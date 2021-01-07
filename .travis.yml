@@ -1,0 +1,19 @@
+language: node_js
+
+node_js:
+  - node
+
+cache:
+  directories:
+    - node_modules
+
+env:
+  - SKIP_PREFLIGHT_CHECK=true
+
+install:
+  - npm ci
+  
+script:
+  - npm test
+  - npm run lint
+  - npx commitlint-travis
