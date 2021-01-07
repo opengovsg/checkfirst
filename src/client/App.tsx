@@ -1,35 +1,21 @@
-import React, { useState, useEffect } from 'react'
-import logo from './logo.svg'
+import React, { FC } from 'react'
+import { ChakraProvider } from '@chakra-ui/react'
+import { HashRouter as Router, Redirect, Route, Switch } from 'react-router-dom'
 
-function App() {
-  const [greeting, setGreeting] = useState('')
+import { theme } from './theme'
+import { Checker, Landing } from './pages'
 
-  useEffect(() => {
-    fetch('/api/hello')
-      .then((response) => {
-        return response.text()
-      })
-      .then((data) => setGreeting(data))
-  })
-
+const App: FC = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <h1>{greeting}</h1>
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ChakraProvider resetCSS theme={theme}>
+      <Router>
+        <Switch>
+          <Route exact path="/c/:id" component={Checker} />
+          <Route exact path="/" component={Landing} />
+          <Redirect to="/" />
+        </Switch>
+      </Router>
+    </ChakraProvider>
   )
 }
 
