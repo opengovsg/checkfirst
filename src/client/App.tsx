@@ -8,7 +8,7 @@ import {
 } from 'react-router-dom'
 
 import { theme } from './theme'
-import { Checker, Landing } from './pages'
+import { Checker, Landing, Debug } from './pages'
 
 const App: FC = () => {
   return (
@@ -16,6 +16,7 @@ const App: FC = () => {
       <Router>
         <Switch>
           <Route exact path="/c/:id" component={Checker} />
+          <Route exact path="/debug" component={Debug} />
           <Route exact path="/" component={Landing} />
           <Redirect to="/" />
         </Switch>
