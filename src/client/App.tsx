@@ -1,6 +1,11 @@
 import React, { FC } from 'react'
 import { ChakraProvider } from '@chakra-ui/react'
-import { HashRouter as Router, Redirect, Route, Switch } from 'react-router-dom'
+import {
+  BrowserRouter as Router,
+  Redirect,
+  Route,
+  Switch,
+} from 'react-router-dom'
 
 import { theme } from './theme'
 import { Checker, Landing } from './pages'
