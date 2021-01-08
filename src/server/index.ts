@@ -1,7 +1,13 @@
-import express from 'express'
 import path from 'path'
 
+import express from 'express'
+import bodyParser from 'body-parser'
+
 import config from './config'
+import api from './api'
+import CheckerController from './checker'
+
+const checker = new CheckerController()
 
 const app = express()
 const port = config.get('port')
@@ -18,6 +24,7 @@ app.get('/debug', (_req, res) =>
   res.sendFile(path.resolve(__dirname + '/../../build/client/index.html'))
 )
 
-app.get('/api/hello', (_req, res) => res.send('Hello World'))
+const apiMiddleware = [bodyParser.json()]
+app.use('/api/v1', apiMiddleware, api({ checker }))
 
 app.listen(port, () => console.log(`Listening on port ${port}`))
