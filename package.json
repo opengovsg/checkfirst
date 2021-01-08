@@ -56,7 +56,7 @@
     "hooks": {
       "pre-commit": "lint-staged",
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
-      "pre-push": "commitlint --from origin/master --to HEAD --verbose"
+      "pre-push": "commitlint --from origin/develop --to HEAD --verbose"
     }
   },
   "lint-staged": {
