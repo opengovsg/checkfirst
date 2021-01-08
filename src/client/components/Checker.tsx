@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import { Container, Heading, Divider, Stack, Button } from '@chakra-ui/react'
 import { useForm, FormProvider } from 'react-hook-form'
 
-import { Checkbox, Radio, Numeric } from './fields'
+import { Checkbox, Radio, Numeric, Text } from './fields'
 
 interface CheckerProps {
   config: any
@@ -19,6 +19,12 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
         return <Checkbox key={i} {...field} />
       case 'RADIO':
         return <Radio key={i} {...field} />
+      case 'TEXT':
+        return <Text key={i} {...field} />
+      case 'PHONE':
+        return <Text key={i} textType="PHONE" {...field} />
+      case 'EMAIL':
+        return <Text key={i} textType="EMAIL" {...field} />
     }
   }
 
