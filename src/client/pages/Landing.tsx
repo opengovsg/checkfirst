@@ -5,8 +5,8 @@ export const Landing: FC = () => {
   return (
     <Center h="100vh">
       <VStack>
-        <Box textStyle="h1">Checkfirst.gov.sg</Box>
-        <Box>Don't know? Check first.</Box>
+        <Box textStyle="h1">CheckFirst.gov.sg</Box>
+        <Box>Don't Know? CheckFirst.</Box>
       </VStack>
     </Center>
   )
