@@ -1,5 +1,5 @@
 export interface Config {
-  id: number
+  id: string
   title: string
   description?: string
 
