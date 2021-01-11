@@ -3,15 +3,16 @@ import { Container, Heading, Divider, Stack, Button } from '@chakra-ui/react'
 import { useForm, FormProvider } from 'react-hook-form'
 
 import { Checkbox, Radio, Numeric } from './fields'
+import * as checker from './../../types/client/checker'
 
 interface CheckerProps {
-  config: any
+  config: checker.Config
 }
 
 export const Checker: FC<CheckerProps> = ({ config }) => {
   const methods = useForm()
 
-  const renderField = (field: any, i: number) => {
+  const renderField = (field: checker.Field, i: number) => {
     switch (field.type) {
       case 'NUMERIC':
         return <Numeric key={i} {...field} />
@@ -32,7 +33,7 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
           <Heading textAlign="center">{config?.title}</Heading>
           <Divider my={8} />
           <Stack direction="column" spacing={9} textStyle="body-1">
-            {config?.fields.map(renderField)}
+            {config.fields.map(renderField)}
           </Stack>
           <Divider my={8} />
           <Button colorScheme="primary" width="100%" type="submit">
