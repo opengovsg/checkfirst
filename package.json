@@ -77,7 +77,7 @@
     "body-parser": "^1.19.0",
     "convict": "^6.0.0",
     "express": "^4.17.1",
-    "framer-motion": "^3.1.4",
+    "framer-motion": "^3.2.0",
     "react": "^17.0.1",
     "react-ace": "^9.2.1",
     "react-dom": "^17.0.1",
