@@ -3,7 +3,7 @@ import { Container, Heading, Divider, Stack, Button } from '@chakra-ui/react'
 import { useForm, FormProvider } from 'react-hook-form'
 
 import { Checkbox, Radio, Numeric } from './fields'
-import * as checker from './../../types/client/checker'
+import * as checker from './../../types/checker'
 
 interface CheckerProps {
   config: checker.Config
