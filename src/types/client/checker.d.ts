@@ -13,6 +13,7 @@ export interface Field {
   type: FieldType
   order: number
   description: string
+  help: string
   options: FieldOption[]
 }
 
