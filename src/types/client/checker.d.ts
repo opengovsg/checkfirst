@@ -5,7 +5,7 @@ export interface Config {
 
   fields: Field[]
   results: Result[]
-  transforms: Transform[]
+  transformations: Transform[]
 }
 
 export interface Field {
@@ -36,7 +36,7 @@ export interface Transform {
   id: string
   type: TransformType
   targets: string[]
-  arguments: (string | number)[]
+  args: (string | number)[]
 }
 
 export type TransformType =
