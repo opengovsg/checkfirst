@@ -1,4 +1,4 @@
-export interface Config {
+export interface Checker {
   id: string
   title: string
   description?: string
