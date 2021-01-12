@@ -17,7 +17,6 @@ export interface DateProps {
   id: string
   description: string
   help?: string
-  newDate: Date
 }
 
 export const DateField: FC<DateProps> = ({ order, id, description, help }) => {
