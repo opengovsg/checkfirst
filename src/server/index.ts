@@ -2,12 +2,22 @@ import path from 'path'
 
 import express from 'express'
 import bodyParser from 'body-parser'
+import { Sequelize } from 'sequelize'
 
 import config from './config'
 import api from './api'
-import CheckerController from './checker'
+import { addModelsTo } from './models'
+import { CheckerController, CheckerService } from './checker'
 
-const checker = new CheckerController()
+const sequelize = new Sequelize({ dialect: 'sqlite' })
+
+const { Checker } = addModelsTo(sequelize)
+
+const checker = new CheckerController({
+  service: new CheckerService({
+    Checker,
+  }),
+})
 
 const app = express()
 const port = config.get('port')
@@ -27,4 +37,6 @@ app.get('/debug', (_req, res) =>
 const apiMiddleware = [bodyParser.json()]
 app.use('/api/v1', apiMiddleware, api({ checker }))
 
-app.listen(port, () => console.log(`Listening on port ${port}`))
+sequelize
+  .sync()
+  .then(() => app.listen(port, () => console.log(`Listening on port ${port}`)))

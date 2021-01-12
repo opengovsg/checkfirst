@@ -6,7 +6,7 @@ import { Checkbox, Radio, Numeric } from './fields'
 import * as checker from './../../types/checker'
 
 interface CheckerProps {
-  config: checker.Config
+  config: checker.Checker
 }
 
 export const Checker: FC<CheckerProps> = ({ config }) => {

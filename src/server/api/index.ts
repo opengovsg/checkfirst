@@ -1,5 +1,5 @@
 import express, { Router } from 'express'
-import CheckerController from '../checker'
+import { CheckerController } from '../checker'
 
 export default (options: { checker: CheckerController }): Router => {
   const { checker } = options
