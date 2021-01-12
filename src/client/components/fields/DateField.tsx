@@ -36,12 +36,12 @@ export const DateField: FC<DateProps> = ({ order, id, description, help }) => {
       <Input
         type="hidden"
         name={id}
-        value={date && date.toISOString().split('T')[0]}
+        value={date ? date.valueOf() : undefined}
         ref={register({ required: true })}
       />
       <DatePicker
         wrapperClassName={error ? 'fieldError' : ''}
-        value={date && date.toISOString().split('T')[0]}
+        value={date ? date.toISOString().split('T')[0] : ''}
         selected={date}
         onChange={changeHandler}
         showPopperArrow={true}
