@@ -44,6 +44,9 @@ export const DateField: FC<DateProps> = ({ order, id, description, help }) => {
         selected={date}
         onChange={changeHandler}
         showPopperArrow={true}
+        showMonthDropdown
+        showYearDropdown
+        dropdownMode="select"
       />
       <FormErrorMessage>Field is required</FormErrorMessage>
     </FormControl>
