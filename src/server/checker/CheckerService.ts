@@ -7,7 +7,7 @@ export class CheckerService {
     this.CheckerModel = options.Checker as ModelOf<Checker>
   }
 
-  create: (_checker: Checker) => Promise<boolean> = async (checker) => {
+  create: (checker: Checker) => Promise<boolean> = async (checker) => {
     const [, created] = await this.CheckerModel.findOrCreate({
       where: { id: checker.id },
       defaults: checker,
@@ -16,12 +16,12 @@ export class CheckerService {
   }
 
   // eslint-disable-next-line @typescript-eslint/ban-types
-  retrieve: (_id: string) => Promise<object | undefined> = async (id) => {
+  retrieve: (id: string) => Promise<object | undefined> = async (id) => {
     const result = await this.CheckerModel.findByPk(id)
     return result?.toJSON()
   }
 
-  update: (_id: string, _checker: Partial<Checker>) => Promise<number> = async (
+  update: (id: string, checker: Partial<Checker>) => Promise<number> = async (
     id,
     checker
   ) => {
@@ -31,7 +31,7 @@ export class CheckerService {
     return count
   }
 
-  delete: (_id: string) => Promise<number> = async (id) => {
+  delete: (id: string) => Promise<number> = async (id) => {
     const count = await this.CheckerModel.destroy({ where: { id } })
     return count
   }

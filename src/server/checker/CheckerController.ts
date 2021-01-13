@@ -7,7 +7,7 @@ export class CheckerController {
     this.service = options.service
   }
 
-  post: (_req: Request, _res: Response) => Promise<void> = async (req, res) => {
+  post: (req: Request, res: Response) => Promise<void> = async (req, res) => {
     const checker = req.body
     try {
       const created = await this.service.create(checker)
@@ -21,7 +21,7 @@ export class CheckerController {
     }
   }
 
-  get: (_req: Request, _res: Response) => Promise<void> = async (req, res) => {
+  get: (req: Request, res: Response) => Promise<void> = async (req, res) => {
     const { id } = req.params
     try {
       const checker = await this.service.retrieve(id)
@@ -35,7 +35,7 @@ export class CheckerController {
     }
   }
 
-  put: (_req: Request, _res: Response) => Promise<void> = async (req, res) => {
+  put: (req: Request, res: Response) => Promise<void> = async (req, res) => {
     const { id } = req.params
     const checker = req.body
     try {
@@ -50,10 +50,7 @@ export class CheckerController {
     }
   }
 
-  delete: (_req: Request, _res: Response) => Promise<void> = async (
-    req,
-    res
-  ) => {
+  delete: (req: Request, res: Response) => Promise<void> = async (req, res) => {
     const { id } = req.params
     try {
       const count = await this.service.delete(id)
