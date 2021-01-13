@@ -45,10 +45,11 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
     return accVariables
   }
 
-  // TODO: For checkbox and radio since the value is the option index, we need to retrieve the actual value.
-  const onSubmit = (data: Record<string, any>) => {
-    // Define the input data variables
-    const computedVariables = operations.reduce(evaluateOperation, data)
+  const onSubmit = (inputVariables: Record<string, any>) => {
+    const computedVariables = operations.reduce(
+      evaluateOperation,
+      inputVariables
+    )
     setVariables(computedVariables)
   }
 
