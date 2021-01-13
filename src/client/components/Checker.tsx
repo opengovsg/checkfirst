@@ -27,9 +27,9 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
   }
 
   const evaluateOperation = (
-    accVariables: Record<string, any>,
+    accVariables: Record<string, string | number>,
     operation: checker.Operation
-  ): Record<string, any> => {
+  ): Record<string, string | number> => {
     const { id, type, expression } = operation
 
     switch (type) {
@@ -45,7 +45,7 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
     return accVariables
   }
 
-  const onSubmit = (inputVariables: Record<string, any>) => {
+  const onSubmit = (inputVariables: Record<string, string | number>) => {
     const computedVariables = operations.reduce(
       evaluateOperation,
       inputVariables
