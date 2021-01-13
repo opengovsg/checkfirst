@@ -4,14 +4,13 @@ export interface Checker {
   description?: string
 
   fields: Field[]
-  results: Result[]
-  transformations: Transform[]
+  operations: Operation[]
+  displays: Display[]
 }
 
 export interface Field {
   id: string
   type: FieldType
-  order: number
   description: string
   help: string
   options: FieldOption[]
@@ -24,37 +23,18 @@ export interface FieldOption {
 
 export type FieldType = 'NUMERIC' | 'RADIO' | 'CHECKBOX' | 'SLIDER' | 'DATE'
 
-export interface Result {
-  id: number
-  order: number
-  type: ResultType
-  formula: string
-}
-
-export type ResultType = 'TEXT' | 'NUMERIC'
-
-export interface Transform {
+export interface Display {
   id: string
-  type: TransformType
-  targets: string[]
-  args: (string | number)[]
+  type: DisplayType
+  target: string
 }
 
-export type TransformType =
-  | SingleFieldTransform
-  | MultiFieldTransform
-  | LogicalTransform
+export type DisplayType = 'TEXT' | 'NUMERIC'
 
-export type SingleFieldTransform = 'EQUALS' | 'GT' | 'LT' | 'GTE' | 'LTE'
+export interface Operation {
+  id: string
+  type: OperationType
+  expression: string
+}
 
-export type MultiFieldTransform =
-  | 'SUM'
-  | 'SUM'
-  | 'MEAN'
-  | 'MEDIAN'
-  | 'MULTIPLY'
-  | 'DIVIDE'
-  | 'ADD'
-  | 'SUBTRACT'
-
-export type LogicalTransform = 'IF' | 'THEN' | 'AND' | 'OR' | 'NOT'
+export type OperationType = 'ARITHMETIC' | 'IFELSE' | 'SWITCH'
