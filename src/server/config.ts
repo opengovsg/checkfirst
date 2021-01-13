@@ -34,6 +34,18 @@ const config = convict({
     format: 'int',
     default: 8080,
   },
+  mailSuffix: {
+    doc: 'The domain suffix expected for e-mail logins',
+    env: 'MAIL_SUFFIX',
+    format: '*',
+    default: '*.gov.sg',
+  },
+  otpSecret: {
+    doc: 'A secret string used to generate TOTPs for users',
+    env: 'OTP_SECRET',
+    format: '*',
+    default: 'toomanysecrets',
+  },
 })
 
 export default config

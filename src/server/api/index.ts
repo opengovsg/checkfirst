@@ -1,9 +1,17 @@
 import express, { Router } from 'express'
+import { AuthController } from '../auth/AuthController'
 import { CheckerController } from '../checker'
 
-export default (options: { checker: CheckerController }): Router => {
-  const { checker } = options
+export default (options: {
+  checker: CheckerController
+  auth: AuthController
+}): Router => {
+  const { checker, auth } = options
   const api = express.Router()
+
+  // Authentication and implicit account creation
+  api.post('/auth', auth.sendOTP)
+  api.post('/auth/verify', auth.verifyOTP)
 
   // CRUD for checker template
   api.post('/c', checker.post)
