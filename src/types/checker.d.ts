@@ -26,10 +26,10 @@ export type FieldType = 'NUMERIC' | 'RADIO' | 'CHECKBOX' | 'SLIDER' | 'DATE'
 export interface Display {
   id: string
   type: DisplayType
-  target: string
+  targets: string[]
 }
 
-export type DisplayType = 'TEXT' | 'NUMERIC'
+export type DisplayType = 'TEXT' | 'BUTTON'
 
 export interface Operation {
   id: string
