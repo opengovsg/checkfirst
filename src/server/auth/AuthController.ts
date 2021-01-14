@@ -33,7 +33,7 @@ export class AuthController {
     try {
       const user = await this.service.verifyOTP(email, token)
       if (user) {
-        // TODO: set-cookie the user session
+        Object.assign(req.session, { user })
         res.json({ message: 'OTP verified' })
       } else {
         res.status(403).json({ message: 'Incorrect OTP given' })

@@ -40,11 +40,32 @@ const config = convict({
     format: '*',
     default: '*.gov.sg',
   },
+  cookieMaxAge: {
+    doc: 'The maximum age for a cookie, expressed in ms',
+    env: 'COOKIE_MAX_AGE',
+    format: 'int',
+    default: 1800000, // 30 minutes
+  },
+  // TODO - change the secrets below so that the defaults have
+  // production-appropriate defaults, or no defaults at all, per
+  // guidelines for using convict
   otpSecret: {
     doc: 'A secret string used to generate TOTPs for users',
     env: 'OTP_SECRET',
     format: '*',
     default: 'toomanysecrets',
+  },
+  sessionSecret: {
+    doc: 'A secret string used to generate sessions for users',
+    env: 'SESSION_SECRET',
+    format: '*',
+    default: 'toomanysecrets',
+  },
+  nodeEnv: {
+    doc: 'The node environment',
+    env: 'NODE_ENV',
+    format: '*',
+    default: 'development',
   },
 })
 

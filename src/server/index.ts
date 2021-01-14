@@ -1,6 +1,8 @@
 import path from 'path'
 
 import express from 'express'
+import session from 'express-session'
+import SequelizeStoreFactory from 'connect-session-sequelize'
 import bodyParser from 'body-parser'
 import { Sequelize } from 'sequelize'
 
@@ -47,6 +49,25 @@ const auth = new AuthController({
   }),
 })
 
+const SequelizeStore = SequelizeStoreFactory(session.Store)
+
+const sessionMiddleware = session({
+  store: new SequelizeStore({
+    db: sequelize,
+    tableName: 'sessions',
+  }),
+  resave: false, // can set to false since touch is implemented by our store
+  saveUninitialized: false, // do not save new sessions that have not been modified
+  cookie: {
+    httpOnly: true,
+    sameSite: 'strict',
+    secure: config.get('nodeEnv') === 'production',
+    maxAge: config.get('cookieMaxAge'),
+  },
+  secret: config.get('sessionSecret'),
+  name: 'checkfirst',
+})
+
 const app = express()
 const port = config.get('port')
 
@@ -62,7 +83,7 @@ app.get('/debug', (_req, res) =>
   res.sendFile(path.resolve(__dirname + '/../../build/client/index.html'))
 )
 
-const apiMiddleware = [bodyParser.json()]
+const apiMiddleware = [sessionMiddleware, bodyParser.json()]
 app.use('/api/v1', apiMiddleware, api({ checker, auth }))
 
 sequelize
