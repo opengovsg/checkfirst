@@ -4,7 +4,7 @@ import { useForm, FormProvider } from 'react-hook-form'
 
 import { Checkbox, Radio, Numeric, DateField } from './fields'
 import * as checker from './../../types/checker'
-import { OpArithmetic } from '../operations'
+import { evaluateOperation } from './../core/evaluator'
 
 interface CheckerProps {
   config: checker.Checker
@@ -26,25 +26,6 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
       case 'DATE':
         return <DateField key={i} order={i} {...field} />
     }
-  }
-
-  const evaluateOperation = (
-    accVariables: Record<string, string | number>,
-    operation: checker.Operation
-  ): Record<string, string | number> => {
-    const { id, type, expression } = operation
-
-    switch (type) {
-      case 'ARITHMETIC':
-        accVariables[id] = OpArithmetic(expression, accVariables)
-        break
-      // TO-DO
-      // ====
-      // case 'IFELSE':
-      // case 'SWITCH':
-    }
-
-    return accVariables
   }
 
   const onSubmit = (inputVariables: Record<string, string | number>) => {
