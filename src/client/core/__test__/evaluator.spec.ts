@@ -1,29 +1,29 @@
 import * as checker from '../../../types/checker'
-import { Operation, evaluateOperation } from '../evaluator'
+import { operation, evaluateOperation } from '../evaluator'
 
 describe('Operation', () => {
   describe('custom string equality', () => {
     it('should allow [number, number] comparisons', () => {
       const expr = 'a == b'
-      let output = Operation(expr, { a: 1, b: 2 })
+      let output = operation(expr, { a: 1, b: 2 })
       expect(output).toBe(false)
 
-      output = Operation(expr, { a: 1, b: 1 })
+      output = operation(expr, { a: 1, b: 1 })
       expect(output).toBe(true)
     })
 
     it('should allow [string, string] comparisons', () => {
       const expr = 'a == b'
-      let output = Operation(expr, { a: 'hello', b: 'world' })
+      let output = operation(expr, { a: 'hello', b: 'world' })
       expect(output).toBe(false)
 
-      output = Operation(expr, { a: 'hello', b: 'hello' })
+      output = operation(expr, { a: 'hello', b: 'hello' })
       expect(output).toBe(true)
     })
 
     it('should allow [string, number] comparisons', () => {
       const expr = 'a == b'
-      const output = Operation(expr, { a: 1, b: 'world' })
+      const output = operation(expr, { a: 1, b: 'world' })
       expect(output).toBe(false)
     })
   })
@@ -31,36 +31,36 @@ describe('Operation', () => {
   describe('ifelse', () => {
     it('should support [string, string] outputs', () => {
       const expr = 'ifelse(a > b, "hello", "world")'
-      const output = Operation(expr, { a: 2, b: 1 })
+      const output = operation(expr, { a: 2, b: 1 })
       expect(output).toBe('hello')
     })
 
     it('should support [number, number] outputs', () => {
       const expr = 'ifelse(a > b, 10, 20)'
-      const output = Operation(expr, { a: 2, b: 1 })
+      const output = operation(expr, { a: 2, b: 1 })
       expect(output).toBe(10)
     })
 
     it('should support [string, number] outputs', () => {
       const expr = 'ifelse(a > b, "hello", 20)'
-      const output = Operation(expr, { a: 2, b: 1 })
+      const output = operation(expr, { a: 2, b: 1 })
       expect(output).toBe('hello')
     })
 
     it('should support [number, string] outputs', () => {
       const expr = 'ifelse(a > b, 10, "hello")'
-      const output = Operation(expr, { a: 2, b: 1 })
+      const output = operation(expr, { a: 2, b: 1 })
       expect(output).toBe(10)
     })
 
     it('should not accept a string conditional', () => {
       const expr = 'ifelse("test", "hello", "world")'
-      expect(() => Operation(expr, {})).toThrowError()
+      expect(() => operation(expr, {})).toThrowError()
     })
 
     it('should not accept a number conditional', () => {
       const expr = 'ifelse(1, "hello", "world")'
-      expect(() => Operation(expr, {})).toThrowError()
+      expect(() => operation(expr, {})).toThrowError()
     })
   })
 })
@@ -73,8 +73,8 @@ describe('evaluateOperation', () => {
       expression: 'a + b',
     }
     const inputs = { a: 1, b: 1 }
-    const outputs = evaluateOperation(inputs, op)
+    const vars = evaluateOperation(inputs, op)
 
-    expect(outputs).toEqual({ ...inputs, OUTPUT: 2 })
+    expect(vars).toEqual({ ...inputs, OUTPUT: 2 })
   })
 })
