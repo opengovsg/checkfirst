@@ -15,10 +15,9 @@ const factories = {
   createUnequal: factory(
     'unequal',
     [],
-    () =>
-      function unequal(a: string | number, b: string | number) {
-        return a !== b
-      }
+    () => (a: string | number, b: string | number) => {
+      return a !== b
+    }
   ),
   // Custom if-else function
   createIfElse: factory('ifelse', [], () =>
