@@ -7,7 +7,7 @@
   "scripts": {
     "lint": "eslint .",
     "lint-fix": "eslint --fix .",
-    "test": "jest --watch",
+    "test": "jest",
     "build": "tsc && webpack --mode production",
     "dev": "concurrently \"npm run dev-server\" \"npm run dev-client\"",
     "dev-server": "ts-node-dev --respawn --transpile-only --inspect -- src/server/index.ts",
