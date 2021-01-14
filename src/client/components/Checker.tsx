@@ -4,7 +4,7 @@ import { useForm, FormProvider } from 'react-hook-form'
 
 import { Checkbox, Radio, Numeric, DateField } from './fields'
 import * as checker from './../../types/checker'
-import { evaluateOperation } from './../core/evaluator'
+import { variableReducer } from './../core/evaluator'
 
 interface CheckerProps {
   config: checker.Checker
@@ -29,10 +29,7 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
   }
 
   const onSubmit = (inputVariables: Record<string, string | number>) => {
-    const computedVariables = operations.reduce(
-      evaluateOperation,
-      inputVariables
-    )
+    const computedVariables = operations.reduce(variableReducer, inputVariables)
     setVariables(computedVariables)
   }
 
