@@ -32,18 +32,18 @@ const factories = {
 }
 export const math = create(factories, config)
 
-export function operation(
+export function evaluateOperation(
   expression: string,
   variables: Record<string, string | number>
 ): number {
   return math.evaluate!(expression, variables)
 }
 
-export const evaluateOperation = (
+export const variableReducer = (
   accVariables: Record<string, string | number>,
   op: checker.Operation
 ): Record<string, string | number> => {
   const { id, expression } = op
-  accVariables[id] = operation(expression, accVariables)
+  accVariables[id] = evaluateOperation(expression, accVariables)
   return accVariables
 }
