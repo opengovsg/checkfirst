@@ -5,6 +5,7 @@ export interface Checker {
 
   fields: Field[]
   operations: Operation[]
+  constants: Constant[]
   displays: Display[]
 }
 
@@ -38,3 +39,8 @@ export interface Operation {
 }
 
 export type OperationType = 'ARITHMETIC' | 'IFELSE' | 'SWITCH'
+
+export interface Constant {
+  id: string
+  value: string
+}

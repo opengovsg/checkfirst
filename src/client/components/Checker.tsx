@@ -17,7 +17,7 @@ interface VariableResults {
 
 export const Checker: FC<CheckerProps> = ({ config }) => {
   const methods = useForm()
-  const { title, fields, operations, displays } = config
+  const { title, fields, operations, constants, displays } = config
   const [variables, setVariables] = useState<VariableResults>({})
 
   const renderField = (field: checker.Field, i: number) => {
@@ -72,11 +72,13 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
           </Container>
         </form>
       </FormProvider>
-      <Container maxW="3xl" layerStyle="card">
-        <Stack direction="column" spacing={9} textStyle="body-1">
-          {displays.map(renderDisplay)}
-        </Stack>
-      </Container>
+      {Object.keys(variables).length > 0 && (
+        <Container maxW="3xl" layerStyle="card">
+          <Stack direction="column" spacing={9} textStyle="body-1">
+            {displays.map(renderDisplay)}
+          </Stack>
+        </Container>
+      )}
       <>
         {Object.entries(variables).map(([key, value]) => (
           <div>
