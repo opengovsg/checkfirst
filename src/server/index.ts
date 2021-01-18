@@ -1,6 +1,6 @@
 import path from 'path'
 
-import express from 'express'
+import express, { Request, Response } from 'express'
 import session from 'express-session'
 import SequelizeStoreFactory from 'connect-session-sequelize'
 import bodyParser from 'body-parser'
@@ -75,13 +75,13 @@ app.use(express.static(path.resolve(__dirname + '/../../build/client')))
 app.use(express.static(path.resolve(__dirname + '/../../public')))
 
 // Facilitate deep-linking
-app.get('/c/:id', (_req, res) =>
+const sendIndex = (_req: Request, res: Response) =>
   res.sendFile(path.resolve(__dirname + '/../../build/client/index.html'))
-)
 
-app.get('/debug', (_req, res) =>
-  res.sendFile(path.resolve(__dirname + '/../../build/client/index.html'))
-)
+app.get('/c/:id', sendIndex)
+app.get('/debug', sendIndex)
+app.get('/login', sendIndex)
+app.get('/projects', sendIndex)
 
 const apiMiddleware = [sessionMiddleware, bodyParser.json()]
 app.use('/api/v1', apiMiddleware, api({ checker, auth }))
