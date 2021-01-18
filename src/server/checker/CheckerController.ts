@@ -12,12 +12,12 @@ export class CheckerController {
     try {
       const created = await this.service.create(checker)
       if (!created) {
-        res.status(422).send({ message: `${checker.id} already exists` })
+        res.status(422).json({ message: `${checker.id} already exists` })
       } else {
-        res.send(checker)
+        res.json(checker)
       }
     } catch (error) {
-      res.status(400).send({ message: error.message })
+      res.status(400).json({ message: error.message })
     }
   }
 
@@ -26,12 +26,12 @@ export class CheckerController {
     try {
       const checker = await this.service.retrieve(id)
       if (!checker) {
-        res.status(404).send({ message: 'Not Found' })
+        res.status(404).json({ message: 'Not Found' })
       } else {
-        res.send(checker)
+        res.json(checker)
       }
     } catch (error) {
-      res.status(400).send({ message: error.message })
+      res.status(400).json({ message: error.message })
     }
   }
 
@@ -41,12 +41,12 @@ export class CheckerController {
     try {
       const count = await this.service.update(id, checker)
       if (!count) {
-        res.status(404).send({ message: 'Not Found' })
+        res.status(404).json({ message: 'Not Found' })
       } else {
-        res.send(checker)
+        res.json(checker)
       }
     } catch (error) {
-      res.status(400).send({ message: error.message })
+      res.status(400).json({ message: error.message })
     }
   }
 
@@ -55,12 +55,12 @@ export class CheckerController {
     try {
       const count = await this.service.delete(id)
       if (!count) {
-        res.status(404).send({ message: 'Not Found' })
+        res.status(404).json({ message: 'Not Found' })
       } else {
-        res.send({ message: `${id} deleted` })
+        res.json({ message: `${id} deleted` })
       }
     } catch (error) {
-      res.status(400).send({ message: error.message })
+      res.status(400).json({ message: error.message })
     }
   }
 }
