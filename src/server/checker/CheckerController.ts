@@ -21,6 +21,15 @@ export class CheckerController {
     }
   }
 
+  list: (req: Request, res: Response) => Promise<void> = async (_req, res) => {
+    try {
+      const checkers = await this.service.list()
+      res.json(checkers)
+    } catch (error) {
+      res.status(400).json({ message: error.message })
+    }
+  }
+
   get: (req: Request, res: Response) => Promise<void> = async (req, res) => {
     const { id } = req.params
     try {

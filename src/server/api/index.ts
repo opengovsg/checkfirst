@@ -15,6 +15,7 @@ export default (options: {
 
   // CRUD for checker template
   api.post('/c', checker.post)
+  api.get('/c', checker.list)
   api.get('/c/:id', checker.get)
   api.put('/c/:id', checker.put)
   api.delete('/c/:id', checker.delete)

@@ -1,5 +1,6 @@
 import { ModelOf } from '../models'
 import { Checker } from '../../types/checker'
+import { WhereAttributeHash } from 'sequelize/types'
 
 export class CheckerService {
   private CheckerModel: ModelOf<Checker>
@@ -13,6 +14,13 @@ export class CheckerService {
       defaults: checker,
     })
     return created
+  }
+
+  list: (findOptions?: {
+    where: WhereAttributeHash
+  }) => Promise<Checker[]> = async (findOptions) => {
+    const result = await this.CheckerModel.findAll(findOptions)
+    return result
   }
 
   retrieve: (id: string) => Promise<Checker | null> = async (id) => {
