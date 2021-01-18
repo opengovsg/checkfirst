@@ -12,6 +12,8 @@ export default (options: {
   // Authentication and implicit account creation
   api.post('/auth', auth.sendOTP)
   api.post('/auth/verify', auth.verifyOTP)
+  api.get('/auth/whoami', auth.whoami)
+  api.post('/auth/logout', auth.logout)
 
   // CRUD for checker template
   api.post('/c', checker.post)

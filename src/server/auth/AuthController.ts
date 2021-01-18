@@ -42,4 +42,12 @@ export class AuthController {
       res.status(400).json({ message: error.message })
     }
   }
+
+  whoami: (req: Request, res: Response) => Promise<void> = async (req, res) => {
+    res.json(req.session.user || null)
+  }
+
+  logout: (req: Request, res: Response) => Promise<void> = async (req, res) => {
+    req.session.destroy(() => res.json({ message: 'Logged out' }))
+  }
 }
