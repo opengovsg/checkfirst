@@ -1,5 +1,6 @@
 import { ModelOf } from '../models'
 import { Checker } from '../../types/checker'
+import { WhereAttributeHash } from 'sequelize/types'
 
 export class CheckerService {
   private CheckerModel: ModelOf<Checker>
@@ -15,10 +16,16 @@ export class CheckerService {
     return created
   }
 
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  retrieve: (id: string) => Promise<object | undefined> = async (id) => {
+  list: (findOptions?: {
+    where: WhereAttributeHash
+  }) => Promise<Checker[]> = async (findOptions) => {
+    const result = await this.CheckerModel.findAll(findOptions)
+    return result
+  }
+
+  retrieve: (id: string) => Promise<Checker | null> = async (id) => {
     const result = await this.CheckerModel.findByPk(id)
-    return result?.toJSON()
+    return result
   }
 
   update: (id: string, checker: Partial<Checker>) => Promise<number> = async (
