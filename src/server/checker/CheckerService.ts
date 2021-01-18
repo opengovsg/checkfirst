@@ -15,10 +15,9 @@ export class CheckerService {
     return created
   }
 
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  retrieve: (id: string) => Promise<object | undefined> = async (id) => {
+  retrieve: (id: string) => Promise<Checker | null> = async (id) => {
     const result = await this.CheckerModel.findByPk(id)
-    return result?.toJSON()
+    return result
   }
 
   update: (id: string, checker: Partial<Checker>) => Promise<number> = async (
