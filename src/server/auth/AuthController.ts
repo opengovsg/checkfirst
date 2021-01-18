@@ -36,7 +36,7 @@ export class AuthController {
         Object.assign(req.session, { user })
         res.json({ message: 'OTP verified' })
       } else {
-        res.status(403).json({ message: 'Incorrect OTP given' })
+        res.status(401).json({ message: 'Incorrect OTP given' })
       }
     } catch (error) {
       res.status(400).json({ message: error.message })
