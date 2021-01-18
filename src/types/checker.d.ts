@@ -5,6 +5,7 @@ export interface Checker {
 
   fields: Field[]
   operations: Operation[]
+  constants: Constant[]
   displays: Display[]
 }
 
@@ -26,10 +27,10 @@ export type FieldType = 'NUMERIC' | 'RADIO' | 'CHECKBOX' | 'SLIDER' | 'DATE'
 export interface Display {
   id: string
   type: DisplayType
-  target: string
+  targets: string[]
 }
 
-export type DisplayType = 'TEXT' | 'NUMERIC'
+export type DisplayType = 'TEXT' | 'BUTTON'
 
 export interface Operation {
   id: string
@@ -38,3 +39,8 @@ export interface Operation {
 }
 
 export type OperationType = 'ARITHMETIC' | 'IFELSE' | 'SWITCH'
+
+export interface Constant {
+  id: string
+  value: string
+}
