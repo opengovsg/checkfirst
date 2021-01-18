@@ -2,7 +2,7 @@ import React, { FC, useState } from 'react'
 import { Container, Heading, Divider, Stack, Button } from '@chakra-ui/react'
 import { useForm, FormProvider } from 'react-hook-form'
 
-import { Checkbox, Radio, Numeric, DateField } from './fields'
+import { Checkbox, Radio, Numeric, DateField, Constant } from './fields'
 import { TextDisplay, ButtonDisplay } from './displays'
 import * as checker from './../../types/checker'
 import { variableReducer } from './../core/evaluator'
@@ -63,6 +63,9 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
             <Heading textAlign="center">{title}</Heading>
             <Divider my={8} />
             <Stack direction="column" spacing={9} textStyle="body-1">
+              {constants.map((constant) => (
+                <Constant {...constant} />
+              ))}
               {fields.map(renderField)}
             </Stack>
             <Divider my={8} />
