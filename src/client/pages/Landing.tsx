@@ -8,16 +8,25 @@ export const Landing: FC = () => {
   const history = useHistory()
   const auth = useAuth()
 
+  const logout = auth.logout
+  const projects = () => history.push('/projects')
   const login = () => history.push('/login')
 
   return (
     <Flex direction="column" height="100vh">
       <Flex direction="row-reverse" w="100%" px={8} py={4}>
         {auth.isAuthenticated ? (
-          <Button colorScheme="primary">Logout</Button>
+          <>
+            <Button onClick={logout} colorScheme="primary">
+              Logout
+            </Button>
+            <Button onClick={projects} colorScheme="primary" variant="link">
+              Go to Projects
+            </Button>
+          </>
         ) : (
           <Button onClick={login} colorScheme="primary">
-            Sign in
+            Login
           </Button>
         )}
       </Flex>

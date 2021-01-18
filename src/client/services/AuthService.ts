@@ -19,7 +19,12 @@ const verifyOtp = async ({
   })
 }
 
+const logout = async (): Promise<void> => {
+  await ApiClient.post<{ message: string }>('/auth/logout')
+}
+
 export const AuthService = {
   getOtp,
   verifyOtp,
+  logout,
 }
