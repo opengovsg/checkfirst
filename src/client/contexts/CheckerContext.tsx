@@ -19,7 +19,10 @@ export type CheckerAction =
   | { type: FormActionType }
   | { type: FormActionType; field: checker.Field }
 
-const reducer = (state: Partial<checker.Checker>, action: CheckerAction) => {
+export const reducer = (
+  state: Partial<checker.Checker>,
+  action: CheckerAction
+): Partial<checker.Checker> => {
   switch (action.type) {
     case FormActionType.Add:
     case FormActionType.Update:
