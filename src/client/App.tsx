@@ -10,8 +10,8 @@ import {
 
 import { theme } from './theme'
 import { PrivateRoute } from './components'
-import { Checker, Landing, Debug, Login, Projects } from './pages'
-import { AuthProvider } from './contexts'
+import { Checker, Landing, Debug, Login, Projects, FormBuilder } from './pages'
+import { AuthProvider, CheckerProvider } from './contexts'
 
 const queryClient = new QueryClient()
 
@@ -24,8 +24,12 @@ const App: FC = () => {
             <Switch>
               <Route exact path="/c/:id" component={Checker} />
               <Route exact path="/debug" component={Debug} />
-              <Route exact path="/" component={Landing} />
               <Route exact path="/login" component={Login} />
+              <Route exact path="/" component={Landing} />
+
+              <CheckerProvider>
+                <Route exact path="/builder" component={FormBuilder} />
+              </CheckerProvider>
 
               <PrivateRoute>
                 <Route exact path="/projects" component={Projects} />

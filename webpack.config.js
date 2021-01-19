@@ -56,7 +56,7 @@ module.exports = () => {
       port: 3000,
       proxy: {
         '/api': 'http://localhost:8080',
-        '!/(assets/**|c/**|login|debug|projects|bundle.js|favicon*)':
+        '!/(assets/**|c/**|login|debug|projects|builder|bundle.js|favicon*)':
           'http://localhost:8080',
       },
       historyApiFallback: true,
