@@ -28,6 +28,8 @@ describe('AuthController', () => {
   app.use(bodyParser.json(), sessionMiddleware)
   app.post('/auth', controller.sendOTP)
   app.post('/auth/verify', controller.verifyOTP)
+  app.get('/auth/whoami', controller.whoami)
+  app.post('/auth/logout', controller.logout)
 
   const email = 'user@agency.gov.sg'
 
@@ -92,6 +94,37 @@ describe('AuthController', () => {
       expect(response.headers['set-cookie']).not.toBeDefined()
       expect(response.body).toMatchObject({ message })
       expect(service.verifyOTP).toHaveBeenCalledWith(email, expect.any(String))
+    })
+  })
+
+  describe('whoami', () => {
+    const token = '111111'
+    beforeEach(() => {
+      service.verifyOTP.mockReset()
+    })
+    it('returns nothing if not authenticated', async () => {
+      const response = await request(app).get('/auth/whoami').expect(200)
+      expect(response.body).toBeNull()
+    })
+    it('returns user object if authenticated', async () => {
+      const user = { id: 1, email }
+      service.verifyOTP.mockResolvedValue(user)
+      const verify = await request(app)
+        .post('/auth/verify')
+        .send({ email, token })
+        .expect(200)
+      expect(verify.headers['set-cookie']).toBeDefined()
+      const response = await request(app)
+        .get('/auth/whoami')
+        .set('Cookie', verify.headers['set-cookie'])
+        .expect(200)
+      expect(response.body).toMatchObject(user)
+    })
+  })
+
+  describe('logout', () => {
+    it('logs the user out', async () => {
+      await request(app).post('/auth/logout').expect(200)
     })
   })
 })
