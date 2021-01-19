@@ -27,9 +27,11 @@ const App: FC = () => {
               <Route exact path="/login" component={Login} />
               <Route exact path="/" component={Landing} />
 
-              <CheckerProvider>
-                <Route exact path="/builder" component={FormBuilder} />
-              </CheckerProvider>
+              <Route exact path="/builder">
+                <CheckerProvider>
+                  <FormBuilder />
+                </CheckerProvider>
+              </Route>
 
               <PrivateRoute>
                 <Route exact path="/projects" component={Projects} />
