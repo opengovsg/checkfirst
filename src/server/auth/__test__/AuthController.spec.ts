@@ -77,7 +77,7 @@ describe('AuthController', () => {
       const response = await request(app)
         .post('/auth/verify')
         .send({ email, token })
-        .expect(403)
+        .expect(401)
       expect(response.headers['set-cookie']).not.toBeDefined()
       expect(response.body).toMatchObject({ message: expect.any(String) })
     })
