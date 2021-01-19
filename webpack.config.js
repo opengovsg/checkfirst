@@ -69,9 +69,9 @@ module.exports = () => {
         chunksSortMode: 'none',
         meta: {
           // Open Graph protocol meta tags
-          'og:title': 'Checkfirst',
-          'og:type': 'article',
-          'og:description': "Don't Know? Checkfirst.",
+          'og:title': 'CheckFirst',
+          'og:type': 'website',
+          'og:description': "Don't Know? CheckFirst.",
         },
       }),
     ],
