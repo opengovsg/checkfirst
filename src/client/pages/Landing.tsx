@@ -26,7 +26,7 @@ export const Landing: FC = () => {
               colorScheme="primary"
               rightIcon={<BiLogOutCircle />}
             >
-              Logout
+              Sign Out
             </Button>
           </HStack>
         ) : (
@@ -35,7 +35,7 @@ export const Landing: FC = () => {
             colorScheme="primary"
             rightIcon={<BiLogInCircle />}
           >
-            Login
+            Sign In
           </Button>
         )}
       </Flex>

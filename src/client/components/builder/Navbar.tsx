@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { BiArrowBack } from 'react-icons/bi'
+import { BiArrowBack, BiLogOutCircle } from 'react-icons/bi'
 import { IconButton, Button, Flex, HStack } from '@chakra-ui/react'
 
 export const Navbar: FC = () => {
@@ -39,7 +39,9 @@ export const Navbar: FC = () => {
       </HStack>
       <HStack>
         <Button colorScheme="primary">Save</Button>
-        <Button variant="ghost">Sign out</Button>
+        <Button variant="ghost" rightIcon={<BiLogOutCircle />}>
+          Sign Out
+        </Button>
       </HStack>
     </Flex>
   )
