@@ -5,6 +5,7 @@ interface ToolbarOptions {
   onClick: React.MouseEventHandler
   icon: React.ReactElement
   label: string
+  disabled?: boolean
 }
 
 interface FloatingToolbarProps {
@@ -38,7 +39,7 @@ export const FloatingToolbar: FC<FloatingToolbarProps> = ({
       spacing={0}
       boxShadow="0px 0px 10px #DADEE3"
     >
-      {options.map(({ label, icon, onClick }, i) => (
+      {options.map(({ label, icon, onClick, disabled }, i) => (
         <Tooltip key={i} label={label} placement="right">
           <IconButton
             borderRadius={0}
@@ -47,6 +48,7 @@ export const FloatingToolbar: FC<FloatingToolbarProps> = ({
             fontSize="20px"
             icon={icon}
             onClick={onClick}
+            disabled={disabled}
           />
         </Tooltip>
       ))}

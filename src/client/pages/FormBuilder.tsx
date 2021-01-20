@@ -16,8 +16,10 @@ import {
   NumericField,
   RadioField,
   CheckboxField,
+  TitleField,
 } from '../components/builder'
 
+const metadata = { title: 'Title', description: 'This is an example checker.' }
 const fields: checker.Field[] = [
   {
     id: 'A',
@@ -75,6 +77,8 @@ const fields: checker.Field[] = [
   },
 ]
 
+export const TITLE_FIELD_ID = 'TITLE'
+
 export const FormBuilder: FC = () => {
   const [activeId, setActiveId] = useState<string>(fields[0].id)
   const [offsetTop, setOffsetTop] = useState<number>(16)
@@ -90,11 +94,13 @@ export const FormBuilder: FC = () => {
       icon: <BiUpArrowAlt />,
       label: 'Move up',
       onClick: () => console.log('move up'),
+      disabled: activeId === TITLE_FIELD_ID || activeId === fields[0].id,
     },
     {
       icon: <BiDownArrowAlt />,
       label: 'Move down',
       onClick: () => console.log('move down'),
+      disabled: activeId === fields[fields.length - 1].id,
     },
   ]
 
@@ -109,8 +115,9 @@ export const FormBuilder: FC = () => {
   const renderField = (field: checker.Field) => {
     const commonProps = {
       key: field.id,
+      id: field.id,
       active: activeId === field.id,
-      field,
+      data: field,
       onActive,
       onSelect,
     }
@@ -139,6 +146,13 @@ export const FormBuilder: FC = () => {
                     options={toolbarOptions}
                   />
                 )}
+                <TitleField
+                  id={TITLE_FIELD_ID}
+                  active={activeId === TITLE_FIELD_ID}
+                  data={metadata}
+                  onSelect={onSelect}
+                  onActive={onActive}
+                />
                 {fields.map(renderField)}
               </VStack>
             </Container>
