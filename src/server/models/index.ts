@@ -1,8 +1,11 @@
 import { IMinimatch } from 'minimatch'
 import { BuildOptions, Model, Sequelize } from 'sequelize'
 
-import * as CheckerModel from './Checker'
-import * as UserModel from './User'
+import * as CheckerFactory from './Checker'
+import * as UserFactory from './User'
+
+export * as CheckerFactory from './Checker'
+export * as UserFactory from './User'
 
 // Circumvent issues with typescript not knowing about `this`
 // variable during compile time. For use in setters in model
@@ -21,8 +24,11 @@ export const addModelsTo = (
   options: { emailValidator: IMinimatch }
 ): Record<string, ModelOf<unknown>> => {
   const result = {
-    Checker: CheckerModel.init(sequelize),
-    User: UserModel.init(sequelize, options),
+    Checker: CheckerFactory.init(sequelize),
+    User: UserFactory.init(sequelize, options),
   }
+  const joinOptions = { through: 'usersToCheckers' }
+  result.Checker.belongsToMany(result.User, joinOptions)
+  result.User.belongsToMany(result.Checker, joinOptions)
   return result
 }

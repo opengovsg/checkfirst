@@ -4,8 +4,8 @@ export interface Checker {
   description?: string
 
   fields: Field[]
-  operations: Operation[]
   constants: Constant[]
+  operations: Operation[]
   displays: Display[]
 }
 
