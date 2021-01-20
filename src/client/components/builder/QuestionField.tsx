@@ -13,9 +13,16 @@ import {
 import * as checker from '../../../types/checker'
 import { usePosition } from '../../hooks/use-position'
 
+interface TitleFieldData {
+  title: string
+  description: string
+}
+export type TitleFieldComponent = FC<TitleFieldData>
+
 interface QuestionFieldProps {
+  id: string
   active?: boolean
-  field: checker.Field
+  data: checker.Field | TitleFieldData
   onSelect: ({ id }: { id: string }) => void
   onActive: ({ top }: { top: number }) => void
 }
@@ -30,18 +37,24 @@ const ActionButton: FC<IconButtonProps> = (props) => {
   return <IconButton {...props} variant="link" sx={styles.action} />
 }
 
+const isFieldData = (
+  data: checker.Field | TitleFieldData
+): data is checker.Field => {
+  return data && (data as checker.Field).type !== undefined
+}
+
 export const createQuestionField = (
-  InputComponent: QuestionFieldComponent,
-  PreviewComponent: QuestionFieldComponent
+  InputComponent: QuestionFieldComponent | TitleFieldComponent,
+  PreviewComponent: QuestionFieldComponent | TitleFieldComponent
 ): FC<QuestionFieldProps> => ({
+  id,
   active,
-  field,
+  data,
   onSelect,
   onActive,
   ...props
 }) => {
   const [ref, { top }] = usePosition()
-  const Content = active ? InputComponent : PreviewComponent
   const variant = active ? 'active' : ''
   const styles = useMultiStyleConfig('QuestionField', { variant })
 
@@ -50,7 +63,21 @@ export const createQuestionField = (
   }, [active, onActive, top])
 
   const handleSelect = () => {
-    if (!active && onSelect) onSelect({ id: field.id })
+    if (!active && onSelect) onSelect({ id })
+  }
+
+  const renderContent = () => {
+    if (isFieldData(data)) {
+      const Content = (active
+        ? InputComponent
+        : PreviewComponent) as QuestionFieldComponent
+      return <Content {...props} field={data} />
+    }
+
+    const Content = (active
+      ? InputComponent
+      : PreviewComponent) as TitleFieldComponent
+    return <Content {...props} {...data} />
   }
 
   return (
@@ -61,9 +88,7 @@ export const createQuestionField = (
       onClick={handleSelect}
     >
       <StylesProvider value={styles}>
-        <Flex>
-          <Content {...props} field={field} />
-        </Flex>
+        <Flex>{renderContent()}</Flex>
         {active && (
           <HStack justifyContent="flex-end">
             <ActionButton aria-label="Settings" icon={<BiCog />} />
