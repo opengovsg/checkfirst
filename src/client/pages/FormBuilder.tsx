@@ -90,11 +90,13 @@ export const FormBuilder: FC = () => {
       icon: <BiUpArrowAlt />,
       label: 'Move up',
       onClick: () => console.log('move up'),
+      disabled: activeId === fields[0].id,
     },
     {
       icon: <BiDownArrowAlt />,
       label: 'Move down',
       onClick: () => console.log('move down'),
+      disabled: activeId === fields[fields.length - 1].id,
     },
   ]
 
