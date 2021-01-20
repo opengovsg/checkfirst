@@ -1,5 +1,6 @@
 import React, { FC } from 'react'
-import { Button, Box, VStack, Center, Flex } from '@chakra-ui/react'
+import { BiLogOutCircle, BiLogInCircle } from 'react-icons/bi'
+import { Button, Box, VStack, HStack, Center, Flex } from '@chakra-ui/react'
 import { useHistory } from 'react-router-dom'
 
 import { useAuth } from '../contexts'
@@ -16,17 +17,25 @@ export const Landing: FC = () => {
     <Flex direction="column" height="100vh">
       <Flex direction="row-reverse" w="100%" px={8} py={4}>
         {auth.isAuthenticated ? (
-          <>
-            <Button onClick={logout} colorScheme="primary">
-              Logout
-            </Button>
-            <Button onClick={projects} colorScheme="primary" variant="link">
+          <HStack>
+            <Button onClick={projects} variant="ghost">
               Go to Projects
             </Button>
-          </>
+            <Button
+              onClick={logout}
+              colorScheme="primary"
+              rightIcon={<BiLogOutCircle />}
+            >
+              Sign Out
+            </Button>
+          </HStack>
         ) : (
-          <Button onClick={login} colorScheme="primary">
-            Login
+          <Button
+            onClick={login}
+            colorScheme="primary"
+            rightIcon={<BiLogInCircle />}
+          >
+            Sign In
           </Button>
         )}
       </Flex>
