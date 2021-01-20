@@ -1,6 +1,13 @@
 import React, { FC, useState } from 'react'
 import { BiPlusCircle, BiUpArrowAlt, BiDownArrowAlt } from 'react-icons/bi'
-import { Container, Flex, VStack } from '@chakra-ui/react'
+import {
+  Tabs,
+  TabPanels,
+  TabPanel,
+  Container,
+  Flex,
+  VStack,
+} from '@chakra-ui/react'
 
 import * as checker from '../../types/checker'
 import { FloatingToolbar, Navbar, NumericField } from '../components/builder'
@@ -32,6 +39,7 @@ const fields: checker.Field[] = [
 export const FormBuilder: FC = () => {
   const [activeId, setActiveId] = useState<string>(fields[0].id)
   const [offsetTop, setOffsetTop] = useState<number>(48)
+  const [tabIndex, setTabIndex] = useState(0)
 
   const toolbarOptions = [
     {
@@ -60,25 +68,38 @@ export const FormBuilder: FC = () => {
   }
 
   const fieldProps = { onActive, onSelect }
-
   return (
     <Flex direction="column" minH="100vh" bgColor="#F4F6F9">
-      <Navbar />
-      <Container maxW="756px" pt="80px" px={0}>
-        <VStack align="stretch" py="40px" position="relative">
-          {activeId && (
-            <FloatingToolbar offsetTop={offsetTop} options={toolbarOptions} />
-          )}
+      <Navbar onTabsChange={setTabIndex} />
+      <Tabs index={tabIndex} mt="80px">
+        <TabPanels>
+          <TabPanel>
+            <Container maxW="756px" px={0}>
+              <VStack align="stretch" py="40px" position="relative">
+                {activeId && (
+                  <FloatingToolbar
+                    offsetTop={offsetTop}
+                    options={toolbarOptions}
+                  />
+                )}
 
-          {fields.map((field) => (
-            <NumericField
-              active={activeId === field.id}
-              field={field}
-              {...fieldProps}
-            />
-          ))}
-        </VStack>
-      </Container>
+                {fields.map((field) => (
+                  <NumericField
+                    active={activeId === field.id}
+                    field={field}
+                    {...fieldProps}
+                  />
+                ))}
+              </VStack>
+            </Container>
+          </TabPanel>
+          <TabPanel>
+            <Container maxW="756px" px={0}>
+              Logic UI Components Here
+            </Container>
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
     </Flex>
   )
 }
