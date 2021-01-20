@@ -1,6 +1,13 @@
 import React, { FC, useState } from 'react'
 import { BiPlusCircle, BiUpArrowAlt, BiDownArrowAlt } from 'react-icons/bi'
-import { Container, Flex, VStack } from '@chakra-ui/react'
+import {
+  Tabs,
+  TabPanels,
+  TabPanel,
+  Container,
+  Flex,
+  VStack,
+} from '@chakra-ui/react'
 
 import * as checker from '../../types/checker'
 import {
@@ -70,7 +77,8 @@ const fields: checker.Field[] = [
 
 export const FormBuilder: FC = () => {
   const [activeId, setActiveId] = useState<string>(fields[0].id)
-  const [offsetTop, setOffsetTop] = useState<number>(56)
+  const [offsetTop, setOffsetTop] = useState<number>(16)
+  const [tabIndex, setTabIndex] = useState(0)
 
   const toolbarOptions = [
     {
@@ -119,15 +127,29 @@ export const FormBuilder: FC = () => {
 
   return (
     <Flex direction="column" minH="100vh" bgColor="#F4F6F9">
-      <Navbar />
-      <Container maxW="756px" pt="80px" px={0}>
-        <VStack align="stretch" py="40px" position="relative" spacing={4}>
-          {activeId && (
-            <FloatingToolbar offsetTop={offsetTop} options={toolbarOptions} />
-          )}
-          {fields.map(renderField)}
-        </VStack>
-      </Container>
+      <Navbar onTabsChange={setTabIndex} />
+      <Tabs index={tabIndex} mt="80px">
+        <TabPanels>
+          <TabPanel>
+            <Container maxW="756px" px={0}>
+              <VStack align="stretch" position="relative" spacing={4}>
+                {activeId && (
+                  <FloatingToolbar
+                    offsetTop={offsetTop}
+                    options={toolbarOptions}
+                  />
+                )}
+                {fields.map(renderField)}
+              </VStack>
+            </Container>
+          </TabPanel>
+          <TabPanel>
+            <Container maxW="756px" px={0}>
+              Logic UI Components Here
+            </Container>
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
     </Flex>
   )
 }

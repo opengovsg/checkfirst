@@ -1,10 +1,22 @@
 import React, { FC } from 'react'
 import { BiArrowBack } from 'react-icons/bi'
-import { IconButton, Button, Flex, HStack } from '@chakra-ui/react'
+import {
+  Tabs,
+  TabList,
+  Tab,
+  IconButton,
+  Button,
+  Flex,
+  HStack,
+} from '@chakra-ui/react'
 
 import { LogoutButton } from '../LogoutButton'
 
-export const Navbar: FC = () => {
+export type NavbarProps = {
+  onTabsChange: (index: number) => void
+}
+
+export const Navbar: FC<NavbarProps> = ({ onTabsChange }: NavbarProps) => {
   return (
     <Flex
       h="80px"
@@ -21,24 +33,23 @@ export const Navbar: FC = () => {
         <Button variant="ghost">Untitled Project</Button>
       </HStack>
       <HStack h="100%" flex={1} justifyContent="center" spacing={0}>
-        <Button
-          borderRadius={0}
+        <Tabs
+          onChange={onTabsChange}
+          w="250px"
           h="100%"
-          w="120px"
-          variant="ghost"
-          borderBottom="solid 4px black"
+          align="center"
+          colorScheme="primary"
+          isFitted
         >
-          Questions
-        </Button>
-        <Button
-          borderRadius={0}
-          h="100%"
-          w="120px"
-          variant="ghost"
-          borderBottom="solid 4px white"
-        >
-          Logic
-        </Button>
+          <TabList h="100%">
+            <Tab borderBottom="solid 4px">
+              <strong>Questions</strong>
+            </Tab>
+            <Tab borderBottom="solid 4px">
+              <strong>Logic</strong>
+            </Tab>
+          </TabList>
+        </Tabs>
       </HStack>
       <HStack>
         <Button colorScheme="primary">Save</Button>
