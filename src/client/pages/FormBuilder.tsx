@@ -70,7 +70,7 @@ const fields: checker.Field[] = [
 
 export const FormBuilder: FC = () => {
   const [activeId, setActiveId] = useState<string>(fields[0].id)
-  const [offsetTop, setOffsetTop] = useState<number>(48)
+  const [offsetTop, setOffsetTop] = useState<number>(56)
 
   const toolbarOptions = [
     {
@@ -121,7 +121,7 @@ export const FormBuilder: FC = () => {
     <Flex direction="column" minH="100vh" bgColor="#F4F6F9">
       <Navbar />
       <Container maxW="756px" pt="80px" px={0}>
-        <VStack align="stretch" py="40px" position="relative">
+        <VStack align="stretch" py="40px" position="relative" spacing={4}>
           {activeId && (
             <FloatingToolbar offsetTop={offsetTop} options={toolbarOptions} />
           )}
