@@ -16,7 +16,7 @@ export const Landing: FC = () => {
   return (
     <Flex direction="column" height="100vh">
       <Flex direction="row-reverse" w="100%" px={8} py={4}>
-        {auth.isAuthenticated ? (
+        {auth.user ? (
           <HStack>
             <Button onClick={projects} variant="ghost">
               Go to Projects

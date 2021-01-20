@@ -11,7 +11,7 @@ import { AuthService } from '../services'
 
 interface AuthContextProps {
   logout: () => void
-  isAuthenticated: boolean
+  user: User | undefined
   verifyOtp: UseMutationResult<
     void,
     { message: string },
@@ -29,26 +29,30 @@ export const useAuth = (): AuthContextProps => {
 
 export const AuthProvider: FC = ({ children }) => {
   const history = useHistory()
-  const [isAuthenticated, setIsAuthenticated] = useLocalStorage(
-    'isAuthenticated',
-    false
-  )
+  const [user, setUser] = useLocalStorage<User | undefined>('user', undefined)
+  const whoami = () =>
+    ApiClient.get<User | null>('/auth/whoami').then((user) => {
+      if (user.data) {
+        setUser(user.data as User)
+      }
+    })
+
   const verifyOtp = useMutation<
     void,
     { message: string },
     { email: string; token: string }
   >(AuthService.verifyOtp, {
-    onSuccess: () => setIsAuthenticated(true),
+    onSuccess: () => whoami(),
   })
 
   const logout = async () => {
     await ApiClient.post('/auth/logout')
-    setIsAuthenticated(false)
+    setUser(undefined)
   }
 
   const auth = {
     logout,
-    isAuthenticated,
+    user,
     verifyOtp,
   }
 
@@ -67,11 +71,7 @@ export const AuthProvider: FC = ({ children }) => {
     )
 
     // Attempt to fetch user object and set isAuthenticated to true if succeeds
-    ApiClient.get<User | null>('/auth/whoami').then((user) => {
-      if (user.data) {
-        setIsAuthenticated(true)
-      }
-    })
+    whoami()
   }
 
   useEffect(initialize, [])
