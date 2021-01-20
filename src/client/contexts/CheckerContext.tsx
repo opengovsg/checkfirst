@@ -1,45 +1,107 @@
 import React, { FC, createContext, useContext, useReducer } from 'react'
-import checker from '../../types/checker'
+import update from 'immutability-helper'
+import { Checker } from '../../types/checker'
+import {
+  BuilderAction,
+  BuilderAddPayload,
+  BuilderUpdatePayload,
+  BuilderRemovePayload,
+  BuilderReorderPayload,
+} from '../../types/builder'
+
+import { BuilderActionEnum } from '../../util/enums'
 
 const checkerContext = createContext<CheckerContextProps | undefined>(undefined)
 
-export const useChecker = (): CheckerContextProps => {
+export const useCheckerContext = (): CheckerContextProps => {
   const ctx = useContext(checkerContext)
   if (!ctx) throw new Error('useChecker must be used within an CheckerProvider')
   return ctx
 }
 
-// TODO: Scaffold code. Flesh out more depending on requirements
-export enum FormActionType {
-  Add,
-  Remove,
-  Update,
-}
-export type CheckerAction =
-  | { type: FormActionType }
-  | { type: FormActionType; field: checker.Field }
+export const reducer = (state: Checker, action: BuilderAction): Checker => {
+  const { type, payload } = action
+  let newState: Checker
 
-export const reducer = (
-  state: Partial<checker.Checker>,
-  action: CheckerAction
-): Partial<checker.Checker> => {
-  switch (action.type) {
-    case FormActionType.Add:
-    case FormActionType.Update:
-    case FormActionType.Remove:
+  switch (type) {
+    case BuilderActionEnum.Add: {
+      const { configArrName, element } = payload as BuilderAddPayload
+      newState = update(state, {
+        [configArrName]: {
+          $push: [element],
+        },
+      })
+      return newState
+    }
+
+    case BuilderActionEnum.Update: {
+      const {
+        configArrName,
+        element,
+        currIndex,
+      } = payload as BuilderUpdatePayload
+
+      newState = update(state, {
+        [configArrName]: {
+          $splice: [[currIndex, 1, element]],
+        },
+      })
+      return newState
+    }
+
+    case BuilderActionEnum.Remove: {
+      const { configArrName, currIndex } = payload as BuilderRemovePayload
+
+      newState = update(state, {
+        [configArrName]: {
+          $splice: [[currIndex, 1]],
+        },
+      })
+      return newState
+    }
+
+    case BuilderActionEnum.Reorder: {
+      const reorderPayload = payload as BuilderReorderPayload
+
+      // needs a currIndex, newIndex
+      const { currIndex, newIndex, configArrName } = reorderPayload
+      const field = state[configArrName][currIndex]
+
+      newState = update(state, {
+        [configArrName]: {
+          $splice: [
+            [currIndex, 1],
+            [newIndex, 0, field],
+          ],
+        },
+      })
+      return newState
+    }
+
     default:
       return state
   }
 }
 
 interface CheckerContextProps {
-  config: Partial<checker.Checker>
-  dispatch: React.Dispatch<CheckerAction>
+  config: Partial<Checker>
+  dispatch: React.Dispatch<BuilderAction>
   save: () => Promise<void>
 }
 
+const initialConfig = {
+  id: '1', // uuid() or existing id from DB
+  title: 'Checker Title',
+  description: 'My description',
+  fields: [],
+  operations: [],
+  displays: [],
+  constants: [],
+  // TO-DO: add operations, displays, and constants
+}
+
 export const CheckerProvider: FC = ({ children }) => {
-  const [config, dispatch] = useReducer(reducer, {})
+  const [config, dispatch] = useReducer(reducer, initialConfig)
 
   // TODO: Call API to save config
   const save = async () => {
