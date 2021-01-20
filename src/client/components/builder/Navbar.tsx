@@ -26,6 +26,7 @@ export const Navbar: FC<NavbarProps> = ({ onTabsChange }: NavbarProps) => {
       alignItems="center"
       position="fixed"
       w="100%"
+      zIndex={999}
     >
       <HStack>
         <IconButton aria-label="Back" variant="ghost" icon={<BiArrowBack />} />
