@@ -15,6 +15,7 @@ export const Navbar: FC = () => {
       alignItems="center"
       position="fixed"
       w="100%"
+      zIndex={999}
     >
       <HStack>
         <Text>CheckFirst</Text>

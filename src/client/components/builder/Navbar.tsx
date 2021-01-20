@@ -14,6 +14,7 @@ export const Navbar: FC = () => {
       alignItems="center"
       position="fixed"
       w="100%"
+      zIndex={999}
     >
       <HStack>
         <IconButton aria-label="Back" variant="ghost" icon={<BiArrowBack />} />
