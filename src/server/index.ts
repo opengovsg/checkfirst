@@ -32,7 +32,9 @@ const { Checker, User } = addModelsTo(sequelize, { emailValidator })
 
 const checker = new CheckerController({
   service: new CheckerService({
+    sequelize,
     Checker,
+    User,
   }),
 })
 

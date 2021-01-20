@@ -24,6 +24,10 @@ export const init = (sequelize: SequelizeInstance): ModelOf<Checker> =>
       type: Sequelize.JSON,
       allowNull: false,
     },
+    constants: {
+      type: Sequelize.JSON,
+      allowNull: false,
+    },
     operations: {
       type: Sequelize.JSON,
       allowNull: false,
