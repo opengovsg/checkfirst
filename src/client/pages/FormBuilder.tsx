@@ -1,22 +1,82 @@
-import React, { FC } from 'react'
-import { BiPlusCircle } from 'react-icons/bi'
+import React, { FC, useState } from 'react'
+import { BiPlusCircle, BiUpArrowAlt, BiDownArrowAlt } from 'react-icons/bi'
 import { Container, Flex, VStack } from '@chakra-ui/react'
 
-import { FloatingToolbar, Navbar } from '../components/builder'
+import * as checker from '../../types/checker'
+import { FloatingToolbar, Navbar, NumericField } from '../components/builder'
+
+const fields: checker.Field[] = [
+  {
+    id: 'A',
+    type: 'NUMERIC',
+    description: 'Question 1',
+    help: '',
+    options: [],
+  },
+  {
+    id: 'B',
+    type: 'NUMERIC',
+    description: 'Question 2',
+    help: '',
+    options: [],
+  },
+  {
+    id: 'C',
+    type: 'NUMERIC',
+    description: 'Question 3',
+    help: '',
+    options: [],
+  },
+]
 
 export const FormBuilder: FC = () => {
+  const [activeId, setActiveId] = useState<string>(fields[0].id)
+  const [offsetTop, setOffsetTop] = useState<number>(48)
+
   const toolbarOptions = [
-    { icon: <BiPlusCircle />, onClick: () => console.log('clicked') },
+    {
+      icon: <BiPlusCircle />,
+      label: 'Add question',
+      onClick: () => console.log('clicked'),
+    },
+    {
+      icon: <BiUpArrowAlt />,
+      label: 'Move up',
+      onClick: () => console.log('move up'),
+    },
+    {
+      icon: <BiDownArrowAlt />,
+      label: 'Move down',
+      onClick: () => console.log('move down'),
+    },
   ]
+
+  const onSelect = ({ id }: { id: string }) => {
+    setActiveId(id)
+  }
+
+  const onActive = ({ top }: { top: number }) => {
+    setOffsetTop(top)
+  }
+
+  const fieldProps = { onActive, onSelect }
 
   return (
     <Flex direction="column" minH="100vh" bgColor="#F4F6F9">
       <Navbar />
       <Container maxW="756px" pt="80px" px={0}>
-        <VStack align="stretch" py={10} position="relative">
-          <FloatingToolbar offsetTop={0} options={toolbarOptions} />
+        <VStack align="stretch" py="40px" position="relative">
+          {activeId && (
+            <FloatingToolbar offsetTop={offsetTop} options={toolbarOptions} />
+          )}
 
-          <Flex layerStyle="builderField">Dummy field</Flex>
+          {fields.map((field) => (
+            <NumericField
+              active={activeId === field.id}
+              field={field}
+              {...fieldProps}
+            />
+          ))}
         </VStack>
       </Container>
     </Flex>
