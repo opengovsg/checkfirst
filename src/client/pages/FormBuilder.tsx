@@ -3,7 +3,13 @@ import { BiPlusCircle, BiUpArrowAlt, BiDownArrowAlt } from 'react-icons/bi'
 import { Container, Flex, VStack } from '@chakra-ui/react'
 
 import * as checker from '../../types/checker'
-import { FloatingToolbar, Navbar, NumericField } from '../components/builder'
+import {
+  FloatingToolbar,
+  Navbar,
+  NumericField,
+  RadioField,
+  CheckboxField,
+} from '../components/builder'
 
 const fields: checker.Field[] = [
   {
@@ -22,10 +28,43 @@ const fields: checker.Field[] = [
   },
   {
     id: 'C',
-    type: 'NUMERIC',
+    type: 'RADIO',
     description: 'Question 3',
     help: '',
-    options: [],
+    options: [
+      { label: 'Option 1', value: 0 },
+      { label: 'Option 2', value: 1 },
+    ],
+  },
+  {
+    id: 'D',
+    type: 'RADIO',
+    description: 'Question 4',
+    help: '',
+    options: [
+      { label: 'Option 1', value: 0 },
+      { label: 'Option 2', value: 1 },
+    ],
+  },
+  {
+    id: 'E',
+    type: 'CHECKBOX',
+    description: 'Question 5',
+    help: '',
+    options: [
+      { label: 'Option 1', value: 0 },
+      { label: 'Option 2', value: 1 },
+    ],
+  },
+  {
+    id: 'F',
+    type: 'CHECKBOX',
+    description: 'Question 6',
+    help: '',
+    options: [
+      { label: 'Option 1', value: 0 },
+      { label: 'Option 2', value: 1 },
+    ],
   },
 ]
 
@@ -59,7 +98,24 @@ export const FormBuilder: FC = () => {
     setOffsetTop(top)
   }
 
-  const fieldProps = { onActive, onSelect }
+  const renderField = (field: checker.Field) => {
+    const commonProps = {
+      key: field.id,
+      active: activeId === field.id,
+      field,
+      onActive,
+      onSelect,
+    }
+
+    switch (field.type) {
+      case 'RADIO':
+        return <RadioField {...commonProps} />
+      case 'CHECKBOX':
+        return <CheckboxField {...commonProps} />
+      case 'NUMERIC':
+        return <NumericField {...commonProps} />
+    }
+  }
 
   return (
     <Flex direction="column" minH="100vh" bgColor="#F4F6F9">
@@ -69,14 +125,7 @@ export const FormBuilder: FC = () => {
           {activeId && (
             <FloatingToolbar offsetTop={offsetTop} options={toolbarOptions} />
           )}
-
-          {fields.map((field) => (
-            <NumericField
-              active={activeId === field.id}
-              field={field}
-              {...fieldProps}
-            />
-          ))}
+          {fields.map(renderField)}
         </VStack>
       </Container>
     </Flex>
