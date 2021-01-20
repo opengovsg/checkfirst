@@ -13,10 +13,14 @@ import {
 import { LogoutButton } from '../LogoutButton'
 
 export type NavbarProps = {
+  index: number
   onTabsChange: (index: number) => void
 }
 
-export const Navbar: FC<NavbarProps> = ({ onTabsChange }: NavbarProps) => {
+export const Navbar: FC<NavbarProps> = ({
+  index,
+  onTabsChange,
+}: NavbarProps) => {
   return (
     <Flex
       h="80px"
@@ -34,6 +38,7 @@ export const Navbar: FC<NavbarProps> = ({ onTabsChange }: NavbarProps) => {
       </HStack>
       <HStack h="100%" flex={1} justifyContent="center" spacing={0}>
         <Tabs
+          defaultIndex={index}
           onChange={onTabsChange}
           w="250px"
           h="100%"
