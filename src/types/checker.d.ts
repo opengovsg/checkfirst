@@ -9,6 +9,8 @@ export interface Checker {
   displays: Display[]
 }
 
+export type ConfigArrayName = 'fields' | 'operations' | 'displays' | 'constants'
+
 export interface Field {
   id: string
   type: FieldType
