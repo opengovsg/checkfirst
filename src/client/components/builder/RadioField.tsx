@@ -100,8 +100,8 @@ const PreviewComponent: QuestionFieldComponent = ({ field }) => {
       </HStack>
       <RadioGroup>
         <VStack alignItems="left" spacing={2}>
-          {options.map(({ label, value }, i) => (
-            <Radio key={i} value={value} isChecked={false}>
+          {options.map(({ label }, i) => (
+            <Radio key={i} value={label} isChecked={false}>
               {label}
             </Radio>
           ))}

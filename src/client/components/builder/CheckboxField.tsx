@@ -100,8 +100,8 @@ const PreviewComponent: QuestionFieldComponent = ({ field }) => {
       </HStack>
       <CheckboxGroup>
         <VStack alignItems="left" spacing={2}>
-          {options.map(({ label, value }, i) => (
-            <Checkbox key={i} value={value} isChecked={false}>
+          {options.map(({ label }, i) => (
+            <Checkbox key={i} value={label} isChecked={false}>
               {label}
             </Checkbox>
           ))}

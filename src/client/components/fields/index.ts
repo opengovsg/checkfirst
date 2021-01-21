@@ -1,4 +1,4 @@
-export * from './Checkbox'
-export * from './Radio'
-export * from './Numeric'
+export * from './CheckboxField'
+export * from './RadioField'
+export * from './NumericField'
 export * from './DateField'
