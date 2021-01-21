@@ -25,10 +25,10 @@ export const reducer = (state: Checker, action: BuilderAction): Checker => {
 
   switch (type) {
     case BuilderActionEnum.Add: {
-      const { configArrName, element } = payload as BuilderAddPayload
+      const { configArrName, element, newIndex } = payload as BuilderAddPayload
       newState = update(state, {
         [configArrName]: {
-          $push: [element],
+          $splice: [[newIndex, 0, element]],
         },
       })
       return newState

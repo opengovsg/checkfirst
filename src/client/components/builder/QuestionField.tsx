@@ -16,6 +16,7 @@ import { usePosition } from '../../hooks/use-position'
 interface TitleFieldData {
   title: string
   description: string
+  index: number
 }
 export type TitleFieldComponent = FC<TitleFieldData>
 
@@ -23,7 +24,7 @@ interface QuestionFieldProps {
   id: string
   active?: boolean
   data: checker.Field | TitleFieldData
-  onSelect: ({ id }: { id: string }) => void
+  onSelect: ({ index }: { index: number }) => void
   onActive: ({ top }: { top: number }) => void
 }
 

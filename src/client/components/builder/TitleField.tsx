@@ -4,7 +4,7 @@ import { Box, HStack, VStack, Text, Input, Heading } from '@chakra-ui/react'
 
 import { createQuestionField, TitleFieldComponent } from './QuestionField'
 
-const InputComponent: TitleFieldComponent = ({ title, description }) => {
+const InputComponent: TitleFieldComponent = ({ title, description, index }) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     const update = { [name]: value }
@@ -38,7 +38,7 @@ const InputComponent: TitleFieldComponent = ({ title, description }) => {
   )
 }
 
-const PreviewComponent: TitleFieldComponent = ({ title, description }) => {
+const PreviewComponent: TitleFieldComponent = ({ title, description, index }) => {
   return (
     <VStack align="stretch" w="100%">
       <Heading>{title}</Heading>
