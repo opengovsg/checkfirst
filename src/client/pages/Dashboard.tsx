@@ -23,7 +23,7 @@ export const Dashboard: FC = () => {
       <Container maxW="756px" pt="80px" px={0}>
         <VStack align="stretch" py={10} position="relative">
           <Grid templateColumns="repeat(5, 1fr)" gap={6}>
-            <CreateNew />
+            <CreateNew onSuccess={loadCheckers} />
             {checkers.map(() => {
               return <Box w="100%" h="10" bg="blue.500" />
             })}

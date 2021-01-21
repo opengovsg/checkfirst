@@ -6,5 +6,6 @@ export const CheckerCard = {
     justifyContent: 'center',
     boxShadow: 'md',
     borderRadius: '12px',
+    cursor: 'pointer',
   },
 }
