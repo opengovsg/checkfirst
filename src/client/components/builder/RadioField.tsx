@@ -47,9 +47,9 @@ const InputComponent: QuestionFieldComponent = ({ field }) => {
         <Radio isChecked={false} />
         <Input
           type="text"
-          value={option.label}
+          value={option.value}
           onChange={(e) => {
-            updateOption(option, { label: e.target.value })
+            updateOption(option, { value: e.target.value })
           }}
         />
         <IconButton
@@ -100,9 +100,9 @@ const PreviewComponent: QuestionFieldComponent = ({ field }) => {
       </HStack>
       <RadioGroup>
         <VStack alignItems="left" spacing={2}>
-          {options.map(({ label, value }, i) => (
+          {options.map(({ value }, i) => (
             <Radio key={i} value={value} isChecked={false}>
-              {label}
+              {value}
             </Radio>
           ))}
         </VStack>

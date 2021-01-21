@@ -2,7 +2,7 @@ import React, { FC, useState } from 'react'
 import { Container, Heading, Divider, Stack, Button } from '@chakra-ui/react'
 import { useForm, FormProvider } from 'react-hook-form'
 
-import { Checkbox, Radio, Numeric, DateField } from './fields'
+import { CheckboxField, RadioField, NumericField, DateField } from './fields'
 import { TextDisplay, ButtonDisplay } from './displays'
 import * as checker from './../../types/checker'
 import { variableReducer } from './../core/evaluator'
@@ -11,9 +11,7 @@ interface CheckerProps {
   config: checker.Checker
 }
 
-interface VariableResults {
-  [key: string]: any
-}
+type VariableResults = Record<string, string | number>
 
 export const Checker: FC<CheckerProps> = ({ config }) => {
   const methods = useForm()
@@ -23,11 +21,11 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
   const renderField = (field: checker.Field, i: number) => {
     switch (field.type) {
       case 'NUMERIC':
-        return <Numeric key={i} order={i} {...field} />
+        return <NumericField key={i} order={i} {...field} />
       case 'CHECKBOX':
-        return <Checkbox key={i} order={i} {...field} />
+        return <CheckboxField key={i} order={i} {...field} />
       case 'RADIO':
-        return <Radio key={i} order={i} {...field} />
+        return <RadioField key={i} order={i} {...field} />
       case 'DATE':
         return <DateField key={i} order={i} {...field} />
     }
@@ -37,13 +35,15 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
     const values = display.targets.map((output) => variables[output])
     switch (display.type) {
       case 'TEXT':
-        return <TextDisplay key={i} content={values[0]} {...display} />
+        return (
+          <TextDisplay key={i} content={values[0] as string} {...display} />
+        )
       case 'BUTTON':
         return (
           <ButtonDisplay
             key={i}
-            buttonText={values[0]}
-            buttonUrl={values[1]}
+            buttonText={values[0] as string}
+            buttonUrl={values[1] as string}
             {...display}
           />
         )
@@ -83,8 +83,8 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
         </Container>
       )}
       <>
-        {Object.entries(variables).map(([key, value]) => (
-          <div>
+        {Object.entries(variables).map(([key, value], i) => (
+          <div key={i}>
             {key}: {value}
           </div>
         ))}

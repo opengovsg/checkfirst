@@ -12,12 +12,9 @@ import {
 import 'react-datepicker/dist/react-datepicker.css'
 import '../../styles/date-picker.css'
 
-export interface DateProps {
-  order: number
-  id: string
-  description: string
-  help?: string
-}
+import * as checker from '../../../types/checker'
+
+type DateProps = checker.Field & { order: number }
 
 export const DateField: FC<DateProps> = ({ order, id, description, help }) => {
   const { register, errors } = useFormContext()
