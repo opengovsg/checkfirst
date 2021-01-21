@@ -39,28 +39,28 @@ const fields: checker.Field[] = [
     type: 'RADIO',
     description: 'Question 3',
     help: '',
-    options: [{ label: 'Option 1' }, { label: 'Option 2' }],
+    options: [{ value: 'Option 1' }, { value: 'Option 2' }],
   },
   {
     id: 'D',
     type: 'RADIO',
     description: 'Question 4',
     help: '',
-    options: [{ label: 'Option 1' }, { label: 'Option 2' }],
+    options: [{ value: 'Option 1' }, { value: 'Option 2' }],
   },
   {
     id: 'E',
     type: 'CHECKBOX',
     description: 'Question 5',
     help: '',
-    options: [{ label: 'Option 1' }, { label: 'Option 2' }],
+    options: [{ value: 'Option 1' }, { value: 'Option 2' }],
   },
   {
     id: 'F',
     type: 'CHECKBOX',
     description: 'Question 6',
     help: '',
-    options: [{ label: 'Option 1' }, { label: 'Option 2' }],
+    options: [{ value: 'Option 1' }, { value: 'Option 2' }],
   },
 ]
 export const TITLE_FIELD_ID = 'TITLE'

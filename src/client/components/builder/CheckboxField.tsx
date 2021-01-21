@@ -47,9 +47,9 @@ const InputComponent: QuestionFieldComponent = ({ field }) => {
         <Checkbox isChecked={false} />
         <Input
           type="text"
-          value={option.label}
+          value={option.value}
           onChange={(e) => {
-            updateOption(option, { label: e.target.value })
+            updateOption(option, { value: e.target.value })
           }}
         />
         <IconButton
@@ -100,9 +100,9 @@ const PreviewComponent: QuestionFieldComponent = ({ field }) => {
       </HStack>
       <CheckboxGroup>
         <VStack alignItems="left" spacing={2}>
-          {options.map(({ label }, i) => (
-            <Checkbox key={i} value={label} isChecked={false}>
-              {label}
+          {options.map(({ value }, i) => (
+            <Checkbox key={i} value={value} isChecked={false}>
+              {value}
             </Checkbox>
           ))}
         </VStack>

@@ -27,7 +27,7 @@ const EXAMPLE: checker.Checker = {
       type: 'RADIO',
       description: 'Define b',
       help: '',
-      options: [{ label: 'Option 1' }, { label: 'Option 2' }],
+      options: [{ value: 'Option 1' }, { value: 'Option 2' }],
     },
   ],
   operations: [

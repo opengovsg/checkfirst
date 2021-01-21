@@ -28,16 +28,16 @@ export const RadioField: FC<RadioProps> = ({
       name={id}
       control={control}
       rules={{ required: true }}
-      defaultValue={options[0]?.label}
+      defaultValue={options[0]?.value}
       render={({ ref, value, onChange }, { invalid }) => (
         <FormControl isInvalid={invalid}>
           <FormLabel htmlFor={id}>{`${order + 1}. ${description}`}</FormLabel>
           {help && <FormHelperText mb={4}>{help}</FormHelperText>}
           <RadioGroup name={id} value={value} onChange={onChange}>
             <Stack direction="column">
-              {options.map(({ label }: { label: string }, i: number) => (
-                <RadioInput key={i} ref={ref} name={id} value={label}>
-                  {label}
+              {options.map(({ value }: { value: string }, i: number) => (
+                <RadioInput key={i} ref={ref} name={id} value={value}>
+                  {value}
                 </RadioInput>
               ))}
             </Stack>
