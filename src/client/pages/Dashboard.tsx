@@ -1,9 +1,9 @@
 import React, { FC } from 'react'
 import { Box, Container, Flex, Grid, VStack } from '@chakra-ui/react'
 
-import { Navbar, CreateNew } from '../components/projects'
+import { Navbar, CreateNew } from '../components/dashboard'
 
-export const Projects: FC = () => {
+export const Dashboard: FC = () => {
   return (
     <Flex direction="column" minH="100vh" bgColor="#F4F6F9">
       <Navbar />

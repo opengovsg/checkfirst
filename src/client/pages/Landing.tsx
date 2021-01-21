@@ -10,7 +10,7 @@ export const Landing: FC = () => {
   const auth = useAuth()
 
   const logout = auth.logout
-  const projects = () => history.push('/projects')
+  const projects = () => history.push('/dashboard')
   const login = () => history.push('/login')
 
   return (

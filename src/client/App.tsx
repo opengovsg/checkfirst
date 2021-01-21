@@ -10,7 +10,7 @@ import {
 
 import { theme } from './theme'
 import { PrivateRoute } from './components'
-import { Checker, Landing, Debug, Login, Projects, FormBuilder } from './pages'
+import { Checker, Landing, Debug, Login, Dashboard, FormBuilder } from './pages'
 import { AuthProvider, CheckerProvider } from './contexts'
 
 const queryClient = new QueryClient()
@@ -34,7 +34,7 @@ const App: FC = () => {
               </Route>
 
               <PrivateRoute>
-                <Route exact path="/projects" component={Projects} />
+                <Route exact path="/dashboard" component={Dashboard} />
               </PrivateRoute>
               <Redirect to="/" />
             </Switch>
