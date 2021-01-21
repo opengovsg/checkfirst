@@ -1,7 +1,7 @@
 import React, { useState, FC } from 'react'
 import { BiPlus } from 'react-icons/bi'
 import {
-  useStyleConfig,
+  useMultiStyleConfig,
   useDisclosure,
   Text,
   Modal,
@@ -25,7 +25,7 @@ export type CreateNewProps = {
 
 export const CreateNew: FC<CreateNewProps> = ({ onSuccess }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const styles = useStyleConfig('CheckerCard', {})
+  const styles = useMultiStyleConfig('CheckerCard', { variant: 'create' })
 
   const initial = {
     id: '',
@@ -93,9 +93,9 @@ export const CreateNew: FC<CreateNewProps> = ({ onSuccess }) => {
 
   return (
     <>
-      <Box onClick={onOpen} sx={styles} bg="primary.500" color="white">
+      <Box onClick={onOpen} sx={styles.card}>
         <BiPlus size="50px" style={{ display: 'inline', marginTop: '36px' }} />
-        <Text mt="16px" fontSize="16px" fontWeight="600">
+        <Text mt="16px" sx={styles.title}>
           Create New
         </Text>
       </Box>
