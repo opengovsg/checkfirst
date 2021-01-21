@@ -1,5 +1,12 @@
 import React, { FC, useState } from 'react'
-import { BiPlusCircle, BiUpArrowAlt, BiDownArrowAlt } from 'react-icons/bi'
+import {
+  BiHash,
+  BiListUl,
+  BiListCheck,
+  BiPlusCircle,
+  BiUpArrowAlt,
+  BiDownArrowAlt,
+} from 'react-icons/bi'
 import { Container, VStack } from '@chakra-ui/react'
 
 import * as checker from '../../../types/checker'
@@ -78,7 +85,23 @@ export const QuestionsTab: FC = () => {
     {
       icon: <BiPlusCircle />,
       label: 'Add question',
-      onClick: () => console.log('clicked'),
+      menu: [
+        {
+          label: 'Numeric field',
+          icon: <BiHash />,
+          onClick: () => console.log('Add numeric field'),
+        },
+        {
+          label: 'Radio',
+          icon: <BiListUl />,
+          onClick: () => console.log('Add radio field'),
+        },
+        {
+          label: 'Checkbox',
+          icon: <BiListCheck />,
+          onClick: () => console.log('Add checkbox field'),
+        },
+      ],
     },
     {
       icon: <BiUpArrowAlt />,
