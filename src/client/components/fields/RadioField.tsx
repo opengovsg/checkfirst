@@ -35,9 +35,9 @@ export const RadioField: FC<RadioProps> = ({
           {help && <FormHelperText mb={4}>{help}</FormHelperText>}
           <RadioGroup name={id} value={value} onChange={onChange}>
             <Stack direction="column">
-              {options.map(({ value }: { value: string }, i: number) => (
+              {options.map(({ value, label }: { value: number, label: string }, i: number) => (
                 <RadioInput key={i} ref={ref} name={id} value={value}>
-                  {value}
+                  {label}
                 </RadioInput>
               ))}
             </Stack>

@@ -3,6 +3,7 @@ export enum BuilderActionEnum {
   Remove = 'REMOVE',
   Update = 'UPDATE',
   Reorder = 'REORDER',
+  UpdateSettings = 'UPDATE_SETTINGS',
 }
 
 export enum ConfigArrayEnum {

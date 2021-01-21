@@ -1,12 +1,20 @@
 import { Field, Operation, Display, Constant, ConfigArrayName } from './checker'
 
-export type BuilderActionType = 'ADD' | 'REMOVE' | 'UPDATE' | 'REORDER'
+export type BuilderActionType =
+  | 'ADD'
+  | 'REMOVE'
+  | 'UPDATE'
+  | 'REORDER'
+  | 'UPDATE_SETTINGS'
 
-export type BuilderAddPayload =
+export type BuilderAddPayload = (
   | FieldPayload
   | OperationPayload
   | DisplayPayload
   | ConstantPayload
+) & {
+  newIndex: number
+}
 
 export type BuilderUpdatePayload = (
   | FieldPayload
@@ -48,6 +56,11 @@ export interface BuilderReorderPayload {
   configArrName: ConfigArrayName
 }
 
+export interface BuilderUpdateSettingsPayload {
+  settingsName: 'description' | 'title'
+  value: string
+}
+
 export interface BuilderAction {
   type: BuilderActionType
   payload:
@@ -55,4 +68,5 @@ export interface BuilderAction {
     | BuilderUpdatePayload
     | BuilderRemovePayload
     | BuilderReorderPayload
+    | BuilderUpdateSettingsPayload
 }

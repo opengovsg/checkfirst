@@ -20,7 +20,8 @@ export interface Field {
 }
 
 export interface FieldOption {
-  value: string
+  label: string,
+  value: number
 }
 
 export type FieldType = 'NUMERIC' | 'RADIO' | 'CHECKBOX' | 'SLIDER' | 'DATE'

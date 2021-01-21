@@ -18,56 +18,50 @@ import {
   TitleField,
 } from '../builder'
 
-const metadata = { title: 'Title', description: 'This is an example checker.' }
-const fields: checker.Field[] = [
-  {
-    id: 'A',
-    type: 'NUMERIC',
-    description: 'Question 1',
-    help: '',
-    options: [],
-  },
-  {
-    id: 'B',
-    type: 'NUMERIC',
-    description: 'Question 2',
-    help: '',
-    options: [],
-  },
-  {
-    id: 'C',
-    type: 'RADIO',
-    description: 'Question 3',
-    help: '',
-    options: [{ value: 'Option 1' }, { value: 'Option 2' }],
-  },
-  {
-    id: 'D',
-    type: 'RADIO',
-    description: 'Question 4',
-    help: '',
-    options: [{ value: 'Option 1' }, { value: 'Option 2' }],
-  },
-  {
-    id: 'E',
-    type: 'CHECKBOX',
-    description: 'Question 5',
-    help: '',
-    options: [{ value: 'Option 1' }, { value: 'Option 2' }],
-  },
-  {
-    id: 'F',
-    type: 'CHECKBOX',
-    description: 'Question 6',
-    help: '',
-    options: [{ value: 'Option 1' }, { value: 'Option 2' }],
-  },
-]
+import { useCheckerContext } from '../../contexts'
+
+import { BuilderActionEnum, ConfigArrayEnum } from '../../../util/enums'
+
+const TITLE_FIELD_INDEX = -1
+
+const defaultNumericField: checker.Field = {
+  id: 'N',
+  type: 'NUMERIC',
+  description: 'Insert question description',
+  help: '',
+  options: [],
+}
+
+const defaultRadioField: checker.Field = {
+  id: 'R',
+  type: 'RADIO',
+  description: 'Insert question description',
+  help: '',
+  options: [
+    { label: 'Option 1', value: 0 },
+    { label: 'Option 2', value: 1 },
+  ],
+}
+
+const defaultCheckboxField: checker.Field = {
+  id: 'C',
+  type: 'CHECKBOX',
+  description: 'Insert question description',
+  help: '',
+  options: [
+    { label: 'Option 1', value: 0 },
+    { label: 'Option 2', value: 1 },
+  ],
+}
+
 export const TITLE_FIELD_ID = 'TITLE'
 
 export const QuestionsTab: FC = () => {
-  const [activeId, setActiveId] = useState<string>(fields[0].id)
+  const [activeIndex, setActiveIndex] = useState<number>(-1)
   const [offsetTop, setOffsetTop] = useState<number>(16)
+  const { config, dispatch } = useCheckerContext()
+
+  const { title, description, fields } = config
 
   const toolbarOptions = [
     {
@@ -77,50 +71,103 @@ export const QuestionsTab: FC = () => {
         {
           label: 'Numeric field',
           icon: <BiHash />,
-          onClick: () => console.log('Add numeric field'),
+          onClick: () => {
+            dispatch({
+              type: BuilderActionEnum.Add,
+              payload: {
+                element: defaultNumericField,
+                configArrName: ConfigArrayEnum.Fields,
+                newIndex: activeIndex + 1,
+              },
+            })
+            setActiveIndex(activeIndex + 1)
+          },
         },
         {
           label: 'Radio',
           icon: <BiRadioCircleMarked />,
-          onClick: () => console.log('Add radio field'),
+          onClick: () => {
+            dispatch({
+              type: BuilderActionEnum.Add,
+              payload: {
+                element: defaultRadioField,
+                configArrName: ConfigArrayEnum.Fields,
+                newIndex: activeIndex + 1,
+              },
+            })
+            setActiveIndex(activeIndex + 1)
+          },
         },
         {
           label: 'Checkbox',
           icon: <BiCheckboxChecked />,
-          onClick: () => console.log('Add checkbox field'),
+          onClick: () => {
+            dispatch({
+              type: BuilderActionEnum.Add,
+              payload: {
+                element: defaultCheckboxField,
+                configArrName: ConfigArrayEnum.Fields,
+                newIndex: activeIndex + 1,
+              },
+            })
+            setActiveIndex(activeIndex + 1)
+          },
         },
       ],
     },
     {
       icon: <BiUpArrowAlt />,
       label: 'Move up',
-      onClick: () => console.log('move up'),
-      disabled: activeId === TITLE_FIELD_ID || activeId === fields[0].id,
+      onClick: () => {
+        dispatch({
+          type: BuilderActionEnum.Reorder,
+          payload: {
+            currIndex: activeIndex,
+            newIndex: activeIndex - 1,
+            configArrName: ConfigArrayEnum.Fields,
+          },
+        })
+        setActiveIndex(activeIndex - 1)
+      },
+      disabled: activeIndex === TITLE_FIELD_INDEX || activeIndex === 0,
     },
     {
       icon: <BiDownArrowAlt />,
       label: 'Move down',
-      onClick: () => console.log('move down'),
-      disabled: activeId === fields[fields.length - 1].id,
+      onClick: () => {
+        dispatch({
+          type: BuilderActionEnum.Reorder,
+          payload: {
+            currIndex: activeIndex,
+            newIndex: activeIndex + 1,
+            configArrName: ConfigArrayEnum.Fields,
+          },
+        })
+        setActiveIndex(activeIndex + 1)
+      },
+      disabled:
+        activeIndex === TITLE_FIELD_INDEX || activeIndex === fields.length - 1,
     },
   ]
 
-  const onSelect = ({ id }: { id: string }) => {
-    setActiveId(id)
+  const onSelect = ({ index }: { index: number }) => {
+    setActiveIndex(index)
   }
 
   const onActive = ({ top }: { top: number }) => {
     setOffsetTop(top)
   }
 
-  const renderField = (field: checker.Field) => {
+  const renderField = (field: checker.Field, index: number) => {
     const commonProps = {
-      key: field.id,
+      key: field.id + index,
       id: field.id,
-      active: activeId === field.id,
+      active: activeIndex === index,
       data: field,
+      index,
       onActive,
       onSelect,
+      setActiveIndex,
     }
 
     switch (field.type) {
@@ -136,15 +183,15 @@ export const QuestionsTab: FC = () => {
   return (
     <Container maxW="756px" px={0}>
       <VStack align="stretch" position="relative" spacing={4}>
-        {activeId && (
-          <FloatingToolbar offsetTop={offsetTop} options={toolbarOptions} />
-        )}
+        <FloatingToolbar offsetTop={offsetTop} options={toolbarOptions} />
         <TitleField
           id={TITLE_FIELD_ID}
-          active={activeId === TITLE_FIELD_ID}
-          data={metadata}
+          active={activeIndex === TITLE_FIELD_INDEX}
+          data={{ title, description }}
           onSelect={onSelect}
           onActive={onActive}
+          index={TITLE_FIELD_INDEX}
+          setActiveIndex={setActiveIndex}
         />
         {fields.map(renderField)}
       </VStack>

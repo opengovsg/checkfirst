@@ -3,14 +3,24 @@ import { BiHash } from 'react-icons/bi'
 import { useStyles, Box, HStack, VStack, Text, Input } from '@chakra-ui/react'
 
 import { createQuestionField, QuestionFieldComponent } from './QuestionField'
+import { useCheckerContext } from '../../contexts'
 
-const InputComponent: QuestionFieldComponent = ({ field }) => {
+import { BuilderActionEnum, ConfigArrayEnum } from '../../../util/enums'
+
+const InputComponent: QuestionFieldComponent = ({ field, index }) => {
   const { description } = field
   const styles = useStyles()
+  const { dispatch } = useCheckerContext()
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
-    // TODO: Dispatch value to save new question
-    console.log(`dispatch value ${value}`)
+    dispatch({
+      type: BuilderActionEnum.Update,
+      payload: {
+        currIndex: index,
+        element: { ...field, description: value },
+        configArrName: ConfigArrayEnum.Fields,
+      },
+    })
   }
 
   return (

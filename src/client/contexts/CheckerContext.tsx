@@ -7,6 +7,7 @@ import {
   BuilderUpdatePayload,
   BuilderRemovePayload,
   BuilderReorderPayload,
+  BuilderUpdateSettingsPayload,
 } from '../../types/builder'
 
 import { BuilderActionEnum } from '../../util/enums'
@@ -25,10 +26,10 @@ export const reducer = (state: Checker, action: BuilderAction): Checker => {
 
   switch (type) {
     case BuilderActionEnum.Add: {
-      const { configArrName, element } = payload as BuilderAddPayload
+      const { configArrName, element, newIndex } = payload as BuilderAddPayload
       newState = update(state, {
         [configArrName]: {
-          $push: [element],
+          $splice: [[newIndex, 0, element]],
         },
       })
       return newState
@@ -78,13 +79,25 @@ export const reducer = (state: Checker, action: BuilderAction): Checker => {
       return newState
     }
 
+    case BuilderActionEnum.UpdateSettings: {
+      const { settingsName, value } = payload as BuilderUpdateSettingsPayload
+
+      newState = update(state, {
+        [settingsName]: {
+          $set: value,
+        },
+      })
+
+      return newState
+    }
+
     default:
       return state
   }
 }
 
 interface CheckerContextProps {
-  config: Partial<Checker>
+  config: Checker
   dispatch: React.Dispatch<BuilderAction>
   save: () => Promise<void>
 }
