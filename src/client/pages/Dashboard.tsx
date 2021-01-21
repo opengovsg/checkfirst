@@ -30,6 +30,7 @@ export const Dashboard: FC = () => {
                   key={checker.id}
                   checker={checker}
                   onDelete={loadCheckers}
+                  onDuplicate={loadCheckers}
                 />
               )
             })}

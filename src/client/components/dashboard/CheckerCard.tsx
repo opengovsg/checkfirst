@@ -1,16 +1,29 @@
 import React, { useState, FC } from 'react'
 import { BiDuplicate, BiTrash } from 'react-icons/bi'
-import { useMultiStyleConfig, Box, Text, HStack } from '@chakra-ui/react'
+import {
+  useMultiStyleConfig,
+  useDisclosure,
+  Box,
+  Text,
+  HStack,
+} from '@chakra-ui/react'
 
 import { Checker } from '../../../types/checker'
 import { ApiClient } from '../../api'
+import { CreateNewModal } from './CreateNewModal'
 
 type CheckerCardProps = {
   onDelete: () => void
+  onDuplicate: () => void
   checker: Checker
 }
 
-export const CheckerCard: FC<CheckerCardProps> = ({ onDelete, checker }) => {
+export const CheckerCard: FC<CheckerCardProps> = ({
+  onDelete,
+  onDuplicate,
+  checker,
+}) => {
+  const { isOpen, onOpen, onClose } = useDisclosure()
   const styles = useMultiStyleConfig('CheckerCard', {})
   const [isToolbarVisible, setToolbarVisible] = useState<'visible' | 'hidden'>(
     'hidden'
@@ -28,21 +41,29 @@ export const CheckerCard: FC<CheckerCardProps> = ({ onDelete, checker }) => {
   }
 
   return (
-    <Box
-      onMouseOver={() => setToolbarVisible('visible')}
-      onMouseOut={() => setToolbarVisible('hidden')}
-      sx={styles.card}
-    >
-      <Text sx={styles.title}>{checker.title}</Text>
-      <HStack
-        visibility={isToolbarVisible}
-        mt="50px"
-        mb="35px"
-        justifyContent="center"
+    <>
+      <Box
+        onMouseOver={() => setToolbarVisible('visible')}
+        onMouseOut={() => setToolbarVisible('hidden')}
+        sx={styles.card}
       >
-        <BiDuplicate size="24px" />
-        <BiTrash onClick={onClickDelete} size="24px" />
-      </HStack>
-    </Box>
+        <Text sx={styles.title}>{checker.title}</Text>
+        <HStack
+          visibility={isToolbarVisible}
+          mt="50px"
+          mb="35px"
+          justifyContent="center"
+        >
+          <BiDuplicate onClick={onOpen} size="24px" />
+          <BiTrash onClick={onClickDelete} size="24px" />
+        </HStack>
+      </Box>
+      <CreateNewModal
+        isOpen={isOpen}
+        onClose={onClose}
+        onSuccess={onDuplicate}
+        checker={checker}
+      />
+    </>
   )
 }
