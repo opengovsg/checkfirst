@@ -1,8 +1,8 @@
 import React, { FC, useState } from 'react'
 import {
   BiHash,
-  BiListUl,
-  BiListCheck,
+  BiRadioCircleMarked,
+  BiCheckboxChecked,
   BiPlusCircle,
   BiUpArrowAlt,
   BiDownArrowAlt,
@@ -93,12 +93,12 @@ export const QuestionsTab: FC = () => {
         },
         {
           label: 'Radio',
-          icon: <BiListUl />,
+          icon: <BiRadioCircleMarked />,
           onClick: () => console.log('Add radio field'),
         },
         {
           label: 'Checkbox',
-          icon: <BiListCheck />,
+          icon: <BiCheckboxChecked />,
           onClick: () => console.log('Add checkbox field'),
         },
       ],
