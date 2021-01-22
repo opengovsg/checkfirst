@@ -1,18 +1,19 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useState, useRef } from 'react'
+import { isEmpty } from 'lodash'
 import {
   useMultiStyleConfig,
   StylesProvider,
   Container,
   Heading,
-  Stack,
   VStack,
+  Flex,
   Button,
   Text,
 } from '@chakra-ui/react'
 import { useForm, FormProvider } from 'react-hook-form'
 
 import { CheckboxField, RadioField, NumericField, DateField } from './fields'
-import { TextDisplay, ButtonDisplay } from './displays'
+import { TextDisplay, ButtonDisplay, LineDisplay } from './displays'
 import * as checker from './../../types/checker'
 import { variableReducer } from './../core/evaluator'
 
@@ -27,6 +28,7 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
   const methods = useForm()
   const { title, description, fields, operations, constants, displays } = config
   const [variables, setVariables] = useState<VariableResults>({})
+  const outcomes = useRef<HTMLDivElement | null>(null)
 
   const renderField = (field: checker.Field, i: number) => {
     switch (field.type) {
@@ -48,6 +50,15 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
         return (
           <TextDisplay key={i} content={values[0] as string} {...display} />
         )
+      case 'LINE':
+        return (
+          <LineDisplay
+            key={i}
+            label={values[0] as string}
+            value={values[1] as string}
+            {...display}
+          />
+        )
       case 'BUTTON':
         return (
           <ButtonDisplay
@@ -66,11 +77,12 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
     })
     const computedVariables = operations.reduce(variableReducer, inputVariables)
     setVariables(computedVariables)
+    outcomes.current?.scrollIntoView()
   }
 
   return (
-    <Container maxW="xl" py={8}>
-      <StylesProvider value={styles}>
+    <StylesProvider value={styles}>
+      <Container maxW="xl" p={8} mb={4}>
         <FormProvider {...methods}>
           <form onSubmit={methods.handleSubmit(onSubmit)}>
             <VStack align="stretch" spacing={10}>
@@ -85,12 +97,17 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
             </VStack>
           </form>
         </FormProvider>
-        {Object.keys(variables).length > 0 && (
-          <Stack direction="column" spacing={9} textStyle="body-1">
-            {displays.map(renderDisplay)}
-          </Stack>
-        )}
-      </StylesProvider>
-    </Container>
+      </Container>
+
+      {!isEmpty(variables) && (
+        <Flex bg="primary.500" as="div" ref={outcomes}>
+          <Container maxW="xl" pt={8} pb={16} px={8} color="#F4F6F9">
+            <VStack align="strech" spacing={8}>
+              {displays.map(renderDisplay)}
+            </VStack>
+          </Container>
+        </Flex>
+      )}
+    </StylesProvider>
   )
 }
