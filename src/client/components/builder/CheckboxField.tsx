@@ -24,7 +24,6 @@ const InputComponent: QuestionFieldComponent = ({ field, index }) => {
 
   const updateQuestion = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
-    console.log('update question', value)
     dispatch({
       type: BuilderActionEnum.Update,
       payload: {
@@ -37,7 +36,6 @@ const InputComponent: QuestionFieldComponent = ({ field, index }) => {
 
   const deleteOption = (option: checker.FieldOption, i: number) => {
     field.options.splice(i, 1)
-    console.log(field.options, 'delete option field')
     dispatch({
       type: BuilderActionEnum.Update,
       payload: {
@@ -55,7 +53,6 @@ const InputComponent: QuestionFieldComponent = ({ field, index }) => {
   ) => {
     const updatedOption = { ...option, ...update }
     field.options.splice(i, 1, updatedOption)
-    console.log(field.options, 'my option updated')
     dispatch({
       type: BuilderActionEnum.Update,
       payload: {
