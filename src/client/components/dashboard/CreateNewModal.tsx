@@ -10,7 +10,11 @@ import {
   Button,
   Input,
   Text,
+  FormControl,
+  HStack,
+  VStack,
 } from '@chakra-ui/react'
+import { useForm, FormProvider } from 'react-hook-form'
 
 import { Checker } from '../../../types/checker'
 import { ApiClient } from '../../api'
@@ -38,112 +42,94 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({
     displays: [],
   }
 
-  const [newChecker, setChecker] = useState<Checker>(
-    checker
-      ? {
-          ...checker,
-          id: initial.id,
-          title: initial.title,
-          description: initial.description,
-        }
-      : initial
-  )
+  const methods = useForm({ mode: 'onBlur' })
+  const { register, handleSubmit, formState } = methods
+  const { isValid, errors } = formState
 
-  const [idInvalid, setIdInvalid] = useState(false)
-  const [titleInvalid, setTitleInvalid] = useState(false)
-  const [errorText, setErrorText] = useState('')
+  const [submitError, setSubmitError] = useState('')
 
-  const setId = (event: React.FocusEvent<HTMLInputElement>) => {
-    const id = event.target.value
-    const invalid = !/^[a-z0-9-]+[a-z0-9]+$/.test(id)
-    setIdInvalid(invalid)
-    setErrorText(
-      invalid ? 'Id must be lowercase letters and numbers, separated by -' : ''
-    )
-    if (!invalid) {
-      setChecker({ ...newChecker, id })
+  const onSubmit = async (data: {
+    id: string
+    title: string
+    description: string
+  }) => {
+    const newChecker = {
+      ...(checker || initial),
+      ...data,
     }
-  }
-
-  const setTitle = (event: React.FocusEvent<HTMLInputElement>) => {
-    const title = event.target.value
-    const invalid = title === ''
-    setTitleInvalid(invalid)
-    if (!invalid) {
-      setChecker({ ...newChecker, title })
-    }
-  }
-
-  const setDescription = (event: React.FocusEvent<HTMLInputElement>) => {
-    const description = event.target.value
-    if (!description) {
-      const checkerWithoutDescription = { ...newChecker }
-      delete checkerWithoutDescription.description
-      setChecker(checkerWithoutDescription)
-    } else {
-      setChecker({ ...newChecker, description })
-    }
-  }
-
-  const resetAndClose = () => {
-    setChecker(initial)
-    setErrorText('')
-    onClose()
-  }
-
-  const onSubmit = async () => {
     try {
+      setSubmitError('')
       await ApiClient.post('/c', newChecker)
       onSuccess()
-      resetAndClose()
+      onClose()
     } catch (error) {
-      setErrorText(error.response.data.message)
+      setSubmitError(error.response.data.message)
     }
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={resetAndClose}>
+    <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>
           {checker ? `Copy ${checker.id}` : 'Create New Checker'}
         </ModalHeader>
         <ModalCloseButton />
-        <ModalBody>
-          <Input
-            isRequired
-            onBlur={setId}
-            isInvalid={idInvalid}
-            placeholder="Id"
-          />
-          <Input
-            isRequired
-            onBlur={setTitle}
-            isInvalid={titleInvalid}
-            placeholder="Title"
-          />
-          <Input onBlur={setDescription} placeholder="Description (optional)" />
-        </ModalBody>
+        <FormProvider {...methods}>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <ModalBody>
+              <FormControl isInvalid={errors.id}>
+                <Input
+                  name="id"
+                  ref={register({
+                    required: 'Id is required',
+                    pattern: {
+                      value: /^[a-z0-9-]+[a-z0-9]+$/,
+                      message:
+                        'Id must be lowercase letters and numbers, separated by -',
+                    },
+                  })}
+                />
+              </FormControl>
+              <FormControl isInvalid={errors.title}>
+                <Input
+                  name="title"
+                  ref={register({ required: 'Title is required' })}
+                />
+              </FormControl>
+              <FormControl isInvalid={errors.description}>
+                <Input name="description" ref={register({})} />
+              </FormControl>
+            </ModalBody>
+            <ModalFooter>
+              <HStack flex={1}>
+                <VStack>
+                  <Text color="error.500">{submitError}</Text>
+                  {Object.entries(errors).map(([field, error]) => {
+                    return (
+                      <Text key={field} color="error.500">
+                        {error.message}
+                      </Text>
+                    )
+                  })}
+                </VStack>
+              </HStack>
+              <Button onClick={onClose} variant="ghost">
+                Cancel
+              </Button>
+              <Button
+                disabled={!isValid}
+                type="submit"
+                colorScheme="primary"
+                mr={3}
+              >
+                Create
+              </Button>
+            </ModalFooter>
+          </form>
+        </FormProvider>
 
-        <ModalFooter>
-          <Text color="error.500">{errorText}</Text>
-          <Button onClick={resetAndClose} variant="ghost">
-            Cancel
-          </Button>
-          <Button
-            disabled={
-              newChecker.id === '' ||
-              newChecker.title === '' ||
-              idInvalid ||
-              titleInvalid
-            }
-            onClick={onSubmit}
-            colorScheme="primary"
-            mr={3}
-          >
-            Create
-          </Button>
-        </ModalFooter>
+        <ModalFooter />
       </ModalContent>
     </Modal>
   )
