@@ -103,7 +103,7 @@ interface CheckerContextProps {
 }
 
 const initialConfig = {
-  id: '1', // uuid() or existing id from DB
+  id: 'initial-checker', // uuid() or existing id from DB
   title: 'Checker Title',
   description: 'My description',
   fields: [],
