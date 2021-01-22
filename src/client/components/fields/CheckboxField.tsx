@@ -33,17 +33,22 @@ export const CheckboxField: FC<Field> = ({
           {help && <FormHelperText mb={4}>{help}</FormHelperText>}
           <CheckboxGroup onChange={onChange} value={value}>
             <VStack align="stretch" spacing={4}>
-              {options.map(({ value }: { value: string }, i: number) => (
-                <CheckboxInput
-                  colorScheme="primary"
-                  key={i}
-                  ref={ref}
-                  name={id}
-                  value={value}
-                >
-                  {value}
-                </CheckboxInput>
-              ))}
+              {options.map(
+                (
+                  { value, label }: { value: number; label: string },
+                  i: number
+                ) => (
+                  <CheckboxInput
+                    colorScheme="primary"
+                    key={i}
+                    ref={ref}
+                    name={id}
+                    value={value}
+                  >
+                    {label}
+                  </CheckboxInput>
+                )
+              )}
             </VStack>
           </CheckboxGroup>
         </FormControl>

@@ -31,17 +31,22 @@ export const RadioField: FC<Field> = ({ id, description, help, options }) => {
           {help && <FormHelperText mb={4}>{help}</FormHelperText>}
           <RadioGroup name={id} value={value} onChange={onChange}>
             <VStack align="stretch" spacing={4}>
-              {options.map(({ value }: { value: string }, i: number) => (
-                <RadioInput
-                  colorScheme="primary"
-                  key={i}
-                  ref={ref}
-                  name={id}
-                  value={value}
-                >
-                  {value}
-                </RadioInput>
-              ))}
+              {options.map(
+                (
+                  { value, label }: { value: number; label: string },
+                  i: number
+                ) => (
+                  <RadioInput
+                    colorScheme="primary"
+                    key={i}
+                    ref={ref}
+                    name={id}
+                    value={value}
+                  >
+                    {label}
+                  </RadioInput>
+                )
+              )}
             </VStack>
           </RadioGroup>
           <FormErrorMessage>Field is required</FormErrorMessage>

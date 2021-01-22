@@ -9,6 +9,8 @@ export interface Checker {
   displays: Display[]
 }
 
+export type ConfigArrayName = 'fields' | 'operations' | 'displays' | 'constants'
+
 export interface Field {
   id: string
   type: FieldType
@@ -18,7 +20,8 @@ export interface Field {
 }
 
 export interface FieldOption {
-  value: string
+  label: string
+  value: number
 }
 
 export type FieldType = 'NUMERIC' | 'RADIO' | 'CHECKBOX' | 'SLIDER' | 'DATE'

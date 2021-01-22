@@ -10,25 +10,31 @@ import {
   HStack,
 } from '@chakra-ui/react'
 
+import { useCheckerContext } from '../../contexts'
 import * as checker from '../../../types/checker'
 import { usePosition } from '../../hooks/use-position'
 
+import { BuilderActionEnum, ConfigArrayEnum } from '../../../util/enums'
+
 interface TitleFieldData {
   title: string
-  description: string
+  description?: string
 }
 export type TitleFieldComponent = FC<TitleFieldData>
 
 interface QuestionFieldProps {
   id: string
+  index: number
   active?: boolean
   data: checker.Field | TitleFieldData
-  onSelect: ({ id }: { id: string }) => void
+  onSelect: ({ index }: { index: number }) => void
   onActive: ({ top }: { top: number }) => void
+  setActiveIndex: (index: number) => void
 }
 
 interface QuestionFieldComponentProps {
   field: checker.Field
+  index: number
 }
 export type QuestionFieldComponent = FC<QuestionFieldComponentProps>
 
@@ -47,14 +53,16 @@ export const createQuestionField = (
   InputComponent: QuestionFieldComponent | TitleFieldComponent,
   PreviewComponent: QuestionFieldComponent | TitleFieldComponent
 ): FC<QuestionFieldProps> => ({
-  id,
+  index,
   active,
   data,
   onSelect,
   onActive,
+  setActiveIndex,
   ...props
 }) => {
   const [ref, { top }] = usePosition()
+  const { dispatch } = useCheckerContext()
   const variant = active ? 'active' : ''
   const styles = useMultiStyleConfig('QuestionField', { variant })
 
@@ -63,7 +71,7 @@ export const createQuestionField = (
   }, [active, onActive, top])
 
   const handleSelect = () => {
-    if (!active && onSelect) onSelect({ id })
+    if (!active && onSelect) onSelect({ index })
   }
 
   const renderContent = () => {
@@ -71,13 +79,36 @@ export const createQuestionField = (
       const Content = (active
         ? InputComponent
         : PreviewComponent) as QuestionFieldComponent
-      return <Content {...props} field={data} />
+      return <Content {...props} field={data} index={index} />
     }
 
     const Content = (active
       ? InputComponent
       : PreviewComponent) as TitleFieldComponent
     return <Content {...props} {...data} />
+  }
+
+  const handleDuplicate = () => {
+    if (isFieldData(data)) {
+      dispatch({
+        type: BuilderActionEnum.Add,
+        payload: {
+          element: data,
+          configArrName: ConfigArrayEnum.Fields,
+          newIndex: index + 1,
+        },
+      })
+      setActiveIndex(index + 1)
+    }
+  }
+
+  const handleDelete = () => {
+    if (isFieldData(data)) {
+      dispatch({
+        type: BuilderActionEnum.Remove,
+        payload: { currIndex: index, configArrName: ConfigArrayEnum.Fields },
+      })
+    }
   }
 
   return (
@@ -92,8 +123,16 @@ export const createQuestionField = (
         {active && (
           <HStack justifyContent="flex-end">
             <ActionButton aria-label="Settings" icon={<BiCog />} />
-            <ActionButton aria-label="Duplicate" icon={<BiDuplicate />} />
-            <ActionButton aria-label="Delete" icon={<BiTrash />} />
+            <ActionButton
+              aria-label="Duplicate"
+              icon={<BiDuplicate />}
+              onClick={handleDuplicate}
+            />
+            <ActionButton
+              aria-label="Delete"
+              icon={<BiTrash />}
+              onClick={handleDelete}
+            />
           </HStack>
         )}
       </StylesProvider>
