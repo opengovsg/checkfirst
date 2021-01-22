@@ -1,7 +1,8 @@
 import React, { FC } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import {
-  Stack,
+  useStyles,
+  VStack,
   FormControl,
   FormLabel,
   FormHelperText,
@@ -9,17 +10,15 @@ import {
   CheckboxGroup,
 } from '@chakra-ui/react'
 
-import * as checker from '../../../types/checker'
+import { Field } from '../../../types/checker'
 
-type CheckboxProps = checker.Field & { order: number }
-
-export const CheckboxField: FC<CheckboxProps> = ({
-  order,
+export const CheckboxField: FC<Field> = ({
   id,
   description,
   help,
   options,
 }) => {
+  const styles = useStyles()
   const { control } = useFormContext()
 
   return (
@@ -28,16 +27,24 @@ export const CheckboxField: FC<CheckboxProps> = ({
       control={control}
       render={({ ref, value, onChange }, { invalid }) => (
         <FormControl isInvalid={invalid}>
-          <FormLabel htmlFor={id}>{`${order + 1}. ${description}`}</FormLabel>
+          <FormLabel sx={styles.label} htmlFor={id}>
+            {description}
+          </FormLabel>
           {help && <FormHelperText mb={4}>{help}</FormHelperText>}
           <CheckboxGroup onChange={onChange} value={value}>
-            <Stack direction="column">
+            <VStack align="stretch" spacing={4}>
               {options.map(({ value }: { value: string }, i: number) => (
-                <CheckboxInput key={i} ref={ref} name={id} value={value}>
+                <CheckboxInput
+                  colorScheme="primary"
+                  key={i}
+                  ref={ref}
+                  name={id}
+                  value={value}
+                >
                   {value}
                 </CheckboxInput>
               ))}
-            </Stack>
+            </VStack>
           </CheckboxGroup>
         </FormControl>
       )}

@@ -1,5 +1,14 @@
 import React, { FC, useState } from 'react'
-import { Container, Heading, Divider, Stack, Button } from '@chakra-ui/react'
+import {
+  useMultiStyleConfig,
+  StylesProvider,
+  Container,
+  Heading,
+  Stack,
+  VStack,
+  Button,
+  Text,
+} from '@chakra-ui/react'
 import { useForm, FormProvider } from 'react-hook-form'
 
 import { CheckboxField, RadioField, NumericField, DateField } from './fields'
@@ -14,20 +23,21 @@ interface CheckerProps {
 type VariableResults = Record<string, string | number>
 
 export const Checker: FC<CheckerProps> = ({ config }) => {
+  const styles = useMultiStyleConfig('Checker', {})
   const methods = useForm()
-  const { title, fields, operations, constants, displays } = config
+  const { title, description, fields, operations, constants, displays } = config
   const [variables, setVariables] = useState<VariableResults>({})
 
   const renderField = (field: checker.Field, i: number) => {
     switch (field.type) {
       case 'NUMERIC':
-        return <NumericField key={i} order={i} {...field} />
+        return <NumericField key={i} {...field} />
       case 'CHECKBOX':
-        return <CheckboxField key={i} order={i} {...field} />
+        return <CheckboxField key={i} {...field} />
       case 'RADIO':
-        return <RadioField key={i} order={i} {...field} />
+        return <RadioField key={i} {...field} />
       case 'DATE':
-        return <DateField key={i} order={i} {...field} />
+        return <DateField key={i} {...field} />
     }
   }
 
@@ -59,36 +69,28 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
   }
 
   return (
-    <>
-      <FormProvider {...methods}>
-        <form onSubmit={methods.handleSubmit(onSubmit)}>
-          <Container maxW="3xl" layerStyle="card">
-            <Heading textAlign="center">{title}</Heading>
-            <Divider my={8} />
-            <Stack direction="column" spacing={9} textStyle="body-1">
+    <Container maxW="xl" py={8}>
+      <StylesProvider value={styles}>
+        <FormProvider {...methods}>
+          <form onSubmit={methods.handleSubmit(onSubmit)}>
+            <VStack align="stretch" spacing={10}>
+              <VStack spacing={2}>
+                <Heading sx={styles.title}>{title}</Heading>
+                {description && <Text sx={styles.subtitle}>{description}</Text>}
+              </VStack>
               {fields.map(renderField)}
-            </Stack>
-            <Divider my={8} />
-            <Button colorScheme="primary" width="100%" type="submit">
-              Submit
-            </Button>
-          </Container>
-        </form>
-      </FormProvider>
-      {Object.keys(variables).length > 0 && (
-        <Container maxW="3xl" layerStyle="card">
+              <Button colorScheme="primary" width="100%" type="submit">
+                Submit
+              </Button>
+            </VStack>
+          </form>
+        </FormProvider>
+        {Object.keys(variables).length > 0 && (
           <Stack direction="column" spacing={9} textStyle="body-1">
             {displays.map(renderDisplay)}
           </Stack>
-        </Container>
-      )}
-      <>
-        {Object.entries(variables).map(([key, value], i) => (
-          <div key={i}>
-            {key}: {value}
-          </div>
-        ))}
-      </>
-    </>
+        )}
+      </StylesProvider>
+    </Container>
   )
 }

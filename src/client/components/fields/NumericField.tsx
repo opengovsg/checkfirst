@@ -1,27 +1,19 @@
 import React, { FC } from 'react'
 import { useFormContext, Controller } from 'react-hook-form'
 import {
+  useStyles,
   FormControl,
   FormLabel,
   FormHelperText,
   FormErrorMessage,
   NumberInput,
   NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
 } from '@chakra-ui/react'
 
-import * as checker from '../../../types/checker'
+import { Field } from '../../../types/checker'
 
-type NumericProps = checker.Field & { order: number }
-
-export const NumericField: FC<NumericProps> = ({
-  order,
-  id,
-  description,
-  help,
-}) => {
+export const NumericField: FC<Field> = ({ id, description, help }) => {
+  const styles = useStyles()
   const { control } = useFormContext()
 
   return (
@@ -32,14 +24,17 @@ export const NumericField: FC<NumericProps> = ({
       rules={{ required: true }}
       render={({ ref, onChange, value }, { invalid }) => (
         <FormControl isInvalid={invalid}>
-          <FormLabel htmlFor={id}>{`${order + 1}. ${description}`}</FormLabel>
+          <FormLabel sx={styles.label} htmlFor={id}>
+            {description}
+          </FormLabel>
           {help && <FormHelperText mb={4}>{help}</FormHelperText>}
-          <NumberInput name={id} onChange={onChange} value={value}>
+          <NumberInput
+            sx={styles.input}
+            name={id}
+            onChange={onChange}
+            value={value}
+          >
             <NumberInputField ref={ref} />
-            <NumberInputStepper>
-              <NumberIncrementStepper />
-              <NumberDecrementStepper />
-            </NumberInputStepper>
           </NumberInput>
           <FormErrorMessage>Field is required</FormErrorMessage>
         </FormControl>
