@@ -1,5 +1,6 @@
 import React, { useState, FC } from 'react'
 import { BiDuplicate, BiTrash } from 'react-icons/bi'
+import { Link } from 'react-router-dom'
 import {
   useMultiStyleConfig,
   useDisclosure,
@@ -47,16 +48,18 @@ export const CheckerCard: FC<CheckerCardProps> = ({
         onMouseOut={() => setToolbarVisible('hidden')}
         sx={styles.card}
       >
-        <Text sx={styles.title}>{checker.title}</Text>
-        <HStack
-          visibility={isToolbarVisible}
-          mt="50px"
-          mb="35px"
-          justifyContent="center"
-        >
-          <BiDuplicate onClick={onOpen} size="24px" />
-          <BiTrash onClick={onClickDelete} size="24px" />
-        </HStack>
+        <Link to={`/builder/${checker.id}`}>
+          <Text sx={styles.title}>{checker.title}</Text>
+          <HStack
+            visibility={isToolbarVisible}
+            mt="50px"
+            mb="35px"
+            justifyContent="center"
+          >
+            <BiDuplicate onClick={onOpen} size="24px" />
+            <BiTrash onClick={onClickDelete} size="24px" />
+          </HStack>
+        </Link>
       </Box>
       <CreateNewModal
         isOpen={isOpen}

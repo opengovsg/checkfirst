@@ -17,9 +17,7 @@ const InputComponent: TitleFieldComponent = ({ title, description }) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     const update = { settingsName: name as SettingsName, value }
-    // TODO: Dispatch value to save new title and description
 
-    console.log(update, 'my title field changed')
     dispatch({
       type: BuilderActionEnum.UpdateSettings,
       payload: update,

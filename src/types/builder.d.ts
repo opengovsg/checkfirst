@@ -1,4 +1,11 @@
-import { Field, Operation, Display, Constant, ConfigArrayName } from './checker'
+import {
+  Field,
+  Operation,
+  Display,
+  Constant,
+  ConfigArrayName,
+  Checker,
+} from './checker'
 
 export type BuilderActionType =
   | 'ADD'
@@ -6,6 +13,7 @@ export type BuilderActionType =
   | 'UPDATE'
   | 'REORDER'
   | 'UPDATE_SETTINGS'
+  | 'LOAD_CONFIG'
 
 export type BuilderAddPayload = (
   | FieldPayload
@@ -61,6 +69,10 @@ export interface BuilderUpdateSettingsPayload {
   value: string
 }
 
+export interface BuilderLoadConfigPayload {
+  loadedState: Checker
+}
+
 export interface BuilderAction {
   type: BuilderActionType
   payload:
@@ -69,4 +81,5 @@ export interface BuilderAction {
     | BuilderRemovePayload
     | BuilderReorderPayload
     | BuilderUpdateSettingsPayload
+    | BuilderLoadConfigPayload
 }

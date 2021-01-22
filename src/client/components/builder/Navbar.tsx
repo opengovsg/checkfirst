@@ -1,5 +1,6 @@
 import React, { FC } from 'react'
 import { BiArrowBack } from 'react-icons/bi'
+import { Link } from 'react-router-dom'
 import {
   Tabs,
   TabList,
@@ -15,11 +16,13 @@ import { LogoutButton } from '../LogoutButton'
 export type NavbarProps = {
   index: number
   onTabsChange: (index: number) => void
+  onSave: () => void
 }
 
 export const Navbar: FC<NavbarProps> = ({
   index,
   onTabsChange,
+  onSave,
 }: NavbarProps) => {
   return (
     <Flex
@@ -33,8 +36,14 @@ export const Navbar: FC<NavbarProps> = ({
       zIndex={999}
     >
       <HStack>
-        <IconButton aria-label="Back" variant="ghost" icon={<BiArrowBack />} />
-        <Button variant="ghost">Untitled Project</Button>
+        <Link to={'/dashboard'}>
+          <IconButton
+            aria-label="Back"
+            variant="ghost"
+            icon={<BiArrowBack />}
+          />
+          <Button variant="ghost">Untitled Project</Button>
+        </Link>
       </HStack>
       <HStack h="100%" flex={1} justifyContent="center" spacing={0}>
         <Tabs
@@ -57,7 +66,9 @@ export const Navbar: FC<NavbarProps> = ({
         </Tabs>
       </HStack>
       <HStack>
-        <Button colorScheme="primary">Save</Button>
+        <Button colorScheme="primary" onClick={onSave}>
+          Save
+        </Button>
         <LogoutButton />
       </HStack>
     </Flex>

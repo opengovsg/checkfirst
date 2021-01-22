@@ -4,6 +4,7 @@ export enum BuilderActionEnum {
   Update = 'UPDATE',
   Reorder = 'REORDER',
   UpdateSettings = 'UPDATE_SETTINGS',
+  LoadConfig = 'LOAD_CONFIG',
 }
 
 export enum ConfigArrayEnum {
