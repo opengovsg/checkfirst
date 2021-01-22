@@ -27,14 +27,12 @@ const App: FC = () => {
               <Route exact path="/login" component={Login} />
               <Route exact path="/" component={Landing} />
 
-              <Route exact path="/builder">
-                <CheckerProvider>
-                  <FormBuilder />
-                </CheckerProvider>
-              </Route>
-
               <PrivateRoute>
                 <Route exact path="/dashboard" component={Dashboard} />
+                {/* TO-DO: Rename CheckerProvider to BuilderProvider and context */}
+                <CheckerProvider>
+                  <Route exact path="/builder/:id" component={FormBuilder} />
+                </CheckerProvider>
               </PrivateRoute>
               <Redirect to="/" />
             </Switch>
@@ -44,5 +42,4 @@ const App: FC = () => {
     </ChakraProvider>
   )
 }
-
 export default App

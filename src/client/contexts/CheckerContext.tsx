@@ -1,5 +1,6 @@
 import React, { FC, createContext, useContext, useReducer } from 'react'
 import update from 'immutability-helper'
+import { ApiClient } from '../api'
 import { Checker } from '../../types/checker'
 import {
   BuilderAction,
@@ -8,6 +9,7 @@ import {
   BuilderRemovePayload,
   BuilderReorderPayload,
   BuilderUpdateSettingsPayload,
+  BuilderLoadConfigPayload,
 } from '../../types/builder'
 
 import { BuilderActionEnum } from '../../util/enums'
@@ -91,6 +93,11 @@ export const reducer = (state: Checker, action: BuilderAction): Checker => {
       return newState
     }
 
+    case BuilderActionEnum.LoadConfig: {
+      const { loadedState } = payload as BuilderLoadConfigPayload
+      return loadedState
+    }
+
     default:
       return state
   }
@@ -99,11 +106,12 @@ export const reducer = (state: Checker, action: BuilderAction): Checker => {
 interface CheckerContextProps {
   config: Checker
   dispatch: React.Dispatch<BuilderAction>
-  save: () => Promise<void>
+  save: (id: string) => Promise<void>
+  initChecker: (id: string) => Promise<void>
 }
 
 const initialConfig = {
-  id: 'initial-checker', // uuid() or existing id from DB
+  id: 'initial-checker',
   title: 'Checker Title',
   description: 'My description',
   fields: [],
@@ -117,13 +125,23 @@ export const CheckerProvider: FC = ({ children }) => {
   const [config, dispatch] = useReducer(reducer, initialConfig)
 
   // TODO: Call API to save config
-  const save = async () => {
-    console.log('save state')
+  const save = async (id: string) => {
+    await ApiClient.put(`/c/${id}`, config)
   }
 
-  // TODO: Do initial load for the checker based on id in the path
+  const initChecker = async (id: string) => {
+    const checker: Checker | null = (await ApiClient.get(`/c/${id}`)).data
+    if (checker) {
+      dispatch({
+        type: BuilderActionEnum.LoadConfig,
+        payload: {
+          loadedState: checker,
+        },
+      })
+    }
+  }
 
-  const value = { config, dispatch, save }
+  const value = { config, dispatch, save, initChecker }
   return (
     <checkerContext.Provider value={value}>{children}</checkerContext.Provider>
   )

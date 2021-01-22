@@ -15,11 +15,13 @@ import { LogoutButton } from '../LogoutButton'
 export type NavbarProps = {
   index: number
   onTabsChange: (index: number) => void
+  onSave: () => void
 }
 
 export const Navbar: FC<NavbarProps> = ({
   index,
   onTabsChange,
+  onSave,
 }: NavbarProps) => {
   return (
     <Flex
@@ -57,7 +59,9 @@ export const Navbar: FC<NavbarProps> = ({
         </Tabs>
       </HStack>
       <HStack>
-        <Button colorScheme="primary">Save</Button>
+        <Button colorScheme="primary" onClick={onSave}>
+          Save
+        </Button>
         <LogoutButton />
       </HStack>
     </Flex>
