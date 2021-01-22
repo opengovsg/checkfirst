@@ -6,7 +6,7 @@
   "homepage": "https://checkfirst.gov.sg",
   "scripts": {
     "lint": "eslint .",
-    "lint-fix": "eslint --fix .",
+    "lint-fix": "eslint --fix ./src",
     "test": "jest",
     "build": "tsc && webpack --mode production",
     "dev": "concurrently \"npm run dev-server\" \"npm run dev-client\"",
