@@ -7,7 +7,7 @@ export const Login: FC = () => {
   const history = useHistory()
   const [email, setEmail] = useState('')
 
-  const handleLogin = () => history.push('/projects')
+  const handleLogin = () => history.push('/dashboard')
 
   return (
     <Center w="100%" h="100vh" bgColor="neutral.50">

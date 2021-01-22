@@ -83,7 +83,7 @@ const sendIndex = (_req: Request, res: Response) =>
 app.get('/c/:id', sendIndex)
 app.get('/debug', sendIndex)
 app.get('/login', sendIndex)
-app.get('/projects', sendIndex)
+app.get('/dashboard', sendIndex)
 app.get('/builder', sendIndex)
 
 const apiMiddleware = [sessionMiddleware, bodyParser.json()]

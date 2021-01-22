@@ -10,7 +10,7 @@ export const Landing: FC = () => {
   const auth = useAuth()
 
   const logout = auth.logout
-  const projects = () => history.push('/projects')
+  const dashboard = () => history.push('/dashboard')
   const login = () => history.push('/login')
 
   return (
@@ -18,8 +18,8 @@ export const Landing: FC = () => {
       <Flex direction="row-reverse" w="100%" px={8} py={4}>
         {auth.user ? (
           <HStack>
-            <Button onClick={projects} variant="ghost">
-              Go to Projects
+            <Button onClick={dashboard} variant="ghost">
+              Go to Dashboard
             </Button>
             <Button
               onClick={logout}
