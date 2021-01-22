@@ -20,7 +20,7 @@ export interface Field {
 }
 
 export interface FieldOption {
-  label: string,
+  label: string
   value: number
 }
 
