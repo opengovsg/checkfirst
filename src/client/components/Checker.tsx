@@ -80,6 +80,9 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
     outcomes.current?.scrollIntoView()
   }
 
+  const isCheckerComplete = () =>
+    !isEmpty(variables) && (operations.length > 0 || displays.length > 0)
+
   return (
     <StylesProvider value={styles}>
       <Container maxW="xl" p={8} mb={4}>
@@ -99,7 +102,7 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
         </FormProvider>
       </Container>
 
-      {!isEmpty(variables) && (
+      {isCheckerComplete() && (
         <Flex bg="primary.500" as="div" ref={outcomes} flex={1}>
           <Container maxW="xl" pt={8} pb={16} px={8} color="#F4F6F9">
             <VStack align="strech" spacing={8}>
