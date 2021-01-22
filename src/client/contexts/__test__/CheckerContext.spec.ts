@@ -69,7 +69,11 @@ describe('Testing CheckerContext reducer add actions', () => {
   it('should return state with added field', () => {
     const action: BuilderAction = {
       type: BuilderActionEnum.Add,
-      payload: { element: newField, configArrName: ConfigArrayEnum.Fields, newIndex: 1 },
+      payload: {
+        element: newField,
+        configArrName: ConfigArrayEnum.Fields,
+        newIndex: 1,
+      },
     }
     const state = initialChecker
     const expectedState = {
@@ -87,7 +91,7 @@ describe('Testing CheckerContext reducer add actions', () => {
       payload: {
         element: newOperation,
         configArrName: ConfigArrayEnum.Operations,
-        newIndex: 1
+        newIndex: 1,
       },
     }
     const state = initialChecker
@@ -103,7 +107,11 @@ describe('Testing CheckerContext reducer add actions', () => {
   it('should return state with added display', () => {
     const action: BuilderAction = {
       type: BuilderActionEnum.Add,
-      payload: { element: newDisplay, configArrName: ConfigArrayEnum.Displays, newIndex: 1 },
+      payload: {
+        element: newDisplay,
+        configArrName: ConfigArrayEnum.Displays,
+        newIndex: 1,
+      },
     }
     const state = initialChecker
     const expectedState = {
@@ -121,7 +129,7 @@ describe('Testing CheckerContext reducer add actions', () => {
       payload: {
         element: newConstant,
         configArrName: ConfigArrayEnum.Constants,
-        newIndex: 1
+        newIndex: 1,
       },
     }
     const state = initialChecker
@@ -295,7 +303,11 @@ describe('Testing CheckerContext reducer reorder actions', () => {
   it('should return state with reordered field', () => {
     const addAction: BuilderAction = {
       type: BuilderActionEnum.Add,
-      payload: { element: newField, configArrName: ConfigArrayEnum.Fields, newIndex: 1 },
+      payload: {
+        element: newField,
+        configArrName: ConfigArrayEnum.Fields,
+        newIndex: 1,
+      },
     }
     const reorderAction: BuilderAction = {
       type: BuilderActionEnum.Reorder,
@@ -322,7 +334,7 @@ describe('Testing CheckerContext reducer reorder actions', () => {
       payload: {
         element: newOperation,
         configArrName: ConfigArrayEnum.Operations,
-        newIndex: 1
+        newIndex: 1,
       },
     }
     const reorderAction: BuilderAction = {
@@ -350,7 +362,7 @@ describe('Testing CheckerContext reducer reorder actions', () => {
       payload: {
         element: newDisplay,
         configArrName: ConfigArrayEnum.Displays,
-        newIndex: 1
+        newIndex: 1,
       },
     }
     const reorderAction: BuilderAction = {
@@ -378,7 +390,7 @@ describe('Testing CheckerContext reducer reorder actions', () => {
       payload: {
         element: newConstant,
         configArrName: ConfigArrayEnum.Constants,
-        newIndex: 1
+        newIndex: 1,
       },
     }
     const reorderAction: BuilderAction = {
