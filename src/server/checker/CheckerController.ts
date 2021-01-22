@@ -28,19 +28,25 @@ export class CheckerController {
     }
   }
 
-  list: (req: Request, res: Response) => Promise<void> = async (_req, res) => {
-    try {
-      const checkers = await this.service.list()
-      res.json(checkers)
-    } catch (error) {
-      res.status(400).json({ message: error.message })
+  list: (req: Request, res: Response) => Promise<void> = async (req, res) => {
+    const { user } = req.session
+    if (!user) {
+      res.status(401).json({ message: 'User not signed in' })
+    } else {
+      try {
+        const checkers = await this.service.list(user)
+        res.json(checkers)
+      } catch (error) {
+        res.status(400).json({ message: error.message })
+      }
     }
   }
 
   get: (req: Request, res: Response) => Promise<void> = async (req, res) => {
     const { id } = req.params
+    const { user } = req.session
     try {
-      const checker = await this.service.retrieve(id)
+      const checker = await this.service.retrieve(id, user)
       if (!checker) {
         res.status(404).json({ message: 'Not Found' })
       } else {
@@ -53,30 +59,44 @@ export class CheckerController {
 
   put: (req: Request, res: Response) => Promise<void> = async (req, res) => {
     const { id } = req.params
-    const checker = req.body
-    try {
-      const count = await this.service.update(id, checker)
-      if (!count) {
-        res.status(404).json({ message: 'Not Found' })
-      } else {
-        res.json(checker)
+    const { user } = req.session
+    if (!user) {
+      res.status(401).json({ message: 'User not signed in' })
+    } else {
+      try {
+        const checker = req.body
+        const count = await this.service.update(id, checker, user)
+        if (!count) {
+          res.status(404).json({ message: 'Not Found' })
+        } else {
+          res.json(checker)
+        }
+      } catch (error) {
+        res
+          .status(error.message.includes('Unauthorized') ? 403 : 400)
+          .json({ message: error.message })
       }
-    } catch (error) {
-      res.status(400).json({ message: error.message })
     }
   }
 
   delete: (req: Request, res: Response) => Promise<void> = async (req, res) => {
     const { id } = req.params
-    try {
-      const count = await this.service.delete(id)
-      if (!count) {
-        res.status(404).json({ message: 'Not Found' })
-      } else {
-        res.json({ message: `${id} deleted` })
+    const { user } = req.session
+    if (!user) {
+      res.status(401).json({ message: 'User not signed in' })
+    } else {
+      try {
+        const count = await this.service.delete(id, user)
+        if (!count) {
+          res.status(404).json({ message: 'Not Found' })
+        } else {
+          res.json({ message: `${id} deleted` })
+        }
+      } catch (error) {
+        res
+          .status(error.message.includes('Unauthorized') ? 403 : 400)
+          .json({ message: error.message })
       }
-    } catch (error) {
-      res.status(400).json({ message: error.message })
     }
   }
 }
