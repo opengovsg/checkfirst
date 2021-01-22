@@ -108,6 +108,7 @@ export const createQuestionField = (
         type: BuilderActionEnum.Remove,
         payload: { currIndex: index, configArrName: ConfigArrayEnum.Fields },
       })
+      setActiveIndex(index - 1)
     }
   }
 
