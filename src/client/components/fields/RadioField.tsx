@@ -1,7 +1,8 @@
 import React, { FC } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import {
-  Stack,
+  useStyles,
+  VStack,
   FormControl,
   FormLabel,
   FormHelperText,
@@ -10,17 +11,10 @@ import {
   RadioGroup,
 } from '@chakra-ui/react'
 
-import * as checker from '../../../types/checker'
+import { Field } from '../../../types/checker'
 
-type RadioProps = checker.Field & { order: number }
-
-export const RadioField: FC<RadioProps> = ({
-  order,
-  id,
-  description,
-  help,
-  options,
-}) => {
+export const RadioField: FC<Field> = ({ id, description, help, options }) => {
+  const styles = useStyles()
   const { control } = useFormContext()
 
   return (
@@ -31,21 +25,29 @@ export const RadioField: FC<RadioProps> = ({
       defaultValue={options[0]?.value}
       render={({ ref, value, onChange }, { invalid }) => (
         <FormControl isInvalid={invalid}>
-          <FormLabel htmlFor={id}>{`${order + 1}. ${description}`}</FormLabel>
+          <FormLabel sx={styles.label} htmlFor={id}>
+            {description}
+          </FormLabel>
           {help && <FormHelperText mb={4}>{help}</FormHelperText>}
           <RadioGroup name={id} value={value} onChange={onChange}>
-            <Stack direction="column">
+            <VStack align="stretch" spacing={4}>
               {options.map(
                 (
                   { value, label }: { value: number; label: string },
                   i: number
                 ) => (
-                  <RadioInput key={i} ref={ref} name={id} value={value}>
+                  <RadioInput
+                    colorScheme="primary"
+                    key={i}
+                    ref={ref}
+                    name={id}
+                    value={value}
+                  >
                     {label}
                   </RadioInput>
                 )
               )}
-            </Stack>
+            </VStack>
           </RadioGroup>
           <FormErrorMessage>Field is required</FormErrorMessage>
         </FormControl>

@@ -32,7 +32,7 @@ export interface Display {
   targets: string[]
 }
 
-export type DisplayType = 'TEXT' | 'BUTTON'
+export type DisplayType = 'TEXT' | 'BUTTON' | 'LINE'
 
 export interface Operation {
   id: string

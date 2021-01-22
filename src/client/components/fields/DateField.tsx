@@ -2,6 +2,7 @@ import React, { FC, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import DatePicker from 'react-datepicker'
 import {
+  useStyles,
   FormControl,
   FormLabel,
   FormHelperText,
@@ -12,11 +13,10 @@ import {
 import 'react-datepicker/dist/react-datepicker.css'
 import '../../styles/date-picker.css'
 
-import * as checker from '../../../types/checker'
+import { Field } from '../../../types/checker'
 
-type DateProps = checker.Field & { order: number }
-
-export const DateField: FC<DateProps> = ({ order, id, description, help }) => {
+export const DateField: FC<Field> = ({ id, description, help }) => {
+  const styles = useStyles()
   const { register, errors } = useFormContext()
   const [date, setDate] = useState(new Date())
   const error = errors[id]
@@ -27,7 +27,9 @@ export const DateField: FC<DateProps> = ({ order, id, description, help }) => {
 
   return (
     <FormControl isInvalid={error} id={id}>
-      <FormLabel htmlFor={id}>{`${order + 1}. ${description}`}</FormLabel>
+      <FormLabel sx={styles.label} htmlFor={id}>
+        {description}
+      </FormLabel>
       {help && <FormHelperText mb={4}>{help}</FormHelperText>}
       <Input
         type="hidden"
