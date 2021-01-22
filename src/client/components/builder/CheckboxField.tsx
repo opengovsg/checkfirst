@@ -55,6 +55,7 @@ const InputComponent: QuestionFieldComponent = ({ field, index }) => {
   ) => {
     const updatedOption = { ...option, ...update }
     field.options.splice(i, 1, updatedOption)
+    console.log(field.options, 'my option updated')
     dispatch({
       type: BuilderActionEnum.Update,
       payload: {
@@ -71,7 +72,6 @@ const InputComponent: QuestionFieldComponent = ({ field, index }) => {
     const newValue = field.options[field.options.length - 1].value + 1
     const newOption = { label: newOptionLabel, value: newValue }
     field.options.push(newOption)
-    console.log(field.options, 'add option field after push')
     dispatch({
       type: BuilderActionEnum.Update,
       payload: {
@@ -88,7 +88,7 @@ const InputComponent: QuestionFieldComponent = ({ field, index }) => {
         <Checkbox isChecked={false} />
         <Input
           type="text"
-          value={option.value}
+          value={option.label}
           onChange={(e) => {
             updateOption(option, { label: e.target.value }, i)
           }}

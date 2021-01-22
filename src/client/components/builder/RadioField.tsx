@@ -35,7 +35,6 @@ const InputComponent: QuestionFieldComponent = ({ field, index }) => {
 
   const deleteOption = (option: checker.FieldOption, i: number) => {
     field.options.splice(i, 1)
-    console.log(field.options, 'delete option field')
     dispatch({
       type: BuilderActionEnum.Update,
       payload: {
@@ -69,7 +68,6 @@ const InputComponent: QuestionFieldComponent = ({ field, index }) => {
     const newValue = field.options[field.options.length - 1].value + 1
     const newOption = { label: newOptionLabel, value: newValue }
     field.options.push(newOption)
-    console.log(field.options, 'add option field after push')
     dispatch({
       type: BuilderActionEnum.Update,
       payload: {
@@ -86,7 +84,7 @@ const InputComponent: QuestionFieldComponent = ({ field, index }) => {
         <Radio isChecked={false} />
         <Input
           type="text"
-          value={option.value}
+          value={option.label}
           onChange={(e) => {
             updateOption(option, { label: e.target.value }, i)
           }}
