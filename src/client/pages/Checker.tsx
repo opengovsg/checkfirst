@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Box } from '@chakra-ui/react'
+import { Flex } from '@chakra-ui/react'
 
 import * as checker from '../../types/checker'
 import { Checker as CheckerComponent } from '../components'
@@ -24,20 +24,6 @@ const EXAMPLE: checker.Checker = {
       help:
         'The S Pass holder sub quota is 10% of your total (local + foreign) workforce',
       options: [],
-    },
-    {
-      id: 'IN_2',
-      type: 'RADIO',
-      description: 'Define c',
-      help: 'This an example radio field.',
-      options: [{ value: 'Option 1' }, { value: 'Option 2' }],
-    },
-    {
-      id: 'IN_3',
-      type: 'CHECKBOX',
-      description: 'Define d',
-      help: 'This an example checkbox field.',
-      options: [{ value: 'Option 1' }, { value: 'Option 2' }],
     },
   ],
   operations: [
@@ -83,8 +69,8 @@ const EXAMPLE: checker.Checker = {
 
 export const Checker: FC = () => {
   return (
-    <Box bg="neutral.50" minH="100vh">
+    <Flex direction="column" bg="neutral.50" minH="100vh">
       <CheckerComponent config={EXAMPLE} />
-    </Box>
+    </Flex>
   )
 }

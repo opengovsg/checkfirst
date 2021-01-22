@@ -100,7 +100,7 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
       </Container>
 
       {!isEmpty(variables) && (
-        <Flex bg="primary.500" as="div" ref={outcomes}>
+        <Flex bg="primary.500" as="div" ref={outcomes} flex={1}>
           <Container maxW="xl" pt={8} pb={16} px={8} color="#F4F6F9">
             <VStack align="strech" spacing={8}>
               {displays.map(renderDisplay)}
