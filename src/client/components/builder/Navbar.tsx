@@ -1,5 +1,6 @@
 import React, { FC } from 'react'
 import { BiArrowBack } from 'react-icons/bi'
+import { Link } from 'react-router-dom'
 import {
   Tabs,
   TabList,
@@ -35,8 +36,14 @@ export const Navbar: FC<NavbarProps> = ({
       zIndex={999}
     >
       <HStack>
-        <IconButton aria-label="Back" variant="ghost" icon={<BiArrowBack />} />
-        <Button variant="ghost">Untitled Project</Button>
+        <Link to={'/dashboard'}>
+          <IconButton
+            aria-label="Back"
+            variant="ghost"
+            icon={<BiArrowBack />}
+          />
+          <Button variant="ghost">Untitled Project</Button>
+        </Link>
       </HStack>
       <HStack h="100%" flex={1} justifyContent="center" spacing={0}>
         <Tabs
