@@ -1,7 +1,10 @@
+import { User } from './user'
+
 export interface Checker {
   id: string
   title: string
   description?: string
+  users?: User[]
 
   fields: Field[]
   constants: Constant[]
