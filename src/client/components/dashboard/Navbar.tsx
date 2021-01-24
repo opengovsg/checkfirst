@@ -1,6 +1,8 @@
 import React, { FC } from 'react'
-import { Flex, HStack, Text, Link } from '@chakra-ui/react'
+import { Link as RouterLink } from 'react-router-dom'
+import { Flex, HStack, Text, Link, Image } from '@chakra-ui/react'
 
+import Logo from '../../assets/checkfirst-logo.svg'
 import { useAuth } from '../../contexts'
 import { LogoutButton } from '../LogoutButton'
 
@@ -18,7 +20,9 @@ export const Navbar: FC = () => {
       zIndex={999}
     >
       <HStack>
-        <Text>CheckFirst</Text>
+        <RouterLink to="/">
+          <Image htmlWidth="144px" src={Logo} />
+        </RouterLink>
       </HStack>
       <HStack h="100%" flex={1} justifyContent="center" />
       <HStack>
