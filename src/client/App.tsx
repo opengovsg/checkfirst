@@ -26,12 +26,11 @@ const App: FC = () => {
               <Route exact path="/debug" component={Debug} />
               <Route exact path="/login" component={Login} />
               <Route exact path="/" component={Landing} />
-
-              <PrivateRoute>
-                <Route exact path="/dashboard" component={Dashboard} />
-                {/* TO-DO: Rename CheckerProvider to BuilderProvider and context */}
+              <PrivateRoute path="/dashboard" component={Dashboard} />
+              <PrivateRoute path="/builder/:id">
+                {/* TODO: Rename to BuilderProvider */}
                 <CheckerProvider>
-                  <Route exact path="/builder/:id" component={FormBuilder} />
+                  <FormBuilder />
                 </CheckerProvider>
               </PrivateRoute>
               <Redirect to="/" />
