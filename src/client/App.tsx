@@ -13,7 +13,9 @@ import { PrivateRoute } from './components'
 import { Checker, Landing, Debug, Login, Dashboard, FormBuilder } from './pages'
 import { AuthProvider, CheckerProvider } from './contexts'
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { retry: false } },
+})
 
 const App: FC = () => {
   return (
