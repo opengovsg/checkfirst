@@ -5,6 +5,7 @@ import {
   getDependencies,
   getEvaluationOrder,
   evaluate,
+  EvaluationCycleError,
 } from '../evaluator'
 
 describe('Operation', () => {
@@ -137,9 +138,14 @@ describe('getEvaluationOrder', () => {
       { id: 'O1', type: 'ARITHMETIC', expression: 'O2 + A + B' },
     ]
 
-    expect(() =>
+    try {
       getEvaluationOrder(inputs, constants, operations)
-    ).toThrowError(/\bCycles\b/)
+    } catch (err) {
+      expect(err).toBeInstanceOf(EvaluationCycleError)
+
+      const { cycles } = err as EvaluationCycleError
+      expect(cycles.map((cycle) => cycle.sort())).toEqual([['O1', 'O2']])
+    }
   })
 })
 
@@ -178,8 +184,13 @@ describe('evaluate', () => {
       { id: 'O1', type: 'ARITHMETIC', expression: 'O2 + A + B' },
     ]
 
-    expect(() => evaluate(inputs, constants, operations)).toThrowError(
-      /\bCycles\b/
-    )
+    try {
+      evaluate(inputs, constants, operations)
+    } catch (err) {
+      expect(err).toBeInstanceOf(EvaluationCycleError)
+
+      const { cycles } = err as EvaluationCycleError
+      expect(cycles.map((cycle) => cycle.sort())).toEqual([['O1', 'O2']])
+    }
   })
 })

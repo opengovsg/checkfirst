@@ -3,6 +3,17 @@ import { typed, create, all, factory } from 'mathjs'
 import { Graph, alg } from 'graphlib'
 import * as checker from './../../types/checker'
 
+export class EvaluationCycleError extends Error {
+  cycles: string[][]
+
+  constructor(cycles: string[][]) {
+    super('Cycles detected. Computation graph my be a DAG.')
+    Object.setPrototypeOf(this, new.target.prototype)
+
+    this.cycles = cycles
+  }
+}
+
 const config = {}
 const factories = {
   ...all,
@@ -117,8 +128,8 @@ export const getEvaluationOrder = (
   }, graph)
 
   // In order for computation to be valid, the constructed graph must be acyclical.
-  if (!alg.isAcyclic(graph))
-    throw new Error('Cycles detected. Computation graph my be a DAG.')
+  const cycles = alg.findCycles(graph)
+  if (cycles.length > 0) throw new EvaluationCycleError(cycles)
 
   // Do a topological sort to determine evaluation order. Return as map for O(1) lookup.
   let order: Record<string, number> = {}
