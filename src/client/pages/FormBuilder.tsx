@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { AxiosError } from 'axios'
-import { useQueryClient } from 'react-query'
+import { useIsFetching, useQueryClient } from 'react-query'
 import { Container, Flex } from '@chakra-ui/react'
 import { Switch, Route, Redirect, useRouteMatch } from 'react-router-dom'
 
@@ -12,6 +12,7 @@ export const FormBuilder: FC = () => {
     path,
     params: { id },
   } = useRouteMatch<{ id: string }>()
+  const isLoading = useIsFetching(['builder', id])
   const queryClient = useQueryClient()
   const queryState = queryClient.getQueryState<
     checker.Checker,
@@ -19,7 +20,7 @@ export const FormBuilder: FC = () => {
   >(['builder', id])
 
   // If not found or unauthorised, redirect back to dashboard
-  if (queryState?.error) {
+  if (!isLoading && queryState?.error) {
     // TODO: Redirect to an error page when we have one
     return <Redirect to="/dashboard" />
   }
