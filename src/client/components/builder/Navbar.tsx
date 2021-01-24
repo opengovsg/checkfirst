@@ -1,8 +1,8 @@
 import React, { FC } from 'react'
-import { BiArrowBack } from 'react-icons/bi'
+import { BiArrowBack, BiShow } from 'react-icons/bi'
 import { getApiErrorMessage } from '../../api'
 import { useHistory, useRouteMatch } from 'react-router-dom'
-import { Link } from 'react-router-dom'
+import { Link, Redirect } from 'react-router-dom'
 import {
   Tabs,
   TabList,
@@ -27,7 +27,13 @@ export const Navbar: FC = () => {
     exact: true,
   })
   const { save } = useCheckerContext()
-  const index = match?.params.action ? ROUTES.indexOf(match?.params.action) : 0
+
+  const params = match?.params
+  if (!params || !params.id || !params.action) {
+    return <Redirect to="/dashboard" />
+  }
+
+  const index = ROUTES.indexOf(params.action)
 
   const handleTabChange = (index: number) => {
     const id = match?.params.id
@@ -98,6 +104,15 @@ export const Navbar: FC = () => {
         </Tabs>
       </HStack>
       <HStack flex={1} spacing={4} justifyContent="flex-end">
+        <Link to={`/builder/${params.id}/preview`}>
+          <IconButton
+            aria-label="Preview"
+            icon={<BiShow />}
+            variant="ghost"
+            fontSize="20px"
+            isActive={index < 0}
+          />
+        </Link>
         <Button
           colorScheme="primary"
           onClick={handleSave}
