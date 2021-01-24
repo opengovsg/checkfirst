@@ -62,7 +62,7 @@ export const Navbar: FC = () => {
       w="100%"
       zIndex={999}
     >
-      <HStack>
+      <HStack flex={1}>
         <Link to={'/dashboard'}>
           <IconButton
             aria-label="Back"
@@ -97,7 +97,7 @@ export const Navbar: FC = () => {
           </TabList>
         </Tabs>
       </HStack>
-      <HStack>
+      <HStack flex={1} spacing={4} justifyContent="flex-end">
         <Button
           colorScheme="primary"
           onClick={handleSave}
