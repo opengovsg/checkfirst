@@ -1,4 +1,5 @@
 import React, { FC } from 'react'
+import { Redirect } from 'react-router-dom'
 import { BiLogOutCircle, BiLogInCircle } from 'react-icons/bi'
 import { Button, Box, VStack, HStack, Center, Flex } from '@chakra-ui/react'
 import { useHistory } from 'react-router-dom'
@@ -12,6 +13,8 @@ export const Landing: FC = () => {
   const logout = auth.logout
   const dashboard = () => history.push('/dashboard')
   const login = () => history.push('/login')
+
+  if (auth.user) return <Redirect to="/dashboard" />
 
   return (
     <Flex direction="column" height="100vh">
