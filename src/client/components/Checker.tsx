@@ -15,7 +15,7 @@ import { useForm, FormProvider } from 'react-hook-form'
 import { CheckboxField, RadioField, NumericField, DateField } from './fields'
 import { TextDisplay, ButtonDisplay, LineDisplay } from './displays'
 import * as checker from './../../types/checker'
-import { variableReducer } from './../core/evaluator'
+import { evaluate } from './../core/evaluator'
 
 interface CheckerProps {
   config: checker.Checker
@@ -71,12 +71,9 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
     }
   }
 
-  const onSubmit = (inputVariables: Record<string, string | number>) => {
-    constants.forEach((constant) => {
-      inputVariables[constant.id] = constant.value
-    })
-    const computedVariables = operations.reduce(variableReducer, inputVariables)
-    setVariables(computedVariables)
+  const onSubmit = (inputs: Record<string, string | number>) => {
+    const computed = evaluate(inputs, constants, operations)
+    setVariables(computed)
     outcomes.current?.scrollIntoView()
   }
 
