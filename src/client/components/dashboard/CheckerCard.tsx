@@ -1,71 +1,93 @@
-import React, { useState, FC } from 'react'
+import React, { FC } from 'react'
+import { useQueryClient, useMutation } from 'react-query'
+import { useHistory, useRouteMatch, Link, Route } from 'react-router-dom'
 import { BiDuplicate, BiTrash } from 'react-icons/bi'
-import { Link } from 'react-router-dom'
 import {
-  useMultiStyleConfig,
   useDisclosure,
-  Box,
+  useMultiStyleConfig,
+  useToast,
   Text,
+  VStack,
   HStack,
 } from '@chakra-ui/react'
 
 import { Checker } from '../../../types/checker'
-import { ApiClient } from '../../api'
+import { getApiErrorMessage } from '../../api'
+import { CheckerService } from '../../services'
 import { CreateNewModal } from './CreateNewModal'
+import { ConfirmDialog } from '../ConfirmDialog'
 
 type CheckerCardProps = {
-  onDelete: () => void
-  onDuplicate: () => void
   checker: Checker
 }
 
-export const CheckerCard: FC<CheckerCardProps> = ({
-  onDelete,
-  onDuplicate,
-  checker,
-}) => {
+export const CheckerCard: FC<CheckerCardProps> = ({ checker }) => {
+  const history = useHistory()
+  const { path } = useRouteMatch()
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const toast = useToast({ position: 'bottom-right', variant: 'solid' })
   const styles = useMultiStyleConfig('CheckerCard', {})
-  const [isToolbarVisible, setToolbarVisible] = useState<'visible' | 'hidden'>(
-    'hidden'
-  )
 
-  const onClickDelete = async () => {
-    try {
-      await ApiClient.delete(`/c/${checker.id}`)
-      onDelete()
-    } catch (error) {
-      // TODO: Pop this into a toaster
-      // eslint-disable-next-line no-console
-      console.error(error.response.data.message)
-    }
+  const queryClient = useQueryClient()
+  const deleteChecker = useMutation(CheckerService.deleteChecker, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('checkers')
+      toast({
+        status: 'success',
+        title: 'Checker deleted',
+        description: `${checker.id} has been successfully deleted`,
+      })
+    },
+    onError: (err) => {
+      toast({
+        status: 'error',
+        title: 'An error has occurred',
+        description: getApiErrorMessage(err),
+      })
+    },
+  })
+
+  const onClickDelete = (e: React.MouseEvent) => {
+    e.preventDefault()
+    onOpen()
+  }
+
+  const onDeleteConfirm = () => deleteChecker.mutateAsync(checker.id)
+
+  const onDuplicateClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    history.push(`${path}/${checker.id}/duplicate`)
   }
 
   return (
     <>
-      <Box
-        onMouseOver={() => setToolbarVisible('visible')}
-        onMouseOut={() => setToolbarVisible('hidden')}
-        sx={styles.card}
-      >
-        <Link to={`/builder/${checker.id}`}>
-          <Text sx={styles.title}>{checker.title}</Text>
-          <HStack
-            visibility={isToolbarVisible}
-            mt="50px"
-            mb="35px"
-            justifyContent="center"
-          >
-            <BiDuplicate onClick={onOpen} size="24px" />
+      <Link to={{ pathname: `/builder/${checker.id}` }}>
+        <VStack sx={styles.card} align="stretch" role="group">
+          <Text flex={1} sx={styles.title} isTruncated>
+            {checker.id}
+          </Text>
+          <HStack sx={styles.actions}>
+            <BiDuplicate onClick={onDuplicateClick} size="24px" />
             <BiTrash onClick={onClickDelete} size="24px" />
           </HStack>
-        </Link>
-      </Box>
-      <CreateNewModal
+        </VStack>
+      </Link>
+      <ConfirmDialog
         isOpen={isOpen}
         onClose={onClose}
-        onSuccess={onDuplicate}
-        checker={checker}
+        onConfirm={onDeleteConfirm}
+        title="Delete checker"
+        description="Are you sure? You cannot undo this action afterwards."
+      />
+      <Route
+        path={`${path}/${checker.id}/duplicate`}
+        render={() => (
+          <CreateNewModal
+            isOpen
+            onClose={() => history.push(path)}
+            checker={checker}
+          />
+        )}
       />
     </>
   )

@@ -1,20 +1,26 @@
 export const CheckerCard = {
-  parts: ['card', 'title'],
+  parts: ['card', 'title', 'actions'],
   baseStyle: {
     card: {
-      w: '156px',
       h: '160px',
+      maxW: '160px',
       textAlign: 'center',
-      justifyContent: 'center',
+      justifyContent: 'space-between',
       boxShadow: 'md',
       borderRadius: '12px',
-      cursor: 'pointer',
       bg: 'white',
+      p: 8,
     },
     title: {
-      mt: '34px',
       fontSize: '16px',
       fontWeight: '600',
+    },
+    actions: {
+      visibility: 'hidden',
+      justifyContent: 'center',
+      _groupHover: {
+        visibility: 'visible',
+      },
     },
   },
   variants: {
