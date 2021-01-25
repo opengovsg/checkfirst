@@ -18,6 +18,7 @@ import { ip } from '../utils/express'
 
 import sequelize from './sequelize'
 import mailer from './mailer'
+import logger from './logger'
 
 // Define our own tokens
 morgan.token('client-ip', (req: express.Request) => ip(req) as string)
@@ -46,6 +47,7 @@ const { Checker, User } = addModelsTo(sequelize, { emailValidator })
 export async function bootstrap(): Promise<Express> {
   const checker = new CheckerController({
     service: new CheckerService({
+      logger,
       sequelize,
       Checker,
       User,
@@ -53,6 +55,7 @@ export async function bootstrap(): Promise<Express> {
   })
 
   const auth = new AuthController({
+    logger,
     service: new AuthService({
       secret: config.get('otpSecret'),
       emailValidator,
