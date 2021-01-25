@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { BiArrowBack, BiShow } from 'react-icons/bi'
+import { BiArrowBack } from 'react-icons/bi'
 import { getApiErrorMessage } from '../../api'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import { Link, Redirect } from 'react-router-dom'
@@ -105,13 +105,9 @@ export const Navbar: FC = () => {
       </HStack>
       <HStack flex={1} spacing={4} justifyContent="flex-end">
         <Link to={`/builder/${params.id}/preview`}>
-          <IconButton
-            aria-label="Preview"
-            icon={<BiShow />}
-            variant="ghost"
-            fontSize="20px"
-            isActive={index < 0}
-          />
+          <Button variant="outline" colorScheme="primary">
+            Preview
+          </Button>
         </Link>
         <Button
           colorScheme="primary"
