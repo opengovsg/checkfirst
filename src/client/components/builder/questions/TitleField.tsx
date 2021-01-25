@@ -2,9 +2,9 @@ import React from 'react'
 import { BiText } from 'react-icons/bi'
 import { Box, HStack, VStack, Text, Input, Heading } from '@chakra-ui/react'
 
-import { createBuilderField, TitleFieldComponent } from './BuilderField'
-import { useCheckerContext } from '../../contexts'
-import { BuilderActionEnum } from '../../../util/enums'
+import { createBuilderField, TitleFieldComponent } from '../BuilderField'
+import { useCheckerContext } from '../../../contexts'
+import { BuilderActionEnum } from '../../../../util/enums'
 
 const enum SettingsName {
   description = 'description',

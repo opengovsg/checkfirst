@@ -2,10 +2,9 @@ import React from 'react'
 import { BiHash } from 'react-icons/bi'
 import { useStyles, Box, HStack, VStack, Text, Input } from '@chakra-ui/react'
 
-import { createBuilderField, QuestionFieldComponent } from './BuilderField'
-import { useCheckerContext } from '../../contexts'
-
-import { BuilderActionEnum, ConfigArrayEnum } from '../../../util/enums'
+import { createBuilderField, QuestionFieldComponent } from '../BuilderField'
+import { useCheckerContext } from '../../../contexts'
+import { BuilderActionEnum, ConfigArrayEnum } from '../../../../util/enums'
 
 const InputComponent: QuestionFieldComponent = ({ field, index }) => {
   const { description } = field
