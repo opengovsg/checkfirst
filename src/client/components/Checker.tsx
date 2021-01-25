@@ -1,6 +1,7 @@
 import React, { FC, useState, useRef } from 'react'
 import { isEmpty } from 'lodash'
 import {
+  useToast,
   useMultiStyleConfig,
   StylesProvider,
   Container,
@@ -24,6 +25,7 @@ interface CheckerProps {
 type VariableResults = Record<string, string | number>
 
 export const Checker: FC<CheckerProps> = ({ config }) => {
+  const toast = useToast({ position: 'bottom-right', variant: 'solid' })
   const styles = useMultiStyleConfig('Checker', {})
   const methods = useForm()
   const { title, description, fields, operations, constants, displays } = config
@@ -72,6 +74,15 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
   }
 
   const onSubmit = (inputs: Record<string, string | number>) => {
+    if (!isCheckerComplete()) {
+      toast({
+        status: 'warning',
+        title: 'No checker logic found',
+        description:
+          'Results cannot be shown because checker logic is not available.',
+      })
+    }
+
     const computed = evaluate(inputs, constants, operations)
     setVariables(computed)
     outcomes.current?.scrollIntoView()
