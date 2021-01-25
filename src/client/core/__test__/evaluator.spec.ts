@@ -1,5 +1,12 @@
 import * as checker from '../../../types/checker'
-import { evaluateOperation, variableReducer } from '../evaluator'
+import {
+  evaluateOperation,
+  variableReducer,
+  getDependencies,
+  getEvaluationOrder,
+  evaluate,
+  EvaluationCycleError,
+} from '../evaluator'
 
 describe('Operation', () => {
   describe('custom string equality', () => {
@@ -76,5 +83,114 @@ describe('variableReducer', () => {
     const vars = variableReducer(inputs, op)
 
     expect(vars).toEqual({ ...inputs, OUTPUT: 2 })
+  })
+})
+
+describe('getDependencies', () => {
+  const toArray = (s: Set<string>) => Array.from(s).sort()
+
+  it('should extract all dependencies from expression', () => {
+    const expression = 'A + B - C * 1000'
+    const dependencies = getDependencies(expression)
+
+    expect(toArray(dependencies)).toEqual(['A', 'B', 'C'])
+  })
+
+  it('should only extract variables from expressions with functions', () => {
+    const expression = 'ifelse(A == B, max(C, 100), D * 1000)'
+    const dependencies = getDependencies(expression)
+
+    expect(toArray(dependencies)).toEqual(['A', 'B', 'C', 'D'])
+  })
+})
+
+describe('getEvaluationOrder', () => {
+  it('should return evaluation order sorted by dependencies', () => {
+    const inputs = { A: 1, B: 1 }
+    const constants: checker.Constant[] = [{ id: 'C1', value: 'test' }]
+    const operations: checker.Operation[] = [
+      { id: 'O2', type: 'ARITHMETIC', expression: 'A + B' },
+      { id: 'O1', type: 'ARITHMETIC', expression: 'O2 + A + B' },
+    ]
+
+    const order = getEvaluationOrder(inputs, constants, operations)
+    expect(order['O1']).toBeGreaterThan(order['O2'])
+  })
+
+  it('should throw an error when there are variables that do not exists', () => {
+    const inputs = { A: 1, B: 1 }
+    const constants: checker.Constant[] = [{ id: 'C1', value: 'test' }]
+    const operations: checker.Operation[] = [
+      { id: 'O2', type: 'ARITHMETIC', expression: 'A + B' },
+      { id: 'O1', type: 'ARITHMETIC', expression: 'O3 + A + B' },
+    ]
+
+    expect(() =>
+      getEvaluationOrder(inputs, constants, operations)
+    ).toThrowError(/\b(not exists)\b/)
+  })
+
+  it('should throw an error when there exists circular dependencies', () => {
+    const inputs = { A: 1, B: 1 }
+    const constants: checker.Constant[] = [{ id: 'C1', value: 'test' }]
+    const operations: checker.Operation[] = [
+      { id: 'O2', type: 'ARITHMETIC', expression: 'O1 + A + B' },
+      { id: 'O1', type: 'ARITHMETIC', expression: 'O2 + A + B' },
+    ]
+
+    try {
+      getEvaluationOrder(inputs, constants, operations)
+    } catch (err) {
+      expect(err).toBeInstanceOf(EvaluationCycleError)
+
+      const { cycles } = err as EvaluationCycleError
+      expect(cycles.map((cycle) => cycle.sort())).toEqual([['O1', 'O2']])
+    }
+  })
+})
+
+describe('evaluate', () => {
+  it('should evaluate based on the correct evaluation order', () => {
+    const inputs = { A: 1, B: 1 }
+    const constants: checker.Constant[] = [{ id: 'C1', value: 'test' }]
+    const operations: checker.Operation[] = [
+      { id: 'O2', type: 'ARITHMETIC', expression: 'A + B' },
+      { id: 'O1', type: 'ARITHMETIC', expression: 'O2 + A + B' },
+    ]
+    const output = evaluate(inputs, constants, operations)
+
+    expect(output['O1']).toEqual(4)
+    expect(output['O2']).toEqual(2)
+  })
+
+  it('should throw an error when there are variables that do not exists', () => {
+    const inputs = { A: 1, B: 1 }
+    const constants: checker.Constant[] = [{ id: 'C1', value: 'test' }]
+    const operations: checker.Operation[] = [
+      { id: 'O2', type: 'ARITHMETIC', expression: 'A + B' },
+      { id: 'O1', type: 'ARITHMETIC', expression: 'O3 + A + B' },
+    ]
+
+    expect(() => evaluate(inputs, constants, operations)).toThrowError(
+      /\b(not exists)\b/
+    )
+  })
+
+  it('should throw an error when there exists circular dependencies', () => {
+    const inputs = { A: 1, B: 1 }
+    const constants: checker.Constant[] = [{ id: 'C1', value: 'test' }]
+    const operations: checker.Operation[] = [
+      { id: 'O2', type: 'ARITHMETIC', expression: 'O1 + A + B' },
+      { id: 'O1', type: 'ARITHMETIC', expression: 'O2 + A + B' },
+    ]
+
+    try {
+      evaluate(inputs, constants, operations)
+    } catch (err) {
+      expect(err).toBeInstanceOf(EvaluationCycleError)
+
+      const { cycles } = err as EvaluationCycleError
+      expect(cycles.map((cycle) => cycle.sort())).toEqual([['O1', 'O2']])
+    }
   })
 })
