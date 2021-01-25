@@ -61,6 +61,18 @@ const config = convict({
     format: '*',
     default: 'toomanysecrets',
   },
+  databaseUrl: {
+    doc: 'The database URL to connect to, if NODE_ENV is not development',
+    env: 'DATABASE_URL',
+    format: '*',
+    default: '',
+  },
+  smtpUrl: {
+    doc: 'The SMTP server URL to connect to, if NODE_ENV is not development',
+    env: 'SMTP_URL',
+    format: '*',
+    default: '',
+  },
   nodeEnv: {
     doc: 'The node environment',
     env: 'NODE_ENV',

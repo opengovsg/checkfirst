@@ -4,7 +4,7 @@ import express, { Express, Request, Response } from 'express'
 import session from 'express-session'
 import SequelizeStoreFactory from 'connect-session-sequelize'
 import bodyParser from 'body-parser'
-import { Sequelize } from 'sequelize'
+import morgan from 'morgan'
 
 import minimatch from 'minimatch'
 import { totp as totpFactory } from 'otplib'
@@ -14,6 +14,21 @@ import api from '../api'
 import { addModelsTo } from '../models'
 import { CheckerController, CheckerService } from '../checker'
 import { AuthController, AuthService } from '../auth'
+import { ip } from '../utils/express'
+
+import sequelize from './sequelize'
+import mailer from './mailer'
+
+// Define our own tokens
+morgan.token('client-ip', (req: express.Request) => ip(req) as string)
+morgan.token(
+  'userId',
+  (req: express.Request) => `${req.session?.user?.id}` || '-'
+)
+
+const MORGAN_LOG_FORMAT =
+  ':client-ip - [:date[clf]] ":method :url HTTP/:http-version" :status ' +
+  '":userId" :res[content-length] ":referrer" ":user-agent" :response-time ms'
 
 const totp = totpFactory.clone({ step: 60 })
 
@@ -25,8 +40,6 @@ const emailValidator = new minimatch.Minimatch(mailSuffix, {
   nobrace: true,
   nonegate: true,
 })
-
-const sequelize = new Sequelize({ dialect: 'sqlite' })
 
 const { Checker, User } = addModelsTo(sequelize, { emailValidator })
 
@@ -44,10 +57,7 @@ export async function bootstrap(): Promise<Express> {
       secret: config.get('otpSecret'),
       emailValidator,
       totp,
-      mailer: (options, callback) => {
-        console.log(options)
-        callback(null, options)
-      },
+      mailer,
       User,
     }),
   })
@@ -76,6 +86,8 @@ export async function bootstrap(): Promise<Express> {
   app.use(express.static(path.resolve(__dirname + '/../../build/client')))
   app.use(express.static(path.resolve(__dirname + '/../../public')))
 
+  app.use(morgan(MORGAN_LOG_FORMAT))
+
   const apiMiddleware = [sessionMiddleware, bodyParser.json()]
   app.use('/api/v1', apiMiddleware, api({ checker, auth }))
 
@@ -88,4 +100,5 @@ export async function bootstrap(): Promise<Express> {
   return app
 }
 
+export { logger } from './logger'
 export default bootstrap

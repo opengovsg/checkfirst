@@ -1,6 +1,5 @@
 import { IMinimatch } from 'minimatch'
 import { SendMailOptions, SentMessageInfo, Transporter } from 'nodemailer'
-import { promisify } from 'util'
 import { totp as totpGlobal } from 'otplib'
 
 import { User } from '../../types/user'
@@ -23,19 +22,13 @@ export class AuthService {
     secret: string
     emailValidator: IMinimatch
     totp: Pick<typeof totpGlobal, 'generate' | 'verify' | 'options'>
-    mailer:
-      | Transporter
-      | ((
-          mail: SendMailOptions,
-          callback: (err: Error | null, info: SentMessageInfo) => void
-        ) => void)
+    mailer: Pick<Transporter, 'sendMail'>
     User: ModelOf<unknown>
   }) {
     this.secret = secret
     this.emailValidator = emailValidator
     this.totp = totp
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    this.sendMail = promisify('sendMail' in mailer ? mailer.sendMail : mailer)
+    this.sendMail = mailer.sendMail
     this.UserModel = User as ModelOf<User>
   }
 
