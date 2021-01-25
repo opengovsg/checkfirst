@@ -1,5 +1,7 @@
-import React, { FC, useState } from 'react'
+import React, { FC } from 'react'
+import { useQueryClient, useMutation } from 'react-query'
 import {
+  useToast,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -9,27 +11,29 @@ import {
   ModalCloseButton,
   Button,
   Input,
-  Text,
+  Textarea,
   FormControl,
-  HStack,
+  FormLabel,
+  FormHelperText,
+  FormErrorMessage,
   VStack,
+  HStack,
 } from '@chakra-ui/react'
-import { useForm, FormProvider } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 
+import { CheckerService } from '../../services'
 import { Checker } from '../../../types/checker'
-import { ApiClient } from '../../api'
+import { getApiErrorMessage } from '../../api'
 
 export type CreateNewModalProps = {
   isOpen: boolean
   onClose: () => void
-  onSuccess: () => void
   checker?: Checker
 }
 
 export const CreateNewModal: FC<CreateNewModalProps> = ({
   isOpen,
   onClose,
-  onSuccess,
   checker,
 }) => {
   const initial = {
@@ -42,78 +46,93 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({
     displays: [],
   }
 
+  const toast = useToast({ position: 'bottom-right', variant: 'solid' })
   const methods = useForm({ mode: 'onBlur' })
   const { register, handleSubmit, formState } = methods
   const { isValid, errors } = formState
 
-  const [submitError, setSubmitError] = useState('')
+  const queryClient = useQueryClient()
+  const createChecker = useMutation(CheckerService.createChecker, {
+    onSuccess: (created) => {
+      queryClient.invalidateQueries('checkers')
+      toast({
+        status: 'success',
+        title: 'Checker created',
+        description: `${created?.id} has been created successfully`,
+      })
+      onClose()
+    },
+    onError: (err) => {
+      toast({
+        status: 'error',
+        title: 'Unable to create checker',
+        description: getApiErrorMessage(err),
+      })
+    },
+  })
 
   const onSubmit = async (data: {
     id: string
     title: string
     description: string
   }) => {
-    const newChecker = {
+    createChecker.mutate({
       ...(checker || initial),
       ...data,
-    }
-    try {
-      setSubmitError('')
-      await ApiClient.post('/c', newChecker)
-      onSuccess()
-      onClose()
-    } catch (error) {
-      setSubmitError(error.response.data.message)
-    }
+    })
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose} size="lg">
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>
-          {checker ? `Copy ${checker.id}` : 'Create New Checker'}
+          {checker ? `Copy ${checker.id}` : 'Create new checker'}
         </ModalHeader>
         <ModalCloseButton />
-        <FormProvider {...methods}>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <ModalBody>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <ModalBody>
+            <VStack spacing={4}>
               <FormControl isInvalid={errors.id}>
+                <FormLabel htmlFor="id">Checker ID</FormLabel>
                 <Input
                   name="id"
                   ref={register({
-                    required: 'Id is required',
+                    required: 'Checker ID is required',
                     pattern: {
                       value: /^[a-z0-9-]+[a-z0-9]+$/,
                       message:
-                        'Id must be lowercase letters and numbers, separated by -',
+                        'Checker ID must be lowercase letters and numbers, separated by -',
                     },
                   })}
                 />
+                {!errors.id && (
+                  <FormHelperText>
+                    Lowercase letters and numbers, separated by -
+                  </FormHelperText>
+                )}
+                <FormErrorMessage>{errors.id?.message}</FormErrorMessage>
               </FormControl>
-              <FormControl isInvalid={errors.title}>
-                <Input
-                  name="title"
-                  ref={register({ required: 'Title is required' })}
-                />
-              </FormControl>
-              <FormControl isInvalid={errors.description}>
-                <Input name="description" ref={register({})} />
-              </FormControl>
-            </ModalBody>
-            <ModalFooter>
-              <HStack flex={1}>
-                <VStack>
-                  <Text color="error.500">{submitError}</Text>
-                  {Object.entries(errors).map(([field, error]) => {
-                    return (
-                      <Text key={field} color="error.500">
-                        {error.message}
-                      </Text>
-                    )
-                  })}
-                </VStack>
-              </HStack>
+              {!checker && (
+                <>
+                  <FormControl isInvalid={errors.title}>
+                    <FormLabel htmlFor="id">Title</FormLabel>
+                    <Input
+                      name="title"
+                      ref={register({ required: 'Title is required' })}
+                    />
+                    <FormErrorMessage>{errors.title?.message}</FormErrorMessage>
+                  </FormControl>
+                  <FormControl isInvalid={errors.description}>
+                    <FormLabel htmlFor="id">Description</FormLabel>
+                    <Textarea name="description" resize="none" ref={register} />
+                  </FormControl>
+                </>
+              )}
+            </VStack>
+          </ModalBody>
+          <ModalFooter>
+            <HStack>
               <Button onClick={onClose} variant="ghost">
                 Cancel
               </Button>
@@ -121,15 +140,13 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({
                 disabled={!isValid}
                 type="submit"
                 colorScheme="primary"
-                mr={3}
+                isLoading={createChecker.isLoading}
               >
                 Create
               </Button>
-            </ModalFooter>
-          </form>
-        </FormProvider>
-
-        <ModalFooter />
+            </HStack>
+          </ModalFooter>
+        </form>
       </ModalContent>
     </Modal>
   )

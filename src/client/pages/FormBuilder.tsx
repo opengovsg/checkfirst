@@ -1,62 +1,40 @@
-import React, { FC, useState, useEffect } from 'react'
-import { Tabs, TabPanels, TabPanel, Flex } from '@chakra-ui/react'
-import { useCheckerContext } from '../../client/contexts/CheckerContext'
+import React, { FC } from 'react'
+import { AxiosError } from 'axios'
+import { useIsFetching, useQueryClient } from 'react-query'
+import { Container, Flex } from '@chakra-ui/react'
+import { Switch, Route, Redirect, useRouteMatch } from 'react-router-dom'
 
+import * as checker from '../../types/checker'
 import { Navbar, QuestionsTab, LogicTab } from '../components/builder'
 
-// from typings
-import * as H from 'history'
+export const FormBuilder: FC = () => {
+  const {
+    path,
+    params: { id },
+  } = useRouteMatch<{ id: string }>()
+  const isLoading = useIsFetching(['builder', id])
+  const queryClient = useQueryClient()
+  const queryState = queryClient.getQueryState<
+    checker.Checker,
+    AxiosError<{ message: string }>
+  >(['builder', id])
 
-interface matchParams {
-  id: string
-}
-
-interface RouteComponentProps<P> {
-  match: match<P>
-  location: H.Location
-  history: H.History
-  staticContext?: any
-}
-
-interface match<P> {
-  params: P
-  isExact: boolean
-  path: string
-  url: string
-}
-
-export const FormBuilder: FC<RouteComponentProps<matchParams>> = ({
-  match,
-}) => {
-  const { id } = match.params
-  const [tabIndex, setTabIndex] = useState(0)
-  const { initChecker, save } = useCheckerContext()
-
-  /* eslint-disable */
-  useEffect(() => {
-    (async function () {
-      await initChecker(id)
-    })()
-  }, [])
-  /* eslint-enable */
-
-  const onSave = async () => {
-    await save(id)
+  // If not found or unauthorised, redirect back to dashboard
+  if (!isLoading && queryState?.error) {
+    // TODO: Redirect to an error page when we have one
+    return <Redirect to="/dashboard" />
   }
 
   return (
     <Flex direction="column" minH="100vh" bgColor="#F4F6F9">
-      <Navbar index={tabIndex} onTabsChange={setTabIndex} onSave={onSave} />
-      <Tabs index={tabIndex} mt="80px">
-        <TabPanels>
-          <TabPanel>
-            <QuestionsTab />
-          </TabPanel>
-          <TabPanel>
-            <LogicTab />
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
+      <Navbar />
+      <Container maxW="756px" px={0} mt="80px">
+        <Switch>
+          <Route exact path={`${path}/questions`} component={QuestionsTab} />
+          <Route exact path={`${path}/logic`} component={LogicTab} />
+          <Redirect to={`${path}/questions`} />
+        </Switch>
+      </Container>
     </Flex>
   )
 }

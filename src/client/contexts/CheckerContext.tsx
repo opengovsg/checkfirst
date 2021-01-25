@@ -1,6 +1,15 @@
-import React, { FC, createContext, useContext, useReducer } from 'react'
+import React, {
+  FC,
+  createContext,
+  useContext,
+  useEffect,
+  useReducer,
+} from 'react'
+import { AxiosError } from 'axios'
 import update from 'immutability-helper'
-import { ApiClient } from '../api'
+import { useRouteMatch } from 'react-router-dom'
+import { useQuery, useMutation, UseMutationResult } from 'react-query'
+
 import { Checker } from '../../types/checker'
 import {
   BuilderAction,
@@ -11,8 +20,8 @@ import {
   BuilderUpdateSettingsPayload,
   BuilderLoadConfigPayload,
 } from '../../types/builder'
-
 import { BuilderActionEnum } from '../../util/enums'
+import { CheckerService } from '../services'
 
 const checkerContext = createContext<CheckerContextProps | undefined>(undefined)
 
@@ -106,14 +115,13 @@ export const reducer = (state: Checker, action: BuilderAction): Checker => {
 interface CheckerContextProps {
   config: Checker
   dispatch: React.Dispatch<BuilderAction>
-  save: (id: string) => Promise<void>
-  initChecker: (id: string) => Promise<void>
+  save: UseMutationResult<Checker, AxiosError<{ message: string }>, void>
 }
 
 const initialConfig = {
-  id: 'initial-checker',
-  title: 'Checker Title',
-  description: 'My description',
+  id: '',
+  title: '',
+  description: '',
   fields: [],
   operations: [],
   displays: [],
@@ -122,26 +130,42 @@ const initialConfig = {
 }
 
 export const CheckerProvider: FC = ({ children }) => {
+  const {
+    params: { id },
+  } = useRouteMatch<{ id: string }>()
   const [config, dispatch] = useReducer(reducer, initialConfig)
 
-  // TODO: Call API to save config
-  const save = async (id: string) => {
-    await ApiClient.put(`/c/${id}`, config)
-  }
-
-  const initChecker = async (id: string) => {
-    const checker: Checker | null = (await ApiClient.get(`/c/${id}`)).data
-    if (checker) {
+  // Initial query for checker data
+  const { isSuccess, data } = useQuery(['builder', id], () =>
+    CheckerService.getChecker(id)
+  )
+  useEffect(() => {
+    if (data) {
       dispatch({
         type: BuilderActionEnum.LoadConfig,
         payload: {
-          loadedState: checker,
+          loadedState: data,
         },
       })
     }
-  }
+  }, [isSuccess, data])
 
-  const value = { config, dispatch, save, initChecker }
+  const save = useMutation<Checker, AxiosError<{ message: string }>, void>(
+    () => CheckerService.updateChecker(config),
+    {
+      onSuccess: (checker) => {
+        // On success, update load the returned checker to ensure consistency with backend
+        dispatch({
+          type: BuilderActionEnum.LoadConfig,
+          payload: {
+            loadedState: checker,
+          },
+        })
+      },
+    }
+  )
+
+  const value = { config, dispatch, save }
   return (
     <checkerContext.Provider value={value}>{children}</checkerContext.Provider>
   )

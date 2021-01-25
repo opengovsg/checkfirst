@@ -7,7 +7,7 @@ import {
   BiUpArrowAlt,
   BiDownArrowAlt,
 } from 'react-icons/bi'
-import { Container, VStack } from '@chakra-ui/react'
+import { VStack } from '@chakra-ui/react'
 
 import * as checker from '../../../types/checker'
 import {
@@ -181,20 +181,18 @@ export const QuestionsTab: FC = () => {
   }
 
   return (
-    <Container maxW="756px" px={0}>
-      <VStack align="stretch" position="relative" spacing={4}>
-        <FloatingToolbar offsetTop={offsetTop} options={toolbarOptions} />
-        <TitleField
-          id={TITLE_FIELD_ID}
-          active={activeIndex === TITLE_FIELD_INDEX}
-          data={{ title, description }}
-          onSelect={onSelect}
-          onActive={onActive}
-          index={TITLE_FIELD_INDEX}
-          setActiveIndex={setActiveIndex}
-        />
-        {fields.map(renderField)}
-      </VStack>
-    </Container>
+    <VStack align="stretch" position="relative" spacing={4}>
+      <FloatingToolbar offsetTop={offsetTop} options={toolbarOptions} />
+      <TitleField
+        id={TITLE_FIELD_ID}
+        active={activeIndex === TITLE_FIELD_INDEX}
+        data={{ title, description }}
+        onSelect={onSelect}
+        onActive={onActive}
+        index={TITLE_FIELD_INDEX}
+        setActiveIndex={setActiveIndex}
+      />
+      {fields.map(renderField)}
+    </VStack>
   )
 }

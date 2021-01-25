@@ -1,25 +1,31 @@
 import React, { FC } from 'react'
+import { useHistory, useRouteMatch, Route, Link } from 'react-router-dom'
 import { BiPlus } from 'react-icons/bi'
-import { useMultiStyleConfig, useDisclosure, Text, Box } from '@chakra-ui/react'
+import { useMultiStyleConfig, Text, VStack } from '@chakra-ui/react'
 import { CreateNewModal } from './CreateNewModal'
 
-export type CreateNewProps = {
-  onSuccess: () => void
-}
-
-export const CreateNew: FC<CreateNewProps> = ({ onSuccess }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure()
+export const CreateNew: FC = () => {
+  const history = useHistory()
+  const { path } = useRouteMatch()
   const styles = useMultiStyleConfig('CheckerCard', { variant: 'create' })
 
   return (
     <>
-      <Box onClick={onOpen} sx={styles.card}>
-        <BiPlus size="50px" style={{ display: 'inline', marginTop: '36px' }} />
-        <Text mt="16px" sx={styles.title}>
-          Create New
-        </Text>
-      </Box>
-      <CreateNewModal isOpen={isOpen} onClose={onClose} onSuccess={onSuccess} />
+      <Link to={{ pathname: `${path}/create` }}>
+        <VStack sx={styles.card}>
+          <BiPlus size="50px" style={{ display: 'inline' }} />
+          <Text mt="16px" sx={styles.title}>
+            Create New
+          </Text>
+        </VStack>
+      </Link>
+      <Route
+        path={`${path}/create`}
+        exact
+        render={() => (
+          <CreateNewModal isOpen onClose={() => history.push(path)} />
+        )}
+      />
     </>
   )
 }

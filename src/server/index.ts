@@ -76,18 +76,13 @@ const port = config.get('port')
 app.use(express.static(path.resolve(__dirname + '/../../build/client')))
 app.use(express.static(path.resolve(__dirname + '/../../public')))
 
-// Facilitate deep-linking
-const sendIndex = (_req: Request, res: Response) =>
-  res.sendFile(path.resolve(__dirname + '/../../build/client/index.html'))
-
-app.get('/c/:id', sendIndex)
-app.get('/debug', sendIndex)
-app.get('/login', sendIndex)
-app.get('/dashboard', sendIndex)
-app.get('/builder', sendIndex)
-
 const apiMiddleware = [sessionMiddleware, bodyParser.json()]
 app.use('/api/v1', apiMiddleware, api({ checker, auth }))
+
+// Facilitate deep-linking
+app.get('*', (_req: Request, res: Response) => {
+  res.sendFile(path.resolve(__dirname + '/../../build/client/index.html'))
+})
 
 sequelize
   .sync()

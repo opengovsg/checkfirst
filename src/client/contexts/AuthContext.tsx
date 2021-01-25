@@ -61,7 +61,7 @@ export const AuthProvider: FC = ({ children }) => {
     ApiClient.interceptors.response.use(
       (response) => response,
       async (err: AxiosError) => {
-        if (err.response?.status === 401) {
+        if (user && err.response?.status === 401) {
           await logout()
           history.push('/login')
         }
