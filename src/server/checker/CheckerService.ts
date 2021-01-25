@@ -2,17 +2,21 @@ import { ModelOf } from '../models'
 import { Checker } from '../../types/checker'
 import { User } from '../../types/user'
 import { Model, Sequelize } from 'sequelize'
+import { Logger } from 'winston'
 
 export class CheckerService {
   private sequelize: Sequelize
+  private logger?: Logger
   private CheckerModel: ModelOf<Checker>
   private UserModel: ModelOf<User>
   constructor(options: {
     sequelize: Sequelize
+    logger?: Logger
     Checker: ModelOf<unknown>
     User: ModelOf<unknown>
   }) {
     this.sequelize = options.sequelize
+    this.logger = options.logger
     this.CheckerModel = options.Checker as ModelOf<Checker>
     this.UserModel = options.User as ModelOf<User>
   }
@@ -41,7 +45,7 @@ export class CheckerService {
       await transaction.commit()
       return existingChecker === null
     } catch (error) {
-      console.error(error)
+      this.logger?.error(error)
       await transaction.rollback()
       throw error
     }

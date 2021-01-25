@@ -13,7 +13,7 @@ describe('AuthService', () => {
   }
   const secret = 'toomanysecrets'
   const emailValidator = new minimatch.Minimatch('*.gov.sg')
-  const mailer = jest.fn()
+  const mailer = { sendMail: jest.fn() }
   const User = init(sequelize, { emailValidator })
 
   const sequelizeReady = sequelize.sync()
@@ -29,7 +29,7 @@ describe('AuthService', () => {
   describe('sendOTP', () => {
     beforeEach(() => {
       totp.generate.mockReset()
-      mailer.mockReset()
+      mailer.sendMail.mockReset()
     })
     it('sends mail on valid email', () => {
       const email = 'user@agency.gov.sg'
@@ -40,26 +40,23 @@ describe('AuthService', () => {
       // does not want to play nicely with Node's util.promisify
       service.sendOTP(email, ip)
       expect(totp.generate).toHaveBeenCalledWith(secret + email)
-      expect(mailer).toHaveBeenCalledWith(
+      expect(mailer.sendMail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: email,
           html: expect.stringContaining(otp),
-        }),
-        expect.anything()
+        })
       )
-      expect(mailer).toHaveBeenCalledWith(
+      expect(mailer.sendMail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: email,
           html: expect.stringContaining(ip),
-        }),
-        expect.anything()
+        })
       )
-      expect(mailer).toHaveBeenCalledWith(
+      expect(mailer.sendMail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: email,
           html: expect.stringContaining(totp.options.step + ' seconds'),
-        }),
-        expect.anything()
+        })
       )
     })
     it('rejects invalid email', async () => {
@@ -69,7 +66,7 @@ describe('AuthService', () => {
       totp.generate.mockReturnValue(otp)
       await expect(() => service.sendOTP(email, ip)).rejects.toThrowError()
       expect(totp.generate).not.toHaveBeenCalled()
-      expect(mailer).not.toHaveBeenCalled()
+      expect(mailer.sendMail).not.toHaveBeenCalled()
     })
   })
 

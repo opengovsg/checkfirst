@@ -1,15 +1,19 @@
 import { Request, Response } from 'express'
+import { Logger } from 'winston'
 
 import { ip } from '../utils/express'
 import AuthService from './AuthService'
 
 export class AuthController {
-  private service: Pick<AuthService, 'sendOTP' | 'verifyOTP'>
+  private service: Pick<AuthService, keyof AuthService>
+  private logger?: Logger
 
   constructor(options: {
-    service: Pick<AuthService, 'sendOTP' | 'verifyOTP'>
+    service: Pick<AuthService, keyof AuthService>
+    logger?: Logger
   }) {
     this.service = options.service
+    this.logger = options.logger
   }
 
   sendOTP: (req: Request, res: Response) => Promise<void> = async (
@@ -36,6 +40,7 @@ export class AuthController {
         Object.assign(req.session, { user })
         res.json({ message: 'OTP verified' })
       } else {
+        this.logger?.warn(`Incorrect OTP given for ${email}`)
         res.status(401).json({ message: 'Incorrect OTP given' })
       }
     } catch (error) {
