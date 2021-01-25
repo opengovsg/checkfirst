@@ -2,10 +2,7 @@ import React, { FC, useEffect } from 'react'
 import { BiCog, BiDuplicate, BiTrash } from 'react-icons/bi'
 import {
   useMultiStyleConfig,
-  useStyles,
-  IconButtonProps,
   StylesProvider,
-  IconButton,
   Flex,
   HStack,
 } from '@chakra-ui/react'
@@ -13,24 +10,12 @@ import {
 import { useCheckerContext } from '../../contexts'
 import * as checker from '../../../types/checker'
 import { usePosition } from '../../hooks/use-position'
-
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../util/enums'
+import { ActionButton } from '../builder'
 
-interface TitleFieldData {
-  title: string
-  description?: string
-}
-export type TitleFieldComponent = FC<TitleFieldData>
-
-interface QuestionFieldProps {
-  id: string
-  index: number
-  active?: boolean
-  data: checker.Field | TitleFieldData
-  onSelect: ({ index }: { index: number }) => void
-  onActive: ({ top }: { top: number }) => void
-  setActiveIndex: (index: number) => void
-}
+export type TitleFieldComponent = FC<
+  Pick<checker.Checker, 'title' | 'description'>
+>
 
 interface QuestionFieldComponentProps {
   field: checker.Field
@@ -38,21 +23,29 @@ interface QuestionFieldComponentProps {
 }
 export type QuestionFieldComponent = FC<QuestionFieldComponentProps>
 
-const ActionButton: FC<IconButtonProps> = (props) => {
-  const styles = useStyles()
-  return <IconButton {...props} variant="link" sx={styles.action} />
-}
+type BuilderFieldComponent = QuestionFieldComponent | TitleFieldComponent
+type BuilderFieldData =
+  | checker.Field
+  | Pick<checker.Checker, 'title' | 'description'>
 
-const isFieldData = (
-  data: checker.Field | TitleFieldData
-): data is checker.Field => {
+const isFieldData = (data: BuilderFieldData): data is checker.Field => {
   return data && (data as checker.Field).type !== undefined
 }
 
-export const createQuestionField = (
-  InputComponent: QuestionFieldComponent | TitleFieldComponent,
-  PreviewComponent: QuestionFieldComponent | TitleFieldComponent
-): FC<QuestionFieldProps> => ({
+interface BuilderFieldProps {
+  id: string
+  index: number
+  active?: boolean
+  data: BuilderFieldData
+  onSelect: ({ index }: { index: number }) => void
+  onActive: ({ top }: { top: number }) => void
+  setActiveIndex: (index: number) => void
+}
+
+export const createBuilderField = (
+  InputComponent: BuilderFieldComponent,
+  PreviewComponent: BuilderFieldComponent
+): FC<BuilderFieldProps> => ({
   index,
   active,
   data,

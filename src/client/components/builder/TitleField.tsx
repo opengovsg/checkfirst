@@ -2,7 +2,7 @@ import React from 'react'
 import { BiText } from 'react-icons/bi'
 import { Box, HStack, VStack, Text, Input, Heading } from '@chakra-ui/react'
 
-import { createQuestionField, TitleFieldComponent } from './QuestionField'
+import { createBuilderField, TitleFieldComponent } from './BuilderField'
 import { useCheckerContext } from '../../contexts'
 import { BuilderActionEnum } from '../../../util/enums'
 
@@ -58,4 +58,4 @@ const PreviewComponent: TitleFieldComponent = ({ title, description }) => {
   )
 }
 
-export const TitleField = createQuestionField(InputComponent, PreviewComponent)
+export const TitleField = createBuilderField(InputComponent, PreviewComponent)

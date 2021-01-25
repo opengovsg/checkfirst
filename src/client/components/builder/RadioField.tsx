@@ -14,7 +14,7 @@ import {
 
 import * as checker from '../../../types/checker'
 import { useCheckerContext } from '../../contexts'
-import { createQuestionField, QuestionFieldComponent } from './QuestionField'
+import { createBuilderField, QuestionFieldComponent } from './BuilderField'
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../util/enums'
 
 const InputComponent: QuestionFieldComponent = ({ field, index }) => {
@@ -148,4 +148,4 @@ const PreviewComponent: QuestionFieldComponent = ({ field }) => {
   )
 }
 
-export const RadioField = createQuestionField(InputComponent, PreviewComponent)
+export const RadioField = createBuilderField(InputComponent, PreviewComponent)
