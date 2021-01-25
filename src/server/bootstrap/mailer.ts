@@ -4,21 +4,19 @@ import config from '../config'
 
 import logger from './logger'
 
-const nodeEnv = config.get('nodeEnv')
 const smtpUrl = config.get('smtpUrl')
 
-export const mailer: Pick<Transporter, 'sendMail'> =
-  nodeEnv === 'development'
-    ? {
-        sendMail: (options: SendMailOptions) => {
-          logger.info(options)
-          return Promise.resolve(options)
-        },
-      }
-    : nodemailer.createTransport({
-        url: smtpUrl,
-        pool: true,
-        maxMessages: 100,
-        maxConnections: 20,
-      })
+export const mailer: Pick<Transporter, 'sendMail'> = smtpUrl
+  ? nodemailer.createTransport({
+      url: smtpUrl,
+      pool: true,
+      maxMessages: 100,
+      maxConnections: 20,
+    })
+  : {
+      sendMail: (options: SendMailOptions) => {
+        logger.info(JSON.stringify(options, null, 2))
+        return Promise.resolve(options)
+      },
+    }
 export default mailer

@@ -24,11 +24,11 @@ import logger from './logger'
 morgan.token('client-ip', (req: express.Request) => ip(req) as string)
 morgan.token(
   'userId',
-  (req: express.Request) => `${req.session?.user?.id}` || '-'
+  (req: express.Request) => `${req.session?.user?.id || '-'}`
 )
 
 const MORGAN_LOG_FORMAT =
-  ':client-ip - [:date[clf]] ":method :url HTTP/:http-version" :status ' +
+  ':client-ip - [:date[clf]] ":method :url HTTP/:http-version" ' +
   '":userId" :res[content-length] ":referrer" ":user-agent" :response-time ms'
 
 const totp = totpFactory.clone({ step: 60 })
