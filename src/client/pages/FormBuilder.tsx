@@ -5,7 +5,12 @@ import { Container, Flex } from '@chakra-ui/react'
 import { Switch, Route, Redirect, useRouteMatch } from 'react-router-dom'
 
 import * as checker from '../../types/checker'
-import { Navbar, QuestionsTab, LogicTab } from '../components/builder'
+import {
+  Navbar,
+  QuestionsTab,
+  LogicTab,
+  PreviewTab,
+} from '../components/builder'
 
 export const FormBuilder: FC = () => {
   const {
@@ -32,6 +37,7 @@ export const FormBuilder: FC = () => {
         <Switch>
           <Route exact path={`${path}/questions`} component={QuestionsTab} />
           <Route exact path={`${path}/logic`} component={LogicTab} />
+          <Route exact path={`${path}/preview`} component={PreviewTab} />
           <Redirect to={`${path}/questions`} />
         </Switch>
       </Container>
