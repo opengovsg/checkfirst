@@ -46,7 +46,10 @@ export const LogicTab: FC = () => {
         dispatch({
           type: BuilderActionEnum.Add,
           payload: {
-            element: defaultArithmeticOp,
+            element: {
+              ...defaultArithmeticOp,
+              id: defaultArithmeticOp.id + (activeIndex + 1),
+            },
             configArrName: ConfigArrayEnum.Operations,
             newIndex: activeIndex + 1,
           },

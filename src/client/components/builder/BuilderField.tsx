@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from 'react'
-import { BiDuplicate, BiTrash, BiShow } from 'react-icons/bi'
+import { BiDuplicate, BiTrash, BiShow, BiHide } from 'react-icons/bi'
 import {
   useMultiStyleConfig,
   StylesProvider,
@@ -145,6 +145,22 @@ export const createBuilderField = (
     setActiveIndex(index - 1)
   }
 
+  const handleDisplayToggle = () => {
+    if (isOperationData(data)) {
+      dispatch({
+        type: BuilderActionEnum.Update,
+        payload: {
+          currIndex: index,
+          configArrName: ConfigArrayEnum.Operations,
+          element: {
+            ...data,
+            show: !data.show,
+          },
+        },
+      })
+    }
+  }
+
   return (
     <StylesProvider value={styles}>
       <Flex
@@ -162,7 +178,11 @@ export const createBuilderField = (
         {active && (
           <HStack justifyContent="flex-end">
             {isOperationData(data) && (
-              <ActionButton aria-label="Duplicate" icon={<BiShow />} />
+              <ActionButton
+                aria-label="Duplicate"
+                icon={data.show ? <BiShow /> : <BiHide />}
+                onClick={handleDisplayToggle}
+              />
             )}
             <ActionButton
               aria-label="Duplicate"

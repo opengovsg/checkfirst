@@ -1,5 +1,5 @@
 import React, { FC, useState, useRef } from 'react'
-import { isEmpty } from 'lodash'
+import { filter } from 'lodash'
 import {
   useToast,
   useMultiStyleConfig,
@@ -14,7 +14,7 @@ import {
 import { useForm, FormProvider } from 'react-hook-form'
 
 import { CheckboxField, RadioField, NumericField, DateField } from './fields'
-import { TextDisplay, ButtonDisplay, LineDisplay } from './displays'
+import { LineDisplay } from './displays'
 import * as checker from './../../types/checker'
 import { evaluate } from './../core/evaluator'
 
@@ -28,7 +28,7 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
   const toast = useToast({ position: 'bottom-right', variant: 'solid' })
   const styles = useMultiStyleConfig('Checker', {})
   const methods = useForm()
-  const { title, description, fields, operations, constants, displays } = config
+  const { title, description, fields, operations, constants } = config
   const [variables, setVariables] = useState<VariableResults>({})
   const outcomes = useRef<HTMLDivElement | null>(null)
 
@@ -45,32 +45,16 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
     }
   }
 
-  const renderDisplay = (display: checker.Display, i: number) => {
-    const values = display.targets.map((output) => variables[output])
-    switch (display.type) {
-      case 'TEXT':
-        return (
-          <TextDisplay key={i} content={values[0] as string} {...display} />
-        )
-      case 'LINE':
-        return (
-          <LineDisplay
-            key={i}
-            label={values[0] as string}
-            value={values[1] as string}
-            {...display}
-          />
-        )
-      case 'BUTTON':
-        return (
-          <ButtonDisplay
-            key={i}
-            buttonText={values[0] as string}
-            buttonUrl={values[1] as string}
-            {...display}
-          />
-        )
-    }
+  const renderDisplay = (operation: checker.Operation, i: number) => {
+    return (
+      operation.show && (
+        <LineDisplay
+          key={i}
+          label={operation.description}
+          value={variables[operation.id] as string}
+        />
+      )
+    )
   }
 
   const onSubmit = (inputs: Record<string, string | number>) => {
@@ -88,8 +72,8 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
     outcomes.current?.scrollIntoView()
   }
 
-  const isCheckerComplete = () =>
-    !isEmpty(variables) && (operations.length > 0 || displays.length > 0)
+  // Ensure that at least one operation with `show: true`
+  const isCheckerComplete = () => filter(operations, 'show').length > 0
 
   return (
     <StylesProvider value={styles}>
@@ -114,7 +98,7 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
         <Flex bg="primary.500" as="div" ref={outcomes} flex={1}>
           <Container maxW="xl" pt={8} pb={16} px={8} color="#F4F6F9">
             <VStack align="strech" spacing={8}>
-              {displays.map(renderDisplay)}
+              {operations.map(renderDisplay)}
             </VStack>
           </Container>
         </Flex>
