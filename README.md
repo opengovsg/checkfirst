@@ -1,6 +1,6 @@
 # CheckFirst
 
-Don't Know? CheckFirst. A tool to build eligibility checkers and calculators for policies from the Singapore Government
+Don't Know? CheckFirst. A tool to build eligibility checkers and calculators for Singapore Government policies
 
 ## Quick Start
 
