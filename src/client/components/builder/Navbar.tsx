@@ -4,6 +4,7 @@ import { getApiErrorMessage } from '../../api'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import { Link, Redirect } from 'react-router-dom'
 import {
+  Text,
   Tabs,
   TabList,
   Tab,
@@ -11,6 +12,14 @@ import {
   Button,
   Flex,
   HStack,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
   useToast,
 } from '@chakra-ui/react'
 
@@ -20,6 +29,7 @@ import { useCheckerContext } from '../../contexts'
 const ROUTES = ['questions', 'logic']
 
 export const Navbar: FC = () => {
+  const { isOpen, onOpen, onClose } = useDisclosure()
   const history = useHistory()
   const toast = useToast({ position: 'bottom-right', variant: 'solid' })
   const match = useRouteMatch<{ id: string; action: string }>({
@@ -34,6 +44,14 @@ export const Navbar: FC = () => {
   }
 
   const index = ROUTES.indexOf(params.action)
+
+  const checkBeforeBack = () => {
+    if (!isChanged) {
+      history.push('/dashboard')
+    } else {
+      onOpen()
+    }
+  }
 
   const handleTabChange = (index: number) => {
     const id = match?.params.id
@@ -69,14 +87,34 @@ export const Navbar: FC = () => {
       zIndex={999}
     >
       <HStack flex={1}>
-        <Link to={'/dashboard'}>
-          <IconButton
-            aria-label="Back"
-            variant="ghost"
-            icon={<BiArrowBack />}
-          />
-          <Button variant="ghost">{match?.params.id}</Button>
-        </Link>
+        <IconButton
+          onClick={checkBeforeBack}
+          aria-label="Back"
+          variant="ghost"
+          icon={<BiArrowBack />}
+        />
+        <Modal isOpen={isOpen} onClose={onClose} size="lg">
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Discard changes?</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              You have unsaved changes. Do you wish to discard them?
+            </ModalBody>
+            <ModalFooter>
+              <Button onClick={onClose} variant="ghost">
+                Cancel
+              </Button>
+              <Button
+                onClick={() => history.push('/dashboard')}
+                colorScheme="error"
+              >
+                Discard
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+        <Text fontWeight="600">{match?.params.id}</Text>
       </HStack>
       <HStack h="100%" flex={1} justifyContent="center" spacing={0}>
         <Tabs
