@@ -1,10 +1,10 @@
-import { QuestionField } from './QuestionField'
+import { BuilderField } from './BuilderField'
 import { FloatingToolbar } from './FloatingToolbar'
 import { CheckerCard } from './CheckerCard'
 import { Checker } from './Checker'
 
 export const components = {
-  QuestionField,
+  BuilderField,
   FloatingToolbar,
   CheckerCard,
   Checker,
