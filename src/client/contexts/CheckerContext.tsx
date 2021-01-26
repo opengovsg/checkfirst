@@ -4,6 +4,7 @@ import React, {
   useContext,
   useEffect,
   useReducer,
+  useState,
 } from 'react'
 import { AxiosError } from 'axios'
 import update from 'immutability-helper'
@@ -114,6 +115,7 @@ export const reducer = (state: Checker, action: BuilderAction): Checker => {
 
 interface CheckerContextProps {
   config: Checker
+  isChanged: boolean
   dispatch: React.Dispatch<BuilderAction>
   save: UseMutationResult<Checker, AxiosError<{ message: string }>, void>
 }
@@ -134,6 +136,16 @@ export const CheckerProvider: FC = ({ children }) => {
     params: { id },
   } = useRouteMatch<{ id: string }>()
   const [config, dispatch] = useReducer(reducer, initialConfig)
+  const [lastSavedConfig, setLastSavedConfig] = useState<Checker>(initialConfig)
+  const [isChanged, setChanged] = useState(false)
+
+  const dispatchLoad = (loadedState: Checker) => {
+    dispatch({
+      type: BuilderActionEnum.LoadConfig,
+      payload: { loadedState },
+    })
+    setLastSavedConfig(loadedState)
+  }
 
   // Initial query for checker data
   const { isSuccess, data } = useQuery(['builder', id], () =>
@@ -141,31 +153,25 @@ export const CheckerProvider: FC = ({ children }) => {
   )
   useEffect(() => {
     if (data) {
-      dispatch({
-        type: BuilderActionEnum.LoadConfig,
-        payload: {
-          loadedState: data,
-        },
-      })
+      dispatchLoad(data)
     }
   }, [isSuccess, data])
+
+  useEffect(() => {
+    setChanged(JSON.stringify(config) !== JSON.stringify(lastSavedConfig))
+  }, [config, lastSavedConfig])
 
   const save = useMutation<Checker, AxiosError<{ message: string }>, void>(
     () => CheckerService.updateChecker(config),
     {
       onSuccess: (checker) => {
         // On success, update load the returned checker to ensure consistency with backend
-        dispatch({
-          type: BuilderActionEnum.LoadConfig,
-          payload: {
-            loadedState: checker,
-          },
-        })
+        dispatchLoad(checker)
       },
     }
   )
 
-  const value = { config, dispatch, save }
+  const value = { config, isChanged, dispatch, save }
   return (
     <checkerContext.Provider value={value}>{children}</checkerContext.Provider>
   )
