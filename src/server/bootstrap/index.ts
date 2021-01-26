@@ -92,8 +92,8 @@ export async function bootstrap(): Promise<Express> {
     app.set('trust proxy', 1)
   }
 
-  app.use(express.static(path.resolve(__dirname + '/../../build/client')))
-  app.use(express.static(path.resolve(__dirname + '/../../public')))
+  app.use(express.static(path.resolve(__dirname + '/../../../build/client')))
+  app.use(express.static(path.resolve(__dirname + '/../../../public')))
 
   app.use(morgan(MORGAN_LOG_FORMAT))
 
@@ -102,7 +102,7 @@ export async function bootstrap(): Promise<Express> {
 
   // Facilitate deep-linking
   app.get('*', (_req: Request, res: Response) => {
-    res.sendFile(path.resolve(__dirname + '/../../build/client/index.html'))
+    res.sendFile(path.resolve(__dirname + '/../../../build/client/index.html'))
   })
 
   await sequelize.sync()
