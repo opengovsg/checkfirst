@@ -23,6 +23,8 @@ const initialOperation: Operation = {
   id: 'initial_operation',
   type: 'ARITHMETIC',
   expression: '2 * 8',
+  description: '',
+  show: true,
 }
 const initialDisplay: Display = {
   id: 'initial_display',
@@ -54,6 +56,8 @@ const newOperation: Operation = {
   id: 'new_operation',
   type: 'ARITHMETIC',
   expression: '1 + 2',
+  description: '',
+  show: true,
 }
 const newDisplay: Display = {
   id: 'new_display',
