@@ -1,5 +1,5 @@
 import React, { FC, useState, useRef } from 'react'
-import { filter } from 'lodash'
+import { isEmpty, filter } from 'lodash'
 import {
   useToast,
   useMultiStyleConfig,
@@ -94,7 +94,7 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
         </FormProvider>
       </Container>
 
-      {isCheckerComplete() && (
+      {!isEmpty(variables) && isCheckerComplete() && (
         <Flex bg="primary.500" as="div" ref={outcomes} flex={1}>
           <Container maxW="xl" pt={8} pb={16} px={8} color="#F4F6F9">
             <VStack align="strech" spacing={8}>
