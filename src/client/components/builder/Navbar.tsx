@@ -26,7 +26,7 @@ export const Navbar: FC = () => {
     path: '/builder/:id/:action',
     exact: true,
   })
-  const { save } = useCheckerContext()
+  const { save, isChanged } = useCheckerContext()
 
   const params = match?.params
   if (!params || !params.id || !params.action) {
@@ -112,6 +112,7 @@ export const Navbar: FC = () => {
         <Button
           colorScheme="primary"
           onClick={handleSave}
+          disabled={!isChanged}
           isLoading={save.isLoading}
         >
           Save
