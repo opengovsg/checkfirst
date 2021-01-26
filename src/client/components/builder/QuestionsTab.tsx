@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import {
   BiHash,
   BiRadioCircleMarked,
@@ -63,6 +63,15 @@ export const QuestionsTab: FC = () => {
   const { config, dispatch } = useCheckerContext()
 
   const { title, description, fields } = config
+
+  useEffect(() => {
+    let highestIndex = 0
+    config.fields.forEach((field) => {
+      const fieldIndex = parseInt(field.id.slice(1))
+      highestIndex = Math.max(highestIndex, fieldIndex)
+    })
+    setNextUniqueId(highestIndex + 1)
+  }, [])
 
   const toolbarOptions = [
     {

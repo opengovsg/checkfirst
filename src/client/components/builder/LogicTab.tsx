@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import {
   BiPlusCircle,
   BiCalculator,
@@ -38,6 +38,15 @@ export const LogicTab: FC = () => {
   const [offsetTop, setOffsetTop] = useState<number>(16)
   const [nextUniqueId, setNextUniqueId] = useState<number>(1)
   const { dispatch, config } = useCheckerContext()
+
+  useEffect(() => {
+    let highestIndex = 0
+    config.operations.forEach((operation) => {
+      const operationIndex = parseInt(operation.id.slice(1))
+      highestIndex = Math.max(highestIndex, operationIndex)
+    })
+    setNextUniqueId(highestIndex + 1)
+  }, [])
 
   const addMenu = [
     {
@@ -97,7 +106,7 @@ export const LogicTab: FC = () => {
           payload: {
             currIndex: activeIndex,
             newIndex: activeIndex + 1,
-            configArrName: ConfigArrayEnum.Fields,
+            configArrName: ConfigArrayEnum.Operations,
           },
         })
         setActiveIndex(activeIndex + 1)
