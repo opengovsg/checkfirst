@@ -25,7 +25,7 @@ const InputComponent: TitleFieldComponent = ({ title, description }) => {
   }
 
   return (
-    <HStack w="100%" alignItems="flex-start" mb={4}>
+    <HStack w="100%" alignItems="flex-start">
       <Box fontSize="20px" pt={2}>
         <BiText />
       </Box>
