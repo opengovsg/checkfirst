@@ -41,8 +41,8 @@ export const LogicTab: FC = () => {
 
   useEffect(() => {
     let highestIndex = 0
-    config.operations.forEach((field) => {
-      const operationIndex = parseInt(field.id.slice(1))
+    config.operations.forEach((operation) => {
+      const operationIndex = parseInt(operation.id.slice(1))
       highestIndex = Math.max(highestIndex, operationIndex)
     })
     setNextUniqueId(highestIndex + 1)
