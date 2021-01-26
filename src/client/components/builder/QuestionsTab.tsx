@@ -24,16 +24,16 @@ import { BuilderActionEnum, ConfigArrayEnum } from '../../../util/enums'
 
 const TITLE_FIELD_INDEX = -1
 
-const defaultNumericField: checker.Field = {
-  id: 'N',
+const generateDefaultNumericField = (id: number): checker.Field => ({
+  id: `N${id}`,
   type: 'NUMERIC',
   description: 'Insert question description',
   help: '',
   options: [],
-}
+})
 
-const defaultRadioField: checker.Field = {
-  id: 'R',
+const generateDefaultRadioField = (id: number): checker.Field => ({
+  id: `R${id}`,
   type: 'RADIO',
   description: 'Insert question description',
   help: '',
@@ -41,10 +41,10 @@ const defaultRadioField: checker.Field = {
     { label: 'Option 1', value: 0 },
     { label: 'Option 2', value: 1 },
   ],
-}
+})
 
-const defaultCheckboxField: checker.Field = {
-  id: 'C',
+const generateDefaultCheckboxField = (id: number): checker.Field => ({
+  id: `C${id}`,
   type: 'CHECKBOX',
   description: 'Insert question description',
   help: '',
@@ -52,13 +52,14 @@ const defaultCheckboxField: checker.Field = {
     { label: 'Option 1', value: 0 },
     { label: 'Option 2', value: 1 },
   ],
-}
+})
 
 export const TITLE_FIELD_ID = 'TITLE'
 
 export const QuestionsTab: FC = () => {
   const [activeIndex, setActiveIndex] = useState<number>(-1)
   const [offsetTop, setOffsetTop] = useState<number>(16)
+  const [nextUniqueId, setNextUniqueId] = useState<number>(1)
   const { config, dispatch } = useCheckerContext()
 
   const { title, description, fields } = config
@@ -75,12 +76,13 @@ export const QuestionsTab: FC = () => {
             dispatch({
               type: BuilderActionEnum.Add,
               payload: {
-                element: defaultNumericField,
+                element: generateDefaultNumericField(nextUniqueId),
                 configArrName: ConfigArrayEnum.Fields,
                 newIndex: activeIndex + 1,
               },
             })
             setActiveIndex(activeIndex + 1)
+            setNextUniqueId(nextUniqueId + 1)
           },
         },
         {
@@ -90,12 +92,13 @@ export const QuestionsTab: FC = () => {
             dispatch({
               type: BuilderActionEnum.Add,
               payload: {
-                element: defaultRadioField,
+                element: generateDefaultRadioField(nextUniqueId),
                 configArrName: ConfigArrayEnum.Fields,
                 newIndex: activeIndex + 1,
               },
             })
             setActiveIndex(activeIndex + 1)
+            setNextUniqueId(nextUniqueId + 1)
           },
         },
         {
@@ -105,12 +108,13 @@ export const QuestionsTab: FC = () => {
             dispatch({
               type: BuilderActionEnum.Add,
               payload: {
-                element: defaultCheckboxField,
+                element: generateDefaultCheckboxField(nextUniqueId),
                 configArrName: ConfigArrayEnum.Fields,
                 newIndex: activeIndex + 1,
               },
             })
             setActiveIndex(activeIndex + 1)
+            setNextUniqueId(nextUniqueId + 1)
           },
         },
       ],
@@ -160,7 +164,7 @@ export const QuestionsTab: FC = () => {
 
   const renderField = (field: checker.Field, index: number) => {
     const commonProps = {
-      key: field.id + index,
+      key: field.id,
       id: field.id,
       active: activeIndex === index,
       data: field,

@@ -25,17 +25,18 @@ import { FloatingToolbar } from '../builder'
 import { CalculatedResult } from '../builder/logic'
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../util/enums'
 
-const defaultArithmeticOp: checker.Operation = {
-  id: 'O',
+const generateDefaultArithmeticOp = (id: number): checker.Operation => ({
+  id: `O${id}`,
   type: 'ARITHMETIC',
   expression: '',
   description: '',
   show: true,
-}
+})
 
 export const LogicTab: FC = () => {
   const [activeIndex, setActiveIndex] = useState<number>(-1)
   const [offsetTop, setOffsetTop] = useState<number>(16)
+  const [nextUniqueId, setNextUniqueId] = useState<number>(1)
   const { dispatch, config } = useCheckerContext()
 
   const addMenu = [
@@ -46,15 +47,13 @@ export const LogicTab: FC = () => {
         dispatch({
           type: BuilderActionEnum.Add,
           payload: {
-            element: {
-              ...defaultArithmeticOp,
-              id: defaultArithmeticOp.id + (activeIndex + 1),
-            },
+            element: generateDefaultArithmeticOp(nextUniqueId),
             configArrName: ConfigArrayEnum.Operations,
             newIndex: activeIndex + 1,
           },
         })
         setActiveIndex(activeIndex + 1)
+        setNextUniqueId(nextUniqueId + 1)
       },
     },
     {
@@ -63,6 +62,7 @@ export const LogicTab: FC = () => {
       onClick: () => {
         // TODO: Add calculated result
         setActiveIndex(activeIndex + 1)
+        setNextUniqueId(nextUniqueId + 1)
       },
     },
   ]
