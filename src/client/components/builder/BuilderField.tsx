@@ -1,10 +1,11 @@
 import React, { FC, useEffect } from 'react'
-import { BiCog, BiDuplicate, BiTrash } from 'react-icons/bi'
+import { BiDuplicate, BiTrash, BiShow } from 'react-icons/bi'
 import {
   useMultiStyleConfig,
   StylesProvider,
   Flex,
   HStack,
+  Button,
 } from '@chakra-ui/react'
 
 import { useCheckerContext } from '../../contexts'
@@ -23,13 +24,28 @@ interface QuestionFieldComponentProps {
 }
 export type QuestionFieldComponent = FC<QuestionFieldComponentProps>
 
-type BuilderFieldComponent = QuestionFieldComponent | TitleFieldComponent
+interface OperationFieldComponentProps {
+  operation: checker.Operation
+  index: number
+}
+export type OperationFieldComponent = FC<OperationFieldComponentProps>
+
+type BuilderFieldComponent =
+  | QuestionFieldComponent
+  | TitleFieldComponent
+  | OperationFieldComponent
+
 type BuilderFieldData =
   | checker.Field
+  | checker.Operation
   | Pick<checker.Checker, 'title' | 'description'>
 
 const isFieldData = (data: BuilderFieldData): data is checker.Field => {
-  return data && (data as checker.Field).type !== undefined
+  return data && (data as checker.Field).options !== undefined
+}
+
+const isOperationData = (data: BuilderFieldData): data is checker.Operation => {
+  return data && (data as checker.Operation).expression !== undefined
 }
 
 interface BuilderFieldProps {
@@ -57,7 +73,7 @@ export const createBuilderField = (
   const [ref, { top }] = usePosition()
   const { dispatch } = useCheckerContext()
   const variant = active ? 'active' : ''
-  const styles = useMultiStyleConfig('QuestionField', { variant })
+  const styles = useMultiStyleConfig('BuilderField', { variant })
 
   useEffect(() => {
     if (active) onActive({ top })
@@ -75,10 +91,22 @@ export const createBuilderField = (
       return <Content {...props} field={data} index={index} />
     }
 
+    if (isOperationData(data)) {
+      const Content = (active
+        ? InputComponent
+        : PreviewComponent) as OperationFieldComponent
+      return <Content {...props} operation={data} index={index} />
+    }
+
     const Content = (active
       ? InputComponent
       : PreviewComponent) as TitleFieldComponent
-    return <Content {...props} {...data} />
+    return (
+      <Content
+        {...props}
+        {...(data as Pick<checker.Checker, 'title' | 'description'>)}
+      />
+    )
   }
 
   const handleDuplicate = () => {
@@ -92,31 +120,50 @@ export const createBuilderField = (
         },
       })
       setActiveIndex(index + 1)
+    } else if (isOperationData(data)) {
+      dispatch({
+        type: BuilderActionEnum.Add,
+        payload: {
+          element: data,
+          configArrName: ConfigArrayEnum.Operations,
+          newIndex: index + 1,
+        },
+      })
     }
   }
 
   const handleDelete = () => {
-    if (isFieldData(data)) {
-      dispatch({
-        type: BuilderActionEnum.Remove,
-        payload: { currIndex: index, configArrName: ConfigArrayEnum.Fields },
-      })
-      setActiveIndex(index - 1)
-    }
+    dispatch({
+      type: BuilderActionEnum.Remove,
+      payload: {
+        currIndex: index,
+        configArrName: isFieldData(data)
+          ? ConfigArrayEnum.Fields
+          : ConfigArrayEnum.Operations,
+      },
+    })
+    setActiveIndex(index - 1)
   }
 
   return (
-    <Flex
-      ref={ref}
-      sx={styles.container}
-      direction="column"
-      onClick={handleSelect}
-    >
-      <StylesProvider value={styles}>
-        <Flex>{renderContent()}</Flex>
+    <StylesProvider value={styles}>
+      <Flex
+        ref={ref}
+        sx={styles.container}
+        direction="column"
+        onClick={handleSelect}
+      >
+        {(isFieldData(data) || isOperationData(data)) && (
+          <Button colorScheme="primary" sx={styles.badge}>
+            {data.id}
+          </Button>
+        )}
+        <Flex sx={styles.content}>{renderContent()}</Flex>
         {active && (
           <HStack justifyContent="flex-end">
-            <ActionButton aria-label="Settings" icon={<BiCog />} />
+            {isOperationData(data) && (
+              <ActionButton aria-label="Duplicate" icon={<BiShow />} />
+            )}
             <ActionButton
               aria-label="Duplicate"
               icon={<BiDuplicate />}
@@ -129,7 +176,7 @@ export const createBuilderField = (
             />
           </HStack>
         )}
-      </StylesProvider>
-    </Flex>
+      </Flex>
+    </StylesProvider>
   )
 }
