@@ -40,7 +40,9 @@ export type DisplayType = 'TEXT' | 'BUTTON' | 'LINE'
 export interface Operation {
   id: string
   type: OperationType
+  description: string
   expression: string
+  show: boolean
 }
 
 export type OperationType = 'ARITHMETIC' | 'IFELSE' | 'SWITCH'

@@ -78,6 +78,8 @@ describe('variableReducer', () => {
       id: 'OUTPUT',
       type: 'ARITHMETIC',
       expression: 'a + b',
+      description: '',
+      show: true,
     }
     const inputs = { a: 1, b: 1 }
     const vars = variableReducer(inputs, op)
@@ -109,8 +111,20 @@ describe('getEvaluationOrder', () => {
     const inputs = { A: 1, B: 1 }
     const constants: checker.Constant[] = [{ id: 'C1', value: 'test' }]
     const operations: checker.Operation[] = [
-      { id: 'O2', type: 'ARITHMETIC', expression: 'A + B' },
-      { id: 'O1', type: 'ARITHMETIC', expression: 'O2 + A + B' },
+      {
+        id: 'O2',
+        type: 'ARITHMETIC',
+        expression: 'A + B',
+        description: '',
+        show: true,
+      },
+      {
+        id: 'O1',
+        type: 'ARITHMETIC',
+        expression: 'O2 + A + B',
+        description: '',
+        show: true,
+      },
     ]
 
     const order = getEvaluationOrder(inputs, constants, operations)
@@ -121,8 +135,20 @@ describe('getEvaluationOrder', () => {
     const inputs = { A: 1, B: 1 }
     const constants: checker.Constant[] = [{ id: 'C1', value: 'test' }]
     const operations: checker.Operation[] = [
-      { id: 'O2', type: 'ARITHMETIC', expression: 'A + B' },
-      { id: 'O1', type: 'ARITHMETIC', expression: 'O3 + A + B' },
+      {
+        id: 'O2',
+        type: 'ARITHMETIC',
+        expression: 'A + B',
+        description: '',
+        show: true,
+      },
+      {
+        id: 'O1',
+        type: 'ARITHMETIC',
+        expression: 'O3 + A + B',
+        description: '',
+        show: true,
+      },
     ]
 
     expect(() =>
@@ -134,8 +160,20 @@ describe('getEvaluationOrder', () => {
     const inputs = { A: 1, B: 1 }
     const constants: checker.Constant[] = [{ id: 'C1', value: 'test' }]
     const operations: checker.Operation[] = [
-      { id: 'O2', type: 'ARITHMETIC', expression: 'O1 + A + B' },
-      { id: 'O1', type: 'ARITHMETIC', expression: 'O2 + A + B' },
+      {
+        id: 'O2',
+        type: 'ARITHMETIC',
+        expression: 'O1 + A + B',
+        description: '',
+        show: true,
+      },
+      {
+        id: 'O1',
+        type: 'ARITHMETIC',
+        expression: 'O2 + A + B',
+        description: '',
+        show: true,
+      },
     ]
 
     try {
@@ -154,8 +192,20 @@ describe('evaluate', () => {
     const inputs = { A: 1, B: 1 }
     const constants: checker.Constant[] = [{ id: 'C1', value: 'test' }]
     const operations: checker.Operation[] = [
-      { id: 'O2', type: 'ARITHMETIC', expression: 'A + B' },
-      { id: 'O1', type: 'ARITHMETIC', expression: 'O2 + A + B' },
+      {
+        id: 'O2',
+        type: 'ARITHMETIC',
+        expression: 'A + B',
+        description: '',
+        show: true,
+      },
+      {
+        id: 'O1',
+        type: 'ARITHMETIC',
+        expression: 'O2 + A + B',
+        description: '',
+        show: true,
+      },
     ]
     const output = evaluate(inputs, constants, operations)
 
@@ -167,8 +217,20 @@ describe('evaluate', () => {
     const inputs = { A: 1, B: 1 }
     const constants: checker.Constant[] = [{ id: 'C1', value: 'test' }]
     const operations: checker.Operation[] = [
-      { id: 'O2', type: 'ARITHMETIC', expression: 'A + B' },
-      { id: 'O1', type: 'ARITHMETIC', expression: 'O3 + A + B' },
+      {
+        id: 'O2',
+        type: 'ARITHMETIC',
+        expression: 'A + B',
+        description: '',
+        show: true,
+      },
+      {
+        id: 'O1',
+        type: 'ARITHMETIC',
+        expression: 'O3 + A + B',
+        description: '',
+        show: true,
+      },
     ]
 
     expect(() => evaluate(inputs, constants, operations)).toThrowError(
@@ -180,8 +242,20 @@ describe('evaluate', () => {
     const inputs = { A: 1, B: 1 }
     const constants: checker.Constant[] = [{ id: 'C1', value: 'test' }]
     const operations: checker.Operation[] = [
-      { id: 'O2', type: 'ARITHMETIC', expression: 'O1 + A + B' },
-      { id: 'O1', type: 'ARITHMETIC', expression: 'O2 + A + B' },
+      {
+        id: 'O2',
+        type: 'ARITHMETIC',
+        expression: 'O1 + A + B',
+        description: '',
+        show: true,
+      },
+      {
+        id: 'O1',
+        type: 'ARITHMETIC',
+        expression: 'O2 + A + B',
+        description: '',
+        show: true,
+      },
     ]
 
     try {

@@ -2,9 +2,9 @@ import React from 'react'
 import { BiText } from 'react-icons/bi'
 import { Box, HStack, VStack, Text, Input, Heading } from '@chakra-ui/react'
 
-import { createQuestionField, TitleFieldComponent } from './QuestionField'
-import { useCheckerContext } from '../../contexts'
-import { BuilderActionEnum } from '../../../util/enums'
+import { createBuilderField, TitleFieldComponent } from '../BuilderField'
+import { useCheckerContext } from '../../../contexts'
+import { BuilderActionEnum } from '../../../../util/enums'
 
 const enum SettingsName {
   description = 'description',
@@ -25,7 +25,7 @@ const InputComponent: TitleFieldComponent = ({ title, description }) => {
   }
 
   return (
-    <HStack w="100%" alignItems="flex-start" mb={4}>
+    <HStack w="100%" alignItems="flex-start">
       <Box fontSize="20px" pt={2}>
         <BiText />
       </Box>
@@ -58,4 +58,4 @@ const PreviewComponent: TitleFieldComponent = ({ title, description }) => {
   )
 }
 
-export const TitleField = createQuestionField(InputComponent, PreviewComponent)
+export const TitleField = createBuilderField(InputComponent, PreviewComponent)

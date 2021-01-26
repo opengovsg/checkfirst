@@ -10,13 +10,13 @@ import {
 import { VStack } from '@chakra-ui/react'
 
 import * as checker from '../../../types/checker'
+import { FloatingToolbar } from './FloatingToolbar'
 import {
-  FloatingToolbar,
   NumericField,
   RadioField,
   CheckboxField,
   TitleField,
-} from '../builder'
+} from '../builder/questions'
 
 import { useCheckerContext } from '../../contexts'
 
