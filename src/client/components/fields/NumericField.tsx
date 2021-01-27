@@ -12,7 +12,7 @@ import {
 
 import { Field } from '../../../types/checker'
 
-export const NumericField: FC<Field> = ({ id, description, help }) => {
+export const NumericField: FC<Field> = ({ id, title, description }) => {
   const styles = useStyles()
   const { control } = useFormContext()
 
@@ -25,9 +25,9 @@ export const NumericField: FC<Field> = ({ id, description, help }) => {
       render={({ ref, onChange, value }, { invalid }) => (
         <FormControl isInvalid={invalid}>
           <FormLabel sx={styles.label} htmlFor={id}>
-            {description}
+            {title}
           </FormLabel>
-          {help && <FormHelperText mb={4}>{help}</FormHelperText>}
+          {description && <FormHelperText mb={4}>{description}</FormHelperText>}
           <NumberInput
             sx={styles.input}
             name={id}

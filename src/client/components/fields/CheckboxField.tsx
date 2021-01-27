@@ -14,8 +14,8 @@ import { Field } from '../../../types/checker'
 
 export const CheckboxField: FC<Field> = ({
   id,
+  title,
   description,
-  help,
   options,
 }) => {
   const styles = useStyles()
@@ -29,9 +29,9 @@ export const CheckboxField: FC<Field> = ({
       render={({ ref, value, onChange }, { invalid }) => (
         <FormControl isInvalid={invalid}>
           <FormLabel sx={styles.label} htmlFor={id}>
-            {description}
+            {title}
           </FormLabel>
-          {help && <FormHelperText mb={4}>{help}</FormHelperText>}
+          {description && <FormHelperText mb={4}>{description}</FormHelperText>}
           <CheckboxGroup onChange={onChange} value={value}>
             <VStack align="stretch" spacing={4}>
               {options.map(

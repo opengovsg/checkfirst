@@ -50,7 +50,7 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
       operation.show && (
         <LineDisplay
           key={i}
-          label={operation.description}
+          label={operation.title}
           value={variables[operation.id] as string}
         />
       )
