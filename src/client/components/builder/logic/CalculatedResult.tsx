@@ -39,6 +39,8 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
           name="expression"
           type="text"
           placeholder="Enter expression"
+          bg="#F4F6F9"
+          fontFamily="mono"
           value={expression}
           onChange={handleChange}
         />
@@ -55,7 +57,7 @@ const PreviewComponent: OperationFieldComponent = ({ operation }) => {
         <BiCalculator fontSize="20px" />
         <Text>{description}</Text>
       </HStack>
-      <Text>{expression}</Text>
+      <Text fontFamily="mono">{expression}</Text>
     </VStack>
   )
 }
