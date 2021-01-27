@@ -31,7 +31,7 @@ const MORGAN_LOG_FORMAT =
   ':client-ip - [:date[clf]] ":method :url HTTP/:http-version" ' +
   '":userId" :res[content-length] ":referrer" ":user-agent" :response-time ms'
 
-const totp = totpFactory.clone({ step: 60 })
+const totp = totpFactory.clone({ step: 30, window: [1, 0] })
 
 const mailSuffix = config.get('mailSuffix')
 
