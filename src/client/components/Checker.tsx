@@ -57,7 +57,20 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
     )
   }
 
+  // An input variable is a numeric field if its key name starts with N
+  const isNumericField = (key: string) => {
+    return key[0] === 'N'
+  }
+
   const onSubmit = (inputs: Record<string, string | number>) => {
+    // Set all numeric inputs to type Number
+    const parsedInputs: Record<string, string | number> = {}
+    Object.keys(inputs).forEach((key: string) => {
+      parsedInputs[key] = isNumericField(key)
+        ? Number(inputs[key])
+        : inputs[key]
+    })
+
     if (!isCheckerComplete()) {
       toast({
         status: 'warning',
@@ -67,7 +80,7 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
       })
     }
 
-    const computed = evaluate(inputs, constants, operations)
+    const computed = evaluate(parsedInputs, constants, operations)
     setVariables(computed)
     outcomes.current?.scrollIntoView()
   }
