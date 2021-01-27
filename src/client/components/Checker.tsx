@@ -80,9 +80,17 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
       })
     }
 
-    const computed = evaluate(parsedInputs, constants, operations)
-    setVariables(computed)
-    outcomes.current?.scrollIntoView()
+    try {
+      const computed = evaluate(parsedInputs, constants, operations)
+      setVariables(computed)
+      outcomes.current?.scrollIntoView()
+    } catch (err) {
+      toast({
+        status: 'error',
+        title: err.name,
+        description: err.message,
+      })
+    }
   }
 
   // Ensure that at least one operation with `show: true`
