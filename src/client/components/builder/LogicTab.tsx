@@ -29,7 +29,7 @@ const generateDefaultArithmeticOp = (id: number): checker.Operation => ({
   id: `O${id}`,
   type: 'ARITHMETIC',
   expression: '',
-  description: '',
+  title: '',
   show: true,
 })
 

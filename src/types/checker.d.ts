@@ -40,7 +40,7 @@ export type DisplayType = 'TEXT' | 'BUTTON' | 'LINE'
 export interface Operation {
   id: string
   type: OperationType
-  description: string
+  title: string
   expression: string
   show: boolean
 }

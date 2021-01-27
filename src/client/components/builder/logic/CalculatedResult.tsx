@@ -7,7 +7,7 @@ import { createBuilderField, OperationFieldComponent } from '../BuilderField'
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../../util/enums'
 
 const InputComponent: OperationFieldComponent = ({ operation, index }) => {
-  const { description, expression } = operation
+  const { title, expression } = operation
   const { dispatch } = useCheckerContext()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,11 +29,11 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
       </Box>
       <VStack align="stretch" w="100%">
         <Input
-          name="description"
+          name="title"
           type="text"
-          placeholder="Operation description"
+          placeholder="Operation title"
           onChange={handleChange}
-          value={description}
+          value={title}
         />
         <Input
           name="expression"
@@ -48,12 +48,12 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
 }
 
 const PreviewComponent: OperationFieldComponent = ({ operation }) => {
-  const { description, expression } = operation
+  const { title, expression } = operation
   return (
     <VStack align="stretch" w="50%" spacing={4}>
       <HStack>
         <BiCalculator fontSize="20px" />
-        <Text>{description}</Text>
+        <Text>{title}</Text>
       </HStack>
       <Text>{expression}</Text>
     </VStack>
