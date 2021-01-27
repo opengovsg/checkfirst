@@ -158,7 +158,7 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
           <BiGitBranch />
         </Box>
         <Input
-          name="description"
+          name="title"
           type="text"
           placeholder="Result description"
           onChange={handleChange}

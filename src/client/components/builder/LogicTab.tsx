@@ -28,7 +28,7 @@ import { BuilderActionEnum, ConfigArrayEnum } from '../../../util/enums'
 const generateDefaultArithmeticOp = (id: number): checker.Operation => ({
   id: `O${id}`,
   type: 'ARITHMETIC',
-  title: 'CalculatedResult',
+  title: 'Calculated result',
   expression: '1 + 1',
   show: true,
 })
