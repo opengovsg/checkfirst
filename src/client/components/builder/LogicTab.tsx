@@ -22,14 +22,22 @@ import {
 import { useCheckerContext } from '../../contexts'
 import * as checker from '../../../types/checker'
 import { FloatingToolbar } from '../builder'
-import { CalculatedResult } from '../builder/logic'
+import { CalculatedResult, ConditionalResult } from '../builder/logic'
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../util/enums'
 
 const generateDefaultArithmeticOp = (id: number): checker.Operation => ({
   id: `O${id}`,
   type: 'ARITHMETIC',
-  expression: '',
-  title: '',
+  title: 'Calculated result',
+  expression: '1 + 1',
+  show: true,
+})
+
+const generateDefaultIfelseOp = (id: number): checker.Operation => ({
+  id: `O${id}`,
+  type: 'IFELSE',
+  title: 'Conditional result',
+  expression: 'ifelse(1 > 0, true, false)',
   show: true,
 })
 
@@ -46,7 +54,7 @@ export const LogicTab: FC = () => {
       highestIndex = Math.max(highestIndex, operationIndex)
     })
     setNextUniqueId(highestIndex + 1)
-  }, [])
+  }, [config])
 
   const addMenu = [
     {
@@ -69,7 +77,14 @@ export const LogicTab: FC = () => {
       label: 'Conditional result',
       icon: <BiGitBranch />,
       onClick: () => {
-        // TODO: Add calculated result
+        dispatch({
+          type: BuilderActionEnum.Add,
+          payload: {
+            element: generateDefaultIfelseOp(nextUniqueId),
+            configArrName: ConfigArrayEnum.Operations,
+            newIndex: activeIndex + 1,
+          },
+        })
         setActiveIndex(activeIndex + 1)
         setNextUniqueId(nextUniqueId + 1)
       },
@@ -135,7 +150,12 @@ export const LogicTab: FC = () => {
       setActiveIndex,
     }
 
-    return <CalculatedResult {...commonProps} />
+    switch (op.type) {
+      case 'ARITHMETIC':
+        return <CalculatedResult {...commonProps} />
+      case 'IFELSE':
+        return <ConditionalResult {...commonProps} />
+    }
   }
 
   return (
@@ -156,8 +176,8 @@ export const LogicTab: FC = () => {
                 Add result
               </MenuButton>
               <MenuList>
-                {addMenu.map(({ label, icon, onClick }) => (
-                  <MenuItem onClick={onClick}>
+                {addMenu.map(({ label, icon, onClick }, i) => (
+                  <MenuItem onClick={onClick} key={i}>
                     <MenuIcon mr={4}>{icon}</MenuIcon>
                     {label}
                   </MenuItem>

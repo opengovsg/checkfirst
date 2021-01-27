@@ -5,4 +5,5 @@ export const fonts = {
   body: "'IBM Plex Sans', sans-serif",
   ssp: "'Source Sans Pro', sans-serif",
   ibm: "'IBM Plex Sans', sans-serif",
+  mono: "'JetBrains Mono', monospace",
 }
