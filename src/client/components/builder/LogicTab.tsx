@@ -42,7 +42,7 @@ const generateDefaultIfelseOp = (id: number): checker.Operation => ({
 })
 
 export const LogicTab: FC = () => {
-  const [activeIndex, setActiveIndex] = useState<number>(-1)
+  const [activeIndex, setActiveIndex] = useState<number>(0)
   const [offsetTop, setOffsetTop] = useState<number>(16)
   const [nextUniqueId, setNextUniqueId] = useState<number>(1)
   const { dispatch, config } = useCheckerContext()

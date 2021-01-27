@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { math } from '../../../core/evaluator'
 import update from 'immutability-helper'
 import { BiGitBranch, BiPlusCircle, BiTrash } from 'react-icons/bi'
 import {
@@ -39,12 +40,22 @@ const EMPTY_STATE: IfelseState = {
   thenExpr: '',
 }
 
+const isValidExpression = (expression: string): boolean => {
+  try {
+    math.parse!(expression)
+    return true
+  } catch (err) {
+    return false
+  }
+}
+
 const fromExpression = (expression: string): IfelseState => {
-  const matches = expression.match(/ifelse\((.*?), (.*?), (.*?)\)/)
-  if (matches) {
-    const { 1: conditionExpr, 2: thenExpr, 3: elseExpr } = matches
-    // TODO: This is the not the most robust method to tokenize the string.
-    // This will fail if there are nested AND/OR in sub-expressions.
+  const root = math.parse!(expression)
+  const args: string[] = []
+  root.forEach((node) => args.push(node.toString()))
+
+  if (args.length === 4) {
+    const { 1: conditionExpr, 2: thenExpr, 3: elseExpr } = args
     const parts = conditionExpr.replace(/\b(and|or)\b/g, '#$1').split('#')
 
     const conditions = parts.slice(1).map((p) => {
@@ -89,7 +100,10 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
 
   useEffect(() => {
     const updatedExpr = toExpression(ifelseState)
-    if (operation.expression !== updatedExpr) {
+    if (
+      operation.expression !== updatedExpr &&
+      isValidExpression(updatedExpr)
+    ) {
       dispatch({
         type: BuilderActionEnum.Update,
         payload: {
