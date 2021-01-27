@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { BiArrowBack } from 'react-icons/bi'
+import { BiArrowBack, BiCode, BiCopy, BiShareAlt } from 'react-icons/bi'
 import { getApiErrorMessage } from '../../api'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import { Link, Redirect } from 'react-router-dom'
@@ -21,6 +21,12 @@ import {
   ModalCloseButton,
   useDisclosure,
   useToast,
+  FormControl,
+  FormLabel,
+  Input,
+  InputGroup,
+  InputRightElement,
+  useClipboard,
 } from '@chakra-ui/react'
 
 import { LogoutButton } from '../LogoutButton'
@@ -28,15 +34,56 @@ import { useCheckerContext } from '../../contexts'
 
 const ROUTES = ['questions', 'logic']
 
+type EmbedFieldProps = {
+  name: string
+  value: string
+}
+
+const EmbedField: FC<EmbedFieldProps> = ({ name, value, children }) => {
+  const { onCopy } = useClipboard(value)
+  const toast = useToast({ position: 'bottom-right', variant: 'solid' })
+  const onClick = () => {
+    onCopy()
+    toast({
+      status: 'success',
+      title: 'Copied!',
+    })
+  }
+  return (
+    <FormControl mb="1rem">
+      <FormLabel htmlFor={name} mb="0">
+        <HStack spacing="1">{children}</HStack>
+      </FormLabel>
+      <InputGroup>
+        <Input readOnly name={name} value={value} />
+        <InputRightElement
+          cursor="pointer"
+          onClick={onClick}
+          children={<BiCopy />}
+        />
+      </InputGroup>
+    </FormControl>
+  )
+}
+
 export const Navbar: FC = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const {
+    isOpen: isBackPromptOpen,
+    onOpen: onBackPromptOpen,
+    onClose: onBackPromptClose,
+  } = useDisclosure()
+  const {
+    isOpen: isEmbedOpen,
+    onOpen: onEmbedOpen,
+    onClose: onEmbedClose,
+  } = useDisclosure()
   const history = useHistory()
   const toast = useToast({ position: 'bottom-right', variant: 'solid' })
   const match = useRouteMatch<{ id: string; action: string }>({
     path: '/builder/:id/:action',
     exact: true,
   })
-  const { save, isChanged } = useCheckerContext()
+  const { save, isChanged, config: checker } = useCheckerContext()
 
   const params = match?.params
   if (!params || !params.id || !params.action) {
@@ -49,7 +96,7 @@ export const Navbar: FC = () => {
     if (!isChanged) {
       history.push('/dashboard')
     } else {
-      onOpen()
+      onBackPromptOpen()
     }
   }
 
@@ -75,6 +122,9 @@ export const Navbar: FC = () => {
     }
   }
 
+  const linkTo = (checker: { id: string }) =>
+    `${window?.location?.origin}/c/${checker.id}`
+
   return (
     <Flex
       h="80px"
@@ -93,7 +143,7 @@ export const Navbar: FC = () => {
           variant="ghost"
           icon={<BiArrowBack />}
         />
-        <Modal isOpen={isOpen} onClose={onClose} size="lg">
+        <Modal isOpen={isBackPromptOpen} onClose={onBackPromptClose} size="lg">
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>Discard changes?</ModalHeader>
@@ -102,7 +152,7 @@ export const Navbar: FC = () => {
               You have unsaved changes. Do you wish to discard them?
             </ModalBody>
             <ModalFooter>
-              <Button onClick={onClose} variant="ghost">
+              <Button onClick={onBackPromptClose} variant="ghost">
                 Cancel
               </Button>
               <Button
@@ -142,6 +192,37 @@ export const Navbar: FC = () => {
         </Tabs>
       </HStack>
       <HStack flex={1} spacing={4} justifyContent="flex-end">
+        <IconButton
+          onClick={onEmbedOpen}
+          aria-label="Embed or Share"
+          variant="ghost"
+          icon={<BiCode size="24px" />}
+        />
+        <Modal isOpen={isEmbedOpen} onClose={onEmbedClose} size="lg">
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Embed or Share</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <EmbedField
+                name="iframe"
+                value={`<iframe src="${linkTo(checker)}"></iframe>`}
+              >
+                <BiCode size="1rem" />
+                <Text>Embed this checker on your site</Text>
+              </EmbedField>
+              <EmbedField name="link" value={linkTo(checker)}>
+                <BiShareAlt size="1rem" />
+                <Text>Share this link to your checker</Text>
+              </EmbedField>
+            </ModalBody>
+            <ModalFooter>
+              <Text color="error.500">
+                {isChanged ? 'Warning: You have unsaved changes' : ''}
+              </Text>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
         <Link to={`/builder/${params.id}/preview`}>
           <Button variant="outline" colorScheme="primary">
             Preview

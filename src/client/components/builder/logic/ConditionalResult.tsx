@@ -81,7 +81,7 @@ const toExpression = (state: IfelseState): string => {
 }
 
 const InputComponent: OperationFieldComponent = ({ operation, index }) => {
-  const { description, expression } = operation
+  const { title, expression } = operation
   const { dispatch } = useCheckerContext()
   const [ifelseState, setIfelseState] = useState<IfelseState>(
     fromExpression(expression)
@@ -162,7 +162,7 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
           type="text"
           placeholder="Result description"
           onChange={handleChange}
-          value={description}
+          value={title}
         />
       </HStack>
       <VStack align="stretch" spacing={4}>
@@ -271,12 +271,12 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
 }
 
 const PreviewComponent: OperationFieldComponent = ({ operation }) => {
-  const { description, expression } = operation
+  const { title, expression } = operation
   return (
     <VStack align="stretch" w="100%" spacing={4}>
       <HStack>
         <BiGitBranch fontSize="20px" />
-        <Text>{description}</Text>
+        <Text>{title}</Text>
       </HStack>
       <Text fontFamily="mono">{expression}</Text>
     </VStack>

@@ -15,15 +15,15 @@ import { BuilderActionEnum, ConfigArrayEnum } from '../../../util/enums'
 const initialField: Field = {
   id: 'initial_field',
   type: 'NUMERIC',
-  description: 'Initial field',
-  help: '',
+  title: 'Initial field',
+  description: '',
   options: [],
 }
 const initialOperation: Operation = {
   id: 'initial_operation',
   type: 'ARITHMETIC',
   expression: '2 * 8',
-  description: '',
+  title: '',
   show: true,
 }
 const initialDisplay: Display = {
@@ -48,15 +48,15 @@ const initialChecker: Checker = {
 const newField: Field = {
   id: 'new_field',
   type: 'NUMERIC',
-  description: 'a Field object to test actions on the Builder',
-  help: '',
+  title: 'a Field object to test actions on the Builder',
+  description: '',
   options: [],
 }
 const newOperation: Operation = {
   id: 'new_operation',
   type: 'ARITHMETIC',
   expression: '1 + 2',
-  description: '',
+  title: '',
   show: true,
 }
 const newDisplay: Display = {

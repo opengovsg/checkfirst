@@ -15,7 +15,7 @@ import '../../styles/date-picker.css'
 
 import { Field } from '../../../types/checker'
 
-export const DateField: FC<Field> = ({ id, description, help }) => {
+export const DateField: FC<Field> = ({ id, title, description }) => {
   const styles = useStyles()
   const { register, errors } = useFormContext()
   const [date, setDate] = useState(new Date())
@@ -28,9 +28,9 @@ export const DateField: FC<Field> = ({ id, description, help }) => {
   return (
     <FormControl isInvalid={error} id={id}>
       <FormLabel sx={styles.label} htmlFor={id}>
-        {description}
+        {title}
       </FormLabel>
-      {help && <FormHelperText mb={4}>{help}</FormHelperText>}
+      {description && <FormHelperText mb={4}>{description}</FormHelperText>}
       <Input
         type="hidden"
         name={id}
