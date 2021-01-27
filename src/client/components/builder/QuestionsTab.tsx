@@ -27,7 +27,7 @@ const TITLE_FIELD_INDEX = -1
 const generateDefaultNumericField = (id: number): checker.Field => ({
   id: `N${id}`,
   type: 'NUMERIC',
-  title: 'Insert question description',
+  title: 'Insert question title',
   description: '',
   options: [],
 })
@@ -35,7 +35,7 @@ const generateDefaultNumericField = (id: number): checker.Field => ({
 const generateDefaultRadioField = (id: number): checker.Field => ({
   id: `R${id}`,
   type: 'RADIO',
-  title: 'Insert question description',
+  title: 'Insert question title',
   description: '',
   options: [
     { label: 'Option 1', value: 0 },
@@ -46,7 +46,7 @@ const generateDefaultRadioField = (id: number): checker.Field => ({
 const generateDefaultCheckboxField = (id: number): checker.Field => ({
   id: `C${id}`,
   type: 'CHECKBOX',
-  title: 'Insert question description',
+  title: 'Insert question title',
   description: '',
   options: [
     { label: 'Option 1', value: 0 },

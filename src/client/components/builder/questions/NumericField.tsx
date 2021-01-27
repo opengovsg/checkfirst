@@ -7,16 +7,16 @@ import { useCheckerContext } from '../../../contexts'
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../../util/enums'
 
 const InputComponent: QuestionFieldComponent = ({ field, index }) => {
-  const { title } = field
+  const { title, description } = field
   const styles = useStyles()
   const { dispatch } = useCheckerContext()
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target
+    const { name, value } = e.target
     dispatch({
       type: BuilderActionEnum.Update,
       payload: {
         currIndex: index,
-        element: { ...field, title: value },
+        element: { ...field, [name]: value },
         configArrName: ConfigArrayEnum.Fields,
       },
     })
@@ -31,8 +31,16 @@ const InputComponent: QuestionFieldComponent = ({ field, index }) => {
         <Input
           type="text"
           placeholder="Question"
+          name="title"
           onChange={handleChange}
           value={title}
+        />
+        <Input
+          type="text"
+          name="description"
+          placeholder="Description"
+          onChange={handleChange}
+          value={description}
         />
         <Input
           type="text"
@@ -46,13 +54,16 @@ const InputComponent: QuestionFieldComponent = ({ field, index }) => {
 }
 
 const PreviewComponent: QuestionFieldComponent = ({ field }) => {
-  const { title } = field
+  const { title, description } = field
   const styles = useStyles()
   return (
     <VStack align="stretch" w="50%">
       <HStack>
         <BiHash fontSize="20px" />
         <Text>{title}</Text>
+      </HStack>
+      <HStack>
+        <Text>{description}</Text>
       </HStack>
       <Input
         type="text"
