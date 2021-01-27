@@ -52,7 +52,7 @@ const InputComponent: TitleFieldComponent = ({ title, description }) => {
 const PreviewComponent: TitleFieldComponent = ({ title, description }) => {
   return (
     <VStack align="stretch" w="100%">
-      <Heading>{title}</Heading>
+      <Heading size="lg">{title}</Heading>
       <Text>{description}</Text>
     </VStack>
   )

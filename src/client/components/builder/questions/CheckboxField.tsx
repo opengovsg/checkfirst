@@ -104,22 +104,24 @@ const InputComponent: QuestionFieldComponent = ({ field, index }) => {
       <Box fontSize="20px" pt={2}>
         <BiListCheck />
       </Box>
-      <VStack align="stretch" w="50%" spacing={6}>
-        <Input
-          type="text"
-          name="title"
-          placeholder="Question"
-          onChange={updateTitleOrDescription}
-          value={title}
-        />
-        <Input
-          type="text"
-          name="description"
-          placeholder="Description"
-          onChange={updateTitleOrDescription}
-          value={description}
-        />
-        <VStack spacing={4} alignItems="left">
+      <VStack align="stretch" w="90%" spacing={6}>
+        <VStack align="stretch" spacing={2}>
+          <Input
+            type="text"
+            name="title"
+            placeholder="Question"
+            onChange={updateTitleOrDescription}
+            value={title}
+          />
+          <Input
+            type="text"
+            name="description"
+            placeholder="Description"
+            onChange={updateTitleOrDescription}
+            value={description}
+          />
+        </VStack>
+        <VStack spacing={4} alignItems="left" w="50%">
           {field.options.map(renderOption)}
           <HStack h={10}>
             <Checkbox isChecked={false} />
@@ -138,14 +140,14 @@ const InputComponent: QuestionFieldComponent = ({ field, index }) => {
 const PreviewComponent: QuestionFieldComponent = ({ field }) => {
   const { title, description, options } = field
   return (
-    <VStack align="stretch" w="50%" spacing={4}>
-      <HStack>
-        <BiListCheck fontSize="20px" />
-        <Text>{title}</Text>
-      </HStack>
-      <HStack>
-        <Text>{description}</Text>
-      </HStack>
+    <VStack align="stretch" w="100%" spacing={6}>
+      <VStack align="stretch">
+        <HStack>
+          <BiListCheck fontSize="20px" />
+          <Text>{title}</Text>
+        </HStack>
+        {description && <Text color="#718096">{description}</Text>}
+      </VStack>
       <CheckboxGroup>
         <VStack alignItems="left" spacing={2}>
           {options.map(({ value, label }, i) => (
