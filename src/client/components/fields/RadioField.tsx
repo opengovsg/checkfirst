@@ -13,7 +13,7 @@ import {
 
 import { Field } from '../../../types/checker'
 
-export const RadioField: FC<Field> = ({ id, description, help, options }) => {
+export const RadioField: FC<Field> = ({ id, title, description, options }) => {
   const styles = useStyles()
   const { control } = useFormContext()
 
@@ -26,9 +26,9 @@ export const RadioField: FC<Field> = ({ id, description, help, options }) => {
       render={({ ref, value, onChange }, { invalid }) => (
         <FormControl isInvalid={invalid}>
           <FormLabel sx={styles.label} htmlFor={id}>
-            {description}
+            {title}
           </FormLabel>
-          {help && <FormHelperText mb={4}>{help}</FormHelperText>}
+          {description && <FormHelperText mb={4}>{description}</FormHelperText>}
           <RadioGroup name={id} value={value} onChange={onChange}>
             <VStack align="stretch" spacing={4}>
               {options.map(

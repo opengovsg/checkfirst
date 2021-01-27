@@ -18,7 +18,7 @@ import { createBuilderField, QuestionFieldComponent } from '../BuilderField'
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../../util/enums'
 
 const InputComponent: QuestionFieldComponent = ({ field, index }) => {
-  const { description } = field
+  const { title } = field
   const { dispatch } = useCheckerContext()
 
   const updateQuestion = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,7 +27,7 @@ const InputComponent: QuestionFieldComponent = ({ field, index }) => {
       type: BuilderActionEnum.Update,
       payload: {
         currIndex: index,
-        element: { ...field, description: value },
+        element: { ...field, title: value },
         configArrName: ConfigArrayEnum.Fields,
       },
     })
@@ -109,7 +109,7 @@ const InputComponent: QuestionFieldComponent = ({ field, index }) => {
           type="text"
           placeholder="Question"
           onChange={updateQuestion}
-          value={description}
+          value={title}
         />
         <VStack spacing={4} alignItems="left">
           {field.options.map(renderOption)}
@@ -128,12 +128,12 @@ const InputComponent: QuestionFieldComponent = ({ field, index }) => {
 }
 
 const PreviewComponent: QuestionFieldComponent = ({ field }) => {
-  const { description, options } = field
+  const { title, options } = field
   return (
     <VStack align="stretch" w="50%" spacing={4}>
       <HStack>
         <BiListUl fontSize="20px" />
-        <Text>{description}</Text>
+        <Text>{title}</Text>
       </HStack>
       <RadioGroup>
         <VStack alignItems="left" spacing={2}>
