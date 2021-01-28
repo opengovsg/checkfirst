@@ -71,7 +71,7 @@ export const QuestionsTab: FC = () => {
       highestIndex = Math.max(highestIndex, fieldIndex)
     })
     setNextUniqueId(highestIndex + 1)
-  }, [])
+  }, [config])
 
   const toolbarOptions = [
     {
@@ -181,6 +181,8 @@ export const QuestionsTab: FC = () => {
       onActive,
       onSelect,
       setActiveIndex,
+      nextUniqueId,
+      setNextUniqueId,
     }
 
     switch (field.type) {
@@ -204,6 +206,8 @@ export const QuestionsTab: FC = () => {
         onActive={onActive}
         index={TITLE_FIELD_INDEX}
         setActiveIndex={setActiveIndex}
+        nextUniqueId={nextUniqueId}
+        setNextUniqueId={setNextUniqueId}
       />
       {fields.map(renderField)}
     </VStack>
