@@ -25,19 +25,24 @@ export class CheckerService {
     checker,
     user
   ) => {
+    const isSqliteFile =
+      this.sequelize.getDialect() === 'sqlite' &&
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      ((this.sequelize as unknown) as Record<string, unknown>).options.storage
     const transaction = await this.sequelize.transaction()
+    const options = isSqliteFile ? {} : { transaction }
     try {
-      const existingChecker = await this.CheckerModel.findByPk(checker.id, {
-        transaction,
-      })
+      const existingChecker = await this.CheckerModel.findByPk(
+        checker.id,
+        options
+      )
       if (!existingChecker) {
         const userInstance = await this.UserModel.findByPk(user.id)
         if (!userInstance) {
           throw new Error(`User ${user.id} [${user.email}] not found`)
         }
-        const checkerInstance = await this.CheckerModel.create(checker, {
-          transaction,
-        })
+        const checkerInstance = await this.CheckerModel.create(checker, options)
         // We definitely know that userInstance can add associations
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await (userInstance as any).addChecker(checkerInstance)

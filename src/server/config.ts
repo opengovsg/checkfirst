@@ -44,11 +44,17 @@ const config = convict({
     doc: 'The maximum age for a cookie, expressed in ms',
     env: 'COOKIE_MAX_AGE',
     format: 'int',
-    default: 1800000, // 30 minutes
+    default: 14400000, // 4 hours
   },
   // TODO - change the secrets below so that the defaults have
   // production-appropriate defaults, or no defaults at all, per
   // guidelines for using convict
+  sqlitePath: {
+    doc: 'The path of the sqlite data file, or blank if in-memory',
+    env: 'SQLITE_PATH',
+    format: '*',
+    default: '/tmp/checkfirst.db',
+  },
   otpSecret: {
     doc: 'A secret string used to generate TOTPs for users',
     env: 'OTP_SECRET',
