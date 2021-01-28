@@ -81,7 +81,14 @@ export const LoginForm: FC<LoginFormProps> = ({ email, onLogin }) => {
       <VStack spacing={6} align="stretch">
         <FormControl id="email" isInvalid={hasError()}>
           <FormLabel>One time password</FormLabel>
-          <Input type="text" name="token" ref={register({ required: true })} />
+          <Input
+            type="text"
+            inputMode="numeric"
+            pattern="\d{6}"
+            name="token"
+            autoComplete="one-time-code"
+            ref={register({ required: true })}
+          />
           {hasError() ? (
             <FormErrorMessage>{getErrorMessage()}</FormErrorMessage>
           ) : (
