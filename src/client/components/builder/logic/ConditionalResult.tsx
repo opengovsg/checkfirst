@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { math } from '../../../core/evaluator'
+import { isValidExpression, math } from '../../../core/evaluator'
 import update from 'immutability-helper'
 import { BiGitBranch, BiPlusCircle, BiTrash } from 'react-icons/bi'
 import {
@@ -20,6 +20,7 @@ import {
 import { useCheckerContext } from '../../../contexts'
 import { createBuilderField, OperationFieldComponent } from '../BuilderField'
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../../util/enums'
+import { ExpressionInput } from './ExpressionInput'
 
 interface Condition {
   type: 'AND' | 'OR'
@@ -38,15 +39,6 @@ const EMPTY_STATE: IfelseState = {
   conditions: [],
   elseExpr: '',
   thenExpr: '',
-}
-
-const isValidExpression = (expression: string): boolean => {
-  try {
-    math.parse!(expression)
-    return true
-  } catch (err) {
-    return false
-  }
 }
 
 const fromExpression = (expression: string): IfelseState => {
@@ -100,6 +92,7 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
 
   useEffect(() => {
     const updatedExpr = toExpression(ifelseState)
+    // TODO: Check args length is 4
     if (
       operation.expression !== updatedExpr &&
       isValidExpression(updatedExpr)
@@ -127,8 +120,7 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
     })
   }
 
-  const handleExprChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
+  const handleExprChange = (name: string, value: string) => {
     setIfelseState((s) =>
       update(s, {
         [name]: { $set: value },
@@ -184,12 +176,12 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
           <Box w="100px">
             <Button variant="ghost">IF</Button>
           </Box>
-          <Input
+          <ExpressionInput
             bg="#F4F6F9"
             type="text"
             name="ifExpr"
             fontFamily="mono"
-            onChange={handleExprChange}
+            onChange={(expr) => handleExprChange('ifExpr', expr)}
             value={ifelseState.ifExpr}
           />
           <HStack>
@@ -219,13 +211,11 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
                 </MenuItem>
               </MenuList>
             </Menu>
-            <Input
+            <ExpressionInput
               bg="#F4F6F9"
               type="text"
               fontFamily="mono"
-              onChange={({ target: { value } }) =>
-                updateCondition(i, { expression: value })
-              }
+              onChange={(expression) => updateCondition(i, { expression })}
               value={cond.expression}
             />
             <HStack>
@@ -255,12 +245,12 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
               THEN
             </Button>
           </Box>
-          <Input
+          <ExpressionInput
             bg="#F4F6F9"
             type="text"
             name="thenExpr"
             fontFamily="mono"
-            onChange={handleExprChange}
+            onChange={(expr) => handleExprChange('thenExpr', expr)}
             value={ifelseState.thenExpr}
           />
         </HStack>
@@ -270,12 +260,12 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
               ELSE
             </Button>
           </Box>
-          <Input
+          <ExpressionInput
             bg="#F4F6F9"
             type="text"
             name="elseExpr"
             fontFamily="mono"
-            onChange={handleExprChange}
+            onChange={(expr) => handleExprChange('elseExpr', expr)}
             value={ifelseState.elseExpr}
           />
         </HStack>

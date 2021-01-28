@@ -170,3 +170,15 @@ export const evaluate = (
 
   return variables
 }
+
+/**
+ * Evaluate if expression is a valid mathjs expressionon
+ */
+export const isValidExpression = (expression: string): boolean => {
+  try {
+    math.parse!(expression)
+    return true
+  } catch (err) {
+    return false
+  }
+}

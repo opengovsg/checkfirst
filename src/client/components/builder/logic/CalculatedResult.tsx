@@ -5,6 +5,7 @@ import { VStack, HStack, Box, Text, Input } from '@chakra-ui/react'
 import { useCheckerContext } from '../../../contexts'
 import { createBuilderField, OperationFieldComponent } from '../BuilderField'
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../../util/enums'
+import { ExpressionInput } from './ExpressionInput'
 
 const InputComponent: OperationFieldComponent = ({ operation, index }) => {
   const { title, expression } = operation
@@ -12,6 +13,17 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
+    dispatch({
+      type: BuilderActionEnum.Update,
+      payload: {
+        currIndex: index,
+        element: { ...operation, [name]: value },
+        configArrName: ConfigArrayEnum.Operations,
+      },
+    })
+  }
+
+  const handleExpressionChange = (name: string, value: string) => {
     dispatch({
       type: BuilderActionEnum.Update,
       payload: {
@@ -35,14 +47,16 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
           onChange={handleChange}
           value={title}
         />
-        <Input
+        <ExpressionInput
           name="expression"
           type="text"
           placeholder="Enter expression"
           bg="#F4F6F9"
           fontFamily="mono"
           value={expression}
-          onChange={handleChange}
+          onChange={(expression) =>
+            handleExpressionChange('expression', expression)
+          }
         />
       </VStack>
     </HStack>
