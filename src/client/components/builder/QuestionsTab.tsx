@@ -71,7 +71,7 @@ export const QuestionsTab: FC = () => {
       highestIndex = Math.max(highestIndex, fieldIndex)
     })
     setNextUniqueId(highestIndex + 1)
-  }, [])
+  }, [config])
 
   const toolbarOptions = [
     {
