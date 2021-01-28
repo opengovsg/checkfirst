@@ -144,7 +144,7 @@ export const CheckerProvider: FC = ({ children }) => {
       type: BuilderActionEnum.LoadConfig,
       payload: { loadedState },
     })
-    setLastSavedConfig(loadedState)
+    setLastSavedConfig(JSON.parse(JSON.stringify(loadedState)))
   }
 
   // Initial query for checker data
