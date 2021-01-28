@@ -57,18 +57,28 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
     )
   }
 
-  // An input variable is a numeric field if its key name starts with N
-  const isNumericField = (key: string) => {
-    return key[0] === 'N'
-  }
-
   const onSubmit = (inputs: Record<string, string | number>) => {
     // Set all numeric inputs to type Number
     const parsedInputs: Record<string, string | number> = {}
-    Object.keys(inputs).forEach((key: string) => {
-      parsedInputs[key] = isNumericField(key)
-        ? Number(inputs[key])
-        : inputs[key]
+
+    fields.forEach((field) => {
+      const { id, type, options } = field
+      if (!inputs[id]) return
+
+      switch (type) {
+        case 'NUMERIC': {
+          return (parsedInputs[id] = Number(inputs[id]))
+        }
+        case 'RADIO': {
+          return (parsedInputs[id] = options[Number(inputs[id])].label)
+        }
+        case 'CHECKBOX': {
+          const checkboxValues = Object.values(inputs[id]).map(
+            (optionIndex) => options[optionIndex].label
+          )
+          return (parsedInputs[id] = JSON.stringify(checkboxValues))
+        }
+      }
     })
 
     if (!isCheckerComplete()) {
