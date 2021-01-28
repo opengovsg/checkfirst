@@ -53,9 +53,11 @@ interface BuilderFieldProps {
   index: number
   active?: boolean
   data: BuilderFieldData
+  nextUniqueId: number
   onSelect: ({ index }: { index: number }) => void
   onActive: ({ top }: { top: number }) => void
   setActiveIndex: (index: number) => void
+  setNextUniqueId: (index: number) => void
 }
 
 export const createBuilderField = (
@@ -68,6 +70,8 @@ export const createBuilderField = (
   onSelect,
   onActive,
   setActiveIndex,
+  nextUniqueId,
+  setNextUniqueId,
   ...props
 }) => {
   const [ref, { top }] = usePosition()
@@ -111,24 +115,35 @@ export const createBuilderField = (
 
   const handleDuplicate = () => {
     if (isFieldData(data)) {
+      const updatedData = {
+        ...data,
+        id: `${data.id[0]}${nextUniqueId}`,
+      }
       dispatch({
         type: BuilderActionEnum.Add,
         payload: {
-          element: data,
+          element: updatedData,
           configArrName: ConfigArrayEnum.Fields,
           newIndex: index + 1,
         },
       })
       setActiveIndex(index + 1)
+      setNextUniqueId(nextUniqueId + 1)
     } else if (isOperationData(data)) {
+      const updatedData = {
+        ...data,
+        id: `${data.id[0]}${nextUniqueId}`,
+      }
       dispatch({
         type: BuilderActionEnum.Add,
         payload: {
-          element: data,
+          element: updatedData,
           configArrName: ConfigArrayEnum.Operations,
           newIndex: index + 1,
         },
       })
+      setActiveIndex(index + 1)
+      setNextUniqueId(nextUniqueId + 1)
     }
   }
 

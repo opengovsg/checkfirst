@@ -148,6 +148,8 @@ export const LogicTab: FC = () => {
       onActive,
       onSelect,
       setActiveIndex,
+      nextUniqueId,
+      setNextUniqueId,
     }
 
     switch (op.type) {
