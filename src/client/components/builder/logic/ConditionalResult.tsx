@@ -51,21 +51,21 @@ const fromExpression = (expression: string): IfelseState => {
     const parts = conditionExpr.replace(/\b(and|or)\b/g, '#$1').split('#')
 
     const conditions = parts.slice(1).map((p) => {
-      const partMatch = p.match(/\b(and|or)\b\s\((.*?)\)/)
+      const partMatch = p.match(/\b(and|or)\b\s?\((.*?)\)/)
       if (!partMatch) throw new Error('Invalid expression')
 
       const { 1: boolOperator, 2: subExpr } = partMatch
       return {
         type: boolOperator.toUpperCase(),
-        expression: subExpr,
+        expression: subExpr.trim(),
       } as Condition
     })
 
     return {
-      ifExpr: parts[0],
+      ifExpr: parts[0].trim(),
       conditions,
-      elseExpr,
-      thenExpr,
+      elseExpr: elseExpr.trim(),
+      thenExpr: thenExpr.trim(),
     }
   }
 
