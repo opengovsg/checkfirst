@@ -6,6 +6,7 @@ provider:
   runtime: nodejs12.x
   stage: ${env:NODE_ENV}
   region: ap-southeast-1
+  memorySize: 256
   apiGateway:
     shouldStartNameWithService: true
   environment:
