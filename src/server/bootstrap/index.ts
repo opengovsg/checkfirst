@@ -62,12 +62,13 @@ export async function bootstrap(): Promise<Express> {
       totp,
       mailer,
       User,
+      logger,
     }),
   })
 
   const SequelizeStore = SequelizeStoreFactory(session.Store)
 
-  const isProduction = config.get('nodeEnv') === 'production'
+  const secure = ['production', 'staging'].includes(config.get('nodeEnv'))
 
   const sessionMiddleware = session({
     store: new SequelizeStore({
@@ -79,7 +80,7 @@ export async function bootstrap(): Promise<Express> {
     cookie: {
       httpOnly: true,
       sameSite: 'strict',
-      secure: isProduction,
+      secure,
       maxAge: config.get('cookieMaxAge'),
     },
     secret: config.get('sessionSecret'),
@@ -88,7 +89,7 @@ export async function bootstrap(): Promise<Express> {
 
   const app = express()
 
-  if (isProduction) {
+  if (secure) {
     app.set('trust proxy', 1)
   }
 
