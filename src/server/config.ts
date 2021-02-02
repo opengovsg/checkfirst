@@ -74,8 +74,8 @@ const config = convict({
     default: '',
   },
   smtpUrl: {
-    doc: 'The SMTP server URL to connect to, if NODE_ENV is not development',
-    env: 'SMTP_URL',
+    doc: 'The AWS region for SES, if NODE_ENV is not development',
+    env: 'AWS_REGION',
     format: '*',
     default: '',
   },

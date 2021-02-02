@@ -1,17 +1,15 @@
 import nodemailer, { SendMailOptions, Transporter } from 'nodemailer'
+import { SES } from 'aws-sdk'
 
 import config from '../config'
 
 import logger from './logger'
 
-const smtpUrl = config.get('smtpUrl')
+const region = config.get('awsRegion')
 
-export const mailer: Pick<Transporter, 'sendMail'> = smtpUrl
+export const mailer: Pick<Transporter, 'sendMail'> = region
   ? nodemailer.createTransport({
-      url: smtpUrl,
-      pool: true,
-      maxMessages: 100,
-      maxConnections: 20,
+      SES: new SES({ region }),
     })
   : {
       sendMail: (options: SendMailOptions) => {
