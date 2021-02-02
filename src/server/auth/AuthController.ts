@@ -25,6 +25,7 @@ export class AuthController {
       await this.service.sendOTP(email, ip(req))
       res.json({ message: 'OTP sent' })
     } catch (error) {
+      this.logger?.error(error)
       res.status(400).json({ message: error.message })
     }
   }
@@ -44,6 +45,7 @@ export class AuthController {
         res.status(401).json({ message: 'Incorrect OTP given' })
       }
     } catch (error) {
+      this.logger?.error(error)
       res.status(400).json({ message: error.message })
     }
   }

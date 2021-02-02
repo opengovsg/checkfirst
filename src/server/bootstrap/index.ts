@@ -28,7 +28,7 @@ morgan.token(
 )
 
 const MORGAN_LOG_FORMAT =
-  ':client-ip - [:date[clf]] ":method :url HTTP/:http-version" ' +
+  ':client-ip - [:date[clf]] ":method :url HTTP/:http-version" :status ' +
   '":userId" :res[content-length] ":referrer" ":user-agent" :response-time ms'
 
 const totp = totpFactory.clone({ step: 30, window: [1, 0] })
