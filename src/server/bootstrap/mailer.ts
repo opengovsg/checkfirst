@@ -14,7 +14,6 @@ export const mailer: Pick<Transporter, 'sendMail'> = region
         httpOptions: {
           connectTimeout: 20000,
         },
-        logger: console,
       }),
     })
   : {
