@@ -1,0 +1,48 @@
+service: checkfirst
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: ${env:NODE_ENV}
+  region: ap-southeast-1
+  apiGateway:
+    shouldStartNameWithService: true
+  environment:
+    NODE_ENV: ${env:NODE_ENV}
+  vpc:
+    subnetIds:
+      - ${env:VPC_SUBNET}
+    securityGroupIds:
+      - ${env:VPC_SECURITY_GROUP}
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - 'ses:SendRawEmail'
+      Resource:
+        '*'
+
+functions:
+  api:
+    handler: build/server/serverless.handler
+    timeout: 30
+    environment:
+      DATABASE_URL: ${env:DATABASE_URL}
+      SESSION_SECRET: ${env:SESSION_SECRET}
+      OTP_SECRET: ${env:OTP_SECRET}
+    events:
+      - http:
+          path: api/v1/{proxy+}
+          method: any
+  static:
+    handler: build/server/serverless.handler
+    timeout: 30
+    environment:
+      DATABASE_URL: ${env:DATABASE_URL}
+    events:
+      - http:
+          path: ""
+          method: get
+      - http:
+          path: "{proxy+}"
+          method: get
