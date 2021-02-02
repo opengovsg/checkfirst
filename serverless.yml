@@ -45,5 +45,35 @@ functions:
           path: ""
           method: get
       - http:
-          path: "{proxy+}"
+          path: bundle.js
+          method: get
+      - http:
+          path: bundle.js.map
+          method: get
+      - http:
+          path: bundle.js.LICENSE.txt
+          method: get
+      - http:
+          path: logo.svg
+          method: get
+      - http:
+          path: robots.txt
+          method: get
+      - http:
+          path: debug
+          method: get
+      - http:
+          path: login
+          method: get
+      - http:
+          path: dashboard
+          method: get
+      - http:
+          path: builder/{proxy+}
+          method: get
+      - http:
+          path: c/{proxy+}
+          method: get
+      - http:
+          path: assets/{proxy+}
           method: get
