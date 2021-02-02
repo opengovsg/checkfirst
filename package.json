@@ -79,7 +79,7 @@
     }
   },
   "dependencies": {
-    "@chakra-ui/react": "^1.1.6",
+    "@chakra-ui/react": "^1.2.1",
     "@emotion/react": "^11.1.4",
     "@emotion/styled": "^11.0.0",
     "@types/nodemailer": "^6.4.0",
