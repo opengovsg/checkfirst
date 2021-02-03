@@ -1,0 +1,79 @@
+service: checkfirst
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: ${env:NODE_ENV}
+  region: ap-southeast-1
+  memorySize: 256
+  apiGateway:
+    shouldStartNameWithService: true
+  environment:
+    NODE_ENV: ${env:NODE_ENV}
+  vpc:
+    subnetIds:
+      - ${env:VPC_SUBNET}
+    securityGroupIds:
+      - ${env:VPC_SECURITY_GROUP}
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - 'ses:SendRawEmail'
+      Resource:
+        '*'
+
+functions:
+  api:
+    handler: build/server/serverless.handler
+    timeout: 30
+    environment:
+      DATABASE_URL: ${env:DATABASE_URL}
+      SESSION_SECRET: ${env:SESSION_SECRET}
+      OTP_SECRET: ${env:OTP_SECRET}
+    events:
+      - http:
+          path: api/v1/{proxy+}
+          method: any
+  static:
+    handler: build/server/serverless.handler
+    timeout: 30
+    environment:
+      DATABASE_URL: ${env:DATABASE_URL}
+    events:
+      - http:
+          path: ""
+          method: get
+      - http:
+          path: bundle.js
+          method: get
+      - http:
+          path: bundle.js.map
+          method: get
+      - http:
+          path: bundle.js.LICENSE.txt
+          method: get
+      - http:
+          path: logo.svg
+          method: get
+      - http:
+          path: robots.txt
+          method: get
+      - http:
+          path: debug
+          method: get
+      - http:
+          path: login
+          method: get
+      - http:
+          path: dashboard
+          method: get
+      - http:
+          path: builder/{proxy+}
+          method: get
+      - http:
+          path: c/{proxy+}
+          method: get
+      - http:
+          path: assets/{proxy+}
+          method: get

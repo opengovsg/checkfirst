@@ -9,7 +9,12 @@ const region = config.get('awsRegion')
 
 export const mailer: Pick<Transporter, 'sendMail'> = region
   ? nodemailer.createTransport({
-      SES: new SES({ region }),
+      SES: new SES({
+        region,
+        httpOptions: {
+          connectTimeout: 20000,
+        },
+      }),
     })
   : {
       sendMail: (options: SendMailOptions) => {

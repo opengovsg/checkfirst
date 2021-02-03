@@ -28,7 +28,7 @@ morgan.token(
 )
 
 const MORGAN_LOG_FORMAT =
-  ':client-ip - [:date[clf]] ":method :url HTTP/:http-version" ' +
+  ':client-ip - [:date[clf]] ":method :url HTTP/:http-version" :status ' +
   '":userId" :res[content-length] ":referrer" ":user-agent" :response-time ms'
 
 const totp = totpFactory.clone({ step: 30, window: [1, 0] })
@@ -62,12 +62,13 @@ export async function bootstrap(): Promise<Express> {
       totp,
       mailer,
       User,
+      logger,
     }),
   })
 
   const SequelizeStore = SequelizeStoreFactory(session.Store)
 
-  const isProduction = config.get('nodeEnv') === 'production'
+  const secure = ['production', 'staging'].includes(config.get('nodeEnv'))
 
   const sessionMiddleware = session({
     store: new SequelizeStore({
@@ -79,7 +80,7 @@ export async function bootstrap(): Promise<Express> {
     cookie: {
       httpOnly: true,
       sameSite: 'strict',
-      secure: isProduction,
+      secure,
       maxAge: config.get('cookieMaxAge'),
     },
     secret: config.get('sessionSecret'),
@@ -88,7 +89,7 @@ export async function bootstrap(): Promise<Express> {
 
   const app = express()
 
-  if (isProduction) {
+  if (secure) {
     app.set('trust proxy', 1)
   }
 

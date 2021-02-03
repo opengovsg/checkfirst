@@ -2,6 +2,7 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 const outputDirectory = 'build/client'
 const srcDirectory = path.join(__dirname, 'src/client')
@@ -73,6 +74,9 @@ module.exports = () => {
           'og:type': 'website',
           'og:description': "Don't Know? CheckFirst.",
         },
+      }),
+      new CopyWebpackPlugin({
+        patterns: [{ from: './src/client/assets', to: 'assets' }],
       }),
     ],
   }

@@ -45,7 +45,7 @@ export class CheckerService {
         const checkerInstance = await this.CheckerModel.create(checker, options)
         // We definitely know that userInstance can add associations
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await (userInstance as any).addChecker(checkerInstance)
+        await (userInstance as any).addChecker(checkerInstance, options)
       }
       await transaction.commit()
       return existingChecker === null
