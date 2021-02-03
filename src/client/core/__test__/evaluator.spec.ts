@@ -72,6 +72,25 @@ describe('Operation', () => {
   })
 })
 
+describe('countif', () => {
+  it('should support [string[], string] inputs', () => {
+    const expr = 'countif([a, b], "hi")'
+    const output = evaluateOperation(expr, { a: 'hi', b: 'hello' })
+    expect(output).toBe(1)
+  })
+
+  it('should support [number[], number] inputs', () => {
+    const expr = 'countif([a, b], 7)'
+    const output = evaluateOperation(expr, { a: 7, b: 8 })
+    expect(output).toBe(1)
+  })
+
+  it('should not accept a non-array inputs as the first argument', () => {
+    const expr = 'countif(a, 7)'
+    expect(() => evaluateOperation(expr, { a: 7 })).toThrowError()
+  })
+})
+
 describe('variableReducer', () => {
   it('should apply evaluateOperation and accumulate variables', () => {
     const op: checker.Operation = {
