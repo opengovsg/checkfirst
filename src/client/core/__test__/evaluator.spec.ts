@@ -70,6 +70,28 @@ describe('Operation', () => {
       expect(() => evaluateOperation(expr, {})).toThrowError()
     })
   })
+
+  describe('blacklisted functions', () => {
+    it('should prevent evaluate from being called inline', () => {
+      const expr = 'evaluate(1 + 1)'
+      expect(() => evaluateOperation(expr, {})).toThrowError(/\b(evaluate)\b/)
+    })
+
+    it('should prevent createUnit from being called inline', () => {
+      const expr = 'createUnit("x")'
+      expect(() => evaluateOperation(expr, {})).toThrowError(/\b(createUnit)\b/)
+    })
+
+    it('should prevent simplify from being called inline', () => {
+      const expr = 'simplify(1 + 1)'
+      expect(() => evaluateOperation(expr, {})).toThrowError(/\b(simplify)\b/)
+    })
+
+    it('should prevent derivative from being called inline', () => {
+      const expr = 'derivative("x^2", "x")'
+      expect(() => evaluateOperation(expr, {})).toThrowError(/\b(derivative)\b/)
+    })
+  })
 })
 
 describe('variableReducer', () => {
