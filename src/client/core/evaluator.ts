@@ -42,6 +42,21 @@ const factories = {
       ) => (condition ? a : b),
     })
   ),
+  // Custom count-if function
+  createCountIf: factory('countif', [], () =>
+    typed('countif', {
+      'Array, string | number': (
+        elemArray: string[] | number[],
+        comparedElem: string | number
+      ) => {
+        let count = 0
+        elemArray.forEach((elem: string | number) => {
+          if (elem === comparedElem) count++
+        })
+        return count
+      },
+    })
+  ),
 }
 export const math = create(factories, config)
 
