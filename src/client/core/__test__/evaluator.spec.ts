@@ -91,6 +91,11 @@ describe('Operation', () => {
       const expr = 'derivative("x^2", "x")'
       expect(() => evaluateOperation(expr, {})).toThrowError(/\b(derivative)\b/)
     })
+
+    it('should prevent parse from being called inline', () => {
+      const expr = 'parse(1 + 1)'
+      expect(() => evaluateOperation(expr, {})).toThrowError(/\b(parse)\b/)
+    })
   })
 })
 

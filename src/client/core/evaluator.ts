@@ -45,7 +45,14 @@ const factories = {
 }
 export const math = create(factories, config)
 
-const BLACKLIST = ['evaluate', 'createUnit', 'simplify', 'derivative']
+const BLACKLIST = [
+  'evaluate',
+  'createUnit',
+  'simplify',
+  'derivative',
+  'import',
+  'parse',
+]
 export const evaluateOperation = (
   expression: string,
   variables: Record<string, string | number>
