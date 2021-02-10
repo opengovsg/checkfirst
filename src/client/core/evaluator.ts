@@ -60,10 +60,27 @@ const factories = {
 }
 export const math = create(factories, config)
 
-export function evaluateOperation(
+const BLACKLIST = [
+  'evaluate',
+  'createUnit',
+  'simplify',
+  'derivative',
+  'import',
+  'parse',
+]
+export const evaluateOperation = (
   expression: string,
   variables: Record<string, string | number>
-): number {
+): number => {
+  const node = math.parse!(expression)
+  const blacklisted = node.filter(
+    (n) => n.isFunctionNode && n.name && BLACKLIST.includes(n.name)
+  )
+  if (blacklisted.length > 0) {
+    const functionNames = blacklisted.map((n) => n.name).join(', ')
+    throw new Error(`The following functions are not allowed: ${functionNames}`)
+  }
+
   return math.evaluate!(expression, variables)
 }
 
