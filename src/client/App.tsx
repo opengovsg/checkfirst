@@ -9,7 +9,7 @@ import {
 } from 'react-router-dom'
 
 import { theme } from './theme'
-import { PrivateRoute } from './components'
+import { PrivateRoute, Masthead } from './components'
 import { Checker, Landing, Debug, Login, Dashboard, FormBuilder } from './pages'
 import { AuthProvider, CheckerProvider } from './contexts'
 
@@ -22,6 +22,7 @@ const App: FC = () => {
     <ChakraProvider resetCSS theme={theme}>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
+          <Masthead isSticky />
           <Router>
             <Switch>
               <Route exact path="/c/:id" component={Checker} />
