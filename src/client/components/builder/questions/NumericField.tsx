@@ -10,8 +10,8 @@ const InputComponent: QuestionFieldComponent = ({ field, index }) => {
   const { title, description } = field
   const styles = useStyles()
   const { dispatch } = useCheckerContext()
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
+
+  const updateQuestion = (name: string, value: string) => {
     dispatch({
       type: BuilderActionEnum.Update,
       payload: {
@@ -20,6 +20,16 @@ const InputComponent: QuestionFieldComponent = ({ field, index }) => {
         configArrName: ConfigArrayEnum.Fields,
       },
     })
+  }
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    updateQuestion(name, value)
+  }
+
+  const handleBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    if (!value) updateQuestion(name, 'Insert question title')
   }
 
   return (
@@ -32,6 +42,7 @@ const InputComponent: QuestionFieldComponent = ({ field, index }) => {
           type="text"
           placeholder="Question"
           name="title"
+          onBlur={handleBlur}
           onChange={handleChange}
           value={title}
         />

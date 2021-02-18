@@ -21,8 +21,7 @@ const InputComponent: QuestionFieldComponent = ({ field, index }) => {
   const { title, description } = field
   const { dispatch } = useCheckerContext()
 
-  const updateTitleOrDescription = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
+  const updateTitleOrDescription = (name: string, value: string) => {
     dispatch({
       type: BuilderActionEnum.Update,
       payload: {
@@ -85,6 +84,10 @@ const InputComponent: QuestionFieldComponent = ({ field, index }) => {
         <Input
           type="text"
           value={option.label}
+          onBlur={(e) => {
+            const { value } = e.target
+            if (!value) updateOption(option, { label: `Option ${i + 1}` }, i)
+          }}
           onChange={(e) => {
             updateOption(option, { label: e.target.value }, i)
           }}
@@ -111,14 +114,22 @@ const InputComponent: QuestionFieldComponent = ({ field, index }) => {
             type="text"
             name="title"
             placeholder="Question"
-            onChange={updateTitleOrDescription}
+            onBlur={({ target: { name, value } }) => {
+              if (!value)
+                updateTitleOrDescription(name, 'Insert question title')
+            }}
+            onChange={({ target: { name, value } }) =>
+              updateTitleOrDescription(name, value)
+            }
             value={title}
           />
           <Input
             type="text"
             name="description"
             placeholder="Description"
-            onChange={updateTitleOrDescription}
+            onChange={({ target: { name, value } }) =>
+              updateTitleOrDescription(name, value)
+            }
             value={description}
           />
         </VStack>
