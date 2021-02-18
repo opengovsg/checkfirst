@@ -113,7 +113,7 @@
     "react-dom": "^17.0.1",
     "react-hook-form": "^6.15.1",
     "react-icons": "^4.2.0",
-    "react-query": "^3.6.0",
+    "react-query": "^3.9.8",
     "react-router-dom": "^5.2.0",
     "sequelize": "^6.5.0",
     "serverless-http": "^2.7.0",
