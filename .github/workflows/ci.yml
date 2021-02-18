@@ -102,7 +102,8 @@ jobs:
       - name: serverless deploy
         uses: opengovsg/serverless-github-action@v2.1.0
         with:
-          args: deploy --conceal
+          args: -c "serverless plugin install --name serverless-plugin-custom-binary && serverless deploy --conceal"
+          entrypoint: /bin/bash
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
