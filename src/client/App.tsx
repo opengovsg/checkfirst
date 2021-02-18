@@ -12,6 +12,7 @@ import { theme } from './theme'
 import { PrivateRoute } from './components'
 import { Checker, Landing, Debug, Login, Dashboard, FormBuilder } from './pages'
 import { AuthProvider, CheckerProvider } from './contexts'
+import Masthead from './components/Masthead'
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: false } },
@@ -22,6 +23,7 @@ const App: FC = () => {
     <ChakraProvider resetCSS theme={theme}>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
+          <Masthead />
           <Router>
             <Switch>
               <Route exact path="/c/:id" component={Checker} />
