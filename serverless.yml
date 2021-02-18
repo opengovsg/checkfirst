@@ -1,6 +1,14 @@
 service: checkfirst
 frameworkVersion: '2'
 
+plugins:
+  - serverless-plugin-custom-binary
+
+custom:
+  apiGateway:
+    binaryMediaTypes:
+      - '*/*'
+
 provider:
   name: aws
   runtime: nodejs12.x
@@ -77,3 +85,4 @@ functions:
       - http:
           path: assets/{proxy+}
           method: get
+          contentHandling: CONVERT_TO_BINARY
