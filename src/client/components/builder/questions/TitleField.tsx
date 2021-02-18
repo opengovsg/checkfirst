@@ -14,14 +14,22 @@ const enum SettingsName {
 const InputComponent: TitleFieldComponent = ({ title, description }) => {
   const { dispatch } = useCheckerContext()
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
+  const update = (name: string, value: string) => {
     const update = { settingsName: name as SettingsName, value }
-
     dispatch({
       type: BuilderActionEnum.UpdateSettings,
       payload: update,
     })
+  }
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    update(name, value)
+  }
+
+  const handleTitleBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    if (!value) update(name, 'Title')
   }
 
   return (
@@ -34,6 +42,7 @@ const InputComponent: TitleFieldComponent = ({ title, description }) => {
           type="text"
           name={SettingsName.title}
           placeholder="Title"
+          onBlur={handleTitleBlur}
           onChange={handleChange}
           value={title}
         />
