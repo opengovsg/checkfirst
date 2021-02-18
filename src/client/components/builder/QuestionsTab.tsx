@@ -37,10 +37,7 @@ const generateDefaultRadioField = (id: number): checker.Field => ({
   type: 'RADIO',
   title: 'Insert question title',
   description: '',
-  options: [
-    { label: 'Option 1', value: 0 },
-    { label: 'Option 2', value: 1 },
-  ],
+  options: [{ label: 'Option 1', value: 0 }],
 })
 
 const generateDefaultCheckboxField = (id: number): checker.Field => ({
@@ -48,10 +45,7 @@ const generateDefaultCheckboxField = (id: number): checker.Field => ({
   type: 'CHECKBOX',
   title: 'Insert question title',
   description: '',
-  options: [
-    { label: 'Option 1', value: 0 },
-    { label: 'Option 2', value: 1 },
-  ],
+  options: [{ label: 'Option 1', value: 0 }],
 })
 
 export const TITLE_FIELD_ID = 'TITLE'
