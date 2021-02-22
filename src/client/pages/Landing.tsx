@@ -11,6 +11,8 @@ import {
   Link,
   Image,
   Text,
+  Stack,
+  Container,
 } from '@chakra-ui/react'
 import { useHistory } from 'react-router-dom'
 
@@ -26,63 +28,63 @@ export const Landing: FC = () => {
   const login = () => history.push('/login')
   const LandingNavbar = () => (
     <Flex
-      pt="47px"
       h="80px"
-      direction="row"
-      bgColor="neutral.100"
-      px="10vw"
-      alignItems="center"
       w="100%"
+      pt="47px"
       zIndex={999}
+      direction="row"
+      justifyContent="space-between"
+      bgColor="neutral.100"
+      alignItems="center"
     >
       <Image htmlWidth="206px" htmlHeight="24px" src={Logo} />
-      <HStack h="100%" flex={1} justifyContent="center" />
-      <Link href="https://guide.checkfirst.gov.sg" mr="3vw" isExternal>
-        Guide
-      </Link>
-      <Button
-        onClick={login}
-        colorScheme="primary"
-        rightIcon={<BiLogInCircle />}
-      >
-        Sign In
-      </Button>
+      <Stack alignItems="center" direction="row">
+        <Link href="https://guide.checkfirst.gov.sg" mr="3vw" isExternal>
+          Guide
+        </Link>
+        <Button
+          onClick={login}
+          colorScheme="primary"
+          rightIcon={<BiLogInCircle />}
+        >
+          Sign In
+        </Button>
+      </Stack>
     </Flex>
   )
   const Footer = () => (
     <>
-      <HStack
-        my="auto"
+      <Stack
         h="128px"
         px="10vw"
         direction="row"
+        justifyContent="space-between"
         bgColor="primary.500"
         color="neutral.100"
       >
-        <Text fontSize="24px" fontWeight="600">
-          CheckFirst
-        </Text>
-        <Text ml="1vw !important" fontStyle="italic">
-          Don't Know? CheckFirst.
-        </Text>
-        <HStack h="100%" flex={1} justifyContent="center" />
-        <HStack flex={1} minWidth="460px">
-          <Link mx="auto" href="https://guide.checkfirst.gov.sg" isExternal>
+        <Stack alignItems="center" direction="row">
+          <Text fontSize="24px" fontWeight="600">
+            CheckFirst
+          </Text>
+          <Text fontStyle="italic">Don't Know? CheckFirst.</Text>
+        </Stack>
+        <Stack
+          alignItems="center"
+          direction="row"
+          minW="460px"
+          justifyContent="space-between"
+        >
+          <Link href="https://guide.checkfirst.gov.sg" isExternal>
             User Guide
           </Link>
-          <Text mx="auto">Privacy</Text>
-          <Text mx="auto">Terms of Use</Text>
-          <Link
-            mr="0"
-            href="https://www.tech.gov.sg/report_vulnerability"
-            isExternal
-          >
+          <Text>Privacy</Text>
+          <Text>Terms of Use</Text>
+          <Link href="https://www.tech.gov.sg/report_vulnerability" isExternal>
             Report Vulnerability
           </Link>
-        </HStack>
-      </HStack>
+        </Stack>
+      </Stack>
       <HStack
-        my="auto"
         h="128px"
         px="10vw"
         direction="row"
@@ -92,7 +94,9 @@ export const Landing: FC = () => {
       >
         <VStack justifyContent="left">
           <Text width="100%">Built by</Text>
-          <Image htmlWidth="160px" htmlHeight="47px" src={OGP} />
+          <Link href="https://open.gov.sg" isExternal>
+            <Image htmlWidth="160px" htmlHeight="47px" src={OGP} />
+          </Link>
         </VStack>
         <HStack h="100%" flex={1} justifyContent="center" />
         <VStack>
@@ -119,18 +123,20 @@ export const Landing: FC = () => {
   return auth.user ? (
     <Redirect to="/dashboard" />
   ) : (
-    <Flex direction="column" height="100vh">
-      <LandingNavbar />
-      <HStack bgColor="neutral.100" pb="200px">
-        <VStack pl="10vw" pt="20vh" alignItems="left">
-          <Box textStyle="hero">Don't Know?</Box>
-          <Box textStyle="hero">CheckFirst.</Box>
-          <Button mt="5vh !important" colorScheme="primary" width="120px">
-            Learn More
-          </Button>
-        </VStack>
-        <HStack h="100%" flex={1} justifyContent="center" />
-      </HStack>
+    <Flex direction="column" height="100vh" bgColor="neutral.100">
+      <Container maxW="80vw" bgColor="neutral.100">
+        <LandingNavbar />
+        <HStack bgColor="neutral.100" pb="200px">
+          <VStack pt="20vh" alignItems="left">
+            <Box textStyle="hero">Don't Know?</Box>
+            <Box textStyle="hero">CheckFirst.</Box>
+            <Button mt="5vh !important" colorScheme="primary" width="120px">
+              Learn More
+            </Button>
+          </VStack>
+          <HStack h="100%" flex={1} justifyContent="center" />
+        </HStack>
+      </Container>
       <Footer />
     </Flex>
   )
