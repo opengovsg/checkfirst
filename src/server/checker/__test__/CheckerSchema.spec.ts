@@ -3,8 +3,8 @@ import { CheckerSchema } from '..'
 
 describe('CheckerSchema', () => {
   const base = {
-    id: 'test-checker',
-    title: 'checker',
+    id: 'id',
+    title: 'title',
     fields: [],
     constants: [],
     displays: [],
