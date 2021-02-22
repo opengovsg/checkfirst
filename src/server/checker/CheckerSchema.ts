@@ -1,4 +1,4 @@
-import { Joi } from 'celebrate'
+import Joi from 'joi'
 
 const FieldOptionsSchema = Joi.object({
   label: Joi.string().required(),

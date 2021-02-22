@@ -1,4 +1,5 @@
 import request from 'supertest'
+import { omit } from 'lodash'
 import { CheckerController } from '..'
 import express, { NextFunction, Request, Response } from 'express'
 import bodyParser from 'body-parser'
@@ -11,6 +12,15 @@ describe('CheckerController', () => {
   ) => {
     Object.assign(req, { session })
     next()
+  }
+
+  const checker = {
+    id: 'id',
+    title: 'title',
+    fields: [],
+    constants: [],
+    displays: [],
+    operations: [],
   }
 
   const service = {
@@ -45,7 +55,6 @@ describe('CheckerController', () => {
     })
 
     it('allows authenticated creation', async () => {
-      const checker = { id: 'id', title: 'title' }
       service.create.mockResolvedValue(true)
       const response = await request(app).post('/c').send(checker).expect(200)
       expect(response.body).toStrictEqual(checker)
@@ -53,7 +62,6 @@ describe('CheckerController', () => {
     })
 
     it('rejects creation of duplicate id', async () => {
-      const checker = { id: 'id', title: 'title' }
       service.create.mockResolvedValue(false)
       const response = await request(app).post('/c').send(checker).expect(422)
       expect(response.body).toMatchObject({ message: expect.any(String) })
@@ -62,11 +70,20 @@ describe('CheckerController', () => {
 
     it('returns error on service exception', async () => {
       const message = 'An error message'
-      const checker = { id: 'id', title: 'title' }
       service.create.mockRejectedValue(new Error(message))
       const response = await request(app).post('/c').send(checker).expect(400)
       expect(response.body).toStrictEqual({ message })
       expect(service.create).toHaveBeenCalledWith(checker, user)
+    })
+
+    it('returns error when checker is invalid', async () => {
+      service.create.mockResolvedValue(true)
+      const invalid = omit(checker, 'title')
+      const response = await request(app).post('/c').send(invalid).expect(400)
+      expect(response.body).toMatchObject({
+        message: expect.stringMatching(/(required)/),
+      })
+      expect(service.create).not.toHaveBeenCalled()
     })
   })
 
@@ -90,7 +107,6 @@ describe('CheckerController', () => {
     })
 
     it('allows authenticated listing', async () => {
-      const checker = { id: 'id', title: 'title' }
       service.list.mockResolvedValue([checker])
       const response = await request(app).get('/c').expect(200)
       expect(response.body).toStrictEqual([checker])
@@ -123,7 +139,6 @@ describe('CheckerController', () => {
       app.use(sessionMiddleware({}))
       app.get('/c/:id', controller.get)
 
-      const checker = { id: 'id', title: 'title' }
       service.retrieve.mockResolvedValue(checker)
       const response = await request(app).get(`/c/${checker.id}`).expect(200)
       expect(response.body).toStrictEqual(checker)
@@ -131,7 +146,6 @@ describe('CheckerController', () => {
     })
 
     it('allows authenticated get', async () => {
-      const checker = { id: 'id', title: 'title' }
       service.retrieve.mockResolvedValue(checker)
       const response = await request(app).get(`/c/${checker.id}`).expect(200)
       expect(response.body).toStrictEqual(checker)
@@ -172,7 +186,6 @@ describe('CheckerController', () => {
       app.use(sessionMiddleware({}))
       app.put('/c/:id', controller.put)
 
-      const checker = { id: 'id', title: 'title' }
       service.update.mockResolvedValue(1)
 
       await request(app).put(`/c/${checker.id}`).send(checker).expect(401)
@@ -180,7 +193,6 @@ describe('CheckerController', () => {
     })
 
     it('accepts authenticated put', async () => {
-      const checker = { id: 'id', title: 'title' }
       service.update.mockResolvedValue(checker)
       const response = await request(app)
         .put(`/c/${checker.id}`)
@@ -191,14 +203,12 @@ describe('CheckerController', () => {
     })
 
     it('returns 404 on put Not Found', async () => {
-      const checker = { id: 'id', title: 'title' }
       service.update.mockResolvedValue(0)
       await request(app).put(`/c/${checker.id}`).send(checker).expect(404)
       expect(service.update).toHaveBeenCalledWith(checker.id, checker, user)
     })
 
     it('returns error on put exception', async () => {
-      const checker = { id: 'id', title: 'title' }
       const message = 'An error message'
       service.update.mockRejectedValue(new Error(message))
       const response = await request(app)
@@ -207,6 +217,19 @@ describe('CheckerController', () => {
         .expect(400)
       expect(response.body).toStrictEqual({ message })
       expect(service.update).toHaveBeenCalledWith(checker.id, checker, user)
+    })
+
+    it('returns error when checker is invalid', async () => {
+      service.create.mockResolvedValue(true)
+      const invalid = omit(checker, 'title')
+      const response = await request(app)
+        .put(`/c/${checker.id}`)
+        .send(invalid)
+        .expect(400)
+      expect(response.body).toMatchObject({
+        message: expect.stringMatching(/(required)/),
+      })
+      expect(service.create).not.toHaveBeenCalled()
     })
   })
 
@@ -227,7 +250,6 @@ describe('CheckerController', () => {
       app.use(sessionMiddleware({}))
       app.delete('/c/:id', controller.delete)
 
-      const checker = { id: 'id', title: 'title' }
       service.delete.mockResolvedValue(1)
 
       await request(app).delete(`/c/${checker.id}`).send(checker).expect(401)
@@ -235,7 +257,6 @@ describe('CheckerController', () => {
     })
 
     it('accepts authenticated delete', async () => {
-      const checker = { id: 'id', title: 'title' }
       service.delete.mockResolvedValue(checker)
       const response = await request(app)
         .delete(`/c/${checker.id}`)
@@ -246,14 +267,12 @@ describe('CheckerController', () => {
     })
 
     it('returns 404 on delete Not Found', async () => {
-      const checker = { id: 'id', title: 'title' }
       service.delete.mockResolvedValue(0)
       await request(app).delete(`/c/${checker.id}`).send(checker).expect(404)
       expect(service.delete).toHaveBeenCalledWith(checker.id, user)
     })
 
     it('returns error on delete exception', async () => {
-      const checker = { id: 'id', title: 'title' }
       const message = 'An error message'
       service.delete.mockRejectedValue(new Error(message))
       const response = await request(app)
