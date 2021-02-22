@@ -1,4 +1,13 @@
 export const textStyles = {
+  hero: {
+    color: 'primary.500',
+    fontFamily: 'ssp',
+    fontWeight: 600,
+    fontSize: '64px',
+    lineHeight: '72px',
+    letterSpacing: '-0.022em',
+    fontFeatureSettings: "'cv05' on",
+  },
   h1: {
     fontSize: '48px',
     fontWeight: 400,
