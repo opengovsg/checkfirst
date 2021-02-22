@@ -189,8 +189,16 @@ export const evaluate = (
   let variables = { ...inputs }
   const evalOrder = getEvaluationOrder(inputs, constants, operations)
 
-  variables = constants.reduce((vars, { id, value }) => {
-    vars[id] = value
+  variables = constants.reduce((vars, { id, table }) => {
+    // Convert table array to record/object
+    const tableObj = table.reduce((obj, { key, value }) => {
+      obj[key] = value
+      return obj
+    }, <Record<string, number>>{})
+
+    // Evaluate stringified object - the only way to
+    // obtain a non-escaped string of the object.
+    vars[id] = math.evaluate!(JSON.stringify(tableObj))
     return vars
   }, variables)
 

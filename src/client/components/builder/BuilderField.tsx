@@ -30,14 +30,22 @@ interface OperationFieldComponentProps {
 }
 export type OperationFieldComponent = FC<OperationFieldComponentProps>
 
+interface ConstantFieldComponentProps {
+  constant: checker.Constant
+  index: number
+}
+export type ConstantFieldComponent = FC<ConstantFieldComponentProps>
+
 type BuilderFieldComponent =
   | QuestionFieldComponent
   | TitleFieldComponent
   | OperationFieldComponent
+  | ConstantFieldComponent
 
 type BuilderFieldData =
   | checker.Field
   | checker.Operation
+  | checker.Constant
   | Pick<checker.Checker, 'title' | 'description'>
 
 const isFieldData = (data: BuilderFieldData): data is checker.Field => {
@@ -46,6 +54,10 @@ const isFieldData = (data: BuilderFieldData): data is checker.Field => {
 
 const isOperationData = (data: BuilderFieldData): data is checker.Operation => {
   return data && (data as checker.Operation).expression !== undefined
+}
+
+const isConstantData = (data: BuilderFieldData): data is checker.Constant => {
+  return data && (data as checker.Constant).table !== undefined
 }
 
 interface BuilderFieldProps {
@@ -95,6 +107,13 @@ export const createBuilderField = (
       return <Content {...props} field={data} index={index} />
     }
 
+    if (isConstantData(data)) {
+      const Content = (active
+        ? InputComponent
+        : PreviewComponent) as ConstantFieldComponent
+      return <Content {...props} constant={data} index={index} />
+    }
+
     if (isOperationData(data)) {
       const Content = (active
         ? InputComponent
@@ -111,6 +130,12 @@ export const createBuilderField = (
         {...(data as Pick<checker.Checker, 'title' | 'description'>)}
       />
     )
+  }
+
+  const getConfigArrName = (data: BuilderFieldData) => {
+    if (isConstantData(data)) return ConfigArrayEnum.Constants
+    if (isFieldData(data)) return ConfigArrayEnum.Fields
+    if (isOperationData(data)) return ConfigArrayEnum.Operations
   }
 
   const handleDuplicate = () => {
@@ -144,17 +169,33 @@ export const createBuilderField = (
       })
       setActiveIndex(index + 1)
       setNextUniqueId(nextUniqueId + 1)
+    } else if (isConstantData(data)) {
+      const updatedData = {
+        ...data,
+        id: `${data.id[0]}${nextUniqueId}`,
+      }
+      dispatch({
+        type: BuilderActionEnum.Add,
+        payload: {
+          element: updatedData,
+          configArrName: ConfigArrayEnum.Constants,
+          newIndex: index + 1,
+        },
+      })
+      setActiveIndex(index + 1)
+      setNextUniqueId(nextUniqueId + 1)
     }
   }
 
   const handleDelete = () => {
+    // adding the ! assert because only valid ConfigArrayEnum cards have the delete button
+    const configArrName: ConfigArrayEnum = getConfigArrName(data)!
+
     dispatch({
       type: BuilderActionEnum.Remove,
       payload: {
         currIndex: index,
-        configArrName: isFieldData(data)
-          ? ConfigArrayEnum.Fields
-          : ConfigArrayEnum.Operations,
+        configArrName,
       },
     })
     setActiveIndex(index - 1)
@@ -184,7 +225,9 @@ export const createBuilderField = (
         direction="column"
         onClick={handleSelect}
       >
-        {(isFieldData(data) || isOperationData(data)) && (
+        {(isFieldData(data) ||
+          isOperationData(data) ||
+          isConstantData(data)) && (
           <Button colorScheme="primary" sx={styles.badge}>
             {data.id}
           </Button>

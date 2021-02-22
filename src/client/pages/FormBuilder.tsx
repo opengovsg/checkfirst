@@ -8,6 +8,7 @@ import * as checker from '../../types/checker'
 import {
   Navbar,
   QuestionsTab,
+  ConstantsTab,
   LogicTab,
   PreviewTab,
 } from '../components/builder'
@@ -36,6 +37,7 @@ export const FormBuilder: FC = () => {
       <Container maxW="756px" px={0} mt="80px">
         <Switch>
           <Route exact path={`${path}/questions`} component={QuestionsTab} />
+          <Route exact path={`${path}/constants`} component={ConstantsTab} />
           <Route exact path={`${path}/logic`} component={LogicTab} />
           <Route exact path={`${path}/preview`} component={PreviewTab} />
           <Redirect to={`${path}/questions`} />

@@ -47,7 +47,13 @@ export interface Operation {
 
 export type OperationType = 'ARITHMETIC' | 'IFELSE' | 'SWITCH'
 
+export interface TableElem {
+  key: string
+  value: number
+}
+
 export interface Constant {
   id: string
-  value: string
+  title: string
+  table: TableElem[]
 }
