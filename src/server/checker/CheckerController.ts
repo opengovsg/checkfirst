@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import Joi from 'joi'
 import CheckerService from './CheckerService'
 import { CheckerSchema } from './CheckerSchema'
 
@@ -18,7 +19,11 @@ export class CheckerController {
       res.status(401).json({ message: 'User not signed in' })
     } else {
       try {
-        const { error } = CheckerSchema.validate(checker)
+        const { error } = CheckerSchema.keys({
+          createdAt: Joi.string(),
+          updatedAt: Joi.string(),
+          users: Joi.array(),
+        }).validate(checker)
         if (error) throw error
 
         const created = await this.service.create(checker, user)
@@ -70,7 +75,11 @@ export class CheckerController {
     } else {
       try {
         const checker = req.body
-        const { error } = CheckerSchema.validate(checker)
+        const { error } = CheckerSchema.keys({
+          createdAt: Joi.string(),
+          updatedAt: Joi.string(),
+          users: Joi.array(),
+        }).validate(checker)
         if (error) throw error
 
         const count = await this.service.update(id, checker, user)
