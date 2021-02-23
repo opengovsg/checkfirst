@@ -63,9 +63,9 @@ const InputComponent: ConstantFieldComponent = ({ constant, index }) => {
 
   const handleUpdateTableRow = (
     updatedTableElem: checker.TableElem,
-    index: number
+    tableRowIndex: number
   ) => {
-    constant.table.splice(index, 1, updatedTableElem)
+    constant.table.splice(tableRowIndex, 1, updatedTableElem)
     dispatch({
       type: BuilderActionEnum.Update,
       payload: {
