@@ -49,8 +49,8 @@ const InputComponent: ConstantFieldComponent = ({ constant, index }) => {
     })
   }
 
-  const handleDeleteTableRow = (index: number) => {
-    constant.table.splice(index, 1)
+  const handleDeleteTableRow = (tableRowIndex: number) => {
+    constant.table.splice(tableRowIndex, 1)
     dispatch({
       type: BuilderActionEnum.Update,
       payload: {
