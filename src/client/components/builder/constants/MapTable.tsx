@@ -2,6 +2,7 @@ import React from 'react'
 import { BiTable, BiTrash, BiPlusCircle } from 'react-icons/bi'
 import {
   IconButton,
+  Button,
   Box,
   HStack,
   VStack,
@@ -109,6 +110,7 @@ const InputComponent: ConstantFieldComponent = ({ constant, index }) => {
                   handleUpdateTableRow({ key: e.target.value, value }, index)
                 }}
                 value={key}
+                w="45%"
               />
               <Input
                 type="number"
@@ -122,28 +124,25 @@ const InputComponent: ConstantFieldComponent = ({ constant, index }) => {
                 }}
                 value={value}
               />
-              {table.length - 1 === index ? (
-                // Last elem in table array
-                <IconButton
-                  borderRadius={0}
-                  variant="ghost"
-                  aria-label="add map item"
-                  fontSize="20px"
-                  icon={<BiPlusCircle />}
-                  onClick={handleAddTableRow}
-                />
-              ) : (
-                <IconButton
-                  borderRadius={0}
-                  variant="ghost"
-                  aria-label="add map item"
-                  fontSize="20px"
-                  icon={<BiTrash />}
-                  onClick={() => handleDeleteTableRow(index)}
-                />
-              )}
+              <IconButton
+                borderRadius={0}
+                variant="ghost"
+                aria-label="delete item"
+                fontSize="20px"
+                icon={<BiTrash />}
+                onClick={() => handleDeleteTableRow(index)}
+              />
             </HStack>
           ))}
+          <Button
+            leftIcon={<BiPlusCircle />}
+            variant="outline"
+            colorScheme="primary"
+            aria-label="add map item"
+            onClick={handleAddTableRow}
+          >
+            Add map constant
+          </Button>
         </VStack>
       </HStack>
     </>
