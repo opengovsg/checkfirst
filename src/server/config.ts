@@ -55,6 +55,12 @@ const config = convict({
     format: '*',
     default: '/tmp/checkfirst.db',
   },
+  otpExpiry: {
+    doc: 'The number of seconds that an OTP is valid for a user',
+    env: 'OTP_EXPIRY',
+    format: 'int',
+    default: 300,
+  },
   otpSecret: {
     doc: 'A secret string used to generate TOTPs for users',
     env: 'OTP_SECRET',
@@ -68,13 +74,13 @@ const config = convict({
     default: 'toomanysecrets',
   },
   databaseUrl: {
-    doc: 'The database URL to connect to, if NODE_ENV is not development',
+    doc: 'The database URL to connect to. Optional, uses sqlite if absent',
     env: 'DATABASE_URL',
     format: '*',
     default: '',
   },
   awsRegion: {
-    doc: 'The AWS region for SES, if NODE_ENV is not development',
+    doc: 'The AWS region for SES. Optional, logs mail to console if absent',
     env: 'AWS_REGION',
     format: '*',
     default: '',
