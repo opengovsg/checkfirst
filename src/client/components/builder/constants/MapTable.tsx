@@ -123,6 +123,7 @@ const InputComponent: ConstantFieldComponent = ({ constant, index }) => {
                   )
                 }}
                 value={value}
+                w="45%"
               />
               <IconButton
                 borderRadius={0}
@@ -140,6 +141,7 @@ const InputComponent: ConstantFieldComponent = ({ constant, index }) => {
             colorScheme="primary"
             aria-label="add map item"
             onClick={handleAddTableRow}
+            w="91.25%"
           >
             Add map constant
           </Button>
