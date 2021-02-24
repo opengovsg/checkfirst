@@ -113,3 +113,4 @@ jobs:
           DATABASE_URL: ${{ env.DATABASE_URL }}
           SESSION_SECRET: ${{ env.SESSION_SECRET }}
           OTP_SECRET: ${{ env.OTP_SECRET }}
+          OTP_EXPIRY: ${{ secrets.OTP_EXPIRY }}
