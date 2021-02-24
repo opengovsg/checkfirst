@@ -12,6 +12,7 @@ interface ToolbarMenuItem {
   label: string
   icon: React.ReactElement
   onClick?: React.MouseEventHandler
+  disabled?: boolean
 }
 
 interface ToolbarOptions {
@@ -89,7 +90,7 @@ export const FloatingToolbar: FC<FloatingToolbarProps> = ({
       </VStack>
       {menu && (
         <VStack sx={styles.container} spacing={0}>
-          {menu.map(({ label, icon, onClick }, i) => (
+          {menu.map(({ label, icon, onClick, disabled }, i) => (
             <Button
               key={i}
               variant="ghost"
@@ -97,6 +98,7 @@ export const FloatingToolbar: FC<FloatingToolbarProps> = ({
               leftIcon={icon}
               iconSpacing={2}
               onClick={onClick}
+              isDisabled={disabled}
             >
               {label}
             </Button>
