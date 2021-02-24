@@ -10,9 +10,9 @@ export const textStyles = {
   },
   h1: {
     fontSize: '48px',
-    fontWeight: 400,
+    fontWeight: 600,
     lineHeight: '60px',
-    color: 'primary.900',
+    color: 'primary.500',
     fontFamily: 'ssp',
   },
   heading2: {
@@ -30,7 +30,7 @@ export const textStyles = {
     fontWeight: 600,
     lineHeight: '32px',
     letterSpacing: '-0.019em',
-    color: 'primary.900',
+    color: 'primary.500',
   },
   h3: {
     fontSize: '18px',
