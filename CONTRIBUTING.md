@@ -152,7 +152,7 @@ This Code of Conduct is adapted from the [Contributor Covenant][homepage], versi
 
 The contributing guidelines are adapted from [Issue guidelines](https://github.com/necolas/issue-guidelines).
 
-### Contributor License Agreement
+## Contributor License Agreement
 
 Contributions to this project must be accompanied by a Contributor License Agreement. You (or your employer) retain the copyright to your contribution; this simply gives us permission to use and redistribute your contributions as part of the project. 
 Head over [here](https://go.gov.sg/ogp-cla) to submit one. 
