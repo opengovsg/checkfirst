@@ -1,5 +1,5 @@
-import React, { FC, useState } from 'react'
-import { useFormContext } from 'react-hook-form'
+import React, { FC } from 'react'
+import { useFormContext, Controller } from 'react-hook-form'
 import DatePicker from 'react-datepicker'
 import {
   useStyles,
@@ -17,37 +17,37 @@ import { Field } from '../../../types/checker'
 
 export const DateField: FC<Field> = ({ id, title, description }) => {
   const styles = useStyles()
-  const { register, errors } = useFormContext()
-  const [date, setDate] = useState(new Date())
+  const { control, errors } = useFormContext()
   const error = errors[id]
 
-  const changeHandler = (newDate: Date) => {
-    if (newDate) setDate(newDate)
-  }
-
   return (
-    <FormControl isInvalid={error} id={id}>
-      <FormLabel sx={styles.label} htmlFor={id}>
-        {title}
-      </FormLabel>
-      {description && <FormHelperText mb={4}>{description}</FormHelperText>}
-      <Input
-        type="hidden"
-        name={id}
-        value={date ? date.valueOf() : undefined}
-        ref={register({ required: true })}
-      />
-      <DatePicker
-        wrapperClassName={error ? 'fieldError' : ''}
-        value={date ? date.toISOString().split('T')[0] : ''}
-        selected={date}
-        onChange={changeHandler}
-        showPopperArrow={true}
-        showMonthDropdown
-        showYearDropdown
-        dropdownMode="select"
-      />
-      <FormErrorMessage>Field is required</FormErrorMessage>
-    </FormControl>
+    <Controller
+      name={id}
+      control={control}
+      render={({ ref, onChange, value }, { invalid }) => (
+        <FormControl isInvalid={invalid} id={id}>
+          <FormLabel sx={styles.label} htmlFor={id}>
+            {title}
+          </FormLabel>
+          {description && <FormHelperText mb={4}>{description}</FormHelperText>}
+          <Input
+            type="hidden"
+            name={id}
+            value={value ? value.valueOf() : undefined}
+            ref={ref}
+          />
+          <DatePicker
+            wrapperClassName={error ? 'fieldError' : ''}
+            selected={value}
+            onChange={onChange}
+            showPopperArrow={true}
+            showMonthDropdown
+            showYearDropdown
+            dropdownMode="select"
+          />
+          <FormErrorMessage>Field is required</FormErrorMessage>
+        </FormControl>
+      )}
+    />
   )
 }
