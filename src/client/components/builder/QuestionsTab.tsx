@@ -6,6 +6,7 @@ import {
   BiPlusCircle,
   BiUpArrowAlt,
   BiDownArrowAlt,
+  BiCalendar,
 } from 'react-icons/bi'
 import { VStack } from '@chakra-ui/react'
 
@@ -16,6 +17,7 @@ import {
   RadioField,
   CheckboxField,
   TitleField,
+  DateField,
 } from '../builder/questions'
 
 import { useCheckerContext } from '../../contexts'
@@ -52,6 +54,14 @@ const generateDefaultCheckboxField = (id: number): checker.Field => ({
     { label: 'Option 1', value: 0 },
     { label: 'Option 2', value: 1 },
   ],
+})
+
+const generateDefaultDateField = (id: number): checker.Field => ({
+  id: `D${id}`,
+  type: 'DATE',
+  title: 'Insert question title',
+  description: '',
+  options: [],
 })
 
 export const TITLE_FIELD_ID = 'TITLE'
@@ -126,6 +136,22 @@ export const QuestionsTab: FC = () => {
             setNextUniqueId(nextUniqueId + 1)
           },
         },
+        {
+          label: 'Date',
+          icon: <BiCalendar />,
+          onClick: () => {
+            dispatch({
+              type: BuilderActionEnum.Add,
+              payload: {
+                element: generateDefaultDateField(nextUniqueId),
+                configArrName: ConfigArrayEnum.Fields,
+                newIndex: activeIndex + 1,
+              },
+            })
+            setActiveIndex(activeIndex + 1)
+            setNextUniqueId(nextUniqueId + 1)
+          },
+        },
       ],
     },
     {
@@ -192,6 +218,8 @@ export const QuestionsTab: FC = () => {
         return <CheckboxField {...commonProps} />
       case 'NUMERIC':
         return <NumericField {...commonProps} />
+      case 'DATE':
+        return <DateField {...commonProps} />
     }
   }
 
