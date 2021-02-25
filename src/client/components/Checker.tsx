@@ -17,9 +17,16 @@ import { CheckboxField, RadioField, NumericField, DateField } from './fields'
 import { LineDisplay } from './displays'
 import * as checker from './../../types/checker'
 import { evaluate } from './../core/evaluator'
+import { unit, Unit } from 'mathjs'
 
 interface CheckerProps {
   config: checker.Checker
+}
+
+type VariableResults = Record<string, string | number | Unit>
+
+function isUnit(output: string | number | Unit): output is Unit {
+  return (output as Unit).toNumber !== undefined
 }
 
 export const Checker: FC<CheckerProps> = ({ config }) => {
@@ -44,20 +51,33 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
   }
 
   const renderDisplay = (operation: checker.Operation, i: number) => {
+    const output = variables[operation.id]
+
     return (
       operation.show && (
         <LineDisplay
           key={i}
           label={operation.title}
-          value={variables[operation.id] as string}
+          value={
+            isUnit(output)
+              ? new Date(output.toNumber('seconds') * 1000).toLocaleString(
+                  'default',
+                  {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric',
+                  }
+                )
+              : (output as string)
+          }
         />
       )
     )
   }
 
-  const onSubmit = (inputs: Record<string, string | number>) => {
+  const onSubmit = (inputs: Record<string, string | number | Date>) => {
     // Set all numeric inputs to type Number
-    const parsedInputs: Record<string, string | number> = {}
+    const parsedInputs: Record<string, string | number | Unit> = {}
 
     fields.forEach((field) => {
       const { id, type, options } = field
@@ -79,6 +99,11 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
             (optionIndex) => options[optionIndex].label
           )
           return (parsedInputs[id] = JSON.stringify(checkboxValues))
+        }
+        case 'DATE': {
+          const outputDate = inputs[id] as Date
+          const secondsSinceEpoch = Math.round(outputDate.getTime() / 1000)
+          return (parsedInputs[id] = unit(`${secondsSinceEpoch} seconds`))
         }
       }
     })
