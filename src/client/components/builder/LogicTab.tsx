@@ -6,6 +6,7 @@ import {
   BiUpArrowAlt,
   BiDownArrowAlt,
   BiGitCompare,
+  BiCalendar,
 } from 'react-icons/bi'
 import {
   Center,
@@ -27,6 +28,7 @@ import {
   CalculatedResult,
   ConditionalResult,
   MapResult,
+  DateResult,
 } from '../builder/logic'
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../util/enums'
 
@@ -51,6 +53,14 @@ const generateDefaultMapOp = (id: number): checker.Operation => ({
   type: 'MAP',
   title: 'Map constant',
   expression: '0',
+  show: true,
+})
+
+const generateDefaultDateOp = (id: number): checker.Operation => ({
+  id: `O${id}`,
+  type: 'DATE',
+  title: 'Date result',
+  expression: 'A + 14 days',
   show: true,
 })
 
@@ -111,6 +121,22 @@ export const LogicTab: FC = () => {
           type: BuilderActionEnum.Add,
           payload: {
             element: generateDefaultMapOp(nextUniqueId),
+            configArrName: ConfigArrayEnum.Operations,
+            newIndex: activeIndex + 1,
+          },
+        })
+        setActiveIndex(activeIndex + 1)
+        setNextUniqueId(nextUniqueId + 1)
+      },
+    },
+    {
+      label: 'Date result',
+      icon: <BiCalendar />,
+      onClick: () => {
+        dispatch({
+          type: BuilderActionEnum.Add,
+          payload: {
+            element: generateDefaultDateOp(nextUniqueId),
             configArrName: ConfigArrayEnum.Operations,
             newIndex: activeIndex + 1,
           },
@@ -189,6 +215,8 @@ export const LogicTab: FC = () => {
         return <ConditionalResult {...commonProps} />
       case 'MAP':
         return <MapResult {...commonProps} />
+      case 'DATE':
+        return <DateResult {...commonProps} />
     }
   }
 
