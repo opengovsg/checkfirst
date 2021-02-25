@@ -60,7 +60,7 @@ const generateDefaultDateOp = (id: number): checker.Operation => ({
   id: `O${id}`,
   type: 'DATE',
   title: 'Date result',
-  expression: 'A + 14 days',
+  expression: '',
   show: true,
 })
 
