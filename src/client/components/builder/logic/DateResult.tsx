@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { isValidExpression } from '../../../core/evaluator'
 import { BiCalendar, BiChevronDown } from 'react-icons/bi'
 import {
   VStack,
@@ -19,20 +20,64 @@ import {
 import { useCheckerContext } from '../../../contexts'
 import { createBuilderField, OperationFieldComponent } from '../BuilderField'
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../../util/enums'
-import { ExpressionInput } from './ExpressionInput'
+import update from 'immutability-helper'
 
 interface DateState {
   variableId: string
+  isAdd: boolean
+  numberOfIntervals: number
 }
 
 const EMPTY_STATE: DateState = {
   variableId: '',
+  isAdd: true,
+  numberOfIntervals: 0,
+}
+
+// TODO: Make more rigorous to include other time units
+const fromExpression = (expression: string): DateState => {
+  const splitExpression = expression.split(' ')
+  // eg. splitExpression = [ 'D1', '+', '14', 'days' ]
+
+  if (splitExpression.length === 4) {
+    return {
+      variableId: splitExpression[0],
+      isAdd: splitExpression[1] === '+',
+      numberOfIntervals: Number(splitExpression[2]),
+    }
+  }
+
+  return EMPTY_STATE
+}
+
+const toExpression = (state: DateState): string => {
+  const { variableId, isAdd, numberOfIntervals } = state
+  return `${variableId} ${isAdd ? '+' : '-'} ${numberOfIntervals} days`
 }
 
 const InputComponent: OperationFieldComponent = ({ operation, index }) => {
-  const { title, expression } = operation
+  const { title, expression, id: currentId } = operation
   const { config, dispatch } = useCheckerContext()
-  const [dateState, setDateState] = useState<DateState>(EMPTY_STATE)
+  const [dateState, setDateState] = useState<DateState>(
+    fromExpression(expression)
+  )
+
+  useEffect(() => {
+    const updatedExpression = toExpression(dateState)
+    if (
+      operation.expression !== updatedExpression &&
+      isValidExpression(updatedExpression)
+    ) {
+      dispatch({
+        type: BuilderActionEnum.Update,
+        payload: {
+          currIndex: index,
+          element: { ...operation, expression: updatedExpression },
+          configArrName: ConfigArrayEnum.Operations,
+        },
+      })
+    }
+  }, [dateState, dispatch, index, operation])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -46,15 +91,12 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
     })
   }
 
-  const handleExpressionChange = (name: string, value: string) => {
-    dispatch({
-      type: BuilderActionEnum.Update,
-      payload: {
-        currIndex: index,
-        element: { ...operation, [name]: value },
-        configArrName: ConfigArrayEnum.Operations,
-      },
-    })
+  const updateState = (name: string, value: string | boolean | number) => {
+    setDateState((s) =>
+      update(s, {
+        [name]: { $set: value },
+      })
+    )
   }
 
   return (
@@ -70,17 +112,6 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
           onChange={handleChange}
           value={title}
         />
-        <ExpressionInput
-          name="expression"
-          type="text"
-          placeholder="Enter expression"
-          bg="#F4F6F9"
-          fontFamily="mono"
-          value={expression}
-          onChange={(expression) =>
-            handleExpressionChange('expression', expression)
-          }
-        />
         <HStack>
           <Menu>
             <MenuButton as={Button} rightIcon={<BiChevronDown />}>
@@ -92,8 +123,7 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
                 .map(({ id, title }, i) => (
                   <MenuItem
                     key={i}
-                    // onClick={() => handleExprChange('variableId', id)}
-                    onClick={() => setDateState({ variableId: id })}
+                    onClick={() => updateState('variableId', id)}
                   >
                     <HStack spacing={4}>
                       <Badge
@@ -109,11 +139,11 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
                   </MenuItem>
                 ))}
               {config.operations
-                .filter(({ type }) => type === 'DATE')
+                .filter(({ id, type }) => type === 'DATE' && id !== currentId)
                 .map(({ id, title }, i) => (
                   <MenuItem
                     key={i}
-                    onClick={() => setDateState({ variableId: id })}
+                    onClick={() => updateState('variableId', id)}
                   >
                     <HStack spacing={4}>
                       <Badge
@@ -132,14 +162,22 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
           </Menu>
           <Menu>
             <MenuButton as={Button} rightIcon={<BiChevronDown />}>
-              +
+              {dateState.isAdd ? '+' : '-'}
             </MenuButton>
             <MenuList>
-              <MenuItem>+</MenuItem>
-              <MenuItem>-</MenuItem>
+              <MenuItem onClick={() => updateState('isAdd', true)}>+</MenuItem>
+              <MenuItem onClick={() => updateState('isAdd', false)}>-</MenuItem>
             </MenuList>
           </Menu>
-          <NumberInput precision={0} step={1} min={0}>
+          <NumberInput
+            precision={0}
+            step={1}
+            min={0}
+            defaultValue={
+              dateState.numberOfIntervals && dateState.numberOfIntervals
+            }
+            onChange={(value) => updateState('numberOfIntervals', value)}
+          >
             <NumberInputField placeholder="Number" />
           </NumberInput>
           <Text>days</Text>
