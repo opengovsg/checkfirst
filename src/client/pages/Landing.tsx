@@ -151,12 +151,8 @@ export const Landing: FC = () => {
           <HStack h="100%" flex={1} justifyContent="center" />
         </Stack>
       </Container>
-      <Container id="learn-more" maxW="100vw" pt="8vh" bgColor="neutral.50">
-        <Container
-          maxW="80vw"
-          alignItems="center"
-          justifyContent="space-between"
-        >
+      <Container id="learn-more" maxW="100vw" py="8vh" bgColor="neutral.50">
+        <Container maxW="80vw">
           <Text textAlign="center" textStyle="h1">
             Why use CheckFirst?
           </Text>
@@ -201,11 +197,7 @@ export const Landing: FC = () => {
         </Container>
       </Container>
       <Container maxW="100vw" py="8vh" bgColor="neutral.100">
-        <Container
-          maxW="80vw"
-          alignItems="center"
-          justifyContent="space-between"
-        >
+        <Container maxW="80vw">
           <Text textAlign="center" textStyle="h1" pb="3vh">
             Frequently Asked Questions
           </Text>
