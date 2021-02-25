@@ -1,6 +1,15 @@
 import React from 'react'
 import { BiCalendar } from 'react-icons/bi'
-import { useStyles, Box, HStack, VStack, Text, Input } from '@chakra-ui/react'
+import {
+  useStyles,
+  Box,
+  HStack,
+  VStack,
+  Text,
+  Input,
+  InputGroup,
+  InputRightElement,
+} from '@chakra-ui/react'
 
 import { createBuilderField, QuestionFieldComponent } from '../BuilderField'
 import { useCheckerContext } from '../../../contexts'
@@ -42,13 +51,15 @@ const InputComponent: QuestionFieldComponent = ({ field, index }) => {
           onChange={handleChange}
           value={description}
         />
-        <Input
-          type="text"
-          placeholder="Enter number"
-          w="50%"
-          sx={styles.dummyInput}
-          disabled
-        />
+        <InputGroup w="50%">
+          <Input
+            type="text"
+            placeholder="DD/MM/YYYY"
+            sx={styles.dummyInput}
+            disabled
+          />
+          <InputRightElement pointerEvents="none" children={<BiCalendar />} />
+        </InputGroup>
       </VStack>
     </HStack>
   )
@@ -66,13 +77,15 @@ const PreviewComponent: QuestionFieldComponent = ({ field }) => {
         </HStack>
         {description && <Text color="#718096">{description}</Text>}
       </VStack>
-      <Input
-        w="50%"
-        type="text"
-        placeholder="Enter number"
-        sx={styles.dummyInput}
-        disabled
-      />
+      <InputGroup w="50%">
+        <Input
+          type="text"
+          placeholder="DD/MM/YYYY"
+          sx={styles.dummyInput}
+          disabled
+        />
+        <InputRightElement pointerEvents="none" children={<BiCalendar />} />
+      </InputGroup>
     </VStack>
   )
 }
