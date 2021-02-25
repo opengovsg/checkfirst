@@ -56,7 +56,7 @@ export class AuthService {
 
     const mail: SendMailOptions = {
       to: email,
-      from: 'CheckFirst.gov.sg <checkfirst@open.gov.sg>',
+      from: 'CheckFirst.gov.sg <donotreply@mail.checkfirst.gov.sg>',
       subject: 'One-Time Password (OTP) for CheckFirst',
       html,
     }
