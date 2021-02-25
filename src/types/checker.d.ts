@@ -50,7 +50,7 @@ export interface Operation {
   show: boolean
 }
 
-export type OperationType = 'ARITHMETIC' | 'IFELSE' | 'SWITCH' | 'MAP'
+export type OperationType = 'ARITHMETIC' | 'IFELSE' | 'SWITCH' | 'MAP' | 'DATE'
 
 export interface TableElem {
   key: string
