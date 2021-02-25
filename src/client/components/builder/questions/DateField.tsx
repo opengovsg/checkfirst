@@ -58,7 +58,10 @@ const InputComponent: QuestionFieldComponent = ({ field, index }) => {
             sx={styles.dummyInput}
             disabled
           />
-          <InputRightElement pointerEvents="none" children={<BiCalendar />} />
+          <InputRightElement
+            pointerEvents="none"
+            children={<BiCalendar opacity={0.7} />}
+          />
         </InputGroup>
       </VStack>
     </HStack>
@@ -84,7 +87,10 @@ const PreviewComponent: QuestionFieldComponent = ({ field }) => {
           sx={styles.dummyInput}
           disabled
         />
-        <InputRightElement pointerEvents="none" children={<BiCalendar />} />
+        <InputRightElement
+          pointerEvents="none"
+          children={<BiCalendar opacity={0.7} />}
+        />
       </InputGroup>
     </VStack>
   )
