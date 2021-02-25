@@ -7,7 +7,6 @@ import {
   FormLabel,
   FormHelperText,
   FormErrorMessage,
-  Input,
 } from '@chakra-ui/react'
 
 import 'react-datepicker/dist/react-datepicker.css'
@@ -24,18 +23,12 @@ export const DateField: FC<Field> = ({ id, title, description }) => {
     <Controller
       name={id}
       control={control}
-      render={({ ref, onChange, value }, { invalid }) => (
+      render={({ onChange, value }, { invalid }) => (
         <FormControl isInvalid={invalid} id={id}>
           <FormLabel sx={styles.label} htmlFor={id}>
             {title}
           </FormLabel>
           {description && <FormHelperText mb={4}>{description}</FormHelperText>}
-          <Input
-            type="hidden"
-            name={id}
-            value={value ? value.valueOf() : undefined}
-            ref={ref}
-          />
           <DatePicker
             wrapperClassName={error ? 'fieldError' : ''}
             selected={value}
