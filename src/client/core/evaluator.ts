@@ -106,7 +106,8 @@ export const getDependencies = (expression: string): Set<string> => {
   const functions: string[] = []
   node.traverse((node) => {
     if (node.isFunctionNode && node.name) functions.push(node.name)
-    if (node.isSymbolNode && node.name) dependencies.add(node.name)
+    if (node.isSymbolNode && node.name && !['day', 'days'].includes(node.name))
+      dependencies.add(node.name)
   })
 
   // Functions are also SymbolNodes. However, we only want variable nodes.
