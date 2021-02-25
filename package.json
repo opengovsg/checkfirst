@@ -59,7 +59,7 @@
     "supertest": "^6.1.3",
     "ts-jest": "^26.5.1",
     "ts-loader": "^8.0.17",
-    "ts-node-dev": "^1.1.1",
+    "ts-node-dev": "^1.1.2",
     "typescript": "^4.2.2",
     "webpack": "^5.24.1",
     "webpack-cli": "^4.5.0",
