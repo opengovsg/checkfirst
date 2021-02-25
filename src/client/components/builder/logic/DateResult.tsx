@@ -139,8 +139,8 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
               <MenuItem>-</MenuItem>
             </MenuList>
           </Menu>
-          <NumberInput>
-            <NumberInputField />
+          <NumberInput precision={0} step={1} min={0}>
+            <NumberInputField placeholder="Number" />
           </NumberInput>
           <Text>days</Text>
         </HStack>
