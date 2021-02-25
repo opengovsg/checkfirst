@@ -1,15 +1,38 @@
-import React from 'react'
-import { BiCalendar } from 'react-icons/bi'
-import { VStack, HStack, Box, Text, Input } from '@chakra-ui/react'
+import React, { useState } from 'react'
+import { BiCalendar, BiChevronDown } from 'react-icons/bi'
+import {
+  VStack,
+  HStack,
+  Box,
+  Text,
+  Input,
+  Badge,
+  Button,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  NumberInput,
+  NumberInputField,
+} from '@chakra-ui/react'
 
 import { useCheckerContext } from '../../../contexts'
 import { createBuilderField, OperationFieldComponent } from '../BuilderField'
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../../util/enums'
 import { ExpressionInput } from './ExpressionInput'
 
+interface DateState {
+  variableId: string
+}
+
+const EMPTY_STATE: DateState = {
+  variableId: '',
+}
+
 const InputComponent: OperationFieldComponent = ({ operation, index }) => {
   const { title, expression } = operation
-  const { dispatch } = useCheckerContext()
+  const { config, dispatch } = useCheckerContext()
+  const [dateState, setDateState] = useState<DateState>(EMPTY_STATE)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -58,6 +81,69 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
             handleExpressionChange('expression', expression)
           }
         />
+        <HStack>
+          <Menu>
+            <MenuButton as={Button} rightIcon={<BiChevronDown />}>
+              {dateState.variableId ? dateState.variableId : 'SELECT INPUT'}
+            </MenuButton>
+            <MenuList>
+              {config.fields
+                .filter(({ type }) => type === 'DATE')
+                .map(({ id, title }, i) => (
+                  <MenuItem
+                    key={i}
+                    // onClick={() => handleExprChange('variableId', id)}
+                    onClick={() => setDateState({ variableId: id })}
+                  >
+                    <HStack spacing={4}>
+                      <Badge
+                        bg="#FB5D64"
+                        color="white"
+                        fontSize="sm"
+                        borderRadius="5px"
+                      >
+                        {id}
+                      </Badge>
+                      <Text isTruncated>{title}</Text>
+                    </HStack>
+                  </MenuItem>
+                ))}
+              {config.operations
+                .filter(({ type }) => type === 'DATE')
+                .map(({ id, title }, i) => (
+                  <MenuItem
+                    key={i}
+                    onClick={() => setDateState({ variableId: id })}
+                  >
+                    <HStack spacing={4}>
+                      <Badge
+                        bg="#46DBC9"
+                        color="white"
+                        fontSize="sm"
+                        borderRadius="5px"
+                      >
+                        {id}
+                      </Badge>
+                      <Text isTruncated>{title}</Text>
+                    </HStack>
+                  </MenuItem>
+                ))}
+            </MenuList>
+          </Menu>
+          <Menu>
+            <MenuButton as={Button} rightIcon={<BiChevronDown />}>
+              +
+            </MenuButton>
+            <MenuList>
+              <MenuItem>+</MenuItem>
+              <MenuItem>-</MenuItem>
+            </MenuList>
+          </Menu>
+          <NumberInput>
+            <NumberInputField />
+          </NumberInput>
+          <Text>days</Text>
+        </HStack>
       </VStack>
     </HStack>
   )
