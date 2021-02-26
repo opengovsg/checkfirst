@@ -1,6 +1,9 @@
 import React, { FC, useEffect, useState } from 'react'
 import { BiPlusCircle, BiUpArrowAlt, BiDownArrowAlt } from 'react-icons/bi'
 import {
+  Alert,
+  AlertIcon,
+  AlertDescription,
   Center,
   Heading,
   Text,
@@ -132,7 +135,17 @@ export const ConstantsTab: FC = () => {
   return (
     <VStack align="stretch" position="relative" spacing={4}>
       {config.constants.length > 0 ? (
-        <FloatingToolbar offsetTop={offsetTop} options={toolbarOptions} />
+        <>
+          <FloatingToolbar offsetTop={offsetTop} options={toolbarOptions} />
+          <Alert status="info">
+            <AlertIcon />
+            <AlertDescription>
+              Constants can only be numeric values. To map constants to options
+              of a question, ensure that the reference is the same as the
+              option.
+            </AlertDescription>
+          </Alert>
+        </>
       ) : (
         <Center py={16}>
           <VStack spacing={6}>
