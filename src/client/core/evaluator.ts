@@ -68,6 +68,11 @@ const BLACKLIST = [
   'import',
   'parse',
 ]
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+const UNITS = Unit.UNITS
+
 export const evaluateOperation = (
   expression: string,
   variables: checker.VariableResults
@@ -106,7 +111,7 @@ export const getDependencies = (expression: string): Set<string> => {
   const functions: string[] = []
   node.traverse((node) => {
     if (node.isFunctionNode && node.name) functions.push(node.name)
-    if (node.isSymbolNode && node.name && !['day', 'days'].includes(node.name))
+    if (node.isSymbolNode && node.name && !UNITS.includes(node.name))
       dependencies.add(node.name)
   })
 
