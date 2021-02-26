@@ -104,7 +104,7 @@ export const ConstantsTab: FC = () => {
     dispatch({
       type: BuilderActionEnum.Add,
       payload: {
-        element: generateDefaultMap(0),
+        element: generateDefaultMap(nextUniqueId),
         configArrName: ConfigArrayEnum.Constants,
         newIndex: 1,
       },
