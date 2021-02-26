@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { typed, create, all, factory, Unit } from 'mathjs'
+import * as mathjs from 'mathjs'
 import { Graph, alg } from 'graphlib'
 import * as checker from './../../types/checker'
 
@@ -69,9 +70,11 @@ const BLACKLIST = [
   'parse',
 ]
 
+// Reach into the default measurement units defined on mathjs.Unit,
+// but not defined in @types/mathjs
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-const UNITS = Unit.UNITS
+const UNITS = Object.keys(mathjs.Unit.UNITS)
 
 export const evaluateOperation = (
   expression: string,
