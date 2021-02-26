@@ -70,7 +70,11 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
           return (parsedInputs[id] = Number(inputs[id]))
         }
         case 'RADIO': {
-          return (parsedInputs[id] = options[Number(inputs[id])].label)
+          const selected = Number(inputs[id])
+          const option = options.find(({ value }) => value === selected)
+          if (!option)
+            throw new Error(`Unable to find option with value ${selected}`)
+          return (parsedInputs[id] = option.label)
         }
         case 'CHECKBOX': {
           const checkboxValues = Object.values(inputs[id]).map(
