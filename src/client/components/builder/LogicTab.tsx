@@ -5,6 +5,7 @@ import {
   BiGitBranch,
   BiUpArrowAlt,
   BiDownArrowAlt,
+  BiGitCompare,
 } from 'react-icons/bi'
 import {
   Center,
@@ -22,7 +23,11 @@ import {
 import { useCheckerContext } from '../../contexts'
 import * as checker from '../../../types/checker'
 import { FloatingToolbar } from '../builder'
-import { CalculatedResult, ConditionalResult } from '../builder/logic'
+import {
+  CalculatedResult,
+  ConditionalResult,
+  MapResult,
+} from '../builder/logic'
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../util/enums'
 
 const generateDefaultArithmeticOp = (id: number): checker.Operation => ({
@@ -38,6 +43,14 @@ const generateDefaultIfelseOp = (id: number): checker.Operation => ({
   type: 'IFELSE',
   title: 'Conditional result',
   expression: 'ifelse(1 > 0, true, false)',
+  show: true,
+})
+
+const generateDefaultMapOp = (id: number): checker.Operation => ({
+  id: `O${id}`,
+  type: 'MAP',
+  title: 'Map constant',
+  expression: '0',
   show: true,
 })
 
@@ -81,6 +94,23 @@ export const LogicTab: FC = () => {
           type: BuilderActionEnum.Add,
           payload: {
             element: generateDefaultIfelseOp(nextUniqueId),
+            configArrName: ConfigArrayEnum.Operations,
+            newIndex: activeIndex + 1,
+          },
+        })
+        setActiveIndex(activeIndex + 1)
+        setNextUniqueId(nextUniqueId + 1)
+      },
+    },
+    {
+      label: 'Map constant',
+      icon: <BiGitCompare />,
+      disabled: config.constants.length === 0,
+      onClick: () => {
+        dispatch({
+          type: BuilderActionEnum.Add,
+          payload: {
+            element: generateDefaultMapOp(nextUniqueId),
             configArrName: ConfigArrayEnum.Operations,
             newIndex: activeIndex + 1,
           },
@@ -157,6 +187,8 @@ export const LogicTab: FC = () => {
         return <CalculatedResult {...commonProps} />
       case 'IFELSE':
         return <ConditionalResult {...commonProps} />
+      case 'MAP':
+        return <MapResult {...commonProps} />
     }
   }
 

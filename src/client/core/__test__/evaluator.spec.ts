@@ -155,7 +155,13 @@ describe('getDependencies', () => {
 describe('getEvaluationOrder', () => {
   it('should return evaluation order sorted by dependencies', () => {
     const inputs = { A: 1, B: 1 }
-    const constants: checker.Constant[] = [{ id: 'C1', value: 'test' }]
+    const constants: checker.Constant[] = [
+      {
+        id: 'T1',
+        title: 'Test table',
+        table: [{ key: 'test', value: 2 }],
+      },
+    ]
     const operations: checker.Operation[] = [
       {
         id: 'O2',
@@ -179,7 +185,13 @@ describe('getEvaluationOrder', () => {
 
   it('should throw an error when there are variables that do not exists', () => {
     const inputs = { A: 1, B: 1 }
-    const constants: checker.Constant[] = [{ id: 'C1', value: 'test' }]
+    const constants: checker.Constant[] = [
+      {
+        id: 'T1',
+        title: 'Test table',
+        table: [{ key: 'test', value: 2 }],
+      },
+    ]
     const operations: checker.Operation[] = [
       {
         id: 'O2',
@@ -204,7 +216,13 @@ describe('getEvaluationOrder', () => {
 
   it('should throw an error when there exists circular dependencies', () => {
     const inputs = { A: 1, B: 1 }
-    const constants: checker.Constant[] = [{ id: 'C1', value: 'test' }]
+    const constants: checker.Constant[] = [
+      {
+        id: 'T1',
+        title: 'Test table',
+        table: [{ key: 'test', value: 2 }],
+      },
+    ]
     const operations: checker.Operation[] = [
       {
         id: 'O2',
@@ -236,7 +254,13 @@ describe('getEvaluationOrder', () => {
 describe('evaluate', () => {
   it('should evaluate based on the correct evaluation order', () => {
     const inputs = { A: 1, B: 1 }
-    const constants: checker.Constant[] = [{ id: 'C1', value: 'test' }]
+    const constants: checker.Constant[] = [
+      {
+        id: 'T1',
+        title: 'Test table',
+        table: [{ key: 'test', value: 2 }],
+      },
+    ]
     const operations: checker.Operation[] = [
       {
         id: 'O2',
@@ -261,7 +285,13 @@ describe('evaluate', () => {
 
   it('should throw an error when there are variables that do not exists', () => {
     const inputs = { A: 1, B: 1 }
-    const constants: checker.Constant[] = [{ id: 'C1', value: 'test' }]
+    const constants: checker.Constant[] = [
+      {
+        id: 'T1',
+        title: 'Test table',
+        table: [{ key: 'test', value: 2 }],
+      },
+    ]
     const operations: checker.Operation[] = [
       {
         id: 'O2',
@@ -286,7 +316,13 @@ describe('evaluate', () => {
 
   it('should throw an error when there exists circular dependencies', () => {
     const inputs = { A: 1, B: 1 }
-    const constants: checker.Constant[] = [{ id: 'C1', value: 'test' }]
+    const constants: checker.Constant[] = [
+      {
+        id: 'T1',
+        title: 'Test table',
+        table: [{ key: 'test', value: 2 }],
+      },
+    ]
     const operations: checker.Operation[] = [
       {
         id: 'O2',

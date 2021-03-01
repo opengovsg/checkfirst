@@ -32,7 +32,7 @@ import {
 import { LogoutButton } from '../LogoutButton'
 import { useCheckerContext } from '../../contexts'
 
-const ROUTES = ['questions', 'logic']
+const ROUTES = ['questions', 'constants', 'logic']
 
 type EmbedFieldProps = {
   name: string

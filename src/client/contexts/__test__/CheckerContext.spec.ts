@@ -33,7 +33,8 @@ const initialDisplay: Display = {
 }
 const initialConstant: Constant = {
   id: 'initial_constant',
-  value: 'Initial constant string',
+  title: 'initial_constant',
+  table: [{ key: 'test', value: 2 }],
 }
 const initialChecker: Checker = {
   id: 'Initial',
@@ -66,7 +67,8 @@ const newDisplay: Display = {
 }
 const newConstant: Constant = {
   id: 'new_constant',
-  value: 'New constant string',
+  title: 'new_constant',
+  table: [{ key: 'newtest', value: 12 }],
 }
 
 describe('Testing CheckerContext reducer add actions', () => {
