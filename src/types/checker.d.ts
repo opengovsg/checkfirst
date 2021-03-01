@@ -1,5 +1,10 @@
 import { User } from './user'
 
+export type VariableResults = Record<
+  string,
+  string | number | Record<string, number>
+>
+
 export interface Checker {
   id: string
   title: string

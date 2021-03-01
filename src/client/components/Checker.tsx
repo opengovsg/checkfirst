@@ -22,14 +22,12 @@ interface CheckerProps {
   config: checker.Checker
 }
 
-type VariableResults = Record<string, string | number>
-
 export const Checker: FC<CheckerProps> = ({ config }) => {
   const toast = useToast({ position: 'bottom-right', variant: 'solid' })
   const styles = useMultiStyleConfig('Checker', {})
   const methods = useForm()
   const { title, description, fields, operations, constants } = config
-  const [variables, setVariables] = useState<VariableResults>({})
+  const [variables, setVariables] = useState<checker.VariableResults>({})
   const outcomes = useRef<HTMLDivElement | null>(null)
 
   const renderField = (field: checker.Field, i: number) => {
