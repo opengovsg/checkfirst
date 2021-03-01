@@ -70,7 +70,7 @@ const BLACKLIST = [
 ]
 export const evaluateOperation = (
   expression: string,
-  variables: Record<string, string | number>
+  variables: checker.VariableResults
 ): number => {
   const node = math.parse!(expression)
   const blacklisted = node.filter(
@@ -85,9 +85,9 @@ export const evaluateOperation = (
 }
 
 export const variableReducer = (
-  accVariables: Record<string, string | number>,
+  accVariables: checker.VariableResults,
   op: checker.Operation
-): Record<string, string | number> => {
+): checker.VariableResults => {
   const { id, expression } = op
   accVariables[id] = evaluateOperation(expression, accVariables)
   return accVariables
@@ -123,7 +123,7 @@ export const getDependencies = (expression: string): Set<string> => {
  * @throws Error when there is a cycle in the graph or invalid variables
  */
 export const getEvaluationOrder = (
-  inputs: Record<string, string | number>,
+  inputs: checker.VariableResults,
   constants: checker.Constant[],
   operations: checker.Operation[]
 ): Record<string, number> => {
@@ -182,11 +182,13 @@ export const getEvaluationOrder = (
  * @throws Error when there is a cycle in the graph or invalid variables
  */
 export const evaluate = (
-  inputs: Record<string, string | number>,
+  inputs: checker.VariableResults,
   constants: checker.Constant[],
   operations: checker.Operation[]
-): Record<string, string | number> => {
-  let variables = { ...inputs }
+): checker.VariableResults => {
+  let variables = {
+    ...inputs,
+  }
   const evalOrder = getEvaluationOrder(inputs, constants, operations)
 
   variables = constants.reduce((vars, { id, table }) => {
@@ -196,9 +198,7 @@ export const evaluate = (
       return obj
     }, <Record<string, number>>{})
 
-    // Evaluate stringified object - the only way to
-    // obtain a non-escaped string of the object.
-    vars[id] = math.evaluate!(JSON.stringify(tableObj))
+    vars[id] = tableObj
     return vars
   }, variables)
 
