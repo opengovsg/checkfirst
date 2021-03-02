@@ -31,6 +31,7 @@ const DatePickerInput: FC<DatePickerInputProps> = ({ value, onClick }) => (
       className="react-datepicker-ignore-onclickoutside"
       value={value}
       onClick={onClick}
+      readOnly
     />
     <InputRightElement pointerEvents="none" children={<BiCalendar />} />
   </InputGroup>
