@@ -19,11 +19,53 @@ import { useHistory } from 'react-router-dom'
 import Logo from '../assets/checkfirst-logo.svg'
 import OGP from '../assets/ogp-logo.svg'
 
+import Main from '../assets/landing/main.svg'
+import Build from '../assets/landing/build.svg'
+import Share from '../assets/landing/share.svg'
+import UpdateLogic from '../assets/landing/update-logic.svg'
+import StartToday from '../assets/landing/start-today.svg'
+
 import { useAuth } from '../contexts'
 
 export const Landing: FC = () => {
   const history = useHistory()
   const auth = useAuth()
+  const navbarDirection = {
+    base: 'column' as const,
+    sm: 'row' as const,
+  }
+  const heroPadding = {
+    base: '10vh',
+    md: '0vh',
+  }
+  const rowBreakpoint = {
+    base: 'column' as const,
+    md: 'row' as const,
+  }
+  const rowReverseBreakpoint = {
+    base: 'column' as const,
+    md: 'row-reverse' as const,
+  }
+  const startTodayTextWidth = {
+    base: '100%',
+    md: '70%',
+  }
+  const startTodayImageWidth = {
+    base: '100%',
+    md: '30%',
+  }
+  const appFooterJustify = {
+    base: 'center',
+    md: 'space-between',
+  }
+  const footerLinksDirection = {
+    base: 'column' as const,
+    sm: 'row' as const,
+  }
+  const footerLinksMinWidth = {
+    base: '0px',
+    sm: '460px',
+  }
 
   const login = () => history.push('/login')
 
@@ -41,13 +83,17 @@ export const Landing: FC = () => {
       w="100%"
       pt="47px"
       zIndex={999}
-      direction="row"
+      direction={navbarDirection}
       justifyContent="space-between"
       bgColor="neutral.100"
       alignItems="center"
     >
       <Image htmlWidth="206px" htmlHeight="24px" src={Logo} />
-      <Stack alignItems="center" direction="row">
+      <Stack
+        pt={{ base: '20px', sm: 0, md: 0 }}
+        alignItems="center"
+        direction="row"
+      >
         <Link href="https://guide.checkfirst.gov.sg" mr="3vw" isExternal>
           Guide
         </Link>
@@ -64,10 +110,11 @@ export const Landing: FC = () => {
   const Footer = () => (
     <>
       <Stack
-        h="128px"
+        h={{ md: '128px', sm: 'auto' }}
+        py={{ md: 0, base: '10px' }}
         px="10vw"
-        direction="row"
-        justifyContent="space-between"
+        direction={rowBreakpoint}
+        justifyContent={appFooterJustify}
         bgColor="primary.500"
         color="neutral.100"
       >
@@ -79,8 +126,8 @@ export const Landing: FC = () => {
         </Stack>
         <Stack
           alignItems="center"
-          direction="row"
-          minW="460px"
+          direction={footerLinksDirection}
+          minWidth={footerLinksMinWidth}
           justifyContent="space-between"
         >
           <Link href="https://guide.checkfirst.gov.sg" isExternal>
@@ -132,23 +179,43 @@ export const Landing: FC = () => {
   return auth.user ? (
     <Redirect to="/dashboard" />
   ) : (
-    <Flex direction="column" height="100vh" bgColor="neutral.100">
+    <Flex direction="column" bgColor="neutral.100">
       <Container maxW="80vw" bgColor="neutral.100">
         <LandingNavbar />
-        <Stack direction="row" bgColor="neutral.100" pb="200px">
-          <VStack pt="20vh" alignItems="left">
-            <Box textStyle="hero">Don't Know?</Box>
-            <Box textStyle="hero">CheckFirst.</Box>
+        <Stack direction={rowBreakpoint} pt={heroPadding} bgColor="neutral.100">
+          <VStack justifyContent="center" alignItems="left">
+            <Box
+              textStyle="hero"
+              fontSize={{ md: 'min(64px, 6vw)', sm: '64px', base: '40px' }}
+              lineHeight={{ base: '48px', sm: '72px' }}
+            >
+              Don't Know?
+            </Box>
+            <Box
+              textStyle="hero"
+              fontSize={{ md: 'min(64px, 6vw)', sm: '64px', base: '40px' }}
+              lineHeight={{ base: '48px', sm: '72px' }}
+            >
+              CheckFirst.
+            </Box>
             <Button
               onClick={learnMore}
-              mt="5vh !important"
+              mt={{ sm: '5vh !important' }}
               colorScheme="primary"
               width="120px"
             >
               Learn More
             </Button>
           </VStack>
-          <HStack h="100%" flex={1} justifyContent="center" />
+          <HStack
+            minW={{ md: '32px', base: '0px' }}
+            h="100%"
+            flex={1}
+            alignItems="flex-end"
+            flexDir="column"
+          >
+            <Image src={Main} />
+          </HStack>
         </Stack>
       </Container>
       <Container id="learn-more" maxW="100vw" py="8vh" bgColor="neutral.50">
@@ -156,9 +223,11 @@ export const Landing: FC = () => {
           <Text textAlign="center" textStyle="h1">
             Why use CheckFirst?
           </Text>
-          <Stack direction="row">
-            <HStack w="50%" h="320px" />
-            <VStack w="50%" alignItems="left" justifyContent="center">
+          <Stack direction={rowBreakpoint} py="35px">
+            <HStack w="100%">
+              <Image src={Build} />
+            </HStack>
+            <VStack w="100%" alignItems="left" justifyContent="center">
               <Text textStyle="h2">Build your own eligibility checker</Text>
               <Text color="primary.500">
                 Use our form and logic builder to build eligibility checkers,
@@ -167,8 +236,11 @@ export const Landing: FC = () => {
               </Text>
             </VStack>
           </Stack>
-          <Stack direction="row">
-            <VStack w="50%" alignItems="left" justifyContent="center">
+          <Stack direction={rowReverseBreakpoint} py="35px">
+            <HStack w="100%" alignItems="flex-end" flexDir="column">
+              <Image src={UpdateLogic} />
+            </HStack>
+            <VStack w="100%" alignItems="left" justifyContent="center">
               <Text textStyle="h2">Instant changes and deployments</Text>
               <Text color="primary.500">
                 Maintaining an eligibility checker, calculator, or quiz is a
@@ -179,11 +251,12 @@ export const Landing: FC = () => {
                 checker.
               </Text>
             </VStack>
-            <HStack w="50%" h="320px" />
           </Stack>
-          <Stack direction="row">
-            <HStack w="50%" h="320px" />
-            <VStack w="50%" alignItems="left" justifyContent="center">
+          <Stack direction={rowBreakpoint} py="35px">
+            <HStack w="100%">
+              <Image src={Share} />
+            </HStack>
+            <VStack w="100%" alignItems="left" justifyContent="center">
               <Text textStyle="h2">
                 Share the checker with a subset of viewers
               </Text>
@@ -231,15 +304,13 @@ export const Landing: FC = () => {
         </Container>
       </Container>
       <Stack
-        h="30vh"
         px="10vw"
-        direction="row"
-        justifyContent="space-between"
+        direction={rowBreakpoint}
         bgColor="#D6DEFF"
         color="primary.500"
       >
         <VStack
-          w="70%"
+          w={startTodayTextWidth}
           alignItems="left"
           justifyContent="space-between"
           py="6vh"
@@ -262,7 +333,9 @@ export const Landing: FC = () => {
             <Text justifyContent="center">Have a question?</Text>
           </Stack>
         </VStack>
-        <HStack w="30%" h="320px" />
+        <HStack w={startTodayImageWidth} alignItems="flex-end" flexDir="column">
+          <Image src={StartToday} />
+        </HStack>
       </Stack>
       <Footer />
     </Flex>

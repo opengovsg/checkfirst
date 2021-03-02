@@ -4,7 +4,6 @@ export const textStyles = {
     fontFamily: 'ssp',
     fontWeight: 600,
     fontSize: '64px',
-    lineHeight: '72px',
     letterSpacing: '-0.022em',
     fontFeatureSettings: "'cv05' on",
   },

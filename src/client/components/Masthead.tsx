@@ -9,7 +9,12 @@ export const Masthead: FC = () => {
   return (
     <Flex mx="auto" bg="#E5E5E5" py={1} position="relative" zIndex="banner">
       <Container width="93vw" maxWidth="93vw" layerStyle="app">
-        <Link display="flex" isExternal href={SG_GOVT_LINK}>
+        <Link
+          display="flex"
+          justifyContent={{ base: 'center', md: 'inherit' }}
+          isExternal
+          href={SG_GOVT_LINK}
+        >
           <Image src={LionHeadSymbol} />
           <Text ml="4px" fontSize="14px" fontFamily="Lato">
             A Singapore Government Agency Website
