@@ -60,7 +60,7 @@ jobs:
           if [[ $GITHUB_REF == $STAGING_BRANCH ]]; then
             echo '::set-output name=proceed::true';
           elif [[ $GITHUB_REF == $PRODUCTION_BRANCH ]]; then
-            echo '::set-output name=proceed::false';
+            echo '::set-output name=proceed::true';
             echo NODE_ENV=production >> $GITHUB_ENV;
           else
             echo '::set-output name=proceed::false';
