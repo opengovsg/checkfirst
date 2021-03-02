@@ -21,7 +21,9 @@ provider:
     NODE_ENV: ${env:NODE_ENV}
   vpc:
     subnetIds:
-      - ${env:VPC_SUBNET}
+      - ${env:VPC_SUBNET_A}
+      - ${env:VPC_SUBNET_B}
+      - ${env:VPC_SUBNET_C}
     securityGroupIds:
       - ${env:VPC_SECURITY_GROUP}
   iamRoleStatements:
