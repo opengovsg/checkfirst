@@ -13,6 +13,7 @@ import {
   Text,
   Stack,
   Container,
+  useBreakpointValue,
 } from '@chakra-ui/react'
 import { useHistory } from 'react-router-dom'
 
