@@ -12,13 +12,13 @@ custom:
 provider:
   name: aws
   runtime: nodejs12.x
-  stage: ${env:NODE_ENV}
+  stage: ${env:LAMBDA_NODE_ENV}
   region: ap-southeast-1
   memorySize: 256
   apiGateway:
     shouldStartNameWithService: true
   environment:
-    NODE_ENV: ${env:NODE_ENV}
+    NODE_ENV: ${env:LAMBDA_NODE_ENV}
   vpc:
     subnetIds:
       - ${env:VPC_SUBNET_A}

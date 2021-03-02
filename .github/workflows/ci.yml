@@ -61,7 +61,6 @@ jobs:
             echo '::set-output name=proceed::true';
           elif [[ $GITHUB_REF == $PRODUCTION_BRANCH ]]; then
             echo '::set-output name=proceed::true';
-            echo NODE_ENV=production >> $GITHUB_ENV;
           else
             echo '::set-output name=proceed::false';
           fi
@@ -90,7 +89,7 @@ jobs:
       - run: npm run build
       - run: |
           if [[ $GITHUB_REF == $STAGING_BRANCH ]]; then
-            echo NODE_ENV=staging >> $GITHUB_ENV;
+            echo LAMBDA_NODE_ENV=staging >> $GITHUB_ENV;
             echo VPC_SUBNET_A=${{ secrets.VPC_SUBNET_A_STAGING }} >> $GITHUB_ENV;
             echo VPC_SUBNET_B=${{ secrets.VPC_SUBNET_B_STAGING }} >> $GITHUB_ENV;
             echo VPC_SUBNET_C=${{ secrets.VPC_SUBNET_C_STAGING }} >> $GITHUB_ENV;
@@ -99,7 +98,7 @@ jobs:
             echo SESSION_SECRET=${{ secrets.SESSION_SECRET_STAGING }} >> $GITHUB_ENV;
             echo OTP_SECRET=${{ secrets.OTP_SECRET_STAGING }} >> $GITHUB_ENV;
           elif [[ $GITHUB_REF == $PRODUCTION_BRANCH ]]; then
-            echo NODE_ENV=production >> $GITHUB_ENV;
+            echo LAMBDA_NODE_ENV=production >> $GITHUB_ENV;
             echo VPC_SUBNET_A=${{ secrets.VPC_SUBNET_A_PRODUCTION }} >> $GITHUB_ENV;
             echo VPC_SUBNET_B=${{ secrets.VPC_SUBNET_B_PRODUCTION }} >> $GITHUB_ENV;
             echo VPC_SUBNET_C=${{ secrets.VPC_SUBNET_C_PRODUCTION }} >> $GITHUB_ENV;
@@ -116,7 +115,7 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          NODE_ENV: ${{ env.NODE_ENV }}
+          LAMBDA_NODE_ENV: ${{ env.LAMBDA_NODE_ENV }}
           VPC_SUBNET_A: ${{ env.VPC_SUBNET_A }}
           VPC_SUBNET_B: ${{ env.VPC_SUBNET_B }}
           VPC_SUBNET_C: ${{ env.VPC_SUBNET_C }}
