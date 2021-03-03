@@ -1,0 +1,6 @@
+export { Hero } from './Hero'
+export { LearnMore } from './LearnMore'
+export { GetStarted } from './GetStarted'
+export { Faq } from './Faq'
+export { SiteMap } from './SiteMap'
+export { OgpFooter } from './OgpFooter'
