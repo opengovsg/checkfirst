@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { typed, create, all, factory, Unit } from 'mathjs'
+import { typed, create, all, factory } from 'mathjs'
 import * as mathjs from 'mathjs'
 import { Graph, alg } from 'graphlib'
 import * as checker from './../../types/checker'
