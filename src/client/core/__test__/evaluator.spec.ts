@@ -154,7 +154,7 @@ describe('getDependencies', () => {
 
 describe('getEvaluationOrder', () => {
   it('should return evaluation order sorted by dependencies', () => {
-    const inputs = { A: 1, B: 1 }
+    const inputs = { A1: 1, B1: 1 }
     const constants: checker.Constant[] = [
       {
         id: 'T1',
@@ -184,7 +184,7 @@ describe('getEvaluationOrder', () => {
   })
 
   it('should throw an error when there are variables that do not exists', () => {
-    const inputs = { A: 1, B: 1 }
+    const inputs = { A1: 1, B1: 1 }
     const constants: checker.Constant[] = [
       {
         id: 'T1',
@@ -215,7 +215,7 @@ describe('getEvaluationOrder', () => {
   })
 
   it('should throw an error when there exists circular dependencies', () => {
-    const inputs = { A: 1, B: 1 }
+    const inputs = { A1: 1, B1: 1 }
     const constants: checker.Constant[] = [
       {
         id: 'T1',
