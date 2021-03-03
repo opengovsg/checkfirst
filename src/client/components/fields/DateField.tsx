@@ -37,6 +37,9 @@ export const DateField: FC<Field> = ({ id, title, description }) => {
             onChange={([item]) => onChange(item)}
             value={value}
             ref={ref}
+            options={{
+              dateFormat: 'j M Y',
+            }}
             render={(_, ref) => (
               <InputGroup>
                 <Input
