@@ -1,10 +1,7 @@
-import path from 'path'
-
-import express, { Express, Request, Response } from 'express'
+import express, { Express } from 'express'
 import session from 'express-session'
 import SequelizeStoreFactory from 'connect-session-sequelize'
 import bodyParser from 'body-parser'
-import morgan from 'morgan'
 
 import minimatch from 'minimatch'
 import { totp as totpFactory } from 'otplib'
@@ -14,22 +11,12 @@ import api from '../api'
 import { addModelsTo } from '../models'
 import { CheckerController, CheckerService } from '../checker'
 import { AuthController, AuthService } from '../auth'
-import { ip } from '../utils/express'
 
 import sequelize from './sequelize'
 import mailer from './mailer'
 import logger from './logger'
-
-// Define our own tokens
-morgan.token('client-ip', (req: express.Request) => ip(req) as string)
-morgan.token(
-  'userId',
-  (req: express.Request) => `${req.session?.user?.id || '-'}`
-)
-
-const MORGAN_LOG_FORMAT =
-  ':client-ip - [:date[clf]] ":method :url HTTP/:http-version" :status ' +
-  '":userId" :res[content-length] ":referrer" ":user-agent" :response-time ms'
+import morgan from './morgan'
+import addStaticRoutes from './static'
 
 const step = config.get('otpExpiry') / 2
 
@@ -95,18 +82,12 @@ export async function bootstrap(): Promise<Express> {
     app.set('trust proxy', 1)
   }
 
-  app.use(express.static(path.resolve(__dirname + '/../../../build/client')))
-  app.use(express.static(path.resolve(__dirname + '/../../../public')))
-
-  app.use(morgan(MORGAN_LOG_FORMAT))
+  app.use(morgan)
 
   const apiMiddleware = [sessionMiddleware, bodyParser.json()]
   app.use('/api/v1', apiMiddleware, api({ checker, auth }))
 
-  // Facilitate deep-linking
-  app.get('*', (_req: Request, res: Response) => {
-    res.sendFile(path.resolve(__dirname + '/../../../build/client/index.html'))
-  })
+  addStaticRoutes(app)
 
   await sequelize.sync()
   return app

@@ -21,7 +21,7 @@ provider:
     NODE_ENV: ${env:LAMBDA_NODE_ENV}
   vpc:
     subnetIds:
-      - ${env:VPC_SUBNET_A}
+      - ${env:VPC_SUBNET_A} 
       - ${env:VPC_SUBNET_B}
       - ${env:VPC_SUBNET_C}
   iamRoleStatements:
@@ -33,7 +33,7 @@ provider:
 
 functions:
   api:
-    handler: build/server/serverless.handler
+    handler: build/server/serverless/api.handler
     timeout: 30
     vpc:
       securityGroupIds:
@@ -48,7 +48,7 @@ functions:
           path: api/v1/{proxy+}
           method: any
   static:
-    handler: build/server/serverless.handler
+    handler: build/server/serverless/static.handler
     timeout: 30
     vpc:
       securityGroupIds:
