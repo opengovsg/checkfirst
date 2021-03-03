@@ -24,8 +24,6 @@ provider:
       - ${env:VPC_SUBNET_A}
       - ${env:VPC_SUBNET_B}
       - ${env:VPC_SUBNET_C}
-    securityGroupIds:
-      - ${env:VPC_SECURITY_GROUP}
   iamRoleStatements:
     - Effect: 'Allow'
       Action:
@@ -37,6 +35,9 @@ functions:
   api:
     handler: build/server/serverless.handler
     timeout: 30
+    vpc:
+      securityGroupIds:
+        - ${env:VPC_SECURITY_GROUP_API}
     environment:
       DATABASE_URL: ${env:DATABASE_URL}
       SESSION_SECRET: ${env:SESSION_SECRET}
@@ -49,8 +50,9 @@ functions:
   static:
     handler: build/server/serverless.handler
     timeout: 30
-    environment:
-      DATABASE_URL: ${env:DATABASE_URL}
+    vpc:
+      securityGroupIds:
+        - ${env:VPC_SECURITY_GROUP_STATIC}
     events:
       - http:
           path: ""

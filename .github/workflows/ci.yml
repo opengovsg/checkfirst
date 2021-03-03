@@ -93,7 +93,8 @@ jobs:
             echo VPC_SUBNET_A=${{ secrets.VPC_SUBNET_A_STAGING }} >> $GITHUB_ENV;
             echo VPC_SUBNET_B=${{ secrets.VPC_SUBNET_B_STAGING }} >> $GITHUB_ENV;
             echo VPC_SUBNET_C=${{ secrets.VPC_SUBNET_C_STAGING }} >> $GITHUB_ENV;
-            echo VPC_SECURITY_GROUP=${{ secrets.VPC_SECURITY_GROUP_STAGING }} >> $GITHUB_ENV;
+            echo VPC_SECURITY_GROUP_API=${{ secrets.VPC_SECURITY_GROUP_API_STAGING }} >> $GITHUB_ENV;
+            echo VPC_SECURITY_GROUP_STATIC=${{ secrets.VPC_SECURITY_GROUP_STATIC_STAGING }} >> $GITHUB_ENV;
             echo DATABASE_URL=${{ secrets.DATABASE_URL_STAGING }} >> $GITHUB_ENV;
             echo SESSION_SECRET=${{ secrets.SESSION_SECRET_STAGING }} >> $GITHUB_ENV;
             echo OTP_SECRET=${{ secrets.OTP_SECRET_STAGING }} >> $GITHUB_ENV;
@@ -102,7 +103,8 @@ jobs:
             echo VPC_SUBNET_A=${{ secrets.VPC_SUBNET_A_PRODUCTION }} >> $GITHUB_ENV;
             echo VPC_SUBNET_B=${{ secrets.VPC_SUBNET_B_PRODUCTION }} >> $GITHUB_ENV;
             echo VPC_SUBNET_C=${{ secrets.VPC_SUBNET_C_PRODUCTION }} >> $GITHUB_ENV;
-            echo VPC_SECURITY_GROUP=${{ secrets.VPC_SECURITY_GROUP_PRODUCTION }} >> $GITHUB_ENV;
+            echo VPC_SECURITY_GROUP_API=${{ secrets.VPC_SECURITY_GROUP_API_PRODUCTION }} >> $GITHUB_ENV;
+            echo VPC_SECURITY_GROUP_STATIC=${{ secrets.VPC_SECURITY_GROUP_STATIC_PRODUCTION }} >> $GITHUB_ENV;
             echo DATABASE_URL=${{ secrets.DATABASE_URL_PRODUCTION }} >> $GITHUB_ENV;
             echo SESSION_SECRET=${{ secrets.SESSION_SECRET_PRODUCTION }} >> $GITHUB_ENV;
             echo OTP_SECRET=${{ secrets.OTP_SECRET_PRODUCTION }} >> $GITHUB_ENV;
@@ -119,7 +121,8 @@ jobs:
           VPC_SUBNET_A: ${{ env.VPC_SUBNET_A }}
           VPC_SUBNET_B: ${{ env.VPC_SUBNET_B }}
           VPC_SUBNET_C: ${{ env.VPC_SUBNET_C }}
-          VPC_SECURITY_GROUP: ${{ env.VPC_SECURITY_GROUP }}
+          VPC_SECURITY_GROUP_API: ${{ env.VPC_SECURITY_GROUP_API }}
+          VPC_SECURITY_GROUP_STATIC: ${{ env.VPC_SECURITY_GROUP_STATIC }}
           DATABASE_URL: ${{ env.DATABASE_URL }}
           SESSION_SECRET: ${{ env.SESSION_SECRET }}
           OTP_SECRET: ${{ env.OTP_SECRET }}
