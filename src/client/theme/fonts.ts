@@ -6,4 +6,5 @@ export const fonts = {
   ssp: "'Source Sans Pro', sans-serif",
   ibm: "'IBM Plex Sans', sans-serif",
   mono: "'JetBrains Mono', monospace",
+  inter: "'Inter', sans-serif",
 }
