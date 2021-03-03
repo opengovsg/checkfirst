@@ -23,9 +23,9 @@ interface CheckerProps {
   config: checker.Checker
 }
 
-type VariableResults = Record<string, string | number | Unit>
-
-function isUnit(output: string | number | Unit): output is Unit {
+function isUnit(
+  output: string | number | Unit | Record<string, number>
+): output is Unit {
   return (output as Unit).toNumber !== undefined
 }
 

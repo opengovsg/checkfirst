@@ -1,8 +1,9 @@
 import { User } from './user'
+import { Unit } from 'mathjs'
 
 export type VariableResults = Record<
   string,
-  string | number | Record<string, number>
+  string | number | Record<string, number> | Unit
 >
 
 export interface Checker {
