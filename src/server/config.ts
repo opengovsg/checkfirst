@@ -91,6 +91,18 @@ const config = convict({
     format: '*',
     default: 'development',
   },
+  cspReportUri: {
+    doc: 'A URI to report CSP violations to.',
+    env: 'CSP_REPORT_URI',
+    format: '*',
+    default: null,
+  },
+  cspOnlyReportViolations: {
+    doc: 'Only report CSP violations, do not enforce.',
+    env: 'CSP_ONLY_REPORT_VIOLATIONS',
+    format: 'Boolean',
+    default: false,
+  },
 })
 
 export default config
