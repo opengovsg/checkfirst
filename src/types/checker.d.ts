@@ -1,8 +1,9 @@
 import { User } from './user'
+import { Unit } from 'mathjs'
 
 export type VariableResults = Record<
   string,
-  string | number | Record<string, number>
+  string | number | Record<string, number> | Unit
 >
 
 export interface Checker {
@@ -50,7 +51,7 @@ export interface Operation {
   show: boolean
 }
 
-export type OperationType = 'ARITHMETIC' | 'IFELSE' | 'SWITCH' | 'MAP'
+export type OperationType = 'ARITHMETIC' | 'IFELSE' | 'SWITCH' | 'MAP' | 'DATE'
 
 export interface TableElem {
   key: string

@@ -138,23 +138,23 @@ describe('getDependencies', () => {
   const toArray = (s: Set<string>) => Array.from(s).sort()
 
   it('should extract all dependencies from expression', () => {
-    const expression = 'A + B - C * 1000'
+    const expression = 'A1 + B1 - C1 * 1000'
     const dependencies = getDependencies(expression)
 
-    expect(toArray(dependencies)).toEqual(['A', 'B', 'C'])
+    expect(toArray(dependencies)).toEqual(['A1', 'B1', 'C1'])
   })
 
   it('should only extract variables from expressions with functions', () => {
-    const expression = 'ifelse(A == B, max(C, 100), D * 1000)'
+    const expression = 'ifelse(A1 == B1, max(C1, 100), D1 * 1000)'
     const dependencies = getDependencies(expression)
 
-    expect(toArray(dependencies)).toEqual(['A', 'B', 'C', 'D'])
+    expect(toArray(dependencies)).toEqual(['A1', 'B1', 'C1', 'D1'])
   })
 })
 
 describe('getEvaluationOrder', () => {
   it('should return evaluation order sorted by dependencies', () => {
-    const inputs = { A: 1, B: 1 }
+    const inputs = { A1: 1, B1: 1 }
     const constants: checker.Constant[] = [
       {
         id: 'T1',
@@ -166,14 +166,14 @@ describe('getEvaluationOrder', () => {
       {
         id: 'O2',
         type: 'ARITHMETIC',
-        expression: 'A + B',
+        expression: 'A1 + B1',
         title: '',
         show: true,
       },
       {
         id: 'O1',
         type: 'ARITHMETIC',
-        expression: 'O2 + A + B',
+        expression: 'O2 + A1 + B1',
         title: '',
         show: true,
       },
@@ -184,7 +184,7 @@ describe('getEvaluationOrder', () => {
   })
 
   it('should throw an error when there are variables that do not exists', () => {
-    const inputs = { A: 1, B: 1 }
+    const inputs = { A1: 1, B1: 1 }
     const constants: checker.Constant[] = [
       {
         id: 'T1',
@@ -196,14 +196,14 @@ describe('getEvaluationOrder', () => {
       {
         id: 'O2',
         type: 'ARITHMETIC',
-        expression: 'A + B',
+        expression: 'A1 + B1',
         title: '',
         show: true,
       },
       {
         id: 'O1',
         type: 'ARITHMETIC',
-        expression: 'O3 + A + B',
+        expression: 'O3 + A1 + B1',
         title: '',
         show: true,
       },
@@ -215,7 +215,7 @@ describe('getEvaluationOrder', () => {
   })
 
   it('should throw an error when there exists circular dependencies', () => {
-    const inputs = { A: 1, B: 1 }
+    const inputs = { A1: 1, B1: 1 }
     const constants: checker.Constant[] = [
       {
         id: 'T1',
@@ -227,14 +227,14 @@ describe('getEvaluationOrder', () => {
       {
         id: 'O2',
         type: 'ARITHMETIC',
-        expression: 'O1 + A + B',
+        expression: 'O1 + A1 + B1',
         title: '',
         show: true,
       },
       {
         id: 'O1',
         type: 'ARITHMETIC',
-        expression: 'O2 + A + B',
+        expression: 'O2 + A1 + B1',
         title: '',
         show: true,
       },

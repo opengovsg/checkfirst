@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { typed, create, all, factory } from 'mathjs'
+import * as mathjs from 'mathjs'
 import { Graph, alg } from 'graphlib'
 import * as checker from './../../types/checker'
 
@@ -68,6 +69,13 @@ const BLACKLIST = [
   'import',
   'parse',
 ]
+
+// Reach into the default measurement units defined on mathjs.Unit,
+// but not defined in @types/mathjs
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+const UNITS = Object.keys(mathjs.Unit.UNITS)
+
 export const evaluateOperation = (
   expression: string,
   variables: checker.VariableResults
@@ -106,7 +114,8 @@ export const getDependencies = (expression: string): Set<string> => {
   const functions: string[] = []
   node.traverse((node) => {
     if (node.isFunctionNode && node.name) functions.push(node.name)
-    if (node.isSymbolNode && node.name) dependencies.add(node.name)
+    if (node.isSymbolNode && node.name && !UNITS.includes(node.name))
+      dependencies.add(node.name)
   })
 
   // Functions are also SymbolNodes. However, we only want variable nodes.

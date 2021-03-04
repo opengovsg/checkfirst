@@ -1,6 +1,7 @@
-import React, { FC, useState } from 'react'
-import { useFormContext } from 'react-hook-form'
-import DatePicker from 'react-datepicker'
+import 'flatpickr/dist/themes/light.css'
+import React, { FC } from 'react'
+import { useFormContext, Controller } from 'react-hook-form'
+import Flatpickr from 'react-flatpickr'
 import {
   useStyles,
   FormControl,
@@ -8,46 +9,57 @@ import {
   FormHelperText,
   FormErrorMessage,
   Input,
+  InputGroup,
+  InputRightElement,
 } from '@chakra-ui/react'
 
-import 'react-datepicker/dist/react-datepicker.css'
 import '../../styles/date-picker.css'
 
 import { Field } from '../../../types/checker'
+import { BiCalendar } from 'react-icons/bi'
 
 export const DateField: FC<Field> = ({ id, title, description }) => {
   const styles = useStyles()
-  const { register, errors } = useFormContext()
-  const [date, setDate] = useState(new Date())
-  const error = errors[id]
-
-  const changeHandler = (newDate: Date) => {
-    if (newDate) setDate(newDate)
-  }
+  const { control } = useFormContext()
 
   return (
-    <FormControl isInvalid={error} id={id}>
-      <FormLabel sx={styles.label} htmlFor={id}>
-        {title}
-      </FormLabel>
-      {description && <FormHelperText mb={4}>{description}</FormHelperText>}
-      <Input
-        type="hidden"
-        name={id}
-        value={date ? date.valueOf() : undefined}
-        ref={register({ required: true })}
-      />
-      <DatePicker
-        wrapperClassName={error ? 'fieldError' : ''}
-        value={date ? date.toISOString().split('T')[0] : ''}
-        selected={date}
-        onChange={changeHandler}
-        showPopperArrow={true}
-        showMonthDropdown
-        showYearDropdown
-        dropdownMode="select"
-      />
-      <FormErrorMessage>Field is required</FormErrorMessage>
-    </FormControl>
+    <Controller
+      name={id}
+      control={control}
+      defaultValue={new Date()}
+      rules={{ required: true }}
+      render={({ onChange, value, ref }, { invalid }) => (
+        <FormControl isInvalid={invalid} id={id}>
+          <FormLabel sx={styles.label} htmlFor={id}>
+            {title}
+          </FormLabel>
+          {description && <FormHelperText mb={4}>{description}</FormHelperText>}
+          <Flatpickr
+            onChange={([item]) => onChange(item)}
+            value={value}
+            ref={ref}
+            options={{
+              dateFormat: 'j M Y',
+            }}
+            render={(_, ref) => (
+              <InputGroup>
+                <Input
+                  type="text"
+                  placeholder="DD/MM/YYYY"
+                  readOnly
+                  ref={ref}
+                  bg="white"
+                />
+                <InputRightElement
+                  pointerEvents="none"
+                  children={<BiCalendar />}
+                />
+              </InputGroup>
+            )}
+          />
+          <FormErrorMessage>Field is required</FormErrorMessage>
+        </FormControl>
+      )}
+    />
   )
 }
