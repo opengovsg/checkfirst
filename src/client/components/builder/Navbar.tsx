@@ -206,7 +206,9 @@ export const Navbar: FC = () => {
             <ModalBody>
               <EmbedField
                 name="iframe"
-                value={`<iframe src="${linkTo(checker)}"></iframe>`}
+                value={`<iframe src="${linkTo(
+                  checker
+                )}" style=“width:100%;height:500px”></iframe>`}
               >
                 <BiCode size="1rem" />
                 <Text>Embed this checker on your site</Text>
