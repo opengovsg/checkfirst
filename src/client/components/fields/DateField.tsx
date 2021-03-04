@@ -26,6 +26,7 @@ export const DateField: FC<Field> = ({ id, title, description }) => {
     <Controller
       name={id}
       control={control}
+      defaultValue={new Date()}
       rules={{ required: true }}
       render={({ onChange, value, ref }, { invalid }) => (
         <FormControl isInvalid={invalid} id={id}>
