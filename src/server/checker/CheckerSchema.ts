@@ -54,3 +54,9 @@ export const CheckerSchema = Joi.object().keys({
   displays: Joi.array().items(DisplaySchema).required(),
   operations: Joi.array().items(OperationSchema).required(),
 })
+
+export const CheckerWithMetadataSchema = CheckerSchema.keys({
+  createdAt: Joi.string(),
+  updatedAt: Joi.string(),
+  users: Joi.array(),
+})
