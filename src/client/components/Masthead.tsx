@@ -7,7 +7,7 @@ const SG_GOVT_LINK = 'https://www.gov.sg/'
 
 export const Masthead: FC = () => {
   return (
-    <Flex mx="auto" bg="#E5E5E5" py={1} position="relative" zIndex="banner">
+    <Flex bg="#E5E5E5" py={1} position="relative" zIndex="banner">
       <Container width="93vw" maxWidth="93vw" layerStyle="app">
         <Link
           display="flex"

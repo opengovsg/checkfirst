@@ -8,8 +8,8 @@ import {
   FormControl,
   FormLabel,
   FormErrorMessage,
-  FormHelperText,
   Input,
+  Text,
 } from '@chakra-ui/react'
 
 import { getApiErrorMessage } from '../api'
@@ -78,39 +78,42 @@ export const LoginForm: FC<LoginFormProps> = ({ email, onLogin }) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <VStack spacing={6} align="stretch">
+      <VStack spacing="32px" align="stretch">
         <FormControl id="email" isInvalid={hasError()}>
-          <FormLabel>One time password</FormLabel>
+          <FormLabel color="#11263C">One time password</FormLabel>
+          <Text color="#6D7580" mb="24px">
+            Please enter the OTP sent to {email}.
+          </Text>
           <Input
+            h="48px"
+            bg="#F4F6F9"
             type="text"
             inputMode="numeric"
             pattern="\d{6}"
             name="token"
             autoComplete="one-time-code"
             ref={register({ required: true })}
+            placeholder="e.g. 111111"
           />
-          {hasError() ? (
+          {hasError() && (
             <FormErrorMessage>{getErrorMessage()}</FormErrorMessage>
-          ) : (
-            <FormHelperText>
-              Please enter the OTP sent to {email}.
-            </FormHelperText>
           )}
         </FormControl>
-        <HStack justifyContent="flex-end" spacing={6}>
+        <HStack justifyContent="flex-start" spacing={6}>
+          <Button
+            size="lg"
+            isLoading={auth.verifyOtp.isLoading}
+            colorScheme="primary"
+            type="submit"
+          >
+            Login
+          </Button>
           <Button
             variant="link"
             disabled={!canResend}
             onClick={() => sendOtp.mutate(email)}
           >
             {canResend ? 'Resend' : `Resend in ${resendTimer}s`}
-          </Button>
-          <Button
-            isLoading={auth.verifyOtp.isLoading}
-            colorScheme="primary"
-            type="submit"
-          >
-            Login
           </Button>
         </HStack>
       </VStack>
