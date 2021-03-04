@@ -1,10 +1,54 @@
 .flatpickr-months .flatpickr-month {
   background: white;
+  font-family: "Inter", sans-serif;
+  color: #293044;
+  height: 48px;
+  border-bottom: solid 1px #E1E2E4;
+}
+
+.flatpickr-months .flatpickr-month .flatpickr-current-month {
+  padding: 0;
+  display: flex;
+}
+
+.flatpickr-months .flatpickr-month .flatpickr-current-month,
+.flatpickr-months .flatpickr-prev-month,
+.flatpickr-months .flatpickr-next-month {
+  font-size: 16px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flatpickr-current-month .flatpickr-monthDropdown-months,
+.flatpickr-current-month input.cur-year {
+  font-weight: 500;
+  text-align: center;
+  padding: 0;
+  text-align-last:center;
+}
+
+.flatpickr-current-month .flatpickr-monthDropdown-months,
+.flatpickr-current-month .numInputWrapper{
+  width: auto;
+  flex: 1;
+  padding: 8px;
+  border-radius: 4px;
+  text-align: center;
+  height: 36px
+}
+
+.flatpickr-current-month .flatpickr-monthDropdown-months {
+  appearance: none;
+}
+
+.flatpickr-innerContainer {
+  padding: 16px 0px;
 }
 
 .flatpickr-weekdays {
   background: white;
-  border-bottom: 1px solid #E2E8F0;
   margin-bottom: 2px;
 }
 
