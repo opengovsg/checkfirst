@@ -1,5 +1,7 @@
 import { Request, Response } from 'express'
 import CheckerService from './CheckerService'
+import { CheckerWithMetadataSchema } from './CheckerSchema'
+
 export class CheckerController {
   private service: Pick<CheckerService, keyof CheckerService>
 
@@ -16,6 +18,9 @@ export class CheckerController {
       res.status(401).json({ message: 'User not signed in' })
     } else {
       try {
+        const { error } = CheckerWithMetadataSchema.validate(checker)
+        if (error) throw error
+
         const created = await this.service.create(checker, user)
         if (!created) {
           res.status(422).json({ message: `${checker.id} already exists` })
@@ -65,6 +70,9 @@ export class CheckerController {
     } else {
       try {
         const checker = req.body
+        const { error } = CheckerWithMetadataSchema.validate(checker)
+        if (error) throw error
+
         const count = await this.service.update(id, checker, user)
         if (!count) {
           res.status(404).json({ message: 'Not Found' })

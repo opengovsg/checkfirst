@@ -93,6 +93,7 @@ const InputComponent: QuestionFieldComponent = ({ field, index }) => {
           aria-label="Delete option"
           fontSize="20px"
           icon={<BiX />}
+          disabled={field.options.length <= 1}
           onClick={() => deleteOption(option, i)}
         />
       </HStack>
