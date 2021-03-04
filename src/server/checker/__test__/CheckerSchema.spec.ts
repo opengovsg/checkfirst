@@ -176,9 +176,17 @@ describe('CheckerSchema', () => {
 
   describe('constants', () => {
     const baseConstant = {
-      id: 'C1',
-      value: 'Test',
+      id: 'T1',
+      title: 'title',
+      table: [{ key: 'A', value: 1 }],
     }
+
+    it('should not throw an error if constant is valid', () => {
+      const checker = { ...base, constants: [baseConstant] }
+
+      const { error } = CheckerSchema.validate(checker)
+      expect(error).toBeUndefined()
+    })
 
     it('should throw an error if constants is undefined', () => {
       const checker = omit(base, 'constants')
@@ -204,6 +212,15 @@ describe('CheckerSchema', () => {
         const { error } = CheckerSchema.validate(checker)
         expect(error).not.toBeUndefined()
       })
+    })
+
+    it('should throw an error if mapping table entry is invalid', () => {
+      const table = [{ key: 'A' }]
+      const constants = [{ ...baseConstant, table }]
+      const checker = { ...base, constants }
+
+      const { error } = CheckerSchema.validate(checker)
+      expect(error).not.toBeUndefined()
     })
   })
 

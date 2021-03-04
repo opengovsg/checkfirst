@@ -19,9 +19,15 @@ const FieldSchema = Joi.object({
   }).required(),
 })
 
+const TableElemSchema = Joi.object({
+  key: Joi.string().required(),
+  value: Joi.number().required(),
+})
+
 const ConstantSchema = Joi.object({
   id: Joi.string().required(),
-  value: Joi.string().required(),
+  title: Joi.string().required(),
+  table: Joi.array().items(TableElemSchema).required(),
 })
 
 const DisplaySchema = Joi.object({
@@ -32,7 +38,7 @@ const DisplaySchema = Joi.object({
 
 const OperationSchema = Joi.object({
   id: Joi.string().required(),
-  type: Joi.string().valid('ARITHMETIC', 'IFELSE').required(),
+  type: Joi.string().valid('ARITHMETIC', 'IFELSE', 'MAP', 'DATE').required(),
   title: Joi.string().required(),
   expression: Joi.string().required(),
   show: Joi.boolean().required(),
