@@ -101,7 +101,7 @@ const config = convict({
     doc: 'Only report CSP violations, do not enforce.',
     env: 'CSP_ONLY_REPORT_VIOLATIONS',
     format: 'Boolean',
-    default: false,
+    default: true,
   },
 })
 
