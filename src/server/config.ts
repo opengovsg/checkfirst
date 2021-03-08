@@ -103,6 +103,13 @@ const config = convict({
     format: 'Boolean',
     default: true,
   },
+  sentryDns: {
+    doc:
+      'The Sentry DNS used for bug and error tracking. e.g. `https://12345@sentry.io/12345`',
+    env: 'SENTRY_DNS',
+    format: '*',
+    default: '',
+  },
 })
 
 export default config
