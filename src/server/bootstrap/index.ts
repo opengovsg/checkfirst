@@ -17,6 +17,7 @@ import mailer from './mailer'
 import logger from './logger'
 import morgan from './morgan'
 import addStaticRoutes from './static'
+import helmet from './helmet'
 
 const step = config.get('otpExpiry') / 2
 
@@ -83,6 +84,7 @@ export async function bootstrap(): Promise<Express> {
   }
 
   app.use(morgan)
+  app.use(helmet)
 
   const apiMiddleware = [sessionMiddleware, bodyParser.json()]
   app.use('/api/v1', apiMiddleware, api({ checker, auth }))

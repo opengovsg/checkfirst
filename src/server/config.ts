@@ -91,6 +91,25 @@ const config = convict({
     format: '*',
     default: 'development',
   },
+  cspReportUri: {
+    doc: 'A URI to report CSP violations to.',
+    env: 'CSP_REPORT_URI',
+    format: '*',
+    default: '',
+  },
+  cspOnlyReportViolations: {
+    doc: 'Only report CSP violations, do not enforce.',
+    env: 'CSP_ONLY_REPORT_VIOLATIONS',
+    format: 'Boolean',
+    default: true,
+  },
+  sentryDns: {
+    doc:
+      'The Sentry DNS used for bug and error tracking. e.g. `https://12345@sentry.io/12345`',
+    env: 'SENTRY_DNS',
+    format: '*',
+    default: '',
+  },
 })
 
 export default config
