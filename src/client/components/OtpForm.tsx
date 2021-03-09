@@ -8,8 +8,8 @@ import {
   FormControl,
   FormLabel,
   FormErrorMessage,
-  FormHelperText,
   Input,
+  Text,
 } from '@chakra-ui/react'
 
 import { getApiErrorMessage } from '../api'
@@ -42,25 +42,33 @@ export const OtpForm: FC<OtpFormProps> = ({ onSuccess }) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <VStack spacing={6} align="stretch">
+      <VStack spacing="32px" align="stretch">
         <FormControl id="email" isInvalid={hasError()}>
-          <FormLabel>Email address</FormLabel>
-          <Input type="email" name="email" ref={register({ required: true })} />
-          {hasError() ? (
+          <FormLabel label="#11263C">Login</FormLabel>
+          <Text color="#6D7580" mb="24px">
+            Only available for use by public officers with a{' '}
+            <strong>gov.sg</strong> email.
+          </Text>
+          <Input
+            h="48px"
+            bg="#F4F6F9"
+            type="email"
+            name="email"
+            ref={register({ required: true })}
+            placeholder="e.g. jane@open.gov.sg"
+          />
+          {hasError() && (
             <FormErrorMessage>{getErrorMessage()}</FormErrorMessage>
-          ) : (
-            <FormHelperText>
-              Please use your @agency.gov.sg email
-            </FormHelperText>
           )}
         </FormControl>
-        <Box textAlign="right">
+        <Box>
           <Button
+            size="lg"
             isLoading={sendOtp.isLoading}
             colorScheme="primary"
             type="submit"
           >
-            Get OTP
+            Get started
           </Button>
         </Box>
       </VStack>
