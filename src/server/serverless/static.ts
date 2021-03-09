@@ -1,9 +1,9 @@
 import express from 'express'
 import serverless, { Handler } from 'serverless-http'
-import helmet from '../bootstrap/helmet'
 
 import morgan from '../bootstrap/morgan'
 import addStaticRoutes from '../bootstrap/static'
+import helmet from '../bootstrap/helmet'
 
 const BINARY_CONTENT_TYPES = ['image/png']
 
