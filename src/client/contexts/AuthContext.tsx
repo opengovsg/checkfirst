@@ -11,7 +11,7 @@ import { AuthService } from '../services'
 
 interface AuthContextProps {
   logout: () => void
-  user: User | undefined
+  user: User | null
   verifyOtp: UseMutationResult<
     void,
     { message: string },
@@ -29,7 +29,7 @@ export const useAuth = (): AuthContextProps => {
 
 export const AuthProvider: FC = ({ children }) => {
   const history = useHistory()
-  const [user, setUser] = useLocalStorage<User | undefined>('user', undefined)
+  const [user, setUser] = useLocalStorage<User | null>('user', null)
   const whoami = () =>
     ApiClient.get<User | null>('/auth/whoami').then((user) => {
       if (user.data) {
@@ -47,7 +47,7 @@ export const AuthProvider: FC = ({ children }) => {
 
   const logout = async () => {
     await ApiClient.post('/auth/logout')
-    setUser(undefined)
+    setUser(null)
   }
 
   const auth = {
