@@ -19,7 +19,7 @@ As defined in `src/server/config`
 
 ### Entrypoints
 - `src/server/index.ts` for Express.js
-- `src/server/serverless.ts` for deployments into API Gateway + AWS Lambda
+- `src/server/serverless/{api, static}.ts` for deployments into API Gateway + AWS Lambda
 
 ### Modules
 - `api/` - API routing to authentication, CRUD operations
