@@ -55,7 +55,9 @@ describe('AuthService', () => {
       expect(mailer.sendMail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: email,
-          html: expect.stringContaining(totp.options.step + ' seconds'),
+          html: expect.stringContaining(
+            Math.floor(totp.options.step / 60) + ' minutes'
+          ),
         })
       )
     })
