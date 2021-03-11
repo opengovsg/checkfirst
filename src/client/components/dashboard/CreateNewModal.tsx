@@ -14,12 +14,12 @@ import {
   Textarea,
   FormControl,
   FormLabel,
-  FormHelperText,
   FormErrorMessage,
   VStack,
   HStack,
 } from '@chakra-ui/react'
 import { useForm } from 'react-hook-form'
+import { v4 as uuidv4 } from 'uuid'
 
 import { CheckerService } from '../../services'
 import { Checker } from '../../../types/checker'
@@ -37,7 +37,7 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({
   checker,
 }) => {
   const initial = {
-    id: '',
+    id: uuidv4(), // Set id to be a random uuid string
     title: '',
     description: '',
     fields: [],
@@ -58,7 +58,7 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({
       toast({
         status: 'success',
         title: 'Checker created',
-        description: `${created?.id} has been created successfully`,
+        description: `${created?.title} has been created successfully`,
       })
       onClose()
     },
@@ -93,26 +93,6 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({
         <form onSubmit={handleSubmit(onSubmit)}>
           <ModalBody>
             <VStack spacing={4}>
-              <FormControl isInvalid={errors.id}>
-                <FormLabel htmlFor="id">Checker ID</FormLabel>
-                <Input
-                  name="id"
-                  ref={register({
-                    required: 'Checker ID is required',
-                    pattern: {
-                      value: /^[a-z0-9-]+[a-z0-9]+$/,
-                      message:
-                        'Checker ID must be lowercase letters and numbers, separated by -',
-                    },
-                  })}
-                />
-                {!errors.id && (
-                  <FormHelperText>
-                    Lowercase letters and numbers, separated by -
-                  </FormHelperText>
-                )}
-                <FormErrorMessage>{errors.id?.message}</FormErrorMessage>
-              </FormControl>
               {!checker && (
                 <>
                   <FormControl isInvalid={errors.title}>

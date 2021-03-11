@@ -164,7 +164,7 @@ export const Navbar: FC = () => {
             </ModalFooter>
           </ModalContent>
         </Modal>
-        <Text fontWeight="600">{match?.params.id}</Text>
+        <Text fontWeight="600">{checker.title}</Text>
       </HStack>
       <HStack h="100%" flex={1} justifyContent="center" spacing={0}>
         <Tabs
