@@ -64,7 +64,7 @@ export const CheckerCard: FC<CheckerCardProps> = ({ checker }) => {
       <Link to={{ pathname: `/builder/${checker.id}` }}>
         <VStack sx={styles.card} align="stretch" role="group">
           <Text flex={1} sx={styles.title} isTruncated>
-            {checker.id}
+            {checker.title}
           </Text>
           <HStack sx={styles.actions}>
             <BiDuplicate onClick={onDuplicateClick} size="24px" />
