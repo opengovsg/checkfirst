@@ -47,9 +47,10 @@ export class AuthService {
       throw new Error('Invalid email')
     }
     const otp = this.totp.generate(this.secretFrom(email))
-    const html = `Your OTP is <b>${otp}</b>. It will expire in ${
-      this.totp.options.step || NaN
-    } seconds.
+    const timeLeft = this.totp.options.step
+      ? Math.floor(this.totp.options.step / 60) // Round down to minutes
+      : NaN
+    const html = `Your OTP is <b>${otp}</b>. It will expire in ${timeLeft} minutes.
     Please use this to login to your account.
     <p>If your OTP does not work, please request for a new one.</p>
     <p>This login attempt was made from the IP: ${ip}. If you did not attempt to log in, you may choose to ignore this email or investigate this IP address further.</p>`
