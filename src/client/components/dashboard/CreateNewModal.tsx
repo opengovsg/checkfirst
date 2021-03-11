@@ -58,7 +58,7 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({
       toast({
         status: 'success',
         title: 'Checker created',
-        description: `${created?.id} has been created successfully`,
+        description: `${created?.title} has been created successfully`,
       })
       onClose()
     },

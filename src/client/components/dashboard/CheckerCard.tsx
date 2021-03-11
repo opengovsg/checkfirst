@@ -35,7 +35,7 @@ export const CheckerCard: FC<CheckerCardProps> = ({ checker }) => {
       toast({
         status: 'success',
         title: 'Checker deleted',
-        description: `${checker.id} has been successfully deleted`,
+        description: `${checker.title} has been successfully deleted`,
       })
     },
     onError: (err) => {
