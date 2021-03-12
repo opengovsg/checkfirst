@@ -18,4 +18,5 @@ export default helmet({
     },
     reportOnly: cspOnlyReportViolations,
   },
+  frameguard: false,
 })
