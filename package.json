@@ -119,7 +119,7 @@
     "react-flatpickr": "^3.10.7",
     "react-hook-form": "^6.15.4",
     "react-icons": "^4.2.0",
-    "react-query": "^3.12.0",
+    "react-query": "^3.12.2",
     "react-router-dom": "^5.2.0",
     "sequelize": "^6.5.0",
     "serverless-http": "^2.7.0",
