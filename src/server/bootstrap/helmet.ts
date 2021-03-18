@@ -12,7 +12,11 @@ export default helmet({
       defaultSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com/'],
       fontSrc: ["'self'", 'https://fonts.gstatic.com/'],
-      connectSrc: ["'self'", ...(sentryDns ? [parseDomain(sentryDns)] : [])],
+      connectSrc: [
+        "'self'",
+        ...(sentryDns ? [parseDomain(sentryDns)] : []),
+        'https://www.google-analytics.com',
+      ],
       ...(cspReportUri ? { reportUri: cspReportUri } : {}),
       upgradeInsecureRequests: [],
     },
