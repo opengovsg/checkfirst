@@ -7,7 +7,9 @@ export function initializeGA() {
     debug: true, // Set to true only on development
     useExistingGa: true,
   })
-  ReactGA.ga('create', GA_TRACKING_ID, 'auto')
+  ReactGA.ga('create', GA_TRACKING_ID, 'auto', {
+    cookieFlags: 'SameSite=None; Secure',
+  })
 }
 
 export function setGAUserId(userId: number | null) {
