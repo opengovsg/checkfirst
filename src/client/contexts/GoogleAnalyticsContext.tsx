@@ -6,10 +6,10 @@ import React, {
   useState,
 } from 'react'
 import { useLocation } from 'react-router-dom'
-import { initializeGA, sendPageView } from '../services'
+import { initializeGA, sendPageView, sendUserEvent } from '../services'
 
 interface GoogleAnalyticsContextProps {
-  sendPageView: () => void
+  sendUserEvent: (action: string) => void
 }
 
 export const GoogleAnalyticsContext = createContext<
@@ -43,8 +43,10 @@ export const GoogleAnalyticsProvider: FC = ({ children }) => {
     isLoaded && sendPageView(location.pathname)
   }, [location, isLoaded])
 
+  const ga = { sendUserEvent }
+
   return (
-    <GoogleAnalyticsContext.Provider value={{}}>
+    <GoogleAnalyticsContext.Provider value={ga}>
       {children}
     </GoogleAnalyticsContext.Provider>
   )
