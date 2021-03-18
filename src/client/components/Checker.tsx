@@ -18,6 +18,7 @@ import { LineDisplay } from './displays'
 import * as checker from './../../types/checker'
 import { evaluate } from './../core/evaluator'
 import { unit, Unit } from 'mathjs'
+import { sendUserEvent } from '../services'
 
 interface CheckerProps {
   config: checker.Checker
@@ -119,6 +120,7 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
     try {
       const computed = evaluate(parsedInputs, constants, operations)
       setVariables(computed)
+      sendUserEvent('submit')
     } catch (err) {
       toast({
         status: 'error',
