@@ -14,6 +14,7 @@ module.exports = () => {
       path: path.join(__dirname, outputDirectory),
       filename: 'bundle.js',
       publicPath: '/',
+      assetModuleFilename: 'assets/[name].[ext]',
     },
     resolve: {
       extensions: ['.jsx', '.js', '.tsx', '.ts', '.json'],
@@ -41,15 +42,7 @@ module.exports = () => {
         },
         {
           test: /\.(png|woff|woff2|eot|ttf|svg)$/,
-          use: [
-            {
-              loader: 'file-loader',
-              options: {
-                outputPath: 'assets',
-                name: '[name].[ext]',
-              },
-            },
-          ],
+          type: 'asset/resource',
         },
       ],
     },
