@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path')
+const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
@@ -70,6 +71,11 @@ module.exports = () => {
       }),
       new CopyWebpackPlugin({
         patterns: [{ from: './src/client/assets', to: 'assets' }],
+      }),
+      new webpack.DefinePlugin({
+        'process.env.GA_TRACKING_ID': JSON.stringify(
+          process.env.GA_TRACKING_ID
+        ),
       }),
     ],
   }

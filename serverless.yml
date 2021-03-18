@@ -43,6 +43,7 @@ functions:
       SESSION_SECRET: ${env:SESSION_SECRET}
       OTP_SECRET: ${env:OTP_SECRET}
       OTP_EXPIRY: ${env:OTP_EXPIRY}
+      GA_TRACKING_ID: ${env:GA_TRACKING_ID}
     events:
       - http:
           path: api/v1/{proxy+}
