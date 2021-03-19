@@ -4,7 +4,7 @@ const GA_TRACKING_ID = process.env.GA_TRACKING_ID || ''
 
 export function initializeGA() {
   ReactGA.initialize(GA_TRACKING_ID, {
-    debug: true, // Set to true only on development
+    debug: false, // Set to true only on development
     useExistingGa: true,
   })
   ReactGA.ga('create', GA_TRACKING_ID, 'auto', {
