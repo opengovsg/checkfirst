@@ -6,7 +6,9 @@ import React, {
   useState,
 } from 'react'
 import { useLocation } from 'react-router-dom'
-import {
+import { GoogleAnalyticsService } from '../services'
+
+const {
   GA_USER_EVENTS,
   initializeGA,
   setGAUserId,
@@ -14,7 +16,7 @@ import {
   sendUserEvent,
   sendTiming,
   sendException,
-} from '../services'
+} = GoogleAnalyticsService
 
 interface GoogleAnalyticsContextProps {
   GA_USER_EVENTS: {

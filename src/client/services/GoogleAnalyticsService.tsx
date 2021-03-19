@@ -2,11 +2,11 @@ import ReactGA from 'react-ga'
 
 const GA_TRACKING_ID = process.env.GA_TRACKING_ID || ''
 
-export const GA_USER_EVENTS = {
+const GA_USER_EVENTS = {
   SUBMIT: 'Submit',
 }
 
-export function initializeGA() {
+const initializeGA = (): void => {
   ReactGA.initialize(GA_TRACKING_ID, {
     debug: false, // Set to true only on development
     useExistingGa: true,
@@ -16,15 +16,19 @@ export function initializeGA() {
   })
 }
 
-export function setGAUserId(userId: number | null) {
+const setGAUserId = (userId: number | null): void => {
   ReactGA.set({ userId })
 }
 
-export function sendPageView(path: string) {
+const sendPageView = (path: string): void => {
   ReactGA.pageview(path)
 }
 
-export function sendUserEvent(action: string, label?: string, value?: number) {
+const sendUserEvent = (
+  action: string,
+  label?: string,
+  value?: number
+): void => {
   ReactGA.event({
     category: 'User',
     action,
@@ -33,7 +37,11 @@ export function sendUserEvent(action: string, label?: string, value?: number) {
   })
 }
 
-export function sendTiming(category: string, variable: string, value: number) {
+const sendTiming = (
+  category: string,
+  variable: string,
+  value: number
+): void => {
   ReactGA.timing({
     category,
     variable,
@@ -41,6 +49,16 @@ export function sendTiming(category: string, variable: string, value: number) {
   })
 }
 
-export function sendException(description: string) {
+const sendException = (description: string): void => {
   ReactGA.exception({ description })
+}
+
+export const GoogleAnalyticsService = {
+  GA_USER_EVENTS,
+  initializeGA,
+  setGAUserId,
+  sendPageView,
+  sendUserEvent,
+  sendTiming,
+  sendException,
 }
