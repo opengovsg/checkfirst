@@ -2,6 +2,10 @@ import ReactGA from 'react-ga'
 
 const GA_TRACKING_ID = process.env.GA_TRACKING_ID || ''
 
+export const GA_USER_EVENTS = {
+  SUBMIT: 'Submit',
+}
+
 export function initializeGA() {
   ReactGA.initialize(GA_TRACKING_ID, {
     debug: false, // Set to true only on development

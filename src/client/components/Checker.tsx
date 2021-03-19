@@ -128,7 +128,7 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
       })
     }
 
-    GoogleAnalytics.sendUserEvent('Submit')
+    GoogleAnalytics.sendUserEvent(GoogleAnalytics.GA_USER_EVENTS.SUBMIT)
   }
 
   // Ensure that at least one operation with `show: true`

@@ -7,6 +7,7 @@ import React, {
 } from 'react'
 import { useLocation } from 'react-router-dom'
 import {
+  GA_USER_EVENTS,
   initializeGA,
   setGAUserId,
   sendPageView,
@@ -16,6 +17,9 @@ import {
 } from '../services'
 
 interface GoogleAnalyticsContextProps {
+  GA_USER_EVENTS: {
+    SUBMIT: string
+  }
   setGAUserId: (userId: number | null) => void
   sendPageView: (path: string) => void
   sendUserEvent: (action: string, label?: string, value?: number) => void
@@ -56,6 +60,7 @@ export const GoogleAnalyticsProvider: FC = ({ children }) => {
   }, [location, isLoaded])
 
   const ga = {
+    GA_USER_EVENTS,
     setGAUserId,
     sendPageView,
     sendUserEvent,
