@@ -6,10 +6,21 @@ import React, {
   useState,
 } from 'react'
 import { useLocation } from 'react-router-dom'
-import { initializeGA, sendPageView, sendUserEvent } from '../services'
+import {
+  initializeGA,
+  setGAUserId,
+  sendPageView,
+  sendUserEvent,
+  sendTiming,
+  sendException,
+} from '../services'
 
 interface GoogleAnalyticsContextProps {
-  sendUserEvent: (action: string) => void
+  setGAUserId: (userId: number | null) => void
+  sendPageView: (path: string) => void
+  sendUserEvent: (action: string, label?: string, value?: number) => void
+  sendTiming: (category: string, variable: string, value: number) => void
+  sendException: (description: string) => void
 }
 
 export const GoogleAnalyticsContext = createContext<
@@ -39,11 +50,18 @@ export const GoogleAnalyticsProvider: FC = ({ children }) => {
     setLoaded(true)
   }, [])
 
+  // when route changes, send page view to GA
   useEffect(() => {
     isLoaded && sendPageView(location.pathname)
   }, [location, isLoaded])
 
-  const ga = { sendUserEvent }
+  const ga = {
+    setGAUserId,
+    sendPageView,
+    sendUserEvent,
+    sendTiming,
+    sendException,
+  }
 
   return (
     <GoogleAnalyticsContext.Provider value={ga}>

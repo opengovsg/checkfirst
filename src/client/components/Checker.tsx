@@ -18,8 +18,7 @@ import { LineDisplay } from './displays'
 import * as checker from './../../types/checker'
 import { evaluate } from './../core/evaluator'
 import { unit, Unit } from 'mathjs'
-import { sendUserEvent } from '../services'
-
+import { useGoogleAnalytics } from '../contexts'
 interface CheckerProps {
   config: checker.Checker
 }
@@ -36,6 +35,7 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
   const methods = useForm()
   const { title, description, fields, operations, constants } = config
   const [variables, setVariables] = useState<checker.VariableResults>({})
+  const GoogleAnalytics = useGoogleAnalytics()
 
   const renderField = (field: checker.Field, i: number) => {
     switch (field.type) {
@@ -120,7 +120,6 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
     try {
       const computed = evaluate(parsedInputs, constants, operations)
       setVariables(computed)
-      sendUserEvent('submit')
     } catch (err) {
       toast({
         status: 'error',
@@ -128,6 +127,8 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
         description: err.message,
       })
     }
+
+    GoogleAnalytics.sendUserEvent('Submit')
   }
 
   // Ensure that at least one operation with `show: true`
