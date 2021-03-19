@@ -47,8 +47,17 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({
   }
 
   const toast = useToast({ position: 'bottom-right', variant: 'solid' })
-  const methods = useForm({ mode: 'onBlur' })
-  const { register, handleSubmit, formState } = methods
+  const { register, handleSubmit, formState } = useForm({
+    mode: 'onBlur',
+    ...(checker
+      ? {
+          defaultValues: {
+            title: `Copy of ${checker.title}`,
+            description: checker.description,
+          },
+        }
+      : {}),
+  })
   const { isValid, errors } = formState
 
   const queryClient = useQueryClient()
@@ -77,7 +86,7 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({
     description: string
   }) => {
     createChecker.mutate({
-      ...(checker || initial),
+      ...(checker ? { ...checker, id: uuidv4() } : initial),
       ...data,
     })
   }
@@ -87,28 +96,24 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>
-          {checker ? `Copy ${checker.id}` : 'Create new checker'}
+          {checker ? `Duplicate ${checker.title}` : 'Create new checker'}
         </ModalHeader>
         <ModalCloseButton />
         <form onSubmit={handleSubmit(onSubmit)}>
           <ModalBody>
             <VStack spacing={4}>
-              {!checker && (
-                <>
-                  <FormControl isInvalid={errors.title}>
-                    <FormLabel htmlFor="id">Title</FormLabel>
-                    <Input
-                      name="title"
-                      ref={register({ required: 'Title is required' })}
-                    />
-                    <FormErrorMessage>{errors.title?.message}</FormErrorMessage>
-                  </FormControl>
-                  <FormControl isInvalid={errors.description}>
-                    <FormLabel htmlFor="id">Description</FormLabel>
-                    <Textarea name="description" resize="none" ref={register} />
-                  </FormControl>
-                </>
-              )}
+              <FormControl isInvalid={errors.description ? true : false}>
+                <FormLabel htmlFor="id">Title</FormLabel>
+                <Input
+                  name="title"
+                  ref={register({ required: 'Title is required' })}
+                />
+                <FormErrorMessage>{errors.title?.message}</FormErrorMessage>
+              </FormControl>
+              <FormControl isInvalid={errors.title ? true : false}>
+                <FormLabel htmlFor="id">Description</FormLabel>
+                <Textarea name="description" resize="none" ref={register} />
+              </FormControl>
             </VStack>
           </ModalBody>
           <ModalFooter>
