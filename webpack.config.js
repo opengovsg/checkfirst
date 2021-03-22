@@ -76,6 +76,7 @@ module.exports = () => {
         'process.env.GA_TRACKING_ID': JSON.stringify(
           process.env.GA_TRACKING_ID
         ),
+        'process.env.SENTRY_DSN': JSON.stringify(process.env.SENTRY_DSN),
       }),
     ],
   }
