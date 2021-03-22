@@ -48,11 +48,7 @@ export const GoogleAnalyticsProvider: FC = ({ children }) => {
   const location = useLocation()
 
   useEffect(() => {
-    try {
-      initializeGA()
-    } catch (err) {
-      // TODO write error
-    }
+    initializeGA()
     setLoaded(true)
   }, [])
 
