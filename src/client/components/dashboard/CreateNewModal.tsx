@@ -86,8 +86,9 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({
     description: string
   }) => {
     createChecker.mutate({
-      ...(checker ? { ...checker, id: uuidv4() } : initial),
+      ...(checker || initial),
       ...data,
+      id: uuidv4(),
     })
   }
 
