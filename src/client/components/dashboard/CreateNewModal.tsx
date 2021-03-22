@@ -37,7 +37,6 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({
   checker,
 }) => {
   const initial = {
-    id: uuidv4(), // Set id to be a random uuid string
     title: '',
     description: '',
     fields: [],
@@ -88,7 +87,7 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({
     createChecker.mutate({
       ...(checker || initial),
       ...data,
-      id: uuidv4(),
+      id: uuidv4(), // Set id to be a random uuid string
     })
   }
 
