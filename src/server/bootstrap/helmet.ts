@@ -4,7 +4,7 @@ import parseDomain from '../utils/domain'
 
 const cspOnlyReportViolations = config.get('cspOnlyReportViolations')
 const cspReportUri = config.get('cspReportUri')
-const sentryDns = config.get('sentryDns')
+const sentryDsn = config.get('sentryDsn')
 
 export default helmet({
   contentSecurityPolicy: {
@@ -14,7 +14,7 @@ export default helmet({
       fontSrc: ["'self'", 'https://fonts.gstatic.com/'],
       connectSrc: [
         "'self'",
-        ...(sentryDns ? [parseDomain(sentryDns)] : []),
+        ...(sentryDsn ? [parseDomain(sentryDsn)] : []),
         'https://www.google-analytics.com',
       ],
       scriptSrc: ["'self'", 'https://www.google-analytics.com'],
