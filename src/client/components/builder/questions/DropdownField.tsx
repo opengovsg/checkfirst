@@ -1,18 +1,15 @@
 import React from 'react'
-import { BiListUl, BiX } from 'react-icons/bi'
+import { BiListUl } from 'react-icons/bi'
 import {
-  Button,
-  IconButton,
   Box,
   HStack,
   VStack,
   Text,
   Input,
-  Radio,
   Select,
+  Textarea,
 } from '@chakra-ui/react'
 
-import * as checker from '../../../../types/checker'
 import { useCheckerContext } from '../../../contexts'
 import { createBuilderField, QuestionFieldComponent } from '../BuilderField'
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../../util/enums'
@@ -33,71 +30,18 @@ const InputComponent: QuestionFieldComponent = ({ field, index }) => {
     })
   }
 
-  const deleteOption = (option: checker.FieldOption, i: number) => {
-    field.options.splice(i, 1)
+  const changeOptions = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const text = e.target.value
+    const options = text.split('\n').map((label, value) => ({ label, value }))
+    field.options = options
     dispatch({
       type: BuilderActionEnum.Update,
       payload: {
         currIndex: index,
-        element: { ...field, options: field.options },
+        element: { ...field, options },
         configArrName: ConfigArrayEnum.Fields,
       },
     })
-  }
-
-  const updateOption = (
-    option: checker.FieldOption,
-    update: Partial<checker.FieldOption>,
-    i: number
-  ) => {
-    const updatedOption = { ...option, ...update }
-    field.options.splice(i, 1, updatedOption)
-    dispatch({
-      type: BuilderActionEnum.Update,
-      payload: {
-        currIndex: index,
-        element: { ...field, options: field.options },
-        configArrName: ConfigArrayEnum.Fields,
-      },
-    })
-  }
-
-  const addOption = () => {
-    const newOptionLabel = `Option ${field.options.length + 1}`
-    // newValue is an increment of the last option's value to ensure that values are unique
-    const newValue = field.options[field.options.length - 1].value + 1
-    const newOption = { label: newOptionLabel, value: newValue }
-    field.options.push(newOption)
-    dispatch({
-      type: BuilderActionEnum.Update,
-      payload: {
-        currIndex: index,
-        element: { ...field, options: field.options },
-        configArrName: ConfigArrayEnum.Fields,
-      },
-    })
-  }
-
-  const renderOption = (option: checker.FieldOption, i: number) => {
-    return (
-      <HStack key={i}>
-        <Radio isChecked={false} />
-        <Input
-          type="text"
-          value={option.label}
-          onChange={(e) => {
-            updateOption(option, { label: e.target.value }, i)
-          }}
-        />
-        <IconButton
-          aria-label="Delete option"
-          fontSize="20px"
-          icon={<BiX />}
-          disabled={field.options.length <= 1}
-          onClick={() => deleteOption(option, i)}
-        />
-      </HStack>
-    )
   }
 
   return (
@@ -123,15 +67,11 @@ const InputComponent: QuestionFieldComponent = ({ field, index }) => {
           />
         </VStack>
         <VStack spacing={4} alignItems="left" w="50%">
-          {field.options.map(renderOption)}
-          <HStack h={10}>
-            <Radio isChecked={false} />
-            <Box pl={2}>
-              <Button variant="link" onClick={addOption}>
-                Add new option
-              </Button>
-            </Box>
-          </HStack>
+          <Textarea
+            value={field.options.map((o) => o.label).join('\n')}
+            onChange={changeOptions}
+            placeholder="Enter each option on a new line"
+          />
         </VStack>
       </VStack>
     </HStack>
