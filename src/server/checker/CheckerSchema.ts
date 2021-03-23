@@ -8,12 +8,12 @@ const FieldOptionsSchema = Joi.object({
 const FieldSchema = Joi.object({
   id: Joi.string().required(),
   type: Joi.string()
-    .valid('NUMERIC', 'RADIO', 'CHECKBOX', 'SLIDER', 'DATE')
+    .valid('NUMERIC', 'RADIO', 'DROPDOWN', 'CHECKBOX', 'SLIDER', 'DATE')
     .required(),
   title: Joi.string().required(),
   description: Joi.string().allow('').required(),
   options: Joi.when('type', {
-    is: Joi.valid('RADIO', 'CHECKBOX'),
+    is: Joi.valid('RADIO', 'DROPDOWN', 'CHECKBOX'),
     then: Joi.array().items(FieldOptionsSchema).min(1),
     otherwise: Joi.array().length(0),
   }).required(),
