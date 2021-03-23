@@ -16,7 +16,7 @@ function useLocalStorage<T>(
       const item = window.localStorage.getItem(key)
       return item ? JSON.parse(item) : initialValue
     } catch (error) {
-      console.warn(`Error reading localStorage key “${key}”:`, error)
+      console.warn(`Error reading localStorage key "${key}":`, error)
       return initialValue
     }
   }
@@ -29,7 +29,7 @@ function useLocalStorage<T>(
     // Prevent build error "window is undefined" but keep keep working
     if (typeof window == 'undefined') {
       console.warn(
-        `Tried setting localStorage key “${key}” even though environment is not a client`
+        `Tried setting localStorage key "${key}" even though environment is not a client`
       )
     }
     try {
@@ -42,7 +42,7 @@ function useLocalStorage<T>(
       // We dispatch a custom event so every useLocalStorage hook are notified
       window.dispatchEvent(new Event('local-storage'))
     } catch (error) {
-      console.warn(`Error setting localStorage key “${key}”:`, error)
+      console.warn(`Error setting localStorage key "${key}":`, error)
     }
   }
   useEffect(() => {
