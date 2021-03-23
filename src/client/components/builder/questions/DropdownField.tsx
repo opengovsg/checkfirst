@@ -9,7 +9,7 @@ import {
   Text,
   Input,
   Radio,
-  RadioGroup,
+  Select,
 } from '@chakra-ui/react'
 
 import * as checker from '../../../../types/checker'
@@ -149,15 +149,13 @@ const PreviewComponent: QuestionFieldComponent = ({ field }) => {
         </HStack>
         {description && <Text color="#718096">{description}</Text>}
       </VStack>
-      <RadioGroup>
-        <VStack alignItems="left" spacing={2}>
-          {options.map(({ value, label }, i) => (
-            <Radio key={i} value={value} isChecked={false}>
-              {label}
-            </Radio>
-          ))}
-        </VStack>
-      </RadioGroup>
+      <Select>
+        {options.map(({ value, label }, i) => (
+          <option key={i} value={value}>
+            {label}
+          </option>
+        ))}
+      </Select>
     </VStack>
   )
 }
