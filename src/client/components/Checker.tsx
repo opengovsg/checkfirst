@@ -35,7 +35,7 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
   const methods = useForm()
   const { title, description, fields, operations, constants } = config
   const [variables, setVariables] = useState<checker.VariableResults>({})
-  const GoogleAnalytics = useGoogleAnalytics()
+  const googleAnalytics = useGoogleAnalytics()
 
   const renderField = (field: checker.Field, i: number) => {
     switch (field.type) {
@@ -128,7 +128,7 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
       })
     }
 
-    GoogleAnalytics.sendUserEvent(GoogleAnalytics.GA_USER_EVENTS.SUBMIT)
+    googleAnalytics.sendUserEvent(googleAnalytics.GA_USER_EVENTS.SUBMIT)
   }
 
   // Ensure that at least one operation with `show: true`
