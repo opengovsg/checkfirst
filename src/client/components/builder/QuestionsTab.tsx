@@ -81,7 +81,7 @@ export const QuestionsTab: FC = () => {
   useEffect(() => {
     let highestIndex = 0
     config.fields.forEach((field) => {
-      const fieldIndex = parseInt(field.id.slice(1))
+      const fieldIndex = parseInt((field.id.match(/\d+/) || [])[0])
       highestIndex = Math.max(highestIndex, fieldIndex)
     })
     setNextUniqueId(highestIndex + 1)
