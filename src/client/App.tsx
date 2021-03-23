@@ -25,9 +25,9 @@ const App: FC = () => {
   return (
     <ChakraProvider resetCSS theme={theme}>
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <Router>
-            <GoogleAnalyticsProvider>
+        <Router>
+          <GoogleAnalyticsProvider>
+            <AuthProvider>
               <Switch>
                 <Route exact path="/c/:id" component={Checker} />
                 <Route exact path="/login" component={Login} />
@@ -41,9 +41,9 @@ const App: FC = () => {
                 </PrivateRoute>
                 <Redirect to="/" />
               </Switch>
-            </GoogleAnalyticsProvider>
-          </Router>
-        </AuthProvider>
+            </AuthProvider>
+          </GoogleAnalyticsProvider>
+        </Router>
       </QueryClientProvider>
     </ChakraProvider>
   )

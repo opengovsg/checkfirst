@@ -8,6 +8,7 @@ import { User } from '../../types/user'
 import { ApiClient } from '../api'
 import useLocalStorage from '../hooks/use-local-storage'
 import { AuthService } from '../services'
+import { useGoogleAnalytics } from '.'
 
 interface AuthContextProps {
   logout: () => void
@@ -29,11 +30,13 @@ export const useAuth = (): AuthContextProps => {
 
 export const AuthProvider: FC = ({ children }) => {
   const history = useHistory()
+  const googleAnalytics = useGoogleAnalytics()
   const [user, setUser] = useLocalStorage<User | null>('user', null)
   const whoami = () =>
     ApiClient.get<User | null>('/auth/whoami').then((user) => {
       if (user.data) {
         setUser(user.data as User)
+        googleAnalytics.setGAUserId(user.data.id)
       }
     })
 
@@ -48,6 +51,7 @@ export const AuthProvider: FC = ({ children }) => {
   const logout = async () => {
     await ApiClient.post('/auth/logout')
     setUser(null)
+    googleAnalytics.setGAUserId(null)
   }
 
   const auth = {
