@@ -11,7 +11,11 @@ import {
 import { theme } from './theme'
 import { PrivateRoute } from './components'
 import { Checker, Landing, Login, Dashboard, FormBuilder } from './pages'
-import { AuthProvider, CheckerProvider } from './contexts'
+import {
+  AuthProvider,
+  CheckerProvider,
+  GoogleAnalyticsProvider,
+} from './contexts'
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: false } },
@@ -21,23 +25,25 @@ const App: FC = () => {
   return (
     <ChakraProvider resetCSS theme={theme}>
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <Router>
-            <Switch>
-              <Route exact path="/c/:id" component={Checker} />
-              <Route exact path="/login" component={Login} />
-              <Route exact path="/" component={Landing} />
-              <PrivateRoute path="/dashboard" component={Dashboard} />
-              <PrivateRoute path="/builder/:id">
-                {/* TODO: Rename to BuilderProvider */}
-                <CheckerProvider>
-                  <FormBuilder />
-                </CheckerProvider>
-              </PrivateRoute>
-              <Redirect to="/" />
-            </Switch>
-          </Router>
-        </AuthProvider>
+        <Router>
+          <GoogleAnalyticsProvider>
+            <AuthProvider>
+              <Switch>
+                <Route exact path="/c/:id" component={Checker} />
+                <Route exact path="/login" component={Login} />
+                <Route exact path="/" component={Landing} />
+                <PrivateRoute path="/dashboard" component={Dashboard} />
+                <PrivateRoute path="/builder/:id">
+                  {/* TODO: Rename to BuilderProvider */}
+                  <CheckerProvider>
+                    <FormBuilder />
+                  </CheckerProvider>
+                </PrivateRoute>
+                <Redirect to="/" />
+              </Switch>
+            </AuthProvider>
+          </GoogleAnalyticsProvider>
+        </Router>
       </QueryClientProvider>
     </ChakraProvider>
   )
