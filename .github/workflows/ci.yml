@@ -113,7 +113,7 @@ jobs:
             echo SENTRY_ENVIRONMENT=${{ secrets.SENTRY_ENVIRONMENT_PRODUCTION }} >> $GITHUB_ENV;
           fi
           echo SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }} >> $GITHUB_ENV;
-          echo SENTRY_DSN=${{ secrets.SENTRY_DSN }} >> $GITHUB_ENV;
+          echo FRONTEND_SENTRY_DSN=${{ secrets.FRONTEND_SENTRY_DSN }} >> $GITHUB_ENV;
           echo SENTRY_ORG=${{ secrets.SENTRY_ORG }} >> $GITHUB_ENV;
           echo SENTRY_PROJECT=${{ secrets.SENTRY_PROJECT }} >> $GITHUB_ENV;
           echo SENTRY_URL=${{ secrets.SENTRY_URL }} >> $GITHUB_ENV;

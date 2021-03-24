@@ -43,11 +43,6 @@ functions:
       SESSION_SECRET: ${env:SESSION_SECRET}
       OTP_SECRET: ${env:OTP_SECRET}
       OTP_EXPIRY: ${env:OTP_EXPIRY}
-      SENTRY_AUTH_TOKEN: ${env:SENTRY_AUTH_TOKEN}
-      SENTRY_DSN: ${env:SENTRY_DSN}
-      SENTRY_ORG: ${env:SENTRY_ORG}
-      SENTRY_PROJECT: ${env:SENTRY_PROJECT}
-      SENTRY_URL: ${env:SENTRY_URL}
     events:
       - http:
           path: api/v1/{proxy+}
