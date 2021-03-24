@@ -1,5 +1,6 @@
 import React, { FC } from 'react'
-import { useQueryClient, useMutation } from 'react-query'
+import { useParams, Switch, Route } from 'react-router-dom'
+import { useQueryClient, useQuery, useMutation } from 'react-query'
 import {
   useToast,
   Modal,
@@ -22,20 +23,13 @@ import { useForm } from 'react-hook-form'
 import { v4 as uuidv4 } from 'uuid'
 
 import { CheckerService } from '../../services'
-import { Checker } from '../../../types/checker'
 import { getApiErrorMessage } from '../../api'
 
 export type CreateNewModalProps = {
-  isOpen: boolean
   onClose: () => void
-  checker?: Checker
 }
 
-export const CreateNewModal: FC<CreateNewModalProps> = ({
-  isOpen,
-  onClose,
-  checker,
-}) => {
+export const CreateNewModal: FC<CreateNewModalProps> = ({ onClose }) => {
   const initial = {
     title: '',
     description: '',
@@ -46,18 +40,26 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({
   }
 
   const toast = useToast({ position: 'bottom-right', variant: 'solid' })
-  const { register, handleSubmit, formState } = useForm({
+  const { register, handleSubmit, formState, setValue } = useForm({
     mode: 'onBlur',
-    ...(checker
-      ? {
-          defaultValues: {
-            title: `Copy of ${checker.title}`,
-            description: checker.description,
-          },
-        }
-      : {}),
   })
   const { isValid, errors } = formState
+
+  const { checkerId } = useParams<{
+    checkerId?: string
+    templateId?: string
+  }>()
+
+  const { data: checker } = useQuery(
+    ['checker', checkerId],
+    async () => {
+      const checker = await CheckerService.getChecker(checkerId ?? '')
+      setValue('title', checker.title)
+      setValue('description', checker.description)
+      return checker
+    },
+    { enabled: !!checkerId }
+  )
 
   const queryClient = useQueryClient()
   const createChecker = useMutation(CheckerService.createChecker, {
@@ -92,47 +94,51 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="lg">
+    <Modal isOpen onClose={onClose} size="lg">
       <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>
-          {checker ? `Duplicate ${checker.title}` : 'Create new checker'}
-        </ModalHeader>
-        <ModalCloseButton />
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <ModalBody>
-            <VStack spacing={4}>
-              <FormControl isInvalid={errors.description ? true : false}>
-                <FormLabel htmlFor="id">Title</FormLabel>
-                <Input
-                  name="title"
-                  ref={register({ required: 'Title is required' })}
-                />
-                <FormErrorMessage>{errors.title?.message}</FormErrorMessage>
-              </FormControl>
-              <FormControl isInvalid={errors.title ? true : false}>
-                <FormLabel htmlFor="id">Description</FormLabel>
-                <Textarea name="description" resize="none" ref={register} />
-              </FormControl>
-            </VStack>
-          </ModalBody>
-          <ModalFooter>
-            <HStack>
-              <Button onClick={onClose} variant="ghost">
-                Cancel
-              </Button>
-              <Button
-                disabled={!isValid}
-                type="submit"
-                colorScheme="primary"
-                isLoading={createChecker.isLoading}
-              >
-                Create
-              </Button>
-            </HStack>
-          </ModalFooter>
-        </form>
-      </ModalContent>
+      <Switch>
+        <Route>
+          <ModalContent>
+            <ModalHeader>
+              {checker ? `Duplicate ${checker.title}` : 'Create new checker'}
+            </ModalHeader>
+            <ModalCloseButton />
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <ModalBody>
+                <VStack spacing={4}>
+                  <FormControl isInvalid={!!errors.description}>
+                    <FormLabel htmlFor="id">Title</FormLabel>
+                    <Input
+                      name="title"
+                      ref={register({ required: 'Title is required' })}
+                    />
+                    <FormErrorMessage>{errors.title?.message}</FormErrorMessage>
+                  </FormControl>
+                  <FormControl isInvalid={!!errors.title}>
+                    <FormLabel htmlFor="id">Description</FormLabel>
+                    <Textarea name="description" resize="none" ref={register} />
+                  </FormControl>
+                </VStack>
+              </ModalBody>
+              <ModalFooter>
+                <HStack>
+                  <Button onClick={onClose} variant="ghost">
+                    Cancel
+                  </Button>
+                  <Button
+                    disabled={!isValid}
+                    type="submit"
+                    colorScheme="primary"
+                    isLoading={createChecker.isLoading}
+                  >
+                    Create
+                  </Button>
+                </HStack>
+              </ModalFooter>
+            </form>
+          </ModalContent>
+        </Route>
+      </Switch>
     </Modal>
   )
 }

@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { useQueryClient, useMutation } from 'react-query'
-import { useHistory, useRouteMatch, Link, Route } from 'react-router-dom'
+import { useHistory, useRouteMatch, Link } from 'react-router-dom'
 import { BiDuplicate, BiTrash } from 'react-icons/bi'
 import {
   useDisclosure,
@@ -14,7 +14,6 @@ import {
 import { Checker } from '../../../types/checker'
 import { getApiErrorMessage } from '../../api'
 import { CheckerService } from '../../services'
-import { CreateNewModal } from './CreateNewModal'
 import { ConfirmDialog } from '../ConfirmDialog'
 
 type CheckerCardProps = {
@@ -56,7 +55,7 @@ export const CheckerCard: FC<CheckerCardProps> = ({ checker }) => {
 
   const onDuplicateClick = (e: React.MouseEvent) => {
     e.preventDefault()
-    history.push(`${path}/${checker.id}/duplicate`)
+    history.push(`${path}/duplicate/${checker.id}`, { checker })
   }
 
   return (
@@ -78,16 +77,6 @@ export const CheckerCard: FC<CheckerCardProps> = ({ checker }) => {
         onConfirm={onDeleteConfirm}
         title="Delete checker"
         description="Are you sure? You cannot undo this action afterwards."
-      />
-      <Route
-        path={`${path}/${checker.id}/duplicate`}
-        render={() => (
-          <CreateNewModal
-            isOpen
-            onClose={() => history.push(path)}
-            checker={checker}
-          />
-        )}
       />
     </>
   )
