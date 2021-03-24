@@ -22,6 +22,7 @@ import {
   CreateNew,
   CheckerCard,
   CreateNewModal,
+  PreviewTemplate,
 } from '../components/dashboard'
 import { Checker } from '../../types/checker'
 
@@ -36,9 +37,11 @@ export const Dashboard: FC = () => {
   return (
     <Flex direction="column" minH="100vh" bgColor="#F4F6F9">
       <Switch>
-        <Route exact path="/dashboard/create/template/:templateId/preview">
-          Preview
-        </Route>
+        <Route
+          exact
+          path="/dashboard/create/template/:templateId/preview"
+          component={PreviewTemplate}
+        />
         <Route>
           <Navbar />
           <Container maxW="960px" pt="80px" px={0}>
