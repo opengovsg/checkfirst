@@ -1,6 +1,7 @@
 import React, { FC } from 'react'
 import { BiShow, BiPlus } from 'react-icons/bi'
 import { Link } from 'react-router-dom'
+import { useQuery } from 'react-query'
 import {
   Divider,
   Text,
@@ -11,19 +12,22 @@ import {
   Button,
   VStack,
   HStack,
+  Spinner,
 } from '@chakra-ui/react'
 
+import { TemplateService } from '../../services'
+
 interface TemplateInfoProps {
-  id: string
-  name: string
+  id: number
+  title: string
   description: string
 }
-const TemplateInfo: FC<TemplateInfoProps> = ({ id, name, description }) => (
+const TemplateInfo: FC<TemplateInfoProps> = ({ id, title, description }) => (
   <Link to={`/dashboard/create/template/${id}/preview`}>
     <HStack justifyContent="center" p="24px" _hover={{ bgColor: '#F4F6F9' }}>
       <VStack spacing={0} flex={1} align="stretch">
         <Text color="#1B3C87" textStyle="sub1">
-          {name}
+          {title}
         </Text>
         <Text textStyle="sub2" color="#6D7580">
           {description}
@@ -37,7 +41,10 @@ const TemplateInfo: FC<TemplateInfoProps> = ({ id, name, description }) => (
 )
 
 export const SelectTemplate: FC = () => {
-  // TODO: fetch templates
+  const { isLoading, data: templates } = useQuery('templates', () =>
+    TemplateService.listTemplates()
+  )
+
   return (
     <>
       <ModalHeader>Create new checker</ModalHeader>
@@ -58,23 +65,27 @@ export const SelectTemplate: FC = () => {
         </VStack>
 
         <Divider />
-        <VStack align="stretch" spacing={0} divider={<Divider />}>
-          <TemplateInfo
-            id="1"
-            name="Template 1"
-            description="This is template 1"
-          />
-          <TemplateInfo
-            id="2"
-            name="Template 2"
-            description="This is template 2"
-          />
-          <TemplateInfo
-            id="3"
-            name="Template 3"
-            description="This is template 3"
-          />
-        </VStack>
+        {isLoading ? (
+          <Center py={16}>
+            <Spinner size="lg" color="primary.500" thickness="4px" />
+          </Center>
+        ) : (
+          <VStack align="stretch" spacing={0} divider={<Divider />}>
+            {templates && templates.length < 1 && (
+              <Center py="32px" textStyle="body2">
+                No templates found
+              </Center>
+            )}
+            {templates?.map(({ id, title, description }) => (
+              <TemplateInfo
+                key={id}
+                id={id}
+                title={title}
+                description={description}
+              />
+            ))}
+          </VStack>
+        )}
       </ModalBody>
       <ModalFooter />
     </>
