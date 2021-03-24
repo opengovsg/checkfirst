@@ -11,7 +11,7 @@ const srcDirectory = path.join(__dirname, 'src/client')
 
 const requiredSentryEnvVar = [
   process.env.SENTRY_AUTH_TOKEN,
-  process.env.SENTRY_DSN,
+  process.env.FRONTEND_SENTRY_DSN,
   process.env.SENTRY_ORG,
   process.env.SENTRY_PROJECT,
   process.env.SENTRY_URL,
@@ -85,7 +85,9 @@ module.exports = () => {
         'process.env.GA_TRACKING_ID': JSON.stringify(
           process.env.GA_TRACKING_ID
         ),
-        'process.env.SENTRY_DSN': JSON.stringify(process.env.SENTRY_DSN),
+        'process.env.FRONTEND_SENTRY_DSN': JSON.stringify(
+          process.env.FRONTEND_SENTRY_DSN
+        ),
       }),
     ],
   }
