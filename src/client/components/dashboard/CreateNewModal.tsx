@@ -1,4 +1,5 @@
 import React, { FC } from 'react'
+import { omit } from 'lodash'
 import { useParams, Switch, Redirect, Route } from 'react-router-dom'
 import { useQueryClient, useQuery, useMutation } from 'react-query'
 import {
@@ -22,7 +23,8 @@ import {
 import { useForm } from 'react-hook-form'
 import { v4 as uuidv4 } from 'uuid'
 
-import { CheckerService } from '../../services'
+import * as checker from '../../../types/checker'
+import { CheckerService, TemplateService } from '../../services'
 import { getApiErrorMessage } from '../../api'
 import { SelectTemplate } from './SelectTemplate'
 
@@ -46,7 +48,7 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({ onClose }) => {
   })
   const { isValid, errors } = formState
 
-  const { checkerId } = useParams<{
+  const { checkerId, templateId } = useParams<{
     checkerId?: string
     templateId?: string
   }>()
@@ -63,6 +65,22 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({ onClose }) => {
       onSuccess: (checker) => {
         setValue('title', checker.title)
         setValue('description', checker.description)
+      },
+    }
+  )
+
+  const {
+    isLoading: isTemplateLoading,
+    isError: isTemplateError,
+    data: template,
+  } = useQuery(
+    ['template', templateId],
+    async () => TemplateService.getTemplate(templateId ? +templateId : 0),
+    {
+      enabled: !!templateId,
+      onSuccess: (template) => {
+        setValue('title', template.title)
+        setValue('description', template.description)
       },
     }
   )
@@ -92,15 +110,17 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({ onClose }) => {
     title: string
     description: string
   }) => {
+    const templateChecker = omit(template, 'id') as checker.Checker
+    const base = checker || templateChecker || initial
     createChecker.mutate({
-      ...(checker || initial),
+      ...base,
       ...data,
       id: uuidv4(), // Set id to be a random uuid string
     })
   }
 
   // Redirect to dashboard for non-existent checker
-  if (isCheckerError) {
+  if (isCheckerError || isTemplateError) {
     return <Redirect to="/dashboard" />
   }
 
@@ -125,7 +145,7 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({ onClose }) => {
                   <FormControl isInvalid={!!errors.description}>
                     <FormLabel htmlFor="id">Title</FormLabel>
                     <Input
-                      isDisabled={isCheckerLoading}
+                      isDisabled={isCheckerLoading || isTemplateLoading}
                       name="title"
                       ref={register({ required: 'Title is required' })}
                     />
@@ -134,7 +154,7 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({ onClose }) => {
                   <FormControl isInvalid={!!errors.title}>
                     <FormLabel htmlFor="id">Description</FormLabel>
                     <Textarea
-                      isDisabled={isCheckerLoading}
+                      isDisabled={isCheckerLoading || isTemplateLoading}
                       name="description"
                       resize="none"
                       ref={register}
@@ -148,7 +168,7 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({ onClose }) => {
                     Cancel
                   </Button>
                   <Button
-                    disabled={!isValid || !isCheckerLoading}
+                    disabled={!isValid}
                     type="submit"
                     colorScheme="primary"
                     isLoading={createChecker.isLoading}
