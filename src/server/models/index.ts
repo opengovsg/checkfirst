@@ -3,9 +3,7 @@ import { BuildOptions, Model, Sequelize } from 'sequelize'
 
 import * as CheckerFactory from './Checker'
 import * as UserFactory from './User'
-
-export * as CheckerFactory from './Checker'
-export * as UserFactory from './User'
+import * as TemplateFactory from './Template'
 
 // Circumvent issues with typescript not knowing about `this`
 // variable during compile time. For use in setters in model
@@ -26,6 +24,7 @@ export const addModelsTo = (
   const result = {
     Checker: CheckerFactory.init(sequelize),
     User: UserFactory.init(sequelize, options),
+    Template: TemplateFactory.init(sequelize),
   }
   const joinOptions = { through: 'usersToCheckers' }
   result.Checker.belongsToMany(result.User, joinOptions)

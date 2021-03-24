@@ -11,6 +11,7 @@ import api from '../api'
 import { addModelsTo } from '../models'
 import { CheckerController, CheckerService } from '../checker'
 import { AuthController, AuthService } from '../auth'
+import { TemplateController, TemplateService } from '../template'
 
 import sequelize from './sequelize'
 import mailer from './mailer'
@@ -32,7 +33,7 @@ const emailValidator = new minimatch.Minimatch(mailSuffix, {
   nonegate: true,
 })
 
-const { Checker, User } = addModelsTo(sequelize, { emailValidator })
+const { Checker, User, Template } = addModelsTo(sequelize, { emailValidator })
 
 export async function bootstrap(): Promise<Express> {
   const checker = new CheckerController({
@@ -54,6 +55,10 @@ export async function bootstrap(): Promise<Express> {
       User,
       logger,
     }),
+  })
+
+  const template = new TemplateController({
+    service: new TemplateService({ Template }),
   })
 
   const SequelizeStore = SequelizeStoreFactory(session.Store)
@@ -87,7 +92,7 @@ export async function bootstrap(): Promise<Express> {
   app.use(helmet)
 
   const apiMiddleware = [sessionMiddleware, bodyParser.json()]
-  app.use('/api/v1', apiMiddleware, api({ checker, auth }))
+  app.use('/api/v1', apiMiddleware, api({ checker, auth, template }))
 
   addStaticRoutes(app)
 
