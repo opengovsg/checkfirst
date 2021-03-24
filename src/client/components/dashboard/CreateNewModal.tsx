@@ -24,6 +24,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 import { CheckerService } from '../../services'
 import { getApiErrorMessage } from '../../api'
+import { SelectTemplate } from './SelectTemplate'
 
 export type CreateNewModalProps = {
   onClose: () => void
@@ -94,11 +95,16 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({ onClose }) => {
   }
 
   return (
-    <Modal isOpen onClose={onClose} size="lg">
+    <Modal isOpen onClose={onClose} size="xl">
       <ModalOverlay />
-      <Switch>
-        <Route>
-          <ModalContent>
+      <ModalContent py="16px">
+        <Switch>
+          <Route
+            exact
+            path="/dashboard/create"
+            render={() => <SelectTemplate />}
+          />
+          <Route>
             <ModalHeader>
               {checker ? `Duplicate ${checker.title}` : 'Create new checker'}
             </ModalHeader>
@@ -136,9 +142,9 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({ onClose }) => {
                 </HStack>
               </ModalFooter>
             </form>
-          </ModalContent>
-        </Route>
-      </Switch>
+          </Route>
+        </Switch>
+      </ModalContent>
     </Modal>
   )
 }

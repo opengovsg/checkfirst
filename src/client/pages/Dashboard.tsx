@@ -34,9 +34,12 @@ export const Dashboard: FC = () => {
   })
 
   return (
-    <Switch>
-      <Route>
-        <Flex direction="column" minH="100vh" bgColor="#F4F6F9">
+    <Flex direction="column" minH="100vh" bgColor="#F4F6F9">
+      <Switch>
+        <Route exact path="/dashboard/create/template/:templateId/preview">
+          Preview
+        </Route>
+        <Route>
           <Navbar />
           <Container maxW="960px" pt="80px" px={0}>
             <VStack align="stretch" py={10} position="relative">
@@ -69,8 +72,8 @@ export const Dashboard: FC = () => {
             />
             <Redirect to={path} />
           </Switch>
-        </Flex>
-      </Route>
-    </Switch>
+        </Route>
+      </Switch>
+    </Flex>
   )
 }
