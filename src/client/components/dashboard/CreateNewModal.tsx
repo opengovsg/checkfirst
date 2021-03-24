@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { useParams, Switch, Route } from 'react-router-dom'
+import { useParams, Switch, Redirect, Route } from 'react-router-dom'
 import { useQueryClient, useQuery, useMutation } from 'react-query'
 import {
   useToast,
@@ -51,15 +51,20 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({ onClose }) => {
     templateId?: string
   }>()
 
-  const { data: checker } = useQuery(
+  const {
+    isLoading: isCheckerLoading,
+    isError: isCheckerError,
+    data: checker,
+  } = useQuery(
     ['checker', checkerId],
-    async () => {
-      const checker = await CheckerService.getChecker(checkerId ?? '')
-      setValue('title', checker.title)
-      setValue('description', checker.description)
-      return checker
-    },
-    { enabled: !!checkerId }
+    async () => CheckerService.getChecker(checkerId ?? ''),
+    {
+      enabled: !!checkerId,
+      onSuccess: (checker) => {
+        setValue('title', checker.title)
+        setValue('description', checker.description)
+      },
+    }
   )
 
   const queryClient = useQueryClient()
@@ -94,6 +99,11 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({ onClose }) => {
     })
   }
 
+  // Redirect to dashboard for non-existent checker
+  if (isCheckerError) {
+    return <Redirect to="/dashboard" />
+  }
+
   return (
     <Modal isOpen onClose={onClose} size="xl">
       <ModalOverlay />
@@ -115,6 +125,7 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({ onClose }) => {
                   <FormControl isInvalid={!!errors.description}>
                     <FormLabel htmlFor="id">Title</FormLabel>
                     <Input
+                      isDisabled={isCheckerLoading}
                       name="title"
                       ref={register({ required: 'Title is required' })}
                     />
@@ -122,7 +133,12 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({ onClose }) => {
                   </FormControl>
                   <FormControl isInvalid={!!errors.title}>
                     <FormLabel htmlFor="id">Description</FormLabel>
-                    <Textarea name="description" resize="none" ref={register} />
+                    <Textarea
+                      isDisabled={isCheckerLoading}
+                      name="description"
+                      resize="none"
+                      ref={register}
+                    />
                   </FormControl>
                 </VStack>
               </ModalBody>
@@ -132,7 +148,7 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({ onClose }) => {
                     Cancel
                   </Button>
                   <Button
-                    disabled={!isValid}
+                    disabled={!isValid || !isCheckerLoading}
                     type="submit"
                     colorScheme="primary"
                     isLoading={createChecker.isLoading}
