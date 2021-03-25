@@ -8,6 +8,7 @@ import {
   Input,
   Select,
   Textarea,
+  useStyles,
 } from '@chakra-ui/react'
 
 import { useCheckerContext } from '../../../contexts'
@@ -80,6 +81,7 @@ const InputComponent: QuestionFieldComponent = ({ field, index }) => {
 
 const PreviewComponent: QuestionFieldComponent = ({ field }) => {
   const { title, description, options } = field
+  const styles = useStyles()
   return (
     <VStack align="stretch" w="100%" spacing={6}>
       <VStack align="stretch">
@@ -89,7 +91,7 @@ const PreviewComponent: QuestionFieldComponent = ({ field }) => {
         </HStack>
         {description && <Text color="#718096">{description}</Text>}
       </VStack>
-      <Select>
+      <Select isDisabled sx={styles.dummyInput}>
         {options.map(({ value, label }, i) => (
           <option key={i} value={value}>
             {label}

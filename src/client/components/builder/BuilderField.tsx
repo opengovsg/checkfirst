@@ -140,9 +140,10 @@ export const createBuilderField = (
 
   const handleDuplicate = () => {
     if (isFieldData(data)) {
+      const [prefix] = data.id.match(/^[^\d]+/) || []
       const updatedData = {
         ...data,
-        id: `${data.id[0]}${nextUniqueId}`,
+        id: `${prefix}${nextUniqueId}`,
       }
       dispatch({
         type: BuilderActionEnum.Add,
