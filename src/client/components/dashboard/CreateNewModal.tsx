@@ -43,7 +43,7 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({ onClose }) => {
   }
 
   const toast = useToast({ position: 'bottom-right', variant: 'solid' })
-  const { register, handleSubmit, formState, setValue } = useForm({
+  const { trigger, register, handleSubmit, formState, setValue } = useForm({
     mode: 'onBlur',
   })
   const { isValid, errors } = formState
@@ -65,6 +65,7 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({ onClose }) => {
       onSuccess: (checker) => {
         setValue('title', checker.title)
         setValue('description', checker.description)
+        trigger()
       },
     }
   )
@@ -81,6 +82,7 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({ onClose }) => {
       onSuccess: (template) => {
         setValue('title', template.title)
         setValue('description', template.description)
+        trigger()
       },
     }
   )
