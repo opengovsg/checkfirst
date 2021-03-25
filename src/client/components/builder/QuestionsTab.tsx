@@ -8,6 +8,7 @@ import {
   BiDownArrowAlt,
   BiCalendar,
 } from 'react-icons/bi'
+import { IoIosArrowDropdown } from 'react-icons/io'
 import { VStack } from '@chakra-ui/react'
 
 import * as checker from '../../../types/checker'
@@ -18,6 +19,7 @@ import {
   CheckboxField,
   TitleField,
   DateField,
+  DropdownField,
 } from '../builder/questions'
 
 import { useCheckerContext } from '../../contexts'
@@ -37,6 +39,14 @@ const generateDefaultNumericField = (id: number): checker.Field => ({
 const generateDefaultRadioField = (id: number): checker.Field => ({
   id: `R${id}`,
   type: 'RADIO',
+  title: 'Insert question title',
+  description: '',
+  options: [{ label: 'Option 1', value: 0 }],
+})
+
+const generateDefaultDropdownField = (id: number): checker.Field => ({
+  id: `DL${id}`,
+  type: 'DROPDOWN',
   title: 'Insert question title',
   description: '',
   options: [{ label: 'Option 1', value: 0 }],
@@ -71,7 +81,7 @@ export const QuestionsTab: FC = () => {
   useEffect(() => {
     let highestIndex = 0
     config.fields.forEach((field) => {
-      const fieldIndex = parseInt(field.id.slice(1))
+      const fieldIndex = parseInt((field.id.match(/\d+/) || [])[0])
       highestIndex = Math.max(highestIndex, fieldIndex)
     })
     setNextUniqueId(highestIndex + 1)
@@ -106,6 +116,22 @@ export const QuestionsTab: FC = () => {
               type: BuilderActionEnum.Add,
               payload: {
                 element: generateDefaultRadioField(nextUniqueId),
+                configArrName: ConfigArrayEnum.Fields,
+                newIndex: activeIndex + 1,
+              },
+            })
+            setActiveIndex(activeIndex + 1)
+            setNextUniqueId(nextUniqueId + 1)
+          },
+        },
+        {
+          label: 'Dropdown List',
+          icon: <IoIosArrowDropdown />,
+          onClick: () => {
+            dispatch({
+              type: BuilderActionEnum.Add,
+              payload: {
+                element: generateDefaultDropdownField(nextUniqueId),
                 configArrName: ConfigArrayEnum.Fields,
                 newIndex: activeIndex + 1,
               },
@@ -208,6 +234,8 @@ export const QuestionsTab: FC = () => {
     switch (field.type) {
       case 'RADIO':
         return <RadioField {...commonProps} />
+      case 'DROPDOWN':
+        return <DropdownField {...commonProps} />
       case 'CHECKBOX':
         return <CheckboxField {...commonProps} />
       case 'NUMERIC':

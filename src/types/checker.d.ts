@@ -33,7 +33,13 @@ export interface FieldOption {
   value: number
 }
 
-export type FieldType = 'NUMERIC' | 'RADIO' | 'CHECKBOX' | 'SLIDER' | 'DATE'
+export type FieldType =
+  | 'NUMERIC'
+  | 'RADIO'
+  | 'DROPDOWN'
+  | 'CHECKBOX'
+  | 'SLIDER'
+  | 'DATE'
 
 export interface Display {
   id: string

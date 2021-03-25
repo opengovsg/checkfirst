@@ -13,7 +13,13 @@ import {
 } from '@chakra-ui/react'
 import { useForm, FormProvider } from 'react-hook-form'
 
-import { CheckboxField, RadioField, NumericField, DateField } from './fields'
+import {
+  CheckboxField,
+  RadioField,
+  DropdownField,
+  NumericField,
+  DateField,
+} from './fields'
 import { LineDisplay } from './displays'
 import * as checker from './../../types/checker'
 import { evaluate } from './../core/evaluator'
@@ -45,6 +51,8 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
         return <CheckboxField key={i} {...field} />
       case 'RADIO':
         return <RadioField key={i} {...field} />
+      case 'DROPDOWN':
+        return <DropdownField key={i} {...field} />
       case 'DATE':
         return <DateField key={i} {...field} />
     }
@@ -87,6 +95,7 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
         case 'NUMERIC': {
           return (parsedInputs[id] = Number(inputs[id]))
         }
+        case 'DROPDOWN':
         case 'RADIO': {
           const selected = Number(inputs[id])
           const option = options.find(({ value }) => value === selected)
