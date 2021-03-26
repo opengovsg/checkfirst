@@ -59,13 +59,17 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({ onClose }) => {
     data: checker,
   } = useQuery(
     ['checker', checkerId],
-    async () => CheckerService.getChecker(checkerId ?? ''),
+    () => {
+      if (checkerId) return CheckerService.getChecker(checkerId)
+    },
     {
       enabled: !!checkerId,
       onSuccess: (checker) => {
-        setValue('title', checker.title)
-        setValue('description', checker.description)
-        trigger()
+        if (checker) {
+          setValue('title', checker.title)
+          setValue('description', checker.description)
+          trigger()
+        }
       },
     }
   )
@@ -76,13 +80,17 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({ onClose }) => {
     data: template,
   } = useQuery(
     ['template', templateId],
-    async () => TemplateService.getTemplate(templateId ? +templateId : 0),
+    () => {
+      if (templateId) return TemplateService.getTemplate(+templateId)
+    },
     {
       enabled: !!templateId,
       onSuccess: (template) => {
-        setValue('title', template.title)
-        setValue('description', template.description)
-        trigger()
+        if (template) {
+          setValue('title', template.title)
+          setValue('description', template.description)
+          trigger()
+        }
       },
     }
   )
