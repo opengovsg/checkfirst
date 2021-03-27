@@ -24,7 +24,7 @@ describe('AuthService', () => {
   const emailValidator = new minimatch.Minimatch('*.gov.sg')
   const mailer = { sendMail: jest.fn() }
 
-  const sequelizeReady = sequelize.sync()
+  const sequelizeReady = sequelize.authenticate()
 
   const service = new AuthService({
     secret,
