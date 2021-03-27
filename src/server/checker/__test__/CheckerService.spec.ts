@@ -9,7 +9,7 @@ describe('CheckerService', () => {
   const sequelize = new Sequelize({ dialect: 'sqlite', logging: undefined })
   const { User, Checker } = addModelsTo(sequelize, { emailValidator })
 
-  const sequelizeReady = sequelize.sync()
+  const sequelizeReady = sequelize.authenticate()
 
   const service = new CheckerService({ sequelize, User, Checker })
 
