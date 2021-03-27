@@ -16,7 +16,7 @@ describe('AuthService', () => {
   const mailer = { sendMail: jest.fn() }
   const User = init(sequelize, { emailValidator })
 
-  const sequelizeReady = sequelize.authenticate()
+  const sequelizeReady = sequelize.sync()
 
   const service = new AuthService({
     secret,
