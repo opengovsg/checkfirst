@@ -37,6 +37,8 @@ export class CheckerService {
         if (!userInstance) {
           throw new Error(`User ${user.id} [${user.email}] not found`)
         }
+        // FIX:
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const checkerInstance = await this.CheckerModel.create(
           (checker as any) as CheckerModel,
           options
