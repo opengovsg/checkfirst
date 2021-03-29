@@ -12,7 +12,6 @@ module.exports = {
         type: Sequelize.TEXT,
       },
       description: {
-        allowNull: false,
         type: Sequelize.TEXT,
       },
       fields: {
@@ -31,11 +30,11 @@ module.exports = {
         allowNull: false,
         type: Sequelize.JSON,
       },
-      updatedAt: {
+      createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
       },
-      createdAt: {
+      updatedAt: {
         allowNull: false,
         type: Sequelize.DATE,
       },
