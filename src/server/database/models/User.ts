@@ -24,7 +24,7 @@ interface Settable {
 }
 
 @Table({ tableName: 'users', timestamps: true })
-export class User extends Model<User> {
+export class User extends Model {
   @Column({
     primaryKey: true,
     type: DataType.INTEGER,

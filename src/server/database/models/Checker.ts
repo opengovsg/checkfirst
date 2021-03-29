@@ -11,7 +11,7 @@ import { User } from './User'
 import { UserToChecker } from './UserToChecker'
 
 @Table({ tableName: 'checkers', timestamps: true })
-export class Checker extends Model<Checker> {
+export class Checker extends Model {
   @Column({
     primaryKey: true,
     type: DataType.STRING,

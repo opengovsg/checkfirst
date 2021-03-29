@@ -38,12 +38,7 @@ export class CheckerService {
           throw new Error(`User ${user.id} [${user.email}] not found`)
         }
 
-        const checkerInstance = await this.CheckerModel.create(
-          // FIX:
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (checker as any) as CheckerModel,
-          options
-        )
+        const checkerInstance = await this.CheckerModel.create(checker, options)
         // We definitely know that userInstance can add associations
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await (userInstance as any).addChecker(checkerInstance, options)
