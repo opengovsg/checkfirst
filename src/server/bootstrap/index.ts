@@ -91,7 +91,7 @@ export async function bootstrap(): Promise<Express> {
 
   addStaticRoutes(app)
 
-  await sequelize.sync()
+  await sequelize.authenticate()
   return app
 }
 
