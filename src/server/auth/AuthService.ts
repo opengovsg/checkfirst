@@ -4,7 +4,7 @@ import { totp as totpGlobal } from 'otplib'
 import winston from 'winston'
 
 import { User } from '../../types/user'
-import { ModelOf } from '../models'
+import { User as UserModel } from '../database/models/User'
 
 export class AuthService {
   private secret: string
@@ -12,7 +12,7 @@ export class AuthService {
   private emailValidator: IMinimatch
   private totp: Pick<typeof totpGlobal, 'generate' | 'verify' | 'options'>
   private mailer: Pick<Transporter, 'sendMail'>
-  private UserModel: ModelOf<User>
+  private UserModel: typeof UserModel
   private logger?: winston.Logger
 
   constructor({
@@ -21,7 +21,6 @@ export class AuthService {
     emailValidator,
     totp,
     mailer,
-    User,
     logger,
   }: {
     secret: string
@@ -29,7 +28,6 @@ export class AuthService {
     emailValidator: IMinimatch
     totp: Pick<typeof totpGlobal, 'generate' | 'verify' | 'options'>
     mailer: Pick<Transporter, 'sendMail'>
-    User: ModelOf<unknown>
     logger?: winston.Logger
   }) {
     this.secret = secret
@@ -37,7 +35,7 @@ export class AuthService {
     this.emailValidator = emailValidator
     this.totp = totp
     this.mailer = mailer
-    this.UserModel = User as ModelOf<User>
+    this.UserModel = UserModel
     this.logger = logger
   }
 

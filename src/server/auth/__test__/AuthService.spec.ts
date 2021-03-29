@@ -1,10 +1,18 @@
 import minimatch from 'minimatch'
-import { Sequelize } from 'sequelize'
-import { init } from '../../models/User'
+import { Sequelize } from 'sequelize-typescript'
 import { AuthService } from '..'
+import {
+  Checker as CheckerModel,
+  User as UserModel,
+  UserToChecker as UserToCheckerModel,
+} from '../../database/models'
 
 describe('AuthService', () => {
-  const sequelize = new Sequelize({ dialect: 'sqlite', logging: undefined })
+  const sequelize = new Sequelize({
+    dialect: 'sqlite',
+    logging: undefined,
+    models: [UserModel, CheckerModel, UserToCheckerModel],
+  })
 
   const totp = {
     generate: jest.fn(),
@@ -15,7 +23,6 @@ describe('AuthService', () => {
   const appHost = 'checkfirst.gov.sg'
   const emailValidator = new minimatch.Minimatch('*.gov.sg')
   const mailer = { sendMail: jest.fn() }
-  const User = init(sequelize, { emailValidator })
 
   const sequelizeReady = sequelize.sync()
 
@@ -25,7 +32,6 @@ describe('AuthService', () => {
     emailValidator,
     totp,
     mailer,
-    User,
   })
 
   describe('sendOTP', () => {
