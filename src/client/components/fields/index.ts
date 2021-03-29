@@ -1,4 +1,5 @@
 export * from './CheckboxField'
 export * from './RadioField'
+export * from './DropdownField'
 export * from './NumericField'
 export * from './DateField'

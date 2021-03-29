@@ -46,6 +46,12 @@ const config = convict({
     format: 'int',
     default: 14400000, // 4 hours
   },
+  appHost: {
+    doc: 'The fully-qualified domain name of the application',
+    env: 'APP_HOST',
+    format: '*',
+    default: 'checkfirst.gov.sg',
+  },
   // TODO - change the secrets below so that the defaults have
   // production-appropriate defaults, or no defaults at all, per
   // guidelines for using convict

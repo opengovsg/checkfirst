@@ -8,7 +8,6 @@ import { totp as totpFactory } from 'otplib'
 
 import config from '../config'
 import api from '../api'
-import { addModelsTo } from '../models'
 import { CheckerController, CheckerService } from '../checker'
 import { AuthController, AuthService } from '../auth'
 
@@ -32,15 +31,11 @@ const emailValidator = new minimatch.Minimatch(mailSuffix, {
   nonegate: true,
 })
 
-const { Checker, User } = addModelsTo(sequelize, { emailValidator })
-
 export async function bootstrap(): Promise<Express> {
   const checker = new CheckerController({
     service: new CheckerService({
       logger,
       sequelize,
-      Checker,
-      User,
     }),
   })
 
@@ -48,10 +43,10 @@ export async function bootstrap(): Promise<Express> {
     logger,
     service: new AuthService({
       secret: config.get('otpSecret'),
+      appHost: config.get('appHost'),
       emailValidator,
       totp,
       mailer,
-      User,
       logger,
     }),
   })
@@ -91,7 +86,7 @@ export async function bootstrap(): Promise<Express> {
 
   addStaticRoutes(app)
 
-  await sequelize.sync()
+  await sequelize.authenticate()
   return app
 }
 
