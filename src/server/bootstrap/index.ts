@@ -48,6 +48,7 @@ export async function bootstrap(): Promise<Express> {
     logger,
     service: new AuthService({
       secret: config.get('otpSecret'),
+      appHost: config.get('appHost'),
       emailValidator,
       totp,
       mailer,
