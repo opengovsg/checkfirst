@@ -1,12 +1,12 @@
 import React, { FC } from 'react'
 import { ChakraProvider } from '@chakra-ui/react'
 import { QueryClient, QueryClientProvider } from 'react-query'
-import {
-  BrowserRouter as Router,
-  Redirect,
-  Route,
-  Switch,
-} from 'react-router-dom'
+import { Router, Redirect, Route, Switch } from 'react-router-dom'
+import { createBrowserHistory } from 'history'
+const history = createBrowserHistory()
+
+import * as Sentry from '@sentry/react'
+import { Integrations } from '@sentry/tracing'
 
 import { theme } from './theme'
 import { PrivateRoute } from './components'
@@ -21,11 +21,21 @@ const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: false } },
 })
 
+Sentry.init({
+  dsn: process.env.FRONTEND_SENTRY_DSN,
+  integrations: [
+    new Integrations.BrowserTracing({
+      routingInstrumentation: Sentry.reactRouterV5Instrumentation(history),
+    }),
+  ],
+  tracesSampleRate: 1.0,
+})
+
 const App: FC = () => {
   return (
     <ChakraProvider resetCSS theme={theme}>
       <QueryClientProvider client={queryClient}>
-        <Router>
+        <Router history={history}>
           <GoogleAnalyticsProvider>
             <AuthProvider>
               <Switch>

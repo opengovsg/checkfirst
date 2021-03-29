@@ -98,6 +98,7 @@ jobs:
             echo SESSION_SECRET=${{ secrets.SESSION_SECRET_STAGING }} >> $GITHUB_ENV;
             echo OTP_SECRET=${{ secrets.OTP_SECRET_STAGING }} >> $GITHUB_ENV;
             echo GA_TRACKING_ID=${{ secrets.GA_TRACKING_ID_STAGING }} >> $GITHUB_ENV;
+            echo SENTRY_ENVIRONMENT=${{ secrets.SENTRY_ENVIRONMENT_STAGING }} >> $GITHUB_ENV;
             echo APP_HOST=staging.checkfirst.gov.sg >> $GITHUB_ENV;
           elif [[ $GITHUB_REF == $PRODUCTION_BRANCH ]]; then
             echo LAMBDA_NODE_ENV=production >> $GITHUB_ENV;
@@ -110,8 +111,14 @@ jobs:
             echo SESSION_SECRET=${{ secrets.SESSION_SECRET_PRODUCTION }} >> $GITHUB_ENV;
             echo OTP_SECRET=${{ secrets.OTP_SECRET_PRODUCTION }} >> $GITHUB_ENV;
             echo GA_TRACKING_ID=${{ secrets.GA_TRACKING_ID_PRODUCTION }} >> $GITHUB_ENV;
+            echo SENTRY_ENVIRONMENT=${{ secrets.SENTRY_ENVIRONMENT_PRODUCTION }} >> $GITHUB_ENV;
             echo APP_HOST=checkfirst.gov.sg >> $GITHUB_ENV
           fi
+          echo SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }} >> $GITHUB_ENV;
+          echo FRONTEND_SENTRY_DSN=${{ secrets.FRONTEND_SENTRY_DSN }} >> $GITHUB_ENV;
+          echo SENTRY_ORG=${{ secrets.SENTRY_ORG }} >> $GITHUB_ENV;
+          echo SENTRY_PROJECT=${{ secrets.SENTRY_PROJECT }} >> $GITHUB_ENV;
+          echo SENTRY_URL=${{ secrets.SENTRY_URL }} >> $GITHUB_ENV;
       - run: npm run build
       - name: serverless deploy
         uses: opengovsg/serverless-github-action@v2.1.0

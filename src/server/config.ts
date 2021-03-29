@@ -109,10 +109,10 @@ const config = convict({
     format: 'Boolean',
     default: false,
   },
-  sentryDns: {
+  frontendSentryDsn: {
     doc:
-      'The Sentry DNS used for bug and error tracking. e.g. `https://12345@sentry.io/12345`',
-    env: 'SENTRY_DNS',
+      'The Sentry DSN used for bug and error tracking. e.g. `https://12345@sentry.io/12345`',
+    env: 'FRONTEND_SENTRY_DSN',
     format: '*',
     default: '',
   },

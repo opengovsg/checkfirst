@@ -43,6 +43,7 @@ functions:
       SESSION_SECRET: ${env:SESSION_SECRET}
       OTP_SECRET: ${env:OTP_SECRET}
       OTP_EXPIRY: ${env:OTP_EXPIRY}
+      FRONTEND_SENTRY_DSN: ${env:FRONTEND_SENTRY_DSN}
     events:
       - http:
           path: api/v1/{proxy+}

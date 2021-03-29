@@ -9,6 +9,7 @@ import { ApiClient } from '../api'
 import useLocalStorage from '../hooks/use-local-storage'
 import { AuthService } from '../services'
 import { useGoogleAnalytics } from '.'
+import * as Sentry from '@sentry/react'
 
 interface AuthContextProps {
   logout: () => void
@@ -36,7 +37,12 @@ export const AuthProvider: FC = ({ children }) => {
     ApiClient.get<User | null>('/auth/whoami').then((user) => {
       if (user.data) {
         setUser(user.data as User)
-        googleAnalytics.setGAUserId(user.data.id)
+        const { email, id } = user.data
+        googleAnalytics.setGAUserId(id)
+        Sentry.setUser({
+          id: id.toString(),
+          email: email,
+        })
       }
     })
 
@@ -52,6 +58,7 @@ export const AuthProvider: FC = ({ children }) => {
     await ApiClient.post('/auth/logout')
     setUser(null)
     googleAnalytics.setGAUserId(null)
+    Sentry.setUser(null)
   }
 
   const auth = {

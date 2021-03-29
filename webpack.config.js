@@ -4,9 +4,18 @@ const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
+const SentryCliPlugin = require('@sentry/webpack-plugin')
 
 const outputDirectory = 'build/client'
 const srcDirectory = path.join(__dirname, 'src/client')
+
+const requiredSentryEnvVar = [
+  process.env.SENTRY_AUTH_TOKEN,
+  process.env.FRONTEND_SENTRY_DSN,
+  process.env.SENTRY_ORG,
+  process.env.SENTRY_PROJECT,
+  process.env.SENTRY_URL,
+]
 
 module.exports = () => {
   const jsBundle = {
@@ -76,8 +85,33 @@ module.exports = () => {
         'process.env.GA_TRACKING_ID': JSON.stringify(
           process.env.GA_TRACKING_ID
         ),
+        'process.env.FRONTEND_SENTRY_DSN': JSON.stringify(
+          process.env.FRONTEND_SENTRY_DSN
+        ),
       }),
     ],
+  }
+
+  const uploadSourcemapsToSentry = requiredSentryEnvVar.reduce((x, y) => x && y)
+  if (uploadSourcemapsToSentry) {
+    console.log(
+      '\x1b[32m[webpack-sentry-sourcemaps] Build will include upload of sourcemaps to Sentry.\x1b[0m'
+    )
+    jsBundle.plugins.push(
+      new SentryCliPlugin({
+        // plugin automatically extracts ENV vars: https://docs.sentry.io/product/cli/configuration/
+        include: '.',
+        ignoreFile: '.gitignore',
+        ignore: ['node_modules', 'webpack.config.js'],
+        deploy: {
+          env: process.env.SENTRY_ENVIRONMENT,
+        },
+      })
+    )
+  } else {
+    console.log(
+      '\x1b[33m[webpack-sentry-sourcemaps] Skipping upload of sourcemaps to Sentry because of missing env vars. Ignore this if it was intended.\x1b[0m'
+    )
   }
   return [jsBundle]
 }
