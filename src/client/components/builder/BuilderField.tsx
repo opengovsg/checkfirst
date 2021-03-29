@@ -1,4 +1,5 @@
 import React, { FC, useEffect } from 'react'
+import { difference } from 'lodash'
 import { BiDuplicate, BiTrash, BiShow, BiHide } from 'react-icons/bi'
 import {
   useMultiStyleConfig,
@@ -58,6 +59,14 @@ const isOperationData = (data: BuilderFieldData): data is checker.Operation => {
 
 const isConstantData = (data: BuilderFieldData): data is checker.Constant => {
   return data && (data as checker.Constant).table !== undefined
+}
+
+const isTitleData = (
+  data: BuilderFieldData
+): data is Pick<checker.Checker, 'title' | 'description'> => {
+  return (
+    data && difference(Object.keys(data), ['title', 'description']).length === 0
+  )
 }
 
 interface BuilderFieldProps {
@@ -243,16 +252,20 @@ export const createBuilderField = (
                 onClick={handleDisplayToggle}
               />
             )}
-            <ActionButton
-              aria-label="Duplicate"
-              icon={<BiDuplicate />}
-              onClick={handleDuplicate}
-            />
-            <ActionButton
-              aria-label="Delete"
-              icon={<BiTrash />}
-              onClick={handleDelete}
-            />
+            {!isTitleData(data) && (
+              <>
+                <ActionButton
+                  aria-label="Duplicate"
+                  icon={<BiDuplicate />}
+                  onClick={handleDuplicate}
+                />
+                <ActionButton
+                  aria-label="Delete"
+                  icon={<BiTrash />}
+                  onClick={handleDelete}
+                />
+              </>
+            )}
           </HStack>
         )}
       </Flex>
