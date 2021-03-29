@@ -13,6 +13,7 @@ import * as checker from '../../../types/checker'
 import { usePosition } from '../../hooks/use-position'
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../util/enums'
 import { ActionButton } from '../builder'
+import { BuilderAddPayload } from '../../../types/builder'
 
 export type TitleFieldComponent = FC<
   Pick<checker.Checker, 'title' | 'description'>
@@ -138,58 +139,56 @@ export const createBuilderField = (
     if (isOperationData(data)) return ConfigArrayEnum.Operations
   }
 
+  const makeElement = <
+    T extends checker.Field | checker.Operation | checker.Constant
+  >(
+    data: T
+  ): T => {
+    const [prefix] = data.id.match(/^[^\d]+/) || []
+    return {
+      // Do a quick and dirty deep copy by serializing
+      // and deserializing. Note that this will only work so long
+      // as `data` only contains serializable properties
+      ...JSON.parse(JSON.stringify(data)),
+      id: `${prefix}${nextUniqueId}`,
+    }
+  }
+
   const handleDuplicate = () => {
-    if (isFieldData(data)) {
-      const [prefix] = data.id.match(/^[^\d]+/) || []
-      const updatedData = {
-        ...data,
-        id: `${prefix}${nextUniqueId}`,
+    if (isFieldData(data) || isOperationData(data) || isConstantData(data)) {
+      const payload: BuilderAddPayload | undefined = isFieldData(data)
+        ? {
+            element: makeElement(data),
+            configArrName: ConfigArrayEnum.Fields,
+            newIndex: index + 1,
+          }
+        : isOperationData(data)
+        ? {
+            element: makeElement(data),
+            configArrName: ConfigArrayEnum.Operations,
+            newIndex: index + 1,
+          }
+        : isConstantData(data)
+        ? {
+            element: makeElement(data),
+            configArrName: ConfigArrayEnum.Constants,
+            newIndex: index + 1,
+          }
+        : undefined
+      if (payload) {
+        dispatch({
+          type: BuilderActionEnum.Add,
+          payload,
+        })
+        setActiveIndex(index + 1)
+        setNextUniqueId(nextUniqueId + 1)
       }
-      dispatch({
-        type: BuilderActionEnum.Add,
-        payload: {
-          element: updatedData,
-          configArrName: ConfigArrayEnum.Fields,
-          newIndex: index + 1,
-        },
-      })
-      setActiveIndex(index + 1)
-      setNextUniqueId(nextUniqueId + 1)
-    } else if (isOperationData(data)) {
-      const updatedData = {
-        ...data,
-        id: `${data.id[0]}${nextUniqueId}`,
-      }
-      dispatch({
-        type: BuilderActionEnum.Add,
-        payload: {
-          element: updatedData,
-          configArrName: ConfigArrayEnum.Operations,
-          newIndex: index + 1,
-        },
-      })
-      setActiveIndex(index + 1)
-      setNextUniqueId(nextUniqueId + 1)
-    } else if (isConstantData(data)) {
-      const updatedData = {
-        ...data,
-        id: `${data.id[0]}${nextUniqueId}`,
-      }
-      dispatch({
-        type: BuilderActionEnum.Add,
-        payload: {
-          element: updatedData,
-          configArrName: ConfigArrayEnum.Constants,
-          newIndex: index + 1,
-        },
-      })
-      setActiveIndex(index + 1)
-      setNextUniqueId(nextUniqueId + 1)
     }
   }
 
   const handleDelete = () => {
     // adding the ! assert because only valid ConfigArrayEnum cards have the delete button
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const configArrName: ConfigArrayEnum = getConfigArrName(data)!
 
     dispatch({
