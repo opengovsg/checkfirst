@@ -12,6 +12,7 @@ describe('AuthService', () => {
     options: { step: 60 },
   }
   const secret = 'toomanysecrets'
+  const appHost = 'checkfirst.gov.sg'
   const emailValidator = new minimatch.Minimatch('*.gov.sg')
   const mailer = { sendMail: jest.fn() }
   const User = init(sequelize, { emailValidator })
@@ -20,6 +21,7 @@ describe('AuthService', () => {
 
   const service = new AuthService({
     secret,
+    appHost,
     emailValidator,
     totp,
     mailer,
