@@ -48,9 +48,7 @@ describe('CheckerService', () => {
       await UserModel.destroy({ truncate: true })
     })
     it('returns false if checker exists', async () => {
-      // FIX:
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await CheckerModel.create((checker as any) as CheckerModel)
+      await CheckerModel.create(checker)
 
       const created = await service.create(checker, user)
 
