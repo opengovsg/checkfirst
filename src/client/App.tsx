@@ -23,6 +23,7 @@ const queryClient = new QueryClient({
 
 Sentry.init({
   dsn: process.env.FRONTEND_SENTRY_DSN,
+  environment: process.env.NODE_ENV,
   integrations: [
     new Integrations.BrowserTracing({
       routingInstrumentation: Sentry.reactRouterV5Instrumentation(history),
