@@ -14,7 +14,6 @@ const requiredSentryEnvVar = [
   process.env.FRONTEND_SENTRY_DSN,
   process.env.SENTRY_ORG,
   process.env.SENTRY_PROJECT,
-  process.env.SENTRY_URL,
 ]
 
 module.exports = () => {
