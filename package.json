@@ -12,7 +12,8 @@
     "dev": "concurrently \"npm run dev-server\" \"npm run dev-client\"",
     "dev-server": "ts-node-dev --respawn --transpile-only --inspect -- src/server/index.ts",
     "dev-client": "webpack serve --mode development --host 0.0.0.0 --devtool inline-source-map --hot",
-    "start": "node build/server/index.js"
+    "start": "node build/server/index.js",
+    "version": "auto-changelog -p && git add CHANGELOG.md"
   },
   "author": "Open Government Products, GovTech Singapore (https://open.gov.sg)",
   "private": true,
@@ -45,6 +46,7 @@
     "@types/validator": "^13.1.3",
     "@typescript-eslint/eslint-plugin": "^4.16.1",
     "@typescript-eslint/parser": "^4.18.0",
+    "auto-changelog": "^2.2.1",
     "babel-loader": "^8.2.2",
     "babel-polyfill": "^6.26.0",
     "clean-webpack-plugin": "^3.0.0",
