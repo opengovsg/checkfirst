@@ -92,7 +92,7 @@ export async function bootstrap(): Promise<Express> {
   const app = express()
 
   Sentry.init({
-    dsn: process.env.BACKEND_SENTRY_DSN,
+    dsn: config.get('backendSentryDsn'),
     // automatically picks up environment from SENTRY_ENVIRONMENT
     integrations: [
       // enable HTTP calls tracing
@@ -101,6 +101,7 @@ export async function bootstrap(): Promise<Express> {
       new Tracing.Integrations.Express({ app }),
     ],
     tracesSampleRate: 1.0,
+    environment: config.get('nodeEnv'),
   })
 
   if (secure) {

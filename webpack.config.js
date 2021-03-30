@@ -104,7 +104,7 @@ module.exports = () => {
         ignoreFile: '.gitignore',
         ignore: ['node_modules', 'webpack.config.js'],
         deploy: {
-          env: process.env.SENTRY_ENVIRONMENT,
+          env: process.env.LAMBDA_NODE_ENV,
         },
       })
     )
