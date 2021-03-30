@@ -9,7 +9,7 @@ import * as Sentry from '@sentry/react'
 import { Integrations } from '@sentry/tracing'
 
 import { theme } from './theme'
-import { PrivateRoute } from './components'
+import { PrivateRoute, Fallback } from './components'
 import { Checker, Landing, Login, Dashboard, FormBuilder } from './pages'
 import {
   AuthProvider,
@@ -38,19 +38,21 @@ const App: FC = () => {
         <Router history={history}>
           <GoogleAnalyticsProvider>
             <AuthProvider>
-              <Switch>
-                <Route exact path="/c/:id" component={Checker} />
-                <Route exact path="/login" component={Login} />
-                <Route exact path="/" component={Landing} />
-                <PrivateRoute path="/dashboard" component={Dashboard} />
-                <PrivateRoute path="/builder/:id">
-                  {/* TODO: Rename to BuilderProvider */}
-                  <CheckerProvider>
-                    <FormBuilder />
-                  </CheckerProvider>
-                </PrivateRoute>
-                <Redirect to="/" />
-              </Switch>
+              <Sentry.ErrorBoundary fallback={Fallback}>
+                <Switch>
+                  <Route exact path="/c/:id" component={Checker} />
+                  <Route exact path="/login" component={Login} />
+                  <Route exact path="/" component={Landing} />
+                  <PrivateRoute path="/dashboard" component={Dashboard} />
+                  <PrivateRoute path="/builder/:id">
+                    {/* TODO: Rename to BuilderProvider */}
+                    <CheckerProvider>
+                      <FormBuilder />
+                    </CheckerProvider>
+                  </PrivateRoute>
+                  <Redirect to="/" />
+                </Switch>
+              </Sentry.ErrorBoundary>
             </AuthProvider>
           </GoogleAnalyticsProvider>
         </Router>
