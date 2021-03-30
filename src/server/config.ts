@@ -118,7 +118,7 @@ const config = convict({
   },
   frontendSentryDsn: {
     doc:
-      'The Sentry DSN used for bug and error tracking. e.g. `https://12345@sentry.io/12345`',
+      'The Sentry DSN used for bug and error tracking. e.g. `https://12345@sentry.io/12345`. Used by CSP.',
     env: 'FRONTEND_SENTRY_DSN',
     format: '*',
     default: '',
