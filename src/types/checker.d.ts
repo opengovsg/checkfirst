@@ -1,3 +1,4 @@
+import { Checker as CheckerModel } from '../server/database/models/Checker'
 import { User } from './user'
 import { Unit } from 'mathjs'
 
@@ -18,6 +19,17 @@ export interface Checker {
   displays: Display[]
 }
 
+export type Checker = Pick<
+  CheckerModel,
+  'id',
+  'title',
+  'description',
+  'fields',
+  'constants',
+  'operations',
+  'displays'
+>
+
 export type ConfigArrayName = 'fields' | 'operations' | 'displays' | 'constants'
 
 export interface Field {
@@ -33,7 +45,13 @@ export interface FieldOption {
   value: number
 }
 
-export type FieldType = 'NUMERIC' | 'RADIO' | 'CHECKBOX' | 'SLIDER' | 'DATE'
+export type FieldType =
+  | 'NUMERIC'
+  | 'RADIO'
+  | 'DROPDOWN'
+  | 'CHECKBOX'
+  | 'SLIDER'
+  | 'DATE'
 
 export interface Display {
   id: string

@@ -1,20 +1,25 @@
-import minimatch from 'minimatch'
-import { Sequelize } from 'sequelize'
-import { addModelsTo } from '../../models'
+import { Sequelize } from 'sequelize-typescript'
 import { CheckerService } from '..'
+import {
+  Checker as CheckerModel,
+  User as UserModel,
+  UserToChecker as UserToCheckerModel,
+} from '../../database/models'
+import { Checker } from '../../../types/checker'
+import { User } from '../../../types/user'
 
 describe('CheckerService', () => {
-  const emailValidator = new minimatch.Minimatch('*.gov.sg')
-
-  const sequelize = new Sequelize({ dialect: 'sqlite', logging: undefined })
-  const { User, Checker } = addModelsTo(sequelize, { emailValidator })
-
+  const sequelize = new Sequelize({
+    dialect: 'sqlite',
+    logging: undefined,
+    models: [UserModel, CheckerModel, UserToCheckerModel],
+  })
   const sequelizeReady = sequelize.sync()
 
-  const service = new CheckerService({ sequelize, User, Checker })
+  const service = new CheckerService({ sequelize })
 
-  const user = { id: 1, email: 'user@agency.gov.sg' }
-  const checker = {
+  const user: User = { id: 1, email: 'user@agency.gov.sg' }
+  const checker: Checker = {
     id: 'existing-checker',
     title: 'Existing Checker',
     fields: [],
@@ -23,8 +28,8 @@ describe('CheckerService', () => {
     displays: [],
   }
 
-  const anotherUser = { id: 2, email: 'another-user@agency.gov.sg' }
-  const anotherChecker = {
+  const anotherUser: User = { id: 2, email: 'another-user@agency.gov.sg' }
+  const anotherChecker: Checker = {
     id: 'another-checker',
     title: 'Another Checker',
     fields: [],
@@ -39,11 +44,11 @@ describe('CheckerService', () => {
 
   describe('create', () => {
     beforeEach(async () => {
-      await Checker.destroy({ truncate: true })
-      await User.destroy({ truncate: true })
+      await CheckerModel.destroy({ truncate: true })
+      await UserModel.destroy({ truncate: true })
     })
     it('returns false if checker exists', async () => {
-      await Checker.create(checker)
+      await CheckerModel.create(checker)
 
       const created = await service.create(checker, user)
 
@@ -55,13 +60,13 @@ describe('CheckerService', () => {
     })
 
     it('successfully creates a checker', async () => {
-      await User.create(user)
+      await UserModel.create(user)
 
       const created = await service.create(checker, user)
 
       expect(created).toBe(true)
-      const checkerInstance = await Checker.findByPk(checker.id, {
-        include: [User],
+      const checkerInstance = await CheckerModel.findByPk(checker.id, {
+        include: [UserModel],
       })
       const actualChecker = checkerInstance?.toJSON() as Record<string, unknown>
       expect(actualChecker).toMatchObject(checker)
@@ -73,12 +78,12 @@ describe('CheckerService', () => {
 
   describe('list', () => {
     beforeEach(async () => {
-      await Checker.destroy({ truncate: true })
-      await User.destroy({ truncate: true })
+      await CheckerModel.destroy({ truncate: true })
+      await UserModel.destroy({ truncate: true })
     })
     it("lists users' respective checkers", async () => {
-      await User.create(user)
-      await User.create(anotherUser)
+      await UserModel.create(user)
+      await UserModel.create(anotherUser)
       await service.create(checker, user)
       await service.create(anotherChecker, anotherUser)
 
@@ -96,10 +101,10 @@ describe('CheckerService', () => {
 
   describe('retrieve', () => {
     beforeAll(async () => {
-      await Checker.destroy({ truncate: true })
-      await User.destroy({ truncate: true })
-      await User.create(user)
-      await User.create(anotherUser)
+      await CheckerModel.destroy({ truncate: true })
+      await UserModel.destroy({ truncate: true })
+      await UserModel.create(user)
+      await UserModel.create(anotherUser)
       await service.create(checker, user)
     })
 
@@ -131,19 +136,19 @@ describe('CheckerService', () => {
     const change = { description: 'New Description' }
 
     beforeAll(async () => {
-      await User.destroy({ truncate: true })
-      await User.create(user)
-      await User.create(anotherUser)
+      await UserModel.destroy({ truncate: true })
+      await UserModel.create(user)
+      await UserModel.create(anotherUser)
     })
     beforeEach(async () => {
-      await Checker.destroy({ truncate: true })
+      await CheckerModel.destroy({ truncate: true })
       await service.create(checker, user)
     })
 
     it('effects no change if id not found', async () => {
       const count = await service.update(anotherChecker.id, change, user)
       expect(count).toBe(0)
-      const checkerInstance = await Checker.findByPk(checker.id)
+      const checkerInstance = await CheckerModel.findByPk(checker.id)
       expect(checkerInstance).toMatchObject(checker)
     })
 
@@ -151,33 +156,33 @@ describe('CheckerService', () => {
       await expect(
         service.update(checker.id, change, anotherUser)
       ).rejects.toMatchObject(new Error('Unauthorized'))
-      const checkerInstance = await Checker.findByPk(checker.id)
+      const checkerInstance = await CheckerModel.findByPk(checker.id)
       expect(checkerInstance).toMatchObject(checker)
     })
 
     it('effects change if id found and correct user', async () => {
       const count = await service.update(checker.id, change, user)
       expect(count).toBe(1)
-      const checkerInstance = await Checker.findByPk(checker.id)
+      const checkerInstance = await CheckerModel.findByPk(checker.id)
       expect(checkerInstance).toMatchObject({ ...checker, ...change })
     })
   })
 
   describe('delete', () => {
     beforeAll(async () => {
-      await User.destroy({ truncate: true })
-      await User.create(user)
-      await User.create(anotherUser)
+      await UserModel.destroy({ truncate: true })
+      await UserModel.create(user)
+      await UserModel.create(anotherUser)
     })
     beforeEach(async () => {
-      await Checker.destroy({ truncate: true })
+      await CheckerModel.destroy({ truncate: true })
       await service.create(checker, user)
     })
 
     it('does not delete if id not found', async () => {
       const count = await service.delete(anotherChecker.id, user)
       expect(count).toBe(0)
-      const checkerInstance = await Checker.findByPk(checker.id)
+      const checkerInstance = await CheckerModel.findByPk(checker.id)
       expect(checkerInstance).toMatchObject(checker)
     })
 
@@ -185,14 +190,14 @@ describe('CheckerService', () => {
       await expect(
         service.delete(checker.id, anotherUser)
       ).rejects.toMatchObject(new Error('Unauthorized'))
-      const checkerInstance = await Checker.findByPk(checker.id)
+      const checkerInstance = await CheckerModel.findByPk(checker.id)
       expect(checkerInstance).toMatchObject(checker)
     })
 
     it('deletes if id found and correct user', async () => {
       const count = await service.delete(checker.id, user)
       expect(count).toBe(1)
-      const checkerInstance = await Checker.findByPk(checker.id)
+      const checkerInstance = await CheckerModel.findByPk(checker.id)
       expect(checkerInstance).toBeNull()
     })
   })
