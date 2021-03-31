@@ -1,5 +1,16 @@
 import config from '../../config'
 import logger from '../../bootstrap/logger'
+import { parse } from 'pg-connection-string'
+
+// We have to manually parse database URL because sequelize-typescript requires explicit
+// connection parameters.
+const parsed = parse(config.get('databaseUrl'))
+const connectionConfig = {
+  username: parsed.user,
+  port: parsed.port ? +parsed.port : 5432,
+  password: parsed.password,
+  database: parsed.database,
+}
 
 module.exports = {
   development: {
@@ -7,13 +18,15 @@ module.exports = {
     dialect: 'sqlite',
   },
   staging: {
-    url: config.get('databaseUrl'),
     timezone: '+08:00',
     logging: logger.info.bind(logger),
+    dialect: 'postgres',
+    ...connectionConfig,
   },
   production: {
-    url: config.get('databaseUrl'),
     timezone: '+08:00',
     logging: logger.info.bind(logger),
+    dialect: 'postgres',
+    ...connectionConfig,
   },
 }
