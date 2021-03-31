@@ -56,6 +56,9 @@ functions:
     vpc:
       securityGroupIds:
         - ${env:VPC_SECURITY_GROUP_STATIC}
+    environment:
+      FRONTEND_SENTRY_DSN: ${env:FRONTEND_SENTRY_DSN}
+      CSP_REPORT_URI: ${env:CSP_REPORT_URI}
     events:
       - http:
           path: ""

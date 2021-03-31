@@ -6,6 +6,7 @@ import { parse } from 'pg-connection-string'
 // connection parameters.
 const parsed = parse(config.get('databaseUrl'))
 const connectionConfig = {
+  host: parsed.host,
   username: parsed.user,
   port: parsed.port ? +parsed.port : 5432,
   password: parsed.password,
