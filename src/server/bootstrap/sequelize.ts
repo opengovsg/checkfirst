@@ -1,21 +1,17 @@
-import { Sequelize } from 'sequelize-typescript'
-import logger from './logger'
-
+import { Sequelize, SequelizeOptions } from 'sequelize-typescript'
 import config from '../config'
+import {
+  databaseConfigType,
+  nodeEnvType,
+} from '../../types/server/sequelize-config'
+import * as sequelizeConfig from '../database/config/config'
 import { User, Checker, UserToChecker } from '../database/models'
 
-const databaseUrl = config.get('databaseUrl')
-const sqlitePath = config.get('sqlitePath')
+const nodeEnv = config.get('nodeEnv') as nodeEnvType
+const options: SequelizeOptions = (sequelizeConfig as databaseConfigType)[
+  nodeEnv
+]
 
-const sequelize = databaseUrl
-  ? new Sequelize(databaseUrl, {
-      timezone: '+08:00',
-      logging: logger.info.bind(logger),
-    })
-  : new Sequelize({
-      dialect: 'sqlite',
-      ...(sqlitePath ? { storage: sqlitePath } : {}),
-    })
-
+const sequelize = new Sequelize(options)
 sequelize.addModels([User, Checker, UserToChecker])
 export default sequelize
