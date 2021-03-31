@@ -14,7 +14,6 @@ const requiredSentryEnvVar = [
   process.env.FRONTEND_SENTRY_DSN,
   process.env.SENTRY_ORG,
   process.env.SENTRY_PROJECT,
-  process.env.SENTRY_URL,
 ]
 
 module.exports = () => {
@@ -88,6 +87,7 @@ module.exports = () => {
         'process.env.FRONTEND_SENTRY_DSN': JSON.stringify(
           process.env.FRONTEND_SENTRY_DSN
         ),
+        'process.env.NODE_ENV': JSON.stringify(process.env.LAMBDA_NODE_ENV),
       }),
     ],
   }
@@ -104,7 +104,7 @@ module.exports = () => {
         ignoreFile: '.gitignore',
         ignore: ['node_modules', 'webpack.config.js'],
         deploy: {
-          env: process.env.SENTRY_ENVIRONMENT,
+          env: process.env.LAMBDA_NODE_ENV,
         },
       })
     )
