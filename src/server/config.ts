@@ -44,7 +44,7 @@ const config = convict({
     doc: 'The maximum age for a cookie, expressed in ms',
     env: 'COOKIE_MAX_AGE',
     format: 'int',
-    default: 14400000, // 4 hours
+    default: 86400000, // 24 hours
   },
   appHost: {
     doc: 'The fully-qualified domain name of the application',
