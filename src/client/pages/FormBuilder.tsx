@@ -11,7 +11,26 @@ import {
   ConstantsTab,
   LogicTab,
   PreviewTab,
+  PreviewNavBar,
 } from '../components/builder'
+
+const WithNavBar: FC = ({ children }) => (
+  <Flex direction="column" minH="100vh" bgColor="#F4F6F9">
+    <Navbar />
+    <Container maxW="756px" px={0} mt="80px">
+      {children}
+    </Container>
+  </Flex>
+)
+
+const WithPreviewNavBar: FC = ({ children }) => (
+  <Flex direction="column" minH="100vh" bgColor="#F4F6F9">
+    <PreviewNavBar />
+    <Container maxW="756px" px={0} mt="80px">
+      {children}
+    </Container>
+  </Flex>
+)
 
 export const FormBuilder: FC = () => {
   const {
@@ -32,17 +51,28 @@ export const FormBuilder: FC = () => {
   }
 
   return (
-    <Flex direction="column" minH="100vh" bgColor="#F4F6F9">
-      <Navbar />
-      <Container maxW="756px" px={0} mt="80px">
-        <Switch>
-          <Route exact path={`${path}/questions`} component={QuestionsTab} />
-          <Route exact path={`${path}/constants`} component={ConstantsTab} />
-          <Route exact path={`${path}/logic`} component={LogicTab} />
-          <Route exact path={`${path}/preview`} component={PreviewTab} />
-          <Redirect to={`${path}/questions`} />
-        </Switch>
-      </Container>
-    </Flex>
+    <Switch>
+      <Route exact path={`${path}/questions`}>
+        <WithNavBar>
+          <QuestionsTab />
+        </WithNavBar>
+      </Route>
+      <Route exact path={`${path}/constants`}>
+        <WithNavBar>
+          <ConstantsTab />
+        </WithNavBar>
+      </Route>
+      <Route exact path={`${path}/logic`}>
+        <WithNavBar>
+          <LogicTab />
+        </WithNavBar>
+      </Route>
+      <Route exact path={`${path}/preview`}>
+        <WithPreviewNavBar>
+          <PreviewTab />
+        </WithPreviewNavBar>
+      </Route>
+      <Redirect to={`${path}/questions`} />
+    </Switch>
   )
 }
