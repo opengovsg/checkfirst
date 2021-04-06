@@ -88,28 +88,20 @@ export class CheckerService {
     id
   ) => {
     const result = await this.PublishedCheckerModel.findOne({
-      include: [
-        {
-          model: this.CheckerModel,
-          required: true, // Required for an inner join; otherwise the query returns a left outer join
-          where: { id },
-        },
+      attributes: [
+        ['checkerId', 'id'], // rename checkerId as id
+        'title',
+        'description',
+        'fields',
+        'constants',
+        'operations',
+        'displays',
       ],
+      where: { checkerId: id },
       order: [['createdAt', 'DESC']],
     })
 
-    // If a publishedChecker is found, we want to remove the draft checker from the publishedChecker object
-    // since anyone could retrieve it without auth
-    if (result) {
-      const publishedCheckerWithoutDraftChecker: GetPublishedCheckerWithoutDraftCheckerDTO = {
-        ...(result.toJSON() as Checker),
-      }
-      publishedCheckerWithoutDraftChecker.id =
-        publishedCheckerWithoutDraftChecker.checkerId
-      delete publishedCheckerWithoutDraftChecker.checker
-      delete publishedCheckerWithoutDraftChecker.checkerId
-      return publishedCheckerWithoutDraftChecker as GetPublishedCheckerWithoutDraftCheckerDTO
-    }
+    return result
   }
 
   publish: (
