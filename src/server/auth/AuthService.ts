@@ -4,36 +4,38 @@ import { totp as totpGlobal } from 'otplib'
 import winston from 'winston'
 
 import { User } from '../../types/user'
-import { ModelOf } from '../models'
+import { User as UserModel } from '../database/models/User'
 
 export class AuthService {
   private secret: string
+  private appHost: string
   private emailValidator: IMinimatch
   private totp: Pick<typeof totpGlobal, 'generate' | 'verify' | 'options'>
   private mailer: Pick<Transporter, 'sendMail'>
-  private UserModel: ModelOf<User>
+  private UserModel: typeof UserModel
   private logger?: winston.Logger
 
   constructor({
     secret,
+    appHost,
     emailValidator,
     totp,
     mailer,
-    User,
     logger,
   }: {
     secret: string
+    appHost: string
     emailValidator: IMinimatch
     totp: Pick<typeof totpGlobal, 'generate' | 'verify' | 'options'>
     mailer: Pick<Transporter, 'sendMail'>
-    User: ModelOf<unknown>
     logger?: winston.Logger
   }) {
     this.secret = secret
+    this.appHost = appHost
     this.emailValidator = emailValidator
     this.totp = totp
     this.mailer = mailer
-    this.UserModel = User as ModelOf<User>
+    this.UserModel = UserModel
     this.logger = logger
   }
 
@@ -52,7 +54,7 @@ export class AuthService {
       : NaN
     const html = `Your OTP is <b>${otp}</b>. It will expire in ${timeLeft} minutes.
     Please use this to login to your account.
-    <p>If your OTP does not work, please request for a new one.</p>
+    <p>If your OTP does not work, please request for a new one from ${this.appHost}.</p>
     <p>This login attempt was made from the IP: ${ip}. If you did not attempt to log in, you may choose to ignore this email or investigate this IP address further.</p>`
 
     const mail: SendMailOptions = {

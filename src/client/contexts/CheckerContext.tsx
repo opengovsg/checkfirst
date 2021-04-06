@@ -148,8 +148,10 @@ export const CheckerProvider: FC = ({ children }) => {
   }
 
   // Initial query for checker data
-  const { isSuccess, data } = useQuery(['builder', id], () =>
-    CheckerService.getChecker(id)
+  const { isSuccess, data } = useQuery(
+    ['builder', id],
+    () => CheckerService.getChecker(id),
+    { refetchOnWindowFocus: false }
   )
   useEffect(() => {
     if (data) {

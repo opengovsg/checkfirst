@@ -44,7 +44,13 @@ const config = convict({
     doc: 'The maximum age for a cookie, expressed in ms',
     env: 'COOKIE_MAX_AGE',
     format: 'int',
-    default: 14400000, // 4 hours
+    default: 86400000, // 24 hours
+  },
+  appHost: {
+    doc: 'The fully-qualified domain name of the application',
+    env: 'APP_HOST',
+    format: '*',
+    default: 'checkfirst.gov.sg',
   },
   // TODO - change the secrets below so that the defaults have
   // production-appropriate defaults, or no defaults at all, per
@@ -103,10 +109,17 @@ const config = convict({
     format: 'Boolean',
     default: false,
   },
-  sentryDns: {
+  backendSentryDsn: {
     doc:
-      'The Sentry DNS used for bug and error tracking. e.g. `https://12345@sentry.io/12345`',
-    env: 'SENTRY_DNS',
+      'The Sentry DSN used for bug and error tracking. e.g. `https://12345@sentry.io/12345`',
+    env: 'BACKEND_SENTRY_DSN',
+    format: '*',
+    default: '',
+  },
+  frontendSentryDsn: {
+    doc:
+      'The Sentry DSN used for bug and error tracking. e.g. `https://12345@sentry.io/12345`. Used by CSP.',
+    env: 'FRONTEND_SENTRY_DSN',
     format: '*',
     default: '',
   },

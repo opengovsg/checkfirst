@@ -1,24 +1,19 @@
-import { ModelOf } from '../models'
 import { Checker } from '../../types/checker'
 import { User } from '../../types/user'
-import { Model, Sequelize } from 'sequelize'
+import { Model, Sequelize } from 'sequelize-typescript'
 import { Logger } from 'winston'
+import { Checker as CheckerModel, User as UserModel } from '../database/models'
 
 export class CheckerService {
   private sequelize: Sequelize
   private logger?: Logger
-  private CheckerModel: ModelOf<Checker>
-  private UserModel: ModelOf<User>
-  constructor(options: {
-    sequelize: Sequelize
-    logger?: Logger
-    Checker: ModelOf<unknown>
-    User: ModelOf<unknown>
-  }) {
+  private CheckerModel: typeof CheckerModel
+  private UserModel: typeof UserModel
+  constructor(options: { sequelize: Sequelize; logger?: Logger }) {
     this.sequelize = options.sequelize
     this.logger = options.logger
-    this.CheckerModel = options.Checker as ModelOf<Checker>
-    this.UserModel = options.User as ModelOf<User>
+    this.CheckerModel = CheckerModel
+    this.UserModel = UserModel
   }
 
   create: (checker: Checker, user: User) => Promise<boolean> = async (
@@ -42,6 +37,7 @@ export class CheckerService {
         if (!userInstance) {
           throw new Error(`User ${user.id} [${user.email}] not found`)
         }
+
         const checkerInstance = await this.CheckerModel.create(checker, options)
         // We definitely know that userInstance can add associations
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

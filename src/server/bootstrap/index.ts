@@ -1,14 +1,15 @@
-import express, { Express } from 'express'
+import express, { Express, Request, Response, NextFunction } from 'express'
 import session from 'express-session'
 import SequelizeStoreFactory from 'connect-session-sequelize'
 import bodyParser from 'body-parser'
+import * as Sentry from '@sentry/node'
+import * as Tracing from '@sentry/tracing'
 
 import minimatch from 'minimatch'
 import { totp as totpFactory } from 'otplib'
 
 import config from '../config'
 import api from '../api'
-import { addModelsTo } from '../models'
 import { CheckerController, CheckerService } from '../checker'
 import { AuthController, AuthService } from '../auth'
 import { TemplateController, TemplateService } from '../template'
@@ -33,15 +34,11 @@ const emailValidator = new minimatch.Minimatch(mailSuffix, {
   nonegate: true,
 })
 
-const { Checker, User, Template } = addModelsTo(sequelize, { emailValidator })
-
 export async function bootstrap(): Promise<Express> {
   const checker = new CheckerController({
     service: new CheckerService({
       logger,
       sequelize,
-      Checker,
-      User,
     }),
   })
 
@@ -49,10 +46,10 @@ export async function bootstrap(): Promise<Express> {
     logger,
     service: new AuthService({
       secret: config.get('otpSecret'),
+      appHost: config.get('appHost'),
       emailValidator,
       totp,
       mailer,
-      User,
       logger,
     }),
   })
@@ -82,21 +79,56 @@ export async function bootstrap(): Promise<Express> {
     name: 'checkfirst',
   })
 
+  const sentrySessionMiddleware = (
+    req: Request,
+    _res: Response,
+    next: NextFunction
+  ): void => {
+    if (req.session?.user) {
+      const { email, id } = req.session.user
+      Sentry.setUser({
+        id: id.toString(),
+        email: email,
+      })
+    }
+    next()
+  }
+
   const app = express()
+
+  Sentry.init({
+    dsn: config.get('backendSentryDsn'),
+    integrations: [
+      // enable HTTP calls tracing
+      new Sentry.Integrations.Http({ tracing: true }),
+      // enable Express.js middleware tracing
+      new Tracing.Integrations.Express({ app }),
+    ],
+    tracesSampleRate: 1.0,
+    environment: config.get('nodeEnv'),
+  })
 
   if (secure) {
     app.set('trust proxy', 1)
   }
+  app.use(Sentry.Handlers.requestHandler())
+  app.use(Sentry.Handlers.tracingHandler())
 
   app.use(morgan)
   app.use(helmet)
 
-  const apiMiddleware = [sessionMiddleware, bodyParser.json()]
+  const apiMiddleware = [
+    sessionMiddleware,
+    bodyParser.json(),
+    sentrySessionMiddleware, // TODO: debug why user info isn't sent
+  ]
   app.use('/api/v1', apiMiddleware, api({ checker, auth, template }))
 
   addStaticRoutes(app)
 
-  await sequelize.sync()
+  app.use(Sentry.Handlers.errorHandler())
+
+  await sequelize.authenticate()
   return app
 }
 
