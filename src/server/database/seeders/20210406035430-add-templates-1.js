@@ -24,7 +24,7 @@ const covidTempRelief = createTemplate({
   id: 'covid-temp-relief',
   title: 'MLAW COVID Relief Eligibility Check',
   description:
-    'About this checker: It asks users to select a bunch of Yes/No questions. Anytime the user answers no then he or she is not eligible for the relief.',
+    'Asks users to select a bunch of Yes/No questions. Anytime the user answers no then he or she is not eligible for the relief.',
   fields: [
     {
       id: 'R1',
@@ -114,7 +114,7 @@ const quiz = createTemplate({
   id: 'quiz',
   title: 'Quiz',
   description:
-    'About this quiz: This is suitable for teachers that want to administer pop quiz for students to conduct self-assessments at home.',
+    'This is suitable for teachers that want to administer pop quiz for students to conduct self-assessments at home.',
   fields: [
     {
       id: 'N1',
@@ -255,7 +255,7 @@ const importDuties = createTemplate({
   id: 'import-duties',
   title: 'Import Duties Calculator',
   description:
-    'About this checker: This checker makes use of a mapping table where each type of alcohol is mapped to a different fees. Based on the volume of the alcohol specified, the import duties is computed at the end by multiplying the fee, volume and the alcohol percentage content.',
+    'This checker makes use of a mapping table where each type of alcohol is mapped to a different fees. Based on the volume of the alcohol specified, the import duties is computed at the end by multiplying the fee, volume and the alcohol percentage content.',
   fields: [
     {
       id: 'R1',
@@ -314,7 +314,7 @@ const shn = createTemplate({
   id: 'shn-calculator',
   title: 'SHN Calculator',
   description:
-    'About this checker: it helps user calculate date to leave based on the date input by the user.',
+    'Helps user to calculate date to leave based on the date input by the user.',
   fields: [
     {
       id: 'D1',
