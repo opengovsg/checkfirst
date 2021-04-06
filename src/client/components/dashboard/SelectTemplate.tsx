@@ -18,9 +18,9 @@ import {
 import { TemplateService } from '../../services'
 
 interface TemplateInfoProps {
-  id: number
+  id: string
   title: string
-  description: string
+  description?: string
 }
 const TemplateInfo: FC<TemplateInfoProps> = ({ id, title, description }) => (
   <Link to={`/dashboard/create/template/${id}/preview`}>
@@ -30,7 +30,7 @@ const TemplateInfo: FC<TemplateInfoProps> = ({ id, title, description }) => (
           {title}
         </Text>
         <Text textStyle="sub2" color="#6D7580" maxW="100%" noOfLines={2}>
-          {description}
+          {description ?? 'No description'}
         </Text>
       </VStack>
       <Center flex={1} justifyContent="center" fontSize="20px" color="#1B3C87">
