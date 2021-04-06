@@ -24,7 +24,6 @@ import {
 } from '@chakra-ui/react'
 
 import { EmbedModal } from '.'
-import { LogoutButton } from '../LogoutButton'
 import { useCheckerContext } from '../../contexts'
 
 const ROUTES = ['questions', 'constants', 'logic']
@@ -200,7 +199,6 @@ export const Navbar: FC = () => {
         >
           Publish
         </Button>
-        <LogoutButton />
       </HStack>
     </Flex>
   )
