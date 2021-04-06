@@ -39,7 +39,7 @@ export const PreviewNavBar: FC = () => {
       toast({
         status: 'success',
         title: 'Checker published',
-        description: 'Your checker is now live. View it here.',
+        description: 'Your checker is now live.',
       })
     } catch (err) {
       toast({
