@@ -9,7 +9,7 @@ import { CheckerService } from '../services'
 export const Checker: FC = () => {
   const { id } = useParams<{ id: string }>()
   const { isLoading, isError, data: config } = useQuery(['checker', id], () =>
-    CheckerService.getChecker(id)
+    CheckerService.getPublishedChecker(id)
   )
 
   return (

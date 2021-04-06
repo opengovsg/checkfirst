@@ -22,12 +22,15 @@ export default (options: {
   api.get('/auth/whoami', auth.whoami)
   api.post('/auth/logout', auth.logout)
 
+  api.post('/c/drafts', checker.post)
+  api.get('/c/drafts', checker.list)
+  api.get('/c/drafts/:id', checker.get)
+  api.put('/c/drafts/:id', checker.put)
+  api.delete('/c/drafts/:id', checker.delete)
+
   // CRUD for checker template
-  api.post('/c', checker.post)
-  api.get('/c', checker.list)
-  api.get('/c/:id', checker.get)
-  api.put('/c/:id', checker.put)
-  api.delete('/c/:id', checker.delete)
+  api.get('/c/:id', checker.getPublished)
+  api.post('/c/drafts/:id/publish', checker.publish)
 
   api.get('/template', template.list)
   api.get('/template/:id', template.get)
