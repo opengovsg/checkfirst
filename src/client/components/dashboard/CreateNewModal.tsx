@@ -81,7 +81,7 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({ onClose }) => {
   } = useQuery(
     ['template', templateId],
     () => {
-      if (templateId) return TemplateService.getTemplate(+templateId)
+      if (templateId) return TemplateService.getTemplate(templateId)
     },
     {
       enabled: !!templateId,

@@ -5,10 +5,9 @@ import { Constant, Display, Field, Operation } from '../../../types/checker'
 export class Template extends Model {
   @Column({
     primaryKey: true,
-    type: DataType.INTEGER,
-    autoIncrement: true,
+    type: DataType.STRING,
   })
-  id!: number
+  id!: string
 
   @Column({
     type: DataType.TEXT,

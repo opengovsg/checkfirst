@@ -11,7 +11,7 @@ import { Checker } from '..'
 export const PreviewTemplate: FC = () => {
   const { templateId } = useParams<{ templateId: string }>()
   const { isLoading, data: template } = useQuery(['template', templateId], () =>
-    TemplateService.getTemplate(+templateId)
+    TemplateService.getTemplate(templateId)
   )
   const config = { ...template, id: 'preview' } as checker.Checker
 

@@ -13,7 +13,7 @@ export class TemplateService {
     return result
   }
 
-  retrieve: (templateId: number) => Promise<Template | null> = async (
+  retrieve: (templateId: string) => Promise<Template | null> = async (
     templateId
   ) => {
     const result = await this.TemplateModel.findByPk(templateId)

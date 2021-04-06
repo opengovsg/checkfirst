@@ -14,7 +14,7 @@ describe('TemplateController', () => {
   }
 
   const template = {
-    id: 1,
+    id: 'test-template',
     title: 'title',
     description: 'description',
     fields: [],
@@ -86,16 +86,16 @@ describe('TemplateController', () => {
 
     it('returns 404 on Not Found', async () => {
       service.retrieve.mockResolvedValue(undefined)
-      await request(app).get(`/template/1`).expect(404)
-      expect(service.retrieve).toHaveBeenCalledWith(1)
+      await request(app).get(`/template/invalid`).expect(404)
+      expect(service.retrieve).toHaveBeenCalledWith('invalid')
     })
 
     it('returns error on get exception', async () => {
       const message = 'An error message'
       service.retrieve.mockRejectedValue(new Error(message))
-      const response = await request(app).get('/template/1').expect(400)
+      const response = await request(app).get('/template/invalid').expect(400)
       expect(response.body).toStrictEqual({ message })
-      expect(service.retrieve).toHaveBeenCalledWith(1)
+      expect(service.retrieve).toHaveBeenCalledWith('invalid')
     })
   })
 })

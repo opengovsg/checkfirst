@@ -13,7 +13,7 @@ describe('TemplateService', () => {
   const service = new TemplateService()
 
   const template = {
-    id: 1,
+    id: 'test-template',
     title: 'title',
     description: 'description',
     fields: [],
@@ -52,7 +52,7 @@ describe('TemplateService', () => {
     })
 
     it('returns undefined for non-existent id', async () => {
-      const actualTemplate = await service.retrieve(1)
+      const actualTemplate = await service.retrieve('invalid')
       expect(actualTemplate).toBeNull()
     })
   })

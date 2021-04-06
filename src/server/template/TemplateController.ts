@@ -31,7 +31,7 @@ export class TemplateController {
     } else {
       try {
         const { id } = req.params
-        const template = await this.service.retrieve(+id)
+        const template = await this.service.retrieve(id)
         if (!template) {
           res.status(404).json({ message: 'Not Found' })
         } else {
