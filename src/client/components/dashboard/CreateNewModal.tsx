@@ -1,5 +1,4 @@
 import React, { FC } from 'react'
-import { omit } from 'lodash'
 import { useParams, Switch, Redirect, Route } from 'react-router-dom'
 import { useQueryClient, useQuery, useMutation } from 'react-query'
 import {
@@ -23,7 +22,6 @@ import {
 import { useForm } from 'react-hook-form'
 import { v4 as uuidv4 } from 'uuid'
 
-import * as checker from '../../../types/checker'
 import { CheckerService, TemplateService } from '../../services'
 import { getApiErrorMessage } from '../../api'
 import { SelectTemplate } from './SelectTemplate'
@@ -120,8 +118,7 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({ onClose }) => {
     title: string
     description: string
   }) => {
-    const templateChecker = omit(template, 'id') as checker.Checker
-    const base = checker || templateChecker || initial
+    const base = checker || template || initial
     createChecker.mutate({
       ...base,
       ...data,
