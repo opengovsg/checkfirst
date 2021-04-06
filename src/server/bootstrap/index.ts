@@ -55,7 +55,7 @@ export async function bootstrap(): Promise<Express> {
   })
 
   const template = new TemplateController({
-    service: new TemplateService({ Template }),
+    service: new TemplateService(),
   })
 
   const SequelizeStore = SequelizeStoreFactory(session.Store)

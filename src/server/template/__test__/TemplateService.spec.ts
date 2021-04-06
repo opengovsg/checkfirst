@@ -1,15 +1,16 @@
-import minimatch from 'minimatch'
-import { Sequelize } from 'sequelize'
-import { addModelsTo } from '../../models'
+import { Sequelize } from 'sequelize-typescript'
+import { Template as TemplateModel } from '../../database/models'
 import { TemplateService } from '..'
 
 describe('TemplateService', () => {
-  const emailValidator = new minimatch.Minimatch('*.gov.sg')
-  const sequelize = new Sequelize({ dialect: 'sqlite', logging: undefined })
-  const { Template } = addModelsTo(sequelize, { emailValidator })
+  const sequelize = new Sequelize({
+    dialect: 'sqlite',
+    logging: undefined,
+    models: [TemplateModel],
+  })
 
   const sequelizeReady = sequelize.sync()
-  const service = new TemplateService({ Template })
+  const service = new TemplateService()
 
   const template = {
     id: 1,
@@ -27,11 +28,11 @@ describe('TemplateService', () => {
 
   describe('list', () => {
     beforeEach(async () => {
-      await Template.truncate()
+      await TemplateModel.truncate()
     })
 
     it('lists templates', async () => {
-      await Template.create(template)
+      await TemplateModel.create(template)
 
       const [actualTemplate, ...rest] = await service.list()
       expect(actualTemplate).toMatchObject(template)
@@ -41,11 +42,11 @@ describe('TemplateService', () => {
 
   describe('retrieve', () => {
     beforeEach(async () => {
-      await Template.truncate()
+      await TemplateModel.truncate()
     })
 
     it('retrieve template with id', async () => {
-      await Template.create(template)
+      await TemplateModel.create(template)
       const actualTemplate = await service.retrieve(template.id)
       expect(actualTemplate).toMatchObject(template)
     })

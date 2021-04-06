@@ -1,11 +1,11 @@
-import { ModelOf } from '../models'
 import { Template } from '../../types/template'
+import { Template as TemplateModel } from '../database/models'
 
 export class TemplateService {
-  private TemplateModel: ModelOf<Template>
+  private TemplateModel: typeof TemplateModel
 
-  constructor(options: { Template: ModelOf<unknown> }) {
-    this.TemplateModel = options.Template as ModelOf<Template>
+  constructor() {
+    this.TemplateModel = TemplateModel
   }
 
   list: () => Promise<Template[]> = async () => {
