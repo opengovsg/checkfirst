@@ -23,25 +23,25 @@ export class Template extends Model {
 
   @Column({
     type: DataType.JSON,
-    allowNull: true,
+    allowNull: false,
   })
   fields!: Field[]
 
   @Column({
     type: DataType.JSON,
-    allowNull: true,
+    allowNull: false,
   })
   constants!: Constant[]
 
   @Column({
     type: DataType.JSON,
-    allowNull: true,
+    allowNull: false,
   })
   operations!: Operation[]
 
   @Column({
     type: DataType.JSON,
-    allowNull: true,
+    allowNull: false,
   })
   displays!: Display[]
 }
