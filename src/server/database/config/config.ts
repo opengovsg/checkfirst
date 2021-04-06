@@ -17,17 +17,20 @@ module.exports = {
   development: {
     storage: config.get('sqlitePath'),
     dialect: 'sqlite',
+    seederStorage: 'sequelize',
   },
   staging: {
     timezone: '+08:00',
     logging: logger.info.bind(logger),
     dialect: 'postgres',
+    seederStorage: 'sequelize',
     ...connectionConfig,
   },
   production: {
     timezone: '+08:00',
     logging: logger.info.bind(logger),
     dialect: 'postgres',
+    seederStorage: 'sequelize',
     ...connectionConfig,
   },
 }

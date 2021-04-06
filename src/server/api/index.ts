@@ -1,12 +1,14 @@
 import express, { Router } from 'express'
 import { AuthController } from '../auth/AuthController'
 import { CheckerController } from '../checker'
+import { TemplateController } from '../template'
 
 export default (options: {
   checker: CheckerController
   auth: AuthController
+  template: TemplateController
 }): Router => {
-  const { checker, auth } = options
+  const { checker, auth, template } = options
   const api = express.Router()
 
   // Heartbeat check
@@ -29,6 +31,9 @@ export default (options: {
   // CRUD for checker template
   api.get('/c/:id', checker.getPublished)
   api.post('/c/drafts/:id/publish', checker.publish)
+
+  api.get('/template', template.list)
+  api.get('/template/:id', template.get)
 
   return api
 }

@@ -10,6 +10,7 @@ import {
   Checker,
   UserToChecker,
   PublishedChecker,
+  Template,
 } from '../database/models'
 
 const nodeEnv = config.get('nodeEnv') as nodeEnvType
@@ -18,5 +19,5 @@ const options: SequelizeOptions = (sequelizeConfig as databaseConfigType)[
 ]
 
 const sequelize = new Sequelize(options)
-sequelize.addModels([User, Checker, UserToChecker, PublishedChecker])
+sequelize.addModels([User, Checker, UserToChecker, PublishedChecker, Template])
 export default sequelize
