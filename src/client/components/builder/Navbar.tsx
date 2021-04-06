@@ -29,7 +29,6 @@ import {
   useClipboard,
 } from '@chakra-ui/react'
 
-import { LogoutButton } from '../LogoutButton'
 import { useCheckerContext } from '../../contexts'
 
 const ROUTES = ['questions', 'constants', 'logic']
@@ -238,7 +237,6 @@ export const Navbar: FC = () => {
         >
           Save
         </Button>
-        <LogoutButton />
       </HStack>
     </Flex>
   )
