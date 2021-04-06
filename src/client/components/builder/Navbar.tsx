@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { BiArrowBack, BiCode, BiCopy, BiShareAlt } from 'react-icons/bi'
+import { BiArrowBack, BiShow } from 'react-icons/bi'
 import { getApiErrorMessage } from '../../api'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import { Link, Redirect } from 'react-router-dom'
@@ -21,49 +21,12 @@ import {
   ModalCloseButton,
   useDisclosure,
   useToast,
-  FormControl,
-  FormLabel,
-  Input,
-  InputGroup,
-  InputRightElement,
-  useClipboard,
 } from '@chakra-ui/react'
 
+import { EmbedModal } from '.'
 import { useCheckerContext } from '../../contexts'
 
 const ROUTES = ['questions', 'constants', 'logic']
-
-type EmbedFieldProps = {
-  name: string
-  value: string
-}
-
-const EmbedField: FC<EmbedFieldProps> = ({ name, value, children }) => {
-  const { onCopy } = useClipboard(value)
-  const toast = useToast({ position: 'bottom-right', variant: 'solid' })
-  const onClick = () => {
-    onCopy()
-    toast({
-      status: 'success',
-      title: 'Copied!',
-    })
-  }
-  return (
-    <FormControl mb="1rem">
-      <FormLabel htmlFor={name} mb="0">
-        <HStack spacing="1">{children}</HStack>
-      </FormLabel>
-      <InputGroup>
-        <Input readOnly name={name} value={value} />
-        <InputRightElement
-          cursor="pointer"
-          onClick={onClick}
-          children={<BiCopy />}
-        />
-      </InputGroup>
-    </FormControl>
-  )
-}
 
 export const Navbar: FC = () => {
   const {
@@ -82,7 +45,7 @@ export const Navbar: FC = () => {
     path: '/builder/:id/:action',
     exact: true,
   })
-  const { save, isChanged, config: checker } = useCheckerContext()
+  const { save, publish, isChanged, config: checker } = useCheckerContext()
 
   const params = match?.params
   if (!params || !params.id || !params.action) {
@@ -121,8 +84,22 @@ export const Navbar: FC = () => {
     }
   }
 
-  const linkTo = (checker: { id: string }) =>
-    `${window?.location?.origin}/c/${checker.id}`
+  const handlePublish = async () => {
+    try {
+      await publish.mutateAsync()
+      toast({
+        status: 'success',
+        title: 'Checker published',
+        description: `Your checker is now live.`,
+      })
+    } catch (err) {
+      toast({
+        status: 'error',
+        title: 'An error occurred',
+        description: getApiErrorMessage(err),
+      })
+    }
+  }
 
   return (
     <Flex
@@ -191,51 +168,36 @@ export const Navbar: FC = () => {
         </Tabs>
       </HStack>
       <HStack flex={1} spacing={4} justifyContent="flex-end">
-        <IconButton
-          onClick={onEmbedOpen}
-          aria-label="Embed or Share"
-          variant="ghost"
-          icon={<BiCode size="24px" />}
+        <EmbedModal
+          isEmbedOpen={isEmbedOpen}
+          onEmbedOpen={onEmbedOpen}
+          onEmbedClose={onEmbedClose}
+          checker={checker}
+          isChanged={isChanged}
         />
-        <Modal isOpen={isEmbedOpen} onClose={onEmbedClose} size="lg">
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>Embed or Share</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              <EmbedField
-                name="iframe"
-                value={`<iframe src="${linkTo(
-                  checker
-                )}" style="width:100%;height:500px"></iframe>`}
-              >
-                <BiCode size="1rem" />
-                <Text>Embed this checker on your site</Text>
-              </EmbedField>
-              <EmbedField name="link" value={linkTo(checker)}>
-                <BiShareAlt size="1rem" />
-                <Text>Share this link to your checker</Text>
-              </EmbedField>
-            </ModalBody>
-            <ModalFooter>
-              <Text color="error.500">
-                {isChanged ? 'Warning: You have unsaved changes' : ''}
-              </Text>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
         <Link to={`/builder/${params.id}/preview`}>
-          <Button variant="outline" colorScheme="primary">
-            Preview
-          </Button>
+          <IconButton
+            aria-label="Preview"
+            variant="ghost"
+            icon={<BiShow size="24px" />}
+          />
         </Link>
         <Button
+          variant="outline"
           colorScheme="primary"
           onClick={handleSave}
           disabled={!isChanged}
           isLoading={save.isLoading}
         >
-          Save
+          Save Draft
+        </Button>
+        <Button
+          variant="solid"
+          colorScheme="primary"
+          onClick={handlePublish}
+          isLoading={publish.isLoading}
+        >
+          Publish
         </Button>
       </HStack>
     </Flex>

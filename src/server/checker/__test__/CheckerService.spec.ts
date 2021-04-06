@@ -4,6 +4,7 @@ import {
   Checker as CheckerModel,
   User as UserModel,
   UserToChecker as UserToCheckerModel,
+  PublishedChecker as PublishedCheckerModel,
 } from '../../database/models'
 import { Checker } from '../../../types/checker'
 import { User } from '../../../types/user'
@@ -12,7 +13,12 @@ describe('CheckerService', () => {
   const sequelize = new Sequelize({
     dialect: 'sqlite',
     logging: undefined,
-    models: [UserModel, CheckerModel, UserToCheckerModel],
+    models: [
+      UserModel,
+      CheckerModel,
+      UserToCheckerModel,
+      PublishedCheckerModel,
+    ],
   })
   const sequelizeReady = sequelize.sync()
 
@@ -26,6 +32,10 @@ describe('CheckerService', () => {
     constants: [],
     operations: [],
     displays: [],
+  }
+  const newPublishedChecker: Checker = {
+    ...checker,
+    title: 'New Published Title',
   }
 
   const anotherUser: User = { id: 2, email: 'another-user@agency.gov.sg' }
@@ -117,18 +127,10 @@ describe('CheckerService', () => {
       })
     })
 
-    it("retrieves users' checker without user info if another user", async () => {
-      const actualChecker = await service.retrieve(checker.id, anotherUser)
-
-      expect(actualChecker).toMatchObject(checker)
-      expect(actualChecker?.users).not.toBeDefined()
-    })
-
-    it("retrieves users' checker without user info if anonymous", async () => {
-      const actualChecker = await service.retrieve(checker.id)
-
-      expect(actualChecker).toMatchObject(checker)
-      expect(actualChecker?.users).not.toBeDefined()
+    it('throws if unauthorized user', async () => {
+      await expect(
+        service.retrieve(checker.id, anotherUser)
+      ).rejects.toMatchObject(new Error('Unauthorized'))
     })
   })
 
@@ -199,6 +201,57 @@ describe('CheckerService', () => {
       expect(count).toBe(1)
       const checkerInstance = await CheckerModel.findByPk(checker.id)
       expect(checkerInstance).toBeNull()
+    })
+  })
+
+  describe('getPublished', () => {
+    beforeAll(async () => {
+      await CheckerModel.destroy({ truncate: true })
+      await UserModel.destroy({ truncate: true })
+      await UserModel.create(user)
+      await service.create(checker, user)
+    })
+
+    it('retrieves no checker if not published', async () => {
+      await expect(service.retrievePublished(checker.id)).rejects
+    })
+
+    it('retrieves latest published version of checker', async () => {
+      // Publish 2 checker versions but expect to retrieve only the latest published checker
+      await service.publish(checker.id, checker, user)
+      await service.publish(checker.id, newPublishedChecker, user)
+      const actualPublishedChecker = await service.retrievePublished(checker.id)
+
+      expect(actualPublishedChecker).toMatchObject({
+        ...newPublishedChecker,
+      })
+    })
+  })
+
+  describe('publish', () => {
+    beforeAll(async () => {
+      await CheckerModel.destroy({ truncate: true })
+      await UserModel.destroy({ truncate: true })
+      await UserModel.create(user)
+      await service.create(checker, user)
+      await service.publish(checker.id, newPublishedChecker, user)
+    })
+
+    it('updates checker table on publish', async () => {
+      const actualChecker = await service.retrieve(checker.id, user)
+
+      expect(actualChecker).toMatchObject({
+        ...newPublishedChecker,
+        users: expect.arrayContaining([expect.objectContaining(user)]),
+      })
+    })
+
+    it('updates creates new publishedChecker on publish', async () => {
+      const actualPublishedChecker = await service.retrievePublished(checker.id)
+
+      expect(actualPublishedChecker).toMatchObject({
+        ...newPublishedChecker,
+      })
     })
   })
 })

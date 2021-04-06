@@ -1,32 +1,43 @@
-import { Checker } from '../../types/checker'
+import {
+  Checker,
+  CreatePublishedCheckerDTO,
+  GetPublishedCheckerWithoutDraftCheckerDTO,
+} from '../../types/checker'
 import { User } from '../../types/user'
 import { Model, Sequelize } from 'sequelize-typescript'
 import { Logger } from 'winston'
-import { Checker as CheckerModel, User as UserModel } from '../database/models'
+import {
+  Checker as CheckerModel,
+  User as UserModel,
+  PublishedChecker as PublishedCheckerModel,
+} from '../database/models'
 
 export class CheckerService {
   private sequelize: Sequelize
   private logger?: Logger
   private CheckerModel: typeof CheckerModel
   private UserModel: typeof UserModel
+  private PublishedCheckerModel: typeof PublishedCheckerModel
+  private isSqliteFile: boolean
   constructor(options: { sequelize: Sequelize; logger?: Logger }) {
     this.sequelize = options.sequelize
     this.logger = options.logger
     this.CheckerModel = CheckerModel
     this.UserModel = UserModel
+    this.PublishedCheckerModel = PublishedCheckerModel
+    this.isSqliteFile =
+      this.sequelize.getDialect() === 'sqlite' &&
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      ((this.sequelize as unknown) as Record<string, unknown>).options.storage
   }
 
   create: (checker: Checker, user: User) => Promise<boolean> = async (
     checker,
     user
   ) => {
-    const isSqliteFile =
-      this.sequelize.getDialect() === 'sqlite' &&
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      ((this.sequelize as unknown) as Record<string, unknown>).options.storage
     const transaction = await this.sequelize.transaction()
-    const options = isSqliteFile ? {} : { transaction }
+    const options = this.isSqliteFile ? {} : { transaction }
     try {
       const existingChecker = await this.CheckerModel.findByPk(
         checker.id,
@@ -68,19 +79,70 @@ export class CheckerService {
     id,
     user
   ) => {
-    const result = await this.CheckerModel.findByPk(
-      id,
-      user ? { include: [this.UserModel] } : undefined
-    )
-    if (result && user) {
-      const isAuthorized = result.users?.some((u) => u.id === user.id)
-      if (!isAuthorized) {
-        const resultWithoutUsers: Checker = { ...(result.toJSON() as Checker) }
-        delete resultWithoutUsers.users
-        return resultWithoutUsers
-      }
-    }
+    return await this.findAndCheckAuth(id, user)
+  }
+
+  retrievePublished: (
+    id: string
+  ) => Promise<GetPublishedCheckerWithoutDraftCheckerDTO | undefined> = async (
+    id
+  ) => {
+    const result = await this.PublishedCheckerModel.findOne({
+      attributes: [
+        ['checkerId', 'id'], // rename checkerId as id
+        'title',
+        'description',
+        'fields',
+        'constants',
+        'operations',
+        'displays',
+      ],
+      where: { checkerId: id },
+      order: [['createdAt', 'DESC']],
+    })
+
     return result
+  }
+
+  publish: (
+    id: string,
+    checker: Checker,
+    user: User
+  ) => Promise<Checker> = async (id, checker, user) => {
+    const transaction = await this.sequelize.transaction()
+    const transactionOptions = this.isSqliteFile ? {} : { transaction }
+
+    try {
+      const existingChecker = await this.findAndCheckAuth(id, user)
+      if (!existingChecker) throw new Error(`Checker ${id} not found`)
+
+      // Perform update in checkers and create in publishedCheckers with 1 transaction
+      await this.CheckerModel.update(checker, {
+        where: { id },
+        ...transactionOptions,
+      })
+
+      const createPublishedChecker: CreatePublishedCheckerDTO = {
+        title: checker.title,
+        description: checker.description,
+        fields: checker.fields,
+        constants: checker.constants,
+        operations: checker.operations,
+        displays: checker.displays,
+        checkerId: id, // we want to make sure that we are publishing the right checker
+      }
+
+      await this.PublishedCheckerModel.create(createPublishedChecker, {
+        ...transactionOptions,
+      })
+
+      await transaction.commit()
+      return checker
+    } catch (error) {
+      this.logger?.error(error)
+      await transaction.rollback()
+      throw error
+    }
   }
 
   private findAndCheckAuth: (

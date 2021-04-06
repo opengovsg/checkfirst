@@ -1,25 +1,11 @@
-import {
-  BelongsToMany,
-  Column,
-  DataType,
-  HasMany,
-  Model,
-  Table,
-} from 'sequelize-typescript'
-
+import { Column, DataType, Model, Table } from 'sequelize-typescript'
 import { Constant, Display, Field, Operation } from '../../../types/checker'
-import { User } from './User'
-import { UserToChecker } from './UserToChecker'
-import { PublishedChecker } from './PublishedChecker'
 
-@Table({ tableName: 'checkers', timestamps: true })
-export class Checker extends Model {
+@Table({ tableName: 'templates', timestamps: true })
+export class Template extends Model {
   @Column({
     primaryKey: true,
     type: DataType.STRING,
-    validate: {
-      is: /^[a-z0-9-]+$/,
-    },
   })
   id!: string
 
@@ -58,10 +44,4 @@ export class Checker extends Model {
     allowNull: false,
   })
   displays!: Display[]
-
-  @BelongsToMany(() => User, () => UserToChecker)
-  users!: User[]
-
-  @HasMany(() => PublishedChecker)
-  publishedCheckers!: PublishedChecker[]
 }

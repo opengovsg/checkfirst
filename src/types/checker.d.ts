@@ -1,4 +1,5 @@
 import { Checker as CheckerModel } from '../server/database/models/Checker'
+import { PublishedChecker as PublishedCheckerModel } from '../server/database/models/PublishedChecker'
 import { User } from './user'
 import { Unit } from 'mathjs'
 
@@ -28,6 +29,30 @@ export type Checker = Pick<
   'constants',
   'operations',
   'displays'
+>
+
+export type CreatePublishedCheckerDTO = Pick<
+  CheckerModel,
+  'title',
+  'description',
+  'fields',
+  'constants',
+  'operations',
+  'displays'
+>
+
+export type GetPublishedCheckerWithoutDraftCheckerDTO = Pick<
+  PublishedCheckerModel,
+  'id',
+  'title',
+  'description',
+  'fields',
+  'constants',
+  'operations',
+  'displays',
+  'createdAt',
+  'updatedAt',
+  'checkerId'
 >
 
 export type ConfigArrayName = 'fields' | 'operations' | 'displays' | 'constants'

@@ -1,11 +1,9 @@
 import React, { FC } from 'react'
-import { useHistory, useRouteMatch, Route, Link } from 'react-router-dom'
+import { useRouteMatch, Link } from 'react-router-dom'
 import { BiPlus } from 'react-icons/bi'
 import { useMultiStyleConfig, Text, VStack } from '@chakra-ui/react'
-import { CreateNewModal } from './CreateNewModal'
 
 export const CreateNew: FC = () => {
-  const history = useHistory()
   const { path } = useRouteMatch()
   const styles = useMultiStyleConfig('CheckerCard', { variant: 'create' })
 
@@ -19,13 +17,6 @@ export const CreateNew: FC = () => {
           </Text>
         </VStack>
       </Link>
-      <Route
-        path={`${path}/create`}
-        exact
-        render={() => (
-          <CreateNewModal isOpen onClose={() => history.push(path)} />
-        )}
-      />
     </>
   )
 }

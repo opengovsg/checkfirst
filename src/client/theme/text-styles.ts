@@ -59,7 +59,7 @@ export const textStyles = {
   },
   sub2: {
     fontFamily: 'inter',
-    fontWeight: 500,
+    fontWeight: 400,
     fontSize: '14px',
     lineHeight: '24px',
     letterSpacing: '-0.006em',

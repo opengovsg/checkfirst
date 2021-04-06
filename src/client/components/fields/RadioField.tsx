@@ -22,7 +22,6 @@ export const RadioField: FC<Field> = ({ id, title, description, options }) => {
       name={id}
       control={control}
       rules={{ required: true }}
-      defaultValue={`${options[0]?.value}`}
       render={({ ref, value, onChange }, { invalid }) => (
         <FormControl isInvalid={invalid}>
           <FormLabel sx={styles.label} htmlFor={id}>
