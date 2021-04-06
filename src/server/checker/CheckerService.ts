@@ -133,7 +133,6 @@ export class CheckerService {
       }
 
       await this.PublishedCheckerModel.create(createPublishedChecker, {
-        include: [this.CheckerModel],
         ...transactionOptions,
       })
 
