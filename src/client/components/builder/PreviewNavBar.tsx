@@ -87,7 +87,6 @@ export const PreviewNavBar: FC = () => {
           variant="solid"
           colorScheme="primary"
           onClick={handlePublish}
-          disabled={!isChanged}
           isLoading={publish.isLoading}
         >
           Publish

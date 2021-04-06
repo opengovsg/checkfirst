@@ -196,7 +196,6 @@ export const Navbar: FC = () => {
           variant="solid"
           colorScheme="primary"
           onClick={handlePublish}
-          disabled={!isChanged}
           isLoading={publish.isLoading}
         >
           Publish
