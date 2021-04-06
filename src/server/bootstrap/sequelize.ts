@@ -5,7 +5,12 @@ import {
   nodeEnvType,
 } from '../../types/server/sequelize-config'
 import * as sequelizeConfig from '../database/config/config'
-import { User, Checker, UserToChecker } from '../database/models'
+import {
+  User,
+  Checker,
+  UserToChecker,
+  PublishedChecker,
+} from '../database/models'
 
 const nodeEnv = config.get('nodeEnv') as nodeEnvType
 const options: SequelizeOptions = (sequelizeConfig as databaseConfigType)[
@@ -13,5 +18,5 @@ const options: SequelizeOptions = (sequelizeConfig as databaseConfigType)[
 ]
 
 const sequelize = new Sequelize(options)
-sequelize.addModels([User, Checker, UserToChecker])
+sequelize.addModels([User, Checker, UserToChecker, PublishedChecker])
 export default sequelize

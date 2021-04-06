@@ -9,14 +9,14 @@ import {
   VStack,
 } from '@chakra-ui/react'
 
-import { ApiClient } from '../api'
 import { Navbar, CreateNew, CheckerCard } from '../components/dashboard'
 import { Checker } from '../../types/checker'
+import { CheckerService } from '../services'
 
 export const Dashboard: FC = () => {
   const { isLoading, data: checkers } = useQuery('checkers', async () => {
-    const response = await ApiClient.get('/c')
-    return (response.data || []) as Checker[]
+    const response = await CheckerService.listCheckers()
+    return response as Checker[]
   })
 
   return (
