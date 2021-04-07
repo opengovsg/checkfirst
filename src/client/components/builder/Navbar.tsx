@@ -2,8 +2,9 @@ import React, { FC } from 'react'
 import { BiArrowBack, BiShow } from 'react-icons/bi'
 import { getApiErrorMessage } from '../../api'
 import { useHistory, useRouteMatch } from 'react-router-dom'
-import { Link, Redirect } from 'react-router-dom'
+import { Redirect } from 'react-router-dom'
 import {
+  Link,
   Text,
   Tabs,
   TabList,
@@ -175,7 +176,7 @@ export const Navbar: FC = () => {
           checker={checker}
           isChanged={isChanged}
         />
-        <Link to={`/builder/${params.id}/preview`}>
+        <Link href={`/builder/${params.id}/preview`} isExternal>
           <IconButton
             aria-label="Preview"
             variant="ghost"
