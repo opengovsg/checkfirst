@@ -5,13 +5,19 @@ import {
   Checker as CheckerModel,
   User as UserModel,
   UserToChecker as UserToCheckerModel,
+  PublishedChecker as PublishedCheckerModel,
 } from '../../database/models'
 
 describe('AuthService', () => {
   const sequelize = new Sequelize({
     dialect: 'sqlite',
     logging: undefined,
-    models: [UserModel, CheckerModel, UserToCheckerModel],
+    models: [
+      UserModel,
+      CheckerModel,
+      UserToCheckerModel,
+      PublishedCheckerModel,
+    ],
   })
 
   const totp = {

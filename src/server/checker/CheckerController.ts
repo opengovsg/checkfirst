@@ -107,5 +107,45 @@ export class CheckerController {
       }
     }
   }
+
+  getPublished: (req: Request, res: Response) => Promise<void> = async (
+    req,
+    res
+  ) => {
+    const { id } = req.params
+    try {
+      const checker = await this.service.retrievePublished(id)
+      if (!checker) {
+        res.status(404).json({ message: 'Not Found' })
+      } else {
+        res.json(checker)
+      }
+    } catch (error) {
+      res.status(400).json({ message: error.message })
+    }
+  }
+
+  publish: (req: Request, res: Response) => Promise<void> = async (
+    req,
+    res
+  ) => {
+    const { id } = req.params
+    const checker = req.body
+    const { user } = req.session
+    if (!user) {
+      res.status(401).json({ message: 'User not signed in' })
+      return
+    }
+
+    try {
+      const { error } = CheckerWithMetadataSchema.validate(checker)
+      if (error) throw error
+
+      const publishedChecker = await this.service.publish(id, checker, user)
+      res.json(publishedChecker)
+    } catch (error) {
+      res.status(400).json({ message: error.message })
+    }
+  }
 }
 export default CheckerController

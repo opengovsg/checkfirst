@@ -118,6 +118,7 @@ interface CheckerContextProps {
   isChanged: boolean
   dispatch: React.Dispatch<BuilderAction>
   save: UseMutationResult<Checker, AxiosError<{ message: string }>, void>
+  publish: UseMutationResult<Checker, AxiosError<{ message: string }>, void>
 }
 
 const initialConfig = {
@@ -173,7 +174,17 @@ export const CheckerProvider: FC = ({ children }) => {
     }
   )
 
-  const value = { config, isChanged, dispatch, save }
+  const publish = useMutation<Checker, AxiosError<{ message: string }>, void>(
+    () => CheckerService.publishChecker(config),
+    {
+      onSuccess: (checker) => {
+        // On success, update load the returned checker to ensure consistency with backend
+        dispatchLoad(checker)
+      },
+    }
+  )
+
+  const value = { config, isChanged, dispatch, save, publish }
   return (
     <checkerContext.Provider value={value}>{children}</checkerContext.Provider>
   )

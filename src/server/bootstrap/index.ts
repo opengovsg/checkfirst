@@ -12,6 +12,7 @@ import config from '../config'
 import api from '../api'
 import { CheckerController, CheckerService } from '../checker'
 import { AuthController, AuthService } from '../auth'
+import { TemplateController, TemplateService } from '../template'
 
 import sequelize from './sequelize'
 import mailer from './mailer'
@@ -51,6 +52,10 @@ export async function bootstrap(): Promise<Express> {
       mailer,
       logger,
     }),
+  })
+
+  const template = new TemplateController({
+    service: new TemplateService(),
   })
 
   const SequelizeStore = SequelizeStoreFactory(session.Store)
@@ -117,7 +122,7 @@ export async function bootstrap(): Promise<Express> {
     bodyParser.json(),
     sentrySessionMiddleware, // TODO: debug why user info isn't sent
   ]
-  app.use('/api/v1', apiMiddleware, api({ checker, auth }))
+  app.use('/api/v1', apiMiddleware, api({ checker, auth, template }))
 
   addStaticRoutes(app)
 
