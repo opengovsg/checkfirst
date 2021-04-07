@@ -91,7 +91,8 @@ export const EmbedModal: FC<EmbedModalProps> = ({
             <Alert status="info">
               <AlertIcon />
               <AlertDescription>
-                Sharing link will show your latest published checker.
+                Embedded checker and sharing link will show your latest
+                published version.
               </AlertDescription>
             </Alert>
             <EmbedField
