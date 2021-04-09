@@ -177,7 +177,6 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
             <Button variant="ghost">IF</Button>
           </Box>
           <ExpressionInput
-            bg="#F4F6F9"
             type="text"
             name="ifExpr"
             fontFamily="mono"
@@ -212,7 +211,6 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
               </MenuList>
             </Menu>
             <ExpressionInput
-              bg="#F4F6F9"
               type="text"
               fontFamily="mono"
               onChange={(expression) => updateCondition(i, { expression })}
@@ -246,7 +244,6 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
             </Button>
           </Box>
           <ExpressionInput
-            bg="#F4F6F9"
             type="text"
             name="thenExpr"
             fontFamily="mono"
@@ -261,7 +258,6 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
             </Button>
           </Box>
           <ExpressionInput
-            bg="#F4F6F9"
             type="text"
             name="elseExpr"
             fontFamily="mono"
