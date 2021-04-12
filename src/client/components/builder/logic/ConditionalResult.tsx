@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { isValidExpression, math } from '../../../core/evaluator'
 import update from 'immutability-helper'
-import { BiGitBranch, BiPlusCircle, BiTrash } from 'react-icons/bi'
+import {
+  BiGitBranch,
+  BiPlusCircle,
+  BiTrash,
+  BiChevronDown,
+} from 'react-icons/bi'
 import {
   Divider,
   Button,
@@ -200,7 +205,11 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
           <HStack key={i}>
             <Menu>
               <Box w="100px">
-                <MenuButton as={Button} variant="ghost">
+                <MenuButton
+                  as={Button}
+                  variant="outline"
+                  rightIcon={<BiChevronDown />}
+                >
                   {cond.type}
                 </MenuButton>
               </Box>
