@@ -33,7 +33,7 @@ provider:
 
 functions:
   api:
-    description: ${env:GITHUB_SHA}
+    description: commit-${env:GITHUB_SHA}/run-${env:GITHUB_RUN_ID}
     handler: build/server/serverless/api.handler
     timeout: 30
     vpc:
@@ -53,7 +53,7 @@ functions:
           path: api/v1/{proxy+}
           method: any
   static:
-    description: ${env:GITHUB_SHA}
+    description: commit-${env:GITHUB_SHA}/run-${env:GITHUB_RUN_ID}
     handler: build/server/serverless/static.handler
     timeout: 30
     vpc:
