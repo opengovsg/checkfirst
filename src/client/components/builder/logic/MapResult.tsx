@@ -119,7 +119,11 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
             <Button variant="ghost">MAP</Button>
           </Box>
           <Menu>
-            <MenuButton as={Button} rightIcon={<BiChevronDown />}>
+            <MenuButton
+              as={Button}
+              variant="outline"
+              rightIcon={<BiChevronDown />}
+            >
               {mapState.variableId ? mapState.variableId : 'SELECT INPUT'}
             </MenuButton>
             <MenuList>
@@ -167,7 +171,11 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
             <Button variant="ghost">TO</Button>
           </Box>
           <Menu>
-            <MenuButton as={Button} rightIcon={<BiChevronDown />}>
+            <MenuButton
+              as={Button}
+              variant="outline"
+              rightIcon={<BiChevronDown />}
+            >
               {mapState.tableId ? mapState.tableId : 'SELECT MAP TABLE'}
             </MenuButton>
             <MenuList>
