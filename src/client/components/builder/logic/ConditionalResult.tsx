@@ -6,6 +6,7 @@ import {
   Divider,
   Button,
   IconButton,
+  Heading,
   VStack,
   HStack,
   Box,
@@ -173,8 +174,10 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
       </HStack>
       <VStack align="stretch" spacing={4}>
         <HStack>
-          <Box w="100px">
-            <Button variant="ghost">IF</Button>
+          <Box w="100px" pl={8}>
+            <Heading as="h5" size="sm">
+              IF
+            </Heading>
           </Box>
           <ExpressionInput
             type="text"
@@ -238,10 +241,10 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
       <Divider />
       <VStack align="stretch" spacing={4}>
         <HStack>
-          <Box w="100px">
-            <Button w="100%" variant="ghost">
+          <Box w="100px" pl={8}>
+            <Heading as="h5" size="sm">
               THEN
-            </Button>
+            </Heading>
           </Box>
           <ExpressionInput
             type="text"
@@ -252,10 +255,10 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
           />
         </HStack>
         <HStack>
-          <Box w="100px">
-            <Button w="100%" variant="ghost">
+          <Box w="100px" pl={8}>
+            <Heading as="h5" size="sm">
               ELSE
-            </Button>
+            </Heading>
           </Box>
           <ExpressionInput
             type="text"

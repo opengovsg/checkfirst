@@ -5,6 +5,7 @@ import { BiGitCompare, BiChevronDown } from 'react-icons/bi'
 import {
   Badge,
   Button,
+  Heading,
   VStack,
   HStack,
   Box,
@@ -115,8 +116,10 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
       </HStack>
       <VStack align="stretch" spacing={4}>
         <HStack>
-          <Box w="100px">
-            <Button variant="ghost">MAP</Button>
+          <Box w="100px" pl={8}>
+            <Heading as="h5" size="sm">
+              MAP
+            </Heading>
           </Box>
           <Menu>
             <MenuButton
@@ -167,8 +170,10 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
           </Menu>
         </HStack>
         <HStack>
-          <Box w="100px">
-            <Button variant="ghost">TO</Button>
+          <Box w="100px" pl={8}>
+            <Heading as="h5" size="sm">
+              TO
+            </Heading>
           </Box>
           <Menu>
             <MenuButton
