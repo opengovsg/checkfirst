@@ -110,6 +110,10 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
     return changes
   }
 
+  // The baseSort function is used to tie-break items that have the same ranking.
+  // This is useful in two main cases:
+  // - when the user types `@ `, we want to display all reference options on the Questions tab followed by the Logic tab; these reference options should be sorted according to their position on their respective tabs.
+  // - when the user types `@ <query>` and there are multiple reference options with titles that exactly match `<query>`, we want to sort these reference options according to their position on their Questions tab followed by the Logic tab.
   const baseSort = (
     { item: a }: RankedItem,
     { item: b }: RankedItem
