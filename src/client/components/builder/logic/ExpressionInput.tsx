@@ -1,4 +1,5 @@
-import React, { FC } from 'react'
+import React, { FC, useMemo } from 'react'
+import { findIndex } from 'lodash'
 import {
   HStack,
   VStack,
@@ -10,11 +11,16 @@ import {
   Badge,
 } from '@chakra-ui/react'
 import Downshift, { DownshiftState, StateChangeOptions } from 'downshift'
-import { matchSorter } from 'match-sorter'
+import { matchSorter, RankingInfo } from 'match-sorter'
 
 import { useCheckerContext } from '../../../contexts'
 
 type Item = { id: string; type: 'FIELD' | 'OPERATION'; title: string }
+
+interface RankedItem extends RankingInfo {
+  item: Item
+  index: number
+}
 
 interface ExpressionInputProps extends Omit<InputProps, 'onChange'> {
   onChange: (expression: string) => void
@@ -26,8 +32,7 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
   ...props
 }) => {
   const { config } = useCheckerContext()
-
-  const getItems = (): Item[] => {
+  const items = useMemo<Item[]>(() => {
     let items: Item[] = []
     items = items.concat(
       config.fields.map(({ id, title }) => ({
@@ -46,7 +51,7 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
     )
 
     return items
-  }
+  }, [config.fields, config.operations])
 
   const getQueryString = (input?: string | null) => {
     if (!input) return ''
@@ -105,6 +110,19 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
     return changes
   }
 
+  // The baseSort function is used to tie-break items that have the same ranking.
+  // This is useful in two main cases:
+  // - when the user types `@ `, we want to display all reference options on the Questions tab followed by the Logic tab; these reference options should be sorted according to their position on their respective tabs.
+  // - when the user types `@ <query>` and there are multiple reference options with titles that exactly match `<query>`, we want to sort these reference options according to their position on their Questions tab followed by the Logic tab.
+  const baseSort = (
+    { item: a }: RankedItem,
+    { item: b }: RankedItem
+  ): number => {
+    const itemAIndex = findIndex<Item>(items, (item) => item.id === a.id)
+    const itemBIndex = findIndex<Item>(items, (item) => item.id === b.id)
+    return itemAIndex < itemBIndex ? -1 : 1
+  }
+
   return (
     <Downshift
       initialInputValue={`${value}`}
@@ -152,8 +170,9 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
               w="100%"
               zIndex={99}
             >
-              {matchSorter(getItems(), getQueryString(inputValue), {
+              {matchSorter(items, getQueryString(inputValue), {
                 keys: ['id', 'title'],
+                baseSort,
               }).map((item, index) => (
                 <ListItem
                   {...getItemProps({ key: index, item })}
