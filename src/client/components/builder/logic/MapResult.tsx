@@ -5,6 +5,7 @@ import { BiGitCompare, BiChevronDown } from 'react-icons/bi'
 import {
   Badge,
   Button,
+  Heading,
   VStack,
   HStack,
   Box,
@@ -115,11 +116,17 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
       </HStack>
       <VStack align="stretch" spacing={4}>
         <HStack>
-          <Box w="100px">
-            <Button variant="ghost">MAP</Button>
+          <Box w="100px" pl={8}>
+            <Heading as="h5" size="sm">
+              MAP
+            </Heading>
           </Box>
           <Menu>
-            <MenuButton as={Button} rightIcon={<BiChevronDown />}>
+            <MenuButton
+              as={Button}
+              variant="outline"
+              rightIcon={<BiChevronDown />}
+            >
               {mapState.variableId ? mapState.variableId : 'SELECT INPUT'}
             </MenuButton>
             <MenuList>
@@ -163,11 +170,17 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
           </Menu>
         </HStack>
         <HStack>
-          <Box w="100px">
-            <Button variant="ghost">TO</Button>
+          <Box w="100px" pl={8}>
+            <Heading as="h5" size="sm">
+              TO
+            </Heading>
           </Box>
           <Menu>
-            <MenuButton as={Button} rightIcon={<BiChevronDown />}>
+            <MenuButton
+              as={Button}
+              variant="outline"
+              rightIcon={<BiChevronDown />}
+            >
               {mapState.tableId ? mapState.tableId : 'SELECT MAP TABLE'}
             </MenuButton>
             <MenuList>

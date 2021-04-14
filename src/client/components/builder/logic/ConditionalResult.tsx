@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from 'react'
 import { isValidExpression, math } from '../../../core/evaluator'
 import update from 'immutability-helper'
-import { BiGitBranch, BiPlusCircle, BiTrash } from 'react-icons/bi'
+import {
+  BiGitBranch,
+  BiPlusCircle,
+  BiTrash,
+  BiChevronDown,
+} from 'react-icons/bi'
 import {
   Divider,
   Button,
   IconButton,
+  Heading,
   VStack,
   HStack,
   Box,
@@ -173,11 +179,12 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
       </HStack>
       <VStack align="stretch" spacing={4}>
         <HStack>
-          <Box w="100px">
-            <Button variant="ghost">IF</Button>
+          <Box w="100px" pl={8}>
+            <Heading as="h5" size="sm">
+              IF
+            </Heading>
           </Box>
           <ExpressionInput
-            bg="#F4F6F9"
             type="text"
             name="ifExpr"
             fontFamily="mono"
@@ -198,7 +205,11 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
           <HStack key={i}>
             <Menu>
               <Box w="100px">
-                <MenuButton as={Button} variant="ghost">
+                <MenuButton
+                  as={Button}
+                  variant="outline"
+                  rightIcon={<BiChevronDown />}
+                >
                   {cond.type}
                 </MenuButton>
               </Box>
@@ -212,7 +223,6 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
               </MenuList>
             </Menu>
             <ExpressionInput
-              bg="#F4F6F9"
               type="text"
               fontFamily="mono"
               onChange={(expression) => updateCondition(i, { expression })}
@@ -240,13 +250,12 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
       <Divider />
       <VStack align="stretch" spacing={4}>
         <HStack>
-          <Box w="100px">
-            <Button w="100%" variant="ghost">
+          <Box w="100px" pl={8}>
+            <Heading as="h5" size="sm">
               THEN
-            </Button>
+            </Heading>
           </Box>
           <ExpressionInput
-            bg="#F4F6F9"
             type="text"
             name="thenExpr"
             fontFamily="mono"
@@ -255,13 +264,12 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
           />
         </HStack>
         <HStack>
-          <Box w="100px">
-            <Button w="100%" variant="ghost">
+          <Box w="100px" pl={8}>
+            <Heading as="h5" size="sm">
               ELSE
-            </Button>
+            </Heading>
           </Box>
           <ExpressionInput
-            bg="#F4F6F9"
             type="text"
             name="elseExpr"
             fontFamily="mono"

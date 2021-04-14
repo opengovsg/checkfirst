@@ -1,9 +1,15 @@
 import serverless, { Handler } from 'serverless-http'
 
 import bootstrap from '../bootstrap'
-const apiHandler = bootstrap().then((app) => serverless(app))
+import logger from '../bootstrap/logger'
 
 export const handler: Handler = async (event, context) => {
-  const h = await apiHandler
-  return h(event, context)
+  const { app, sequelize } = await bootstrap()
+  const h = serverless(app)
+  try {
+    return await h(event, context)
+  } finally {
+    logger.info('Closing Sequelize connection')
+    await sequelize.close()
+  }
 }

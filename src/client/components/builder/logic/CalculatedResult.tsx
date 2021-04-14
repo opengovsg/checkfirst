@@ -51,7 +51,6 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
           name="expression"
           type="text"
           placeholder="Enter expression"
-          bg="#F4F6F9"
           fontFamily="mono"
           value={expression}
           onChange={(expression) =>
