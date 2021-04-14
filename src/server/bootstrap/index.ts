@@ -1,9 +1,24 @@
 import express, { Express, Request, Response, NextFunction } from 'express'
 import session from 'express-session'
+import { Sequelize, SequelizeOptions } from 'sequelize-typescript'
 import SequelizeStoreFactory from 'connect-session-sequelize'
 import bodyParser from 'body-parser'
 import * as Sentry from '@sentry/node'
 import * as Tracing from '@sentry/tracing'
+
+// Sequelize-related imports
+import {
+  databaseConfigType,
+  nodeEnvType,
+} from '../../types/server/sequelize-config'
+import * as sequelizeConfig from '../database/config/config'
+import {
+  User,
+  Checker,
+  UserToChecker,
+  PublishedChecker,
+  Template,
+} from '../database/models'
 
 import minimatch from 'minimatch'
 import { totp as totpFactory } from 'otplib'
@@ -14,7 +29,6 @@ import { CheckerController, CheckerService } from '../checker'
 import { AuthController, AuthService } from '../auth'
 import { TemplateController, TemplateService } from '../template'
 
-import sequelize from './sequelize'
 import mailer from './mailer'
 import logger from './logger'
 import morgan from './morgan'
@@ -34,7 +48,26 @@ const emailValidator = new minimatch.Minimatch(mailSuffix, {
   nonegate: true,
 })
 
-export async function bootstrap(): Promise<Express> {
+export async function bootstrap(): Promise<{
+  app: Express
+  sequelize: Sequelize
+}> {
+  // Create Sequelize instance and add models
+  const nodeEnv = config.get('nodeEnv') as nodeEnvType
+  const options: SequelizeOptions = (sequelizeConfig as databaseConfigType)[
+    nodeEnv
+  ]
+
+  logger.info('Creating Sequelize instance and adding models')
+  const sequelize = new Sequelize(options)
+  sequelize.addModels([
+    User,
+    Checker,
+    UserToChecker,
+    PublishedChecker,
+    Template,
+  ])
+
   const checker = new CheckerController({
     service: new CheckerService({
       logger,
@@ -128,8 +161,9 @@ export async function bootstrap(): Promise<Express> {
 
   app.use(Sentry.Handlers.errorHandler())
 
+  logger.info('Connecting to Sequelize')
   await sequelize.authenticate()
-  return app
+  return { app, sequelize }
 }
 
 export { logger } from './logger'
