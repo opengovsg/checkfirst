@@ -193,7 +193,7 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
             value={ifelseState.ifExpr}
           />
           <HStack>
-            <DefaultTooltip label="Add Condition" placement="right">
+            <DefaultTooltip label="Add condition" placement="right">
               <IconButton
                 variant="ghost"
                 aria-label="Add condition"
@@ -232,7 +232,7 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
               value={cond.expression}
             />
             <HStack>
-              <DefaultTooltip label="Delete Condition">
+              <DefaultTooltip label="Delete condition">
                 <IconButton
                   variant="ghost"
                   aria-label="Delete condition"
@@ -241,7 +241,7 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
                   icon={<BiTrash />}
                 />
               </DefaultTooltip>
-              <DefaultTooltip label="Add Condition" placement="right">
+              <DefaultTooltip label="Add condition" placement="right">
                 <IconButton
                   variant="ghost"
                   aria-label="Add condition"

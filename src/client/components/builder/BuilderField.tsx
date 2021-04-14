@@ -250,13 +250,13 @@ export const createBuilderField = (
                 aria-label="Duplicate"
                 icon={
                   data.show ? (
-                    <DefaultTooltip label="Hide Result">
+                    <DefaultTooltip label="Hide result">
                       <span>
                         <BiShow />
                       </span>
                     </DefaultTooltip>
                   ) : (
-                    <DefaultTooltip label="Show Result">
+                    <DefaultTooltip label="Show result">
                       <span>
                         <BiHide />
                       </span>
