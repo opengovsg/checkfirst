@@ -51,7 +51,6 @@ export const OtpForm: FC<OtpFormProps> = ({ onSuccess }) => {
           </Text>
           <Input
             h="48px"
-            bg="#F4F6F9"
             type="email"
             name="email"
             ref={register({ required: true })}

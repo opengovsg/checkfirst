@@ -86,7 +86,6 @@ export const LoginForm: FC<LoginFormProps> = ({ email, onLogin }) => {
           </Text>
           <Input
             h="48px"
-            bg="#F4F6F9"
             type="text"
             inputMode="numeric"
             pattern="\d{6}"
