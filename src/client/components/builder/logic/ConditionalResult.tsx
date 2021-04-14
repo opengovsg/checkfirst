@@ -27,6 +27,7 @@ import { useCheckerContext } from '../../../contexts'
 import { createBuilderField, OperationFieldComponent } from '../BuilderField'
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../../util/enums'
 import { ExpressionInput } from './ExpressionInput'
+import { DefaultTooltip } from '../../common/DefaultTooltip'
 
 interface Condition {
   type: 'AND' | 'OR'
@@ -192,13 +193,15 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
             value={ifelseState.ifExpr}
           />
           <HStack>
-            <IconButton
-              variant="ghost"
-              aria-label="Add condition"
-              fontSize="20px"
-              onClick={addCondition}
-              icon={<BiPlusCircle />}
-            />
+            <DefaultTooltip label="Add Condition" placement="right">
+              <IconButton
+                variant="ghost"
+                aria-label="Add condition"
+                fontSize="20px"
+                onClick={addCondition}
+                icon={<BiPlusCircle />}
+              />
+            </DefaultTooltip>
           </HStack>
         </HStack>
         {ifelseState.conditions.map((cond, i) => (
@@ -229,20 +232,24 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
               value={cond.expression}
             />
             <HStack>
-              <IconButton
-                variant="ghost"
-                aria-label="Delete condition"
-                fontSize="20px"
-                onClick={() => deleteCondition(i)}
-                icon={<BiTrash />}
-              />
-              <IconButton
-                variant="ghost"
-                aria-label="Add condition"
-                fontSize="20px"
-                onClick={addCondition}
-                icon={<BiPlusCircle />}
-              />
+              <DefaultTooltip label="Delete Condition">
+                <IconButton
+                  variant="ghost"
+                  aria-label="Delete condition"
+                  fontSize="20px"
+                  onClick={() => deleteCondition(i)}
+                  icon={<BiTrash />}
+                />
+              </DefaultTooltip>
+              <DefaultTooltip label="Add Condition" placement="right">
+                <IconButton
+                  variant="ghost"
+                  aria-label="Add condition"
+                  fontSize="20px"
+                  onClick={addCondition}
+                  icon={<BiPlusCircle />}
+                />
+              </DefaultTooltip>
             </HStack>
           </HStack>
         ))}

@@ -15,6 +15,7 @@ import { Checker } from '../../../types/checker'
 import { getApiErrorMessage } from '../../api'
 import { CheckerService } from '../../services'
 import { ConfirmDialog } from '../ConfirmDialog'
+import { DefaultTooltip } from '../common/DefaultTooltip'
 
 type CheckerCardProps = {
   checker: Checker
@@ -66,8 +67,16 @@ export const CheckerCard: FC<CheckerCardProps> = ({ checker }) => {
             {checker.title}
           </Text>
           <HStack sx={styles.actions}>
-            <BiDuplicate onClick={onDuplicateClick} size="24px" />
-            <BiTrash onClick={onClickDelete} size="24px" />
+            <DefaultTooltip label="Duplicate">
+              <span>
+                <BiDuplicate onClick={onDuplicateClick} size="24px" />
+              </span>
+            </DefaultTooltip>
+            <DefaultTooltip label="Delete">
+              <span>
+                <BiTrash onClick={onClickDelete} size="24px" />
+              </span>
+            </DefaultTooltip>
           </HStack>
         </VStack>
       </Link>

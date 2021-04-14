@@ -26,6 +26,7 @@ import {
 
 import { EmbedModal } from '.'
 import { useCheckerContext } from '../../contexts'
+import { DefaultTooltip } from '../common/DefaultTooltip'
 
 const ROUTES = ['questions', 'constants', 'logic']
 
@@ -177,11 +178,13 @@ export const Navbar: FC = () => {
           isChanged={isChanged}
         />
         <Link href={`/builder/${params.id}/preview`} isExternal>
-          <IconButton
-            aria-label="Preview"
-            variant="ghost"
-            icon={<BiShow size="24px" />}
-          />
+          <DefaultTooltip label="Preview">
+            <IconButton
+              aria-label="Preview"
+              variant="ghost"
+              icon={<BiShow size="24px" />}
+            />
+          </DefaultTooltip>
         </Link>
         <Button
           variant="outline"

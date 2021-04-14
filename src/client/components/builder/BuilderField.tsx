@@ -15,6 +15,7 @@ import { usePosition } from '../../hooks/use-position'
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../util/enums'
 import { ActionButton } from '../builder'
 import { BuilderAddPayload } from '../../../types/builder'
+import { DefaultTooltip } from '../common/DefaultTooltip'
 
 export type TitleFieldComponent = FC<
   Pick<checker.Checker, 'title' | 'description'>
@@ -247,7 +248,21 @@ export const createBuilderField = (
             {isOperationData(data) && (
               <ActionButton
                 aria-label="Duplicate"
-                icon={data.show ? <BiShow /> : <BiHide />}
+                icon={
+                  data.show ? (
+                    <DefaultTooltip label="Hide Result">
+                      <span>
+                        <BiShow />
+                      </span>
+                    </DefaultTooltip>
+                  ) : (
+                    <DefaultTooltip label="Show Result">
+                      <span>
+                        <BiHide />
+                      </span>
+                    </DefaultTooltip>
+                  )
+                }
                 onClick={handleDisplayToggle}
               />
             )}
@@ -255,12 +270,24 @@ export const createBuilderField = (
               <>
                 <ActionButton
                   aria-label="Duplicate"
-                  icon={<BiDuplicate />}
+                  icon={
+                    <DefaultTooltip label="Duplicate">
+                      <span>
+                        <BiDuplicate />
+                      </span>
+                    </DefaultTooltip>
+                  }
                   onClick={handleDuplicate}
                 />
                 <ActionButton
                   aria-label="Delete"
-                  icon={<BiTrash />}
+                  icon={
+                    <DefaultTooltip label="Delete">
+                      <span>
+                        <BiTrash />
+                      </span>
+                    </DefaultTooltip>
+                  }
                   onClick={handleDelete}
                 />
               </>
