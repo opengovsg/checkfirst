@@ -48,12 +48,17 @@ const emailValidator = new minimatch.Minimatch(mailSuffix, {
   nonegate: true,
 })
 
-export async function bootstrap(): Promise<Express> {
+export async function bootstrap(): Promise<{
+  app: Express
+  sequelize: Sequelize
+}> {
   // Create Sequelize instance and add models
   const nodeEnv = config.get('nodeEnv') as nodeEnvType
   const options: SequelizeOptions = (sequelizeConfig as databaseConfigType)[
     nodeEnv
   ]
+
+  logger.info('Creating Sequelize instance and adding models')
   const sequelize = new Sequelize(options)
   sequelize.addModels([
     User,
@@ -156,8 +161,9 @@ export async function bootstrap(): Promise<Express> {
 
   app.use(Sentry.Handlers.errorHandler())
 
+  logger.info('Connecting to Sequelize')
   await sequelize.authenticate()
-  return app
+  return { app, sequelize }
 }
 
 export { logger } from './logger'
