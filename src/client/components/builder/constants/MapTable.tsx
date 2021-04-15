@@ -20,6 +20,7 @@ import * as checker from '../../../../types/checker'
 import { createBuilderField, ConstantFieldComponent } from '../BuilderField'
 import { useCheckerContext } from '../../../contexts'
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../../util/enums'
+import { DefaultTooltip } from '../../common/DefaultTooltip'
 
 const InputComponent: ConstantFieldComponent = ({ constant, index }) => {
   const { title, table } = constant
@@ -125,14 +126,16 @@ const InputComponent: ConstantFieldComponent = ({ constant, index }) => {
                 value={value}
                 w="45%"
               />
-              <IconButton
-                borderRadius={0}
-                variant="ghost"
-                aria-label="delete item"
-                fontSize="20px"
-                icon={<BiTrash />}
-                onClick={() => handleDeleteTableRow(index)}
-              />
+              <DefaultTooltip label="Delete mapping" placement="right">
+                <IconButton
+                  borderRadius={0}
+                  variant="ghost"
+                  aria-label="delete item"
+                  fontSize="20px"
+                  icon={<BiTrash />}
+                  onClick={() => handleDeleteTableRow(index)}
+                />
+              </DefaultTooltip>
             </HStack>
           ))}
           <Button

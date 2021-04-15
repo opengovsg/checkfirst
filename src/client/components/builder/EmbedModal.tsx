@@ -23,6 +23,7 @@ import {
   useClipboard,
 } from '@chakra-ui/react'
 import { Checker } from '../../../types/checker'
+import { DefaultTooltip } from '../common/DefaultTooltip'
 
 type EmbedFieldProps = {
   name: string
@@ -49,7 +50,13 @@ const EmbedField: FC<EmbedFieldProps> = ({ name, value, children }) => {
         <InputRightElement
           cursor="pointer"
           onClick={onClick}
-          children={<BiCopy />}
+          children={
+            <DefaultTooltip label="Copy" placement="right">
+              <span>
+                <BiCopy />
+              </span>
+            </DefaultTooltip>
+          }
         />
       </InputGroup>
     </FormControl>
@@ -76,12 +83,14 @@ export const EmbedModal: FC<EmbedModalProps> = ({
 
   return (
     <>
-      <IconButton
-        onClick={onEmbedOpen}
-        aria-label="Embed or Share"
-        variant="ghost"
-        icon={<BiCode size="24px" />}
-      />
+      <DefaultTooltip label="Embed or Share">
+        <IconButton
+          onClick={onEmbedOpen}
+          aria-label="Embed or Share"
+          variant="ghost"
+          icon={<BiCode size="24px" />}
+        />
+      </DefaultTooltip>
       <Modal isOpen={isEmbedOpen} onClose={onEmbedClose} size="lg">
         <ModalOverlay />
         <ModalContent>
