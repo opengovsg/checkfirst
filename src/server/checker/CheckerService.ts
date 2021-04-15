@@ -71,6 +71,7 @@ export class CheckerService {
           where: { id: user.id },
         },
       ],
+      order: [['updatedAt', 'DESC']],
     })
     return result
   }
