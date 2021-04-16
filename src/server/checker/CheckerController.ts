@@ -50,6 +50,12 @@ export class CheckerController {
   get: (req: Request, res: Response) => Promise<void> = async (req, res) => {
     const { id } = req.params
     const { user } = req.session
+
+    if (!user) {
+      res.status(401).json({ message: 'User not signed in' })
+      return
+    }
+
     try {
       const checker = await this.service.retrieve(id, user)
       if (!checker) {
