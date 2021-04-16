@@ -1,9 +1,11 @@
 import {
   BelongsToMany,
   Column,
+  CreatedAt,
   DataType,
   Model,
   Table,
+  UpdatedAt,
 } from 'sequelize-typescript'
 import minimatch from 'minimatch'
 
@@ -23,7 +25,7 @@ interface Settable {
   setDataValue(key: string, value: unknown): void
 }
 
-@Table({ tableName: 'users', timestamps: true })
+@Table({ tableName: 'users' })
 export class User extends Model {
   @Column({
     primaryKey: true,
@@ -50,4 +52,10 @@ export class User extends Model {
 
   @BelongsToMany(() => Checker, () => UserToChecker)
   checkers!: Checker[]
+
+  @CreatedAt
+  createdAt!: Date
+
+  @UpdatedAt
+  updatedAt!: Date
 }

@@ -1,9 +1,16 @@
-import { Column, ForeignKey, Model, Table } from 'sequelize-typescript'
+import {
+  Column,
+  CreatedAt,
+  ForeignKey,
+  Model,
+  Table,
+  UpdatedAt,
+} from 'sequelize-typescript'
 
 import { Checker } from './Checker'
 import { User } from './User'
 
-@Table({ tableName: 'usersToCheckers', timestamps: true })
+@Table({ tableName: 'usersToCheckers' })
 export class UserToChecker extends Model {
   @ForeignKey(() => User)
   @Column
@@ -12,4 +19,10 @@ export class UserToChecker extends Model {
   @ForeignKey(() => Checker)
   @Column
   checkerId!: string
+
+  @CreatedAt
+  createdAt!: Date
+
+  @UpdatedAt
+  updatedAt!: Date
 }

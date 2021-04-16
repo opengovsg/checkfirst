@@ -1,16 +1,18 @@
 import {
   BelongsTo,
   Column,
+  CreatedAt,
   DataType,
   ForeignKey,
   Model,
   Table,
+  UpdatedAt,
 } from 'sequelize-typescript'
 
 import { Constant, Display, Field, Operation } from '../../../types/checker'
 import { Checker } from './Checker'
 
-@Table({ tableName: 'publishedCheckers', timestamps: true })
+@Table({ tableName: 'publishedCheckers' })
 export class PublishedChecker extends Model {
   @Column({
     primaryKey: true,
@@ -61,4 +63,10 @@ export class PublishedChecker extends Model {
 
   @BelongsTo(() => Checker)
   checker!: Checker
+
+  @CreatedAt
+  createdAt!: Date
+
+  @UpdatedAt
+  updatedAt!: Date
 }

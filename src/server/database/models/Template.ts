@@ -1,7 +1,14 @@
-import { Column, DataType, Model, Table } from 'sequelize-typescript'
+import {
+  Column,
+  CreatedAt,
+  DataType,
+  Model,
+  Table,
+  UpdatedAt,
+} from 'sequelize-typescript'
 import { Constant, Display, Field, Operation } from '../../../types/checker'
 
-@Table({ tableName: 'templates', timestamps: true })
+@Table({ tableName: 'templates' })
 export class Template extends Model {
   @Column({
     primaryKey: true,
@@ -44,4 +51,10 @@ export class Template extends Model {
     allowNull: false,
   })
   displays!: Display[]
+
+  @CreatedAt
+  createdAt!: Date
+
+  @UpdatedAt
+  updatedAt!: Date
 }
