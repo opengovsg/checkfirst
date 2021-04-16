@@ -1,5 +1,11 @@
 import React, { FC } from 'react'
-import { useParams, Switch, Redirect, Route } from 'react-router-dom'
+import {
+  useParams,
+  Switch,
+  Redirect,
+  Route,
+  useHistory,
+} from 'react-router-dom'
 import { useQueryClient, useQuery, useMutation } from 'react-query'
 import {
   useToast,
@@ -31,6 +37,7 @@ export type CreateNewModalProps = {
 }
 
 export const CreateNewModal: FC<CreateNewModalProps> = ({ onClose }) => {
+  const history = useHistory()
   const initial = {
     title: '',
     description: '',
@@ -103,6 +110,7 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({ onClose }) => {
         description: `${created?.title} has been created successfully`,
       })
       onClose()
+      history.push(`/builder/${created.id}`)
     },
     onError: (err) => {
       toast({
