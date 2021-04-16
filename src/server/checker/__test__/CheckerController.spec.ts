@@ -147,18 +147,15 @@ describe('CheckerController', () => {
       service.retrieve.mockReset()
     })
 
-    it('accepts non-authenticated get', async () => {
+    it('returns 401 on non-authenticated get', async () => {
       const app = express()
       app.use(bodyParser.json())
       app.use(sessionMiddleware({}))
       app.get('/c/drafts/:id', controller.get)
 
       service.retrieve.mockResolvedValue(checker)
-      const response = await request(app)
-        .get(`/c/drafts/${checker.id}`)
-        .expect(200)
-      expect(response.body).toStrictEqual(checker)
-      expect(service.retrieve).toHaveBeenCalledWith(checker.id, undefined)
+      await request(app).get(`/c/drafts/${checker.id}`).expect(401)
+      expect(service.retrieve).toHaveBeenCalledTimes(0)
     })
 
     it('allows authenticated get', async () => {
