@@ -73,10 +73,12 @@ const generateDefaultDateOp = (id: number): checker.Operation => ({
 })
 
 export const LogicTab: FC = () => {
-  const [activeIndex, setActiveIndex] = useState<number>(0)
+  const { dispatch, config } = useCheckerContext()
+  const [activeIndex, setActiveIndex] = useState<number>(() =>
+    config.operations.length > 0 ? 0 : -1
+  )
   const [offsetTop, setOffsetTop] = useState<number>(16)
   const [nextUniqueId, setNextUniqueId] = useState<number>(1)
-  const { dispatch, config } = useCheckerContext()
 
   useEffect(() => {
     let highestIndex = 0
