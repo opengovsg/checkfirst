@@ -35,7 +35,7 @@ export class Checker extends Model {
     type: DataType.TEXT,
     allowNull: true,
   })
-  description!: string
+  description?: string
 
   @Column({
     type: DataType.JSON,
