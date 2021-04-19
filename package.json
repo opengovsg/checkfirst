@@ -13,7 +13,8 @@
     "dev-server": "ts-node-dev --respawn --transpile-only --inspect -- src/server/index.ts",
     "dev-client": "webpack serve --mode development --host 0.0.0.0 --devtool inline-source-map --hot",
     "start": "node build/server/index.js",
-    "version": "auto-changelog -p && git add CHANGELOG.md"
+    "version": "auto-changelog -p && git add CHANGELOG.md",
+    "prepare": "husky install"
   },
   "author": "Open Government Products, GovTech Singapore (https://open.gov.sg)",
   "private": true,
