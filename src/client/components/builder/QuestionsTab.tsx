@@ -9,7 +9,7 @@ import {
   BiCalendar,
 } from 'react-icons/bi'
 import { IoIosArrowDropdown } from 'react-icons/io'
-import { VStack } from '@chakra-ui/react'
+import { Center, Heading, Image, Link, Text, VStack } from '@chakra-ui/react'
 
 import * as checker from '../../../types/checker'
 import { FloatingToolbar } from './FloatingToolbar'
@@ -26,7 +26,33 @@ import { useCheckerContext } from '../../contexts'
 
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../util/enums'
 
+// Images
+import emptyQuestionsTabImage from '../../assets/states/empty-questions.svg'
+
 const TITLE_FIELD_INDEX = -1
+const QUESTIONS_GUIDE_URL = 'https://go.gov.sg/checkfirst-questions'
+
+const EmptyQuestionsTabBody: FC = () => (
+  <Center py={16}>
+    <VStack spacing={4}>
+      <Heading size="md" color="#1B3C87">
+        Start building your checker
+      </Heading>
+      <Text>
+        Add questions to get started. <br />
+        <Link href={QUESTIONS_GUIDE_URL} isExternal color="#1B3C87">
+          Learn how to work with questions
+        </Link>
+      </Text>
+      <Image
+        flex={1}
+        src={emptyQuestionsTabImage}
+        height={{ base: '257px', lg: 'auto' }}
+        mb={{ base: '24px', lg: '0px' }}
+      />
+    </VStack>
+  </Center>
+)
 
 const generateDefaultNumericField = (id: number): checker.Field => ({
   id: `N${id}`,
@@ -259,7 +285,11 @@ export const QuestionsTab: FC = () => {
         nextUniqueId={nextUniqueId}
         setNextUniqueId={setNextUniqueId}
       />
-      {fields.map(renderField)}
+      {fields && fields.length > 0 ? (
+        <>{fields.map(renderField)}</>
+      ) : (
+        <EmptyQuestionsTabBody />
+      )}
     </VStack>
   )
 }
