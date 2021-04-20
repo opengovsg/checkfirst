@@ -1,5 +1,6 @@
 import React, { FC, useEffect, useState } from 'react'
 import {
+  BiPlus,
   BiPlusCircle,
   BiCalculator,
   BiGitBranch,
@@ -12,6 +13,8 @@ import {
   Center,
   Heading,
   Text,
+  Image,
+  Link,
   VStack,
   Button,
   Menu,
@@ -31,6 +34,11 @@ import {
   DateResult,
 } from '../builder/logic'
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../util/enums'
+
+// Images
+import emptyLogicTabImage from '../../assets/states/empty-logic.svg'
+
+const LOGIC_CONSTANTS_GUIDE_URL = 'https://go.gov.sg/checkfirst-logic'
 
 const generateDefaultArithmeticOp = (id: number): checker.Operation => ({
   id: `O${id}`,
@@ -226,15 +234,23 @@ export const LogicTab: FC = () => {
         <FloatingToolbar offsetTop={offsetTop} options={toolbarOptions} />
       ) : (
         <Center py={16}>
-          <VStack spacing={6}>
-            <VStack spacing={4}>
-              <Heading size="md">No logic found</Heading>
-              <Text>
-                Select and create a new result to begin defining your logic
-              </Text>
-            </VStack>
+          <VStack spacing={4}>
+            <Heading size="md" color="#1B3C87">
+              Build a logical brain for your checker
+            </Heading>
+            <Text>
+              Use input from questions to make calculations or generate a logic
+              outcome. <br />
+              <Link href={LOGIC_CONSTANTS_GUIDE_URL} isExternal color="#1B3C87">
+                Learn how to work with logic
+              </Link>
+            </Text>
             <Menu placement="bottom">
-              <MenuButton as={Button} colorScheme="primary">
+              <MenuButton
+                leftIcon={<BiPlus />}
+                as={Button}
+                colorScheme="primary"
+              >
                 Add result
               </MenuButton>
               <MenuList>
@@ -246,6 +262,12 @@ export const LogicTab: FC = () => {
                 ))}
               </MenuList>
             </Menu>
+            <Image
+              flex={1}
+              src={emptyLogicTabImage}
+              height={{ base: '257px', lg: 'auto' }}
+              mb={{ base: '24px', lg: '0px' }}
+            />
           </VStack>
         </Center>
       )}
