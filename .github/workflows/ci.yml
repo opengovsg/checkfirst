@@ -47,6 +47,7 @@ jobs:
             ${{ runner.OS }}-node-
             ${{ runner.OS }}-
       - run: npm ci
+      - run: npm run build
       - run: npm test
   gatekeep:
     name: Determine if Build & Deploy is needed
