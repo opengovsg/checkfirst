@@ -10,8 +10,8 @@ import {
   BiCalendar,
 } from 'react-icons/bi'
 import {
+  Box,
   Center,
-  Heading,
   Text,
   Image,
   Link,
@@ -234,34 +234,37 @@ export const LogicTab: FC = () => {
         <FloatingToolbar offsetTop={offsetTop} options={toolbarOptions} />
       ) : (
         <Center py={16}>
-          <VStack spacing={4}>
-            <Heading size="md" color="#1B3C87">
+          <VStack spacing={4} w="100%">
+            <Text textStyle="h2" color="#1B3C87">
               Build a logical brain for your checker
-            </Heading>
-            <Text>
+            </Text>
+            <Text textAlign="center">
               Use input from questions to make calculations or generate a logic
-              outcome. <br />
+              outcome.
+              <br />
               <Link href={LOGIC_CONSTANTS_GUIDE_URL} isExternal color="#1B3C87">
                 Learn how to work with logic
               </Link>
             </Text>
-            <Menu placement="bottom">
-              <MenuButton
-                leftIcon={<BiPlus />}
-                as={Button}
-                colorScheme="primary"
-              >
-                Add result
-              </MenuButton>
-              <MenuList>
-                {addMenu.map(({ label, icon, onClick }, i) => (
-                  <MenuItem onClick={onClick} key={i}>
-                    <MenuIcon mr={4}>{icon}</MenuIcon>
-                    {label}
-                  </MenuItem>
-                ))}
-              </MenuList>
-            </Menu>
+            <Box pt="16px" pb="32px">
+              <Menu placement="bottom">
+                <MenuButton
+                  leftIcon={<BiPlus />}
+                  as={Button}
+                  colorScheme="primary"
+                >
+                  Add logic
+                </MenuButton>
+                <MenuList>
+                  {addMenu.map(({ label, icon, onClick }, i) => (
+                    <MenuItem onClick={onClick} key={i}>
+                      <MenuIcon mr={4}>{icon}</MenuIcon>
+                      {label}
+                    </MenuItem>
+                  ))}
+                </MenuList>
+              </Menu>
+            </Box>
             <Image
               flex={1}
               src={emptyLogicTabImage}

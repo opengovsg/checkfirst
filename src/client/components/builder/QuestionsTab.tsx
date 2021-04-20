@@ -9,7 +9,7 @@ import {
   BiCalendar,
 } from 'react-icons/bi'
 import { IoIosArrowDropdown } from 'react-icons/io'
-import { Center, Heading, Image, Link, Text, VStack } from '@chakra-ui/react'
+import { Center, Image, Link, Text, VStack } from '@chakra-ui/react'
 
 import * as checker from '../../../types/checker'
 import { FloatingToolbar } from './FloatingToolbar'
@@ -34,17 +34,18 @@ const QUESTIONS_GUIDE_URL = 'https://go.gov.sg/checkfirst-questions'
 
 const EmptyQuestionsTabBody: FC = () => (
   <Center py={16}>
-    <VStack spacing={4}>
-      <Heading size="md" color="#1B3C87">
+    <VStack spacing={4} w="100%">
+      <Text color="#1B3C87" textStyle="h2">
         Start building your checker
-      </Heading>
-      <Text>
-        Add questions to get started. <br />
+      </Text>
+      <Text textAlign="center">
+        Add questions to get started.{' '}
         <Link href={QUESTIONS_GUIDE_URL} isExternal color="#1B3C87">
           Learn how to work with questions
         </Link>
       </Text>
       <Image
+        pt="16px"
         flex={1}
         src={emptyQuestionsTabImage}
         height={{ base: '257px', lg: 'auto' }}

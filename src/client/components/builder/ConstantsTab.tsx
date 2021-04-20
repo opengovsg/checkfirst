@@ -9,10 +9,10 @@ import {
   Alert,
   AlertIcon,
   AlertDescription,
+  Box,
   Center,
   Image,
   Link,
-  Heading,
   Text,
   VStack,
   Button,
@@ -161,28 +161,31 @@ export const ConstantsTab: FC = () => {
         </>
       ) : (
         <Center py={16}>
-          <VStack spacing={4}>
-            <Heading size="md" color="#1B3C87">
+          <VStack spacing={4} w="100%">
+            <Text textStyle="h2" color="#1B3C87">
               Give each option a numeric value
-            </Heading>
-            <Text>
+            </Text>
+            <Text textAlign="center">
               With constant tables, you can assign a number to different options
-              of a radio question. Especially useful when trying to make
-              calculations based off a user’s choice. <br />
+              of a radio question. <br />
+              Especially useful when trying to make calculations based off a
+              user’s choice. <br />
               <Link href={CONSTANTS_GUIDE_URL} isExternal color="#1B3C87">
                 Learn how to work with constants
               </Link>
             </Text>
-            <Menu placement="bottom">
-              <MenuButton
-                leftIcon={<BiPlus />}
-                as={Button}
-                colorScheme="primary"
-                onClick={addInitialMap}
-              >
-                Add map
-              </MenuButton>
-            </Menu>
+            <Box pt="16px" pb="32px">
+              <Menu placement="bottom">
+                <MenuButton
+                  leftIcon={<BiPlus />}
+                  as={Button}
+                  colorScheme="primary"
+                  onClick={addInitialMap}
+                >
+                  Add constant table
+                </MenuButton>
+              </Menu>
+            </Box>
             <Image
               flex={1}
               src={emptyConstantsTabImage}
