@@ -34,7 +34,7 @@ import { CheckerService } from '../services'
 // Images
 import emptyDashboardImage from '../assets/states/empty-dashboard.svg'
 
-const GET_STARTED_URL = 'https://guide.checkfirst.gov.sg/'
+const GET_STARTED_URL = 'https://go.gov.sg/checkfirst-formbuilder'
 
 const EmptyDashboardBody: FC = () => (
   <Center py={16}>
