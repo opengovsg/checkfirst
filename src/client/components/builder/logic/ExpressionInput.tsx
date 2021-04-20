@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react'
+import React, { FC, useMemo, useState } from 'react'
 import { findIndex } from 'lodash'
 import {
   HStack,
@@ -22,6 +22,16 @@ interface RankedItem extends RankingInfo {
   index: number
 }
 
+/**
+ * Represents a single query string within an expression.
+ * An expression can contain 0 or more of these blocks, and
+ * are meant to be eventually replaced by a checker variable
+ */
+type QueryBlock = {
+  query: string
+  pos: number
+}
+
 interface ExpressionInputProps extends Omit<InputProps, 'onChange'> {
   onChange: (expression: string) => void
 }
@@ -31,6 +41,7 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
   onChange,
   ...props
 }) => {
+  const [caretPos, setCaretPos] = useState(`${value}`.length)
   const { config } = useCheckerContext()
   const items = useMemo<Item[]>(() => {
     let items: Item[] = []
@@ -53,26 +64,48 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
     return items
   }, [config.fields, config.operations])
 
-  const getQueryString = (input?: string | null) => {
-    if (!input) return ''
+  /**
+   * Obtains the currently edited query block based on the user's caret position
+   * Query blocks are matched based on the regex `/@([\w\d]+([\s]+[\w\d]+)*|[\w\d]*)/g`
+   * Information on the regex can be found at: https://regexr.com/5r4mj
+   *
+   * @param inputStr the current expression
+   * @param caretIndex the index of the caret within the expression
+   * @returns the query string and index of the block within the expression
+   */
+  const getCurrentQueryBlock = (
+    inputStr: string | null | undefined,
+    caretIndex: number
+  ): QueryBlock | null => {
+    if (!inputStr) return null
+    const queryRegEx = /@([\w\d]+([\s]+[\w\d]+)*|[\w\d]*)/g
 
-    // We only support queries when there is one @ in the expression
-    const first = input.indexOf('@')
-    const last = input.lastIndexOf('@')
-    if (first > -1 && last > -1 && first === last) {
-      return input.substring(first + 1)
+    let match: RegExpExecArray | null
+    while ((match = queryRegEx.exec(inputStr)) !== null) {
+      // query block is only active when caret is to the right of the '@' character,
+      // up to the limit of the block as defined by the regex query
+      if (caretIndex <= queryRegEx.lastIndex && caretIndex > match.index) {
+        return { query: match[0].substring(1), pos: match.index }
+      }
     }
 
-    return ''
+    return null
   }
 
   const replaceVariableName = (
     inputStr: string | null,
     variableName?: string | null
   ): string => {
-    const queryString = getQueryString(inputStr)
-    if (queryString && inputStr) {
-      return inputStr.replace('@' + queryString, variableName || '')
+    const queryBlock = getCurrentQueryBlock(inputStr, caretPos)
+    if (inputStr && queryBlock) {
+      const replaceStart = queryBlock.pos
+      // increment query length by 1 to account for the removed '@' character
+      const replaceEnd = queryBlock.pos + (queryBlock.query.length + 1)
+      return (
+        inputStr.slice(0, replaceStart) +
+        (variableName || '') +
+        inputStr.slice(replaceEnd)
+      )
     }
 
     return inputStr || ''
@@ -97,7 +130,6 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
         onChange(changes.inputValue || '')
         return {
           ...changes,
-          isOpen: getQueryString(changes.inputValue) !== '',
         }
       case Downshift.stateChangeTypes.blurInput:
       case Downshift.stateChangeTypes.mouseUp:
@@ -134,7 +166,6 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
         getMenuProps,
         getInputProps,
         getItemProps,
-        isOpen,
         inputValue,
         highlightedIndex,
       }) => (
@@ -148,15 +179,12 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
           <Input
             {...getInputProps({
               ...props,
-              onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => {
-                if (e.key === '@') {
-                  // TODO: Store the existing input value into buffer so we can
-                  // replace it later on select
-                }
+              onChange: (e: React.FormEvent<HTMLInputElement>) => {
+                setCaretPos(e.currentTarget.selectionStart || -1)
               },
             })}
           />
-          {isOpen ? (
+          {getCurrentQueryBlock(inputValue, caretPos) !== null ? (
             <UnorderedList
               {...getMenuProps()}
               listStyleType="none"
@@ -170,10 +198,14 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
               w="100%"
               zIndex={99}
             >
-              {matchSorter(items, getQueryString(inputValue), {
-                keys: ['id', 'title'],
-                baseSort,
-              }).map((item, index) => (
+              {matchSorter(
+                items,
+                getCurrentQueryBlock(inputValue, caretPos)?.query || '',
+                {
+                  keys: ['id', 'title'],
+                  baseSort,
+                }
+              ).map((item, index) => (
                 <ListItem
                   {...getItemProps({ key: index, item })}
                   bg={highlightedIndex === index ? 'neutral.50' : 'none'}
