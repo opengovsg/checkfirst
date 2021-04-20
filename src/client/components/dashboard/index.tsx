@@ -1,5 +1,6 @@
 export { Navbar } from './Navbar'
-export { CreateNew } from './CreateNew'
+export { CreateNewButton } from './CreateNewButton'
+export { CreateNewCard } from './CreateNewCard'
 export { CheckerCard } from './CheckerCard'
 export { CreateNewModal } from './CreateNewModal'
 export { PreviewTemplate } from './PreviewTemplate'

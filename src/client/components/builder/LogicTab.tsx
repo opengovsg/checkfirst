@@ -1,5 +1,6 @@
 import React, { FC, useEffect, useState } from 'react'
 import {
+  BiPlus,
   BiPlusCircle,
   BiCalculator,
   BiGitBranch,
@@ -9,9 +10,11 @@ import {
   BiCalendar,
 } from 'react-icons/bi'
 import {
+  Box,
   Center,
-  Heading,
   Text,
+  Image,
+  Link,
   VStack,
   Button,
   Menu,
@@ -31,6 +34,11 @@ import {
   DateResult,
 } from '../builder/logic'
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../util/enums'
+
+// Images
+import emptyLogicTabImage from '../../assets/states/empty-logic.svg'
+
+const LOGIC_CONSTANTS_GUIDE_URL = 'https://go.gov.sg/checkfirst-logic'
 
 const generateDefaultArithmeticOp = (id: number): checker.Operation => ({
   id: `O${id}`,
@@ -226,26 +234,43 @@ export const LogicTab: FC = () => {
         <FloatingToolbar offsetTop={offsetTop} options={toolbarOptions} />
       ) : (
         <Center py={16}>
-          <VStack spacing={6}>
-            <VStack spacing={4}>
-              <Heading size="md">No logic found</Heading>
-              <Text>
-                Select and create a new result to begin defining your logic
-              </Text>
-            </VStack>
-            <Menu placement="bottom">
-              <MenuButton as={Button} colorScheme="primary">
-                Add result
-              </MenuButton>
-              <MenuList>
-                {addMenu.map(({ label, icon, onClick }, i) => (
-                  <MenuItem onClick={onClick} key={i}>
-                    <MenuIcon mr={4}>{icon}</MenuIcon>
-                    {label}
-                  </MenuItem>
-                ))}
-              </MenuList>
-            </Menu>
+          <VStack spacing={4} w="100%">
+            <Text textStyle="h2" color="#1B3C87">
+              Build a logical brain for your checker
+            </Text>
+            <Text textAlign="center">
+              Use input from questions to make calculations or generate a logic
+              outcome.
+              <br />
+              <Link href={LOGIC_CONSTANTS_GUIDE_URL} isExternal color="#1B3C87">
+                Learn how to work with logic
+              </Link>
+            </Text>
+            <Box pt="16px" pb="32px">
+              <Menu placement="bottom">
+                <MenuButton
+                  leftIcon={<BiPlus />}
+                  as={Button}
+                  colorScheme="primary"
+                >
+                  Add logic
+                </MenuButton>
+                <MenuList>
+                  {addMenu.map(({ label, icon, onClick }, i) => (
+                    <MenuItem onClick={onClick} key={i}>
+                      <MenuIcon mr={4}>{icon}</MenuIcon>
+                      {label}
+                    </MenuItem>
+                  ))}
+                </MenuList>
+              </Menu>
+            </Box>
+            <Image
+              flex={1}
+              src={emptyLogicTabImage}
+              height={{ base: '257px', lg: 'auto' }}
+              mb={{ base: '24px', lg: '0px' }}
+            />
           </VStack>
         </Center>
       )}

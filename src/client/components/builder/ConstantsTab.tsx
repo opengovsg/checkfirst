@@ -1,11 +1,18 @@
 import React, { FC, useEffect, useState } from 'react'
-import { BiPlusCircle, BiUpArrowAlt, BiDownArrowAlt } from 'react-icons/bi'
+import {
+  BiPlus,
+  BiPlusCircle,
+  BiUpArrowAlt,
+  BiDownArrowAlt,
+} from 'react-icons/bi'
 import {
   Alert,
   AlertIcon,
   AlertDescription,
+  Box,
   Center,
-  Heading,
+  Image,
+  Link,
   Text,
   VStack,
   Button,
@@ -20,6 +27,11 @@ import { MapTable } from './constants'
 import { useCheckerContext } from '../../contexts'
 
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../util/enums'
+
+// Images
+import emptyConstantsTabImage from '../../assets/states/empty-constants.svg'
+
+const CONSTANTS_GUIDE_URL = 'https://go.gov.sg/checkfirst-constants'
 
 const generateDefaultMap = (id: number): checker.Constant => ({
   id: `T${id}`,
@@ -145,27 +157,44 @@ export const ConstantsTab: FC = () => {
               option.
             </AlertDescription>
           </Alert>
+          {constants.map(renderMap)}
         </>
       ) : (
         <Center py={16}>
-          <VStack spacing={6}>
-            <VStack spacing={4}>
-              <Heading size="md">No constants found</Heading>
-              <Text>Create a new map to begin defining your constants</Text>
-            </VStack>
-            <Menu placement="bottom">
-              <MenuButton
-                as={Button}
-                colorScheme="primary"
-                onClick={addInitialMap}
-              >
-                Add map
-              </MenuButton>
-            </Menu>
+          <VStack spacing={4} w="100%">
+            <Text textStyle="h2" color="#1B3C87">
+              Give each option a numeric value
+            </Text>
+            <Text textAlign="center">
+              With constant tables, you can assign a number to different options
+              of a radio question. <br />
+              Especially useful when trying to make calculations based off a
+              user’s choice. <br />
+              <Link href={CONSTANTS_GUIDE_URL} isExternal color="#1B3C87">
+                Learn how to work with constants
+              </Link>
+            </Text>
+            <Box pt="16px" pb="32px">
+              <Menu placement="bottom">
+                <MenuButton
+                  leftIcon={<BiPlus />}
+                  as={Button}
+                  colorScheme="primary"
+                  onClick={addInitialMap}
+                >
+                  Add constant table
+                </MenuButton>
+              </Menu>
+            </Box>
+            <Image
+              flex={1}
+              src={emptyConstantsTabImage}
+              height={{ base: '257px', lg: 'auto' }}
+              mb={{ base: '24px', lg: '0px' }}
+            />
           </VStack>
         </Center>
       )}
-      {constants.map(renderMap)}
     </VStack>
   )
 }

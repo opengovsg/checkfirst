@@ -3,7 +3,7 @@ import { useRouteMatch, Link } from 'react-router-dom'
 import { BiPlus } from 'react-icons/bi'
 import { useMultiStyleConfig, Text, VStack } from '@chakra-ui/react'
 
-export const CreateNew: FC = () => {
+export const CreateNewCard: FC = () => {
   const { path } = useRouteMatch()
   const styles = useMultiStyleConfig('CheckerCard', { variant: 'create' })
 
