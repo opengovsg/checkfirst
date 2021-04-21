@@ -112,6 +112,7 @@
     "match-sorter": "^6.3.0",
     "mathjs": "^9.3.2",
     "minimatch": "^3.0.4",
+    "moment-timezone": "0.5.33",
     "morgan": "^1.10.0",
     "nodemailer": "^6.4.17",
     "otplib": "^12.0.1",

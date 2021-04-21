@@ -18,6 +18,18 @@ export type Checker = Pick<
   | 'displays'
 >
 
+export type DashboardCheckerDTO = Pick<
+  CheckerModel,
+  | 'id'
+  | 'title'
+  | 'description'
+  | 'fields'
+  | 'constants'
+  | 'operations'
+  | 'displays'
+  | 'updatedAt'
+>
+
 export type CreatePublishedCheckerDTO = Pick<
   CheckerModel,
   | 'title'

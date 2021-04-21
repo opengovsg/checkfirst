@@ -28,7 +28,7 @@ import {
   CreateNewModal,
   PreviewTemplate,
 } from '../components/dashboard'
-import { Checker } from '../../types/checker'
+import { DashboardCheckerDTO } from '../../types/checker'
 import { CheckerService } from '../services'
 
 // Images
@@ -64,7 +64,7 @@ export const Dashboard: FC = () => {
   const { path } = useRouteMatch()
   const { isLoading, data: checkers } = useQuery('checkers', async () => {
     const response = await CheckerService.listCheckers()
-    return response as Checker[]
+    return response as DashboardCheckerDTO[]
   })
 
   return (

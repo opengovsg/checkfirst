@@ -1,4 +1,5 @@
 import React, { FC } from 'react'
+import moment from 'moment-timezone'
 import { useQueryClient, useMutation } from 'react-query'
 import { useHistory, useRouteMatch, Link } from 'react-router-dom'
 import { BiDuplicate, BiTrash } from 'react-icons/bi'
@@ -11,14 +12,14 @@ import {
   HStack,
 } from '@chakra-ui/react'
 
-import { Checker } from '../../../types/checker'
+import { DashboardCheckerDTO } from '../../../types/checker'
 import { getApiErrorMessage } from '../../api'
 import { CheckerService } from '../../services'
 import { ConfirmDialog } from '../ConfirmDialog'
 import { DefaultTooltip } from '../common/DefaultTooltip'
 
 type CheckerCardProps = {
-  checker: Checker
+  checker: DashboardCheckerDTO
 }
 
 export const CheckerCard: FC<CheckerCardProps> = ({ checker }) => {
@@ -65,6 +66,11 @@ export const CheckerCard: FC<CheckerCardProps> = ({ checker }) => {
         <VStack sx={styles.card} align="stretch" role="group">
           <Text flex={1} sx={styles.title} isTruncated>
             {checker.title}
+          </Text>
+          <Text flex={1} sx={styles.subtitle} isTruncated>
+            {moment(checker.updatedAt)
+              .tz('Asia/Singapore')
+              .format('DD MMM, YYYY')}
           </Text>
           <HStack sx={styles.actions}>
             <DefaultTooltip label="Duplicate">
