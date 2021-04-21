@@ -130,7 +130,9 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
     try {
       const computed = evaluate(parsedInputs, constants, operations)
       setVariables(computed)
-      outcomes.current?.scrollIntoView()
+      outcomes.current?.scrollIntoView({
+        behavior: 'smooth',
+      })
     } catch (err) {
       toast({
         status: 'error',
