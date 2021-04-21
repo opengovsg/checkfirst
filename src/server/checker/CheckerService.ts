@@ -71,11 +71,12 @@ export class CheckerService {
           where: { id: user.id },
         },
       ],
+      order: [['updatedAt', 'DESC']],
     })
     return result
   }
 
-  retrieve: (id: string, user?: User) => Promise<Checker | null> = async (
+  retrieve: (id: string, user: User) => Promise<Checker | null> = async (
     id,
     user
   ) => {
@@ -84,7 +85,7 @@ export class CheckerService {
 
   retrievePublished: (
     id: string
-  ) => Promise<GetPublishedCheckerWithoutDraftCheckerDTO | undefined> = async (
+  ) => Promise<GetPublishedCheckerWithoutDraftCheckerDTO | null> = async (
     id
   ) => {
     const result = await this.PublishedCheckerModel.findOne({

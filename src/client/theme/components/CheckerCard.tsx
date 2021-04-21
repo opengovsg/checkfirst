@@ -15,6 +15,11 @@ export const CheckerCard = {
       fontSize: '16px',
       fontWeight: '600',
     },
+    subtitle: {
+      fontSize: '14px',
+      fontWeight: '500',
+      color: '#767676',
+    },
     actions: {
       visibility: 'hidden',
       justifyContent: 'center',
