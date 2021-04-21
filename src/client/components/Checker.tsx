@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useState, useRef } from 'react'
 import { isEmpty, filter } from 'lodash'
 import {
   useToast,
@@ -42,6 +42,7 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
   const { title, description, fields, operations, constants } = config
   const [variables, setVariables] = useState<checker.VariableResults>({})
   const googleAnalytics = useGoogleAnalytics()
+  const outcomes = useRef<HTMLDivElement | null>(null)
 
   const renderField = (field: checker.Field, i: number) => {
     switch (field.type) {
@@ -129,6 +130,7 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
     try {
       const computed = evaluate(parsedInputs, constants, operations)
       setVariables(computed)
+      outcomes.current?.scrollIntoView()
     } catch (err) {
       toast({
         status: 'error',
@@ -163,7 +165,7 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
       </Container>
 
       {!isEmpty(variables) && isCheckerComplete() && (
-        <Flex bg="primary.500" as="div" flex={1}>
+        <Flex bg="primary.500" as="div" ref={outcomes} flex={1}>
           <Container maxW="xl" pt={8} pb={16} px={8} color="#F4F6F9">
             <VStack align="stretch" spacing={8}>
               {operations.map(renderDisplay)}
