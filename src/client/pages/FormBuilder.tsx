@@ -12,11 +12,13 @@ import {
   LogicTab,
   PreviewTab,
   PreviewNavBar,
+  HelpButton,
 } from '../components/builder'
 
 const WithNavBar: FC = ({ children }) => (
   <Flex direction="column" minH="100vh" bgColor="#F4F6F9">
     <Navbar />
+    <HelpButton />
     <Container maxW="756px" px={0} mt="80px">
       {children}
     </Container>
