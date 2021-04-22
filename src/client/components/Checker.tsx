@@ -149,7 +149,7 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
 
   return (
     <StylesProvider value={styles}>
-      <Container maxW="xl" p={8} mb={4}>
+      <Container maxW="xl" p={8} mb={4} overscroll-behaviour="contain">
         <FormProvider {...methods}>
           <form onSubmit={methods.handleSubmit(onSubmit)}>
             <VStack align="stretch" spacing={10}>
