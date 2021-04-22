@@ -6,10 +6,10 @@ import {
   FormLabel,
   FormHelperText,
   FormErrorMessage,
-  Select,
 } from '@chakra-ui/react'
 
 import { Field } from '../../../types/checker'
+import { SearchDropdown } from './SearchDropdown'
 
 export const DropdownField: FC<Field> = ({
   id,
@@ -32,18 +32,12 @@ export const DropdownField: FC<Field> = ({
             {title}
           </FormLabel>
           {description && <FormHelperText mb={4}>{description}</FormHelperText>}
-          <Select name={id} value={value} onChange={onChange}>
-            {options.map(
-              (
-                { value, label }: { value: number; label: string },
-                i: number
-              ) => (
-                <option key={i} ref={ref} value={`${value}`}>
-                  {label}
-                </option>
-              )
-            )}
-          </Select>
+          <SearchDropdown
+            ref={ref}
+            value={value}
+            onChange={onChange}
+            options={options}
+          />
           <FormErrorMessage>Field is required</FormErrorMessage>
         </FormControl>
       )}
