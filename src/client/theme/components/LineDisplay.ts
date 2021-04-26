@@ -13,6 +13,7 @@ export const LineDisplay = {
     },
     value: {
       w: { base: '100%', md: '25%' },
+      textAlign: { base: 'left', md: 'right' },
       fontWeight: 'bold',
       fontSize: '24px',
       lineHeight: '32px',
@@ -28,6 +29,7 @@ export const LineDisplay = {
       },
       value: {
         w: '100%',
+        textAlign: 'left',
       },
     },
   },
