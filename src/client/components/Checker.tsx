@@ -132,6 +132,7 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
       setVariables(computed)
       outcomes.current?.scrollIntoView({
         behavior: 'smooth',
+        block: 'nearest',
       })
     } catch (err) {
       toast({
