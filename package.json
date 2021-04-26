@@ -55,7 +55,7 @@
     "concurrently": "^6.0.0",
     "copy-webpack-plugin": "^8.1.1",
     "cz-conventional-changelog": "^3.3.0",
-    "eslint": "^7.23.0",
+    "eslint": "^7.25.0",
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-react-hooks": "^4.2.0",
