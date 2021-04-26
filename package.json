@@ -119,7 +119,7 @@
     "pg": "^8.6.0",
     "pg-connection-string": "^2.5.0",
     "react": "^17.0.1",
-    "react-ace": "^9.3.0",
+    "react-ace": "^9.4.0",
     "react-dom": "^17.0.1",
     "react-flatpickr": "^3.10.7",
     "react-ga": "^3.3.0",
