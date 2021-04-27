@@ -49,7 +49,7 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({ onClose }) => {
 
   const toast = useToast({ position: 'bottom-right', variant: 'solid' })
   const { trigger, register, handleSubmit, formState, setValue } = useForm({
-    mode: 'onBlur',
+    mode: 'onChange',
   })
   const { isValid, errors } = formState
 
@@ -157,7 +157,7 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({ onClose }) => {
             <form onSubmit={handleSubmit(onSubmit)}>
               <ModalBody>
                 <VStack spacing={4}>
-                  <FormControl isInvalid={!!errors.description}>
+                  <FormControl isInvalid={!!errors.title}>
                     <FormLabel htmlFor="id">Title</FormLabel>
                     <Input
                       isDisabled={isCheckerLoading || isTemplateLoading}
@@ -166,8 +166,8 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({ onClose }) => {
                     />
                     <FormErrorMessage>{errors.title?.message}</FormErrorMessage>
                   </FormControl>
-                  <FormControl isInvalid={!!errors.title}>
-                    <FormLabel htmlFor="id">Description</FormLabel>
+                  <FormControl>
+                    <FormLabel htmlFor="description">Description</FormLabel>
                     <Textarea
                       isDisabled={isCheckerLoading || isTemplateLoading}
                       name="description"
