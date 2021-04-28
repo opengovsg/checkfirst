@@ -132,6 +132,7 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
       setVariables(computed)
       outcomes.current?.scrollIntoView({
         behavior: 'smooth',
+        block: 'nearest',
       })
     } catch (err) {
       toast({
@@ -149,7 +150,7 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
 
   return (
     <StylesProvider value={styles}>
-      <Container maxW="xl" p={8} mb={4}>
+      <Container maxW="xl" p={8} mb={4} sx={{ overscrollBehavior: 'contain' }}>
         <FormProvider {...methods}>
           <form onSubmit={methods.handleSubmit(onSubmit)}>
             <VStack align="stretch" spacing={10}>

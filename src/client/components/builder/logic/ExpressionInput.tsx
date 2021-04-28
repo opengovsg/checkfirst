@@ -1,4 +1,4 @@
-import React, { FC, useMemo, useState } from 'react'
+import React, { FC, useMemo, useRef } from 'react'
 import { findIndex } from 'lodash'
 import {
   HStack,
@@ -41,7 +41,9 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
   onChange,
   ...props
 }) => {
-  const [caretPos, setCaretPos] = useState(`${value}`.length)
+  const caretPos = useRef<number>(`${value}`.length)
+  const inputRef = useRef<HTMLInputElement>(null)
+
   const { config } = useCheckerContext()
   const items = useMemo<Item[]>(() => {
     let items: Item[] = []
@@ -96,11 +98,15 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
     inputStr: string | null,
     variableName?: string | null
   ): string => {
-    const queryBlock = getCurrentQueryBlock(inputStr, caretPos)
+    const queryBlock = getCurrentQueryBlock(inputStr, caretPos.current)
     if (inputStr && queryBlock) {
       const replaceStart = queryBlock.pos
       // increment query length by 1 to account for the removed '@' character
       const replaceEnd = queryBlock.pos + (queryBlock.query.length + 1)
+
+      // update cursor to after replaced variable
+      caretPos.current = replaceStart + (variableName?.length || 0)
+
       return (
         inputStr.slice(0, replaceStart) +
         (variableName || '') +
@@ -117,15 +123,17 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
   ) => {
     switch (changes.type) {
       case Downshift.stateChangeTypes.clickItem:
-      case Downshift.stateChangeTypes.keyDownEnter:
-        onChange(replaceVariableName(state?.inputValue, changes?.inputValue))
+      case Downshift.stateChangeTypes.keyDownEnter: {
+        const newInputValue = replaceVariableName(
+          state?.inputValue,
+          changes?.inputValue
+        )
+        onChange(newInputValue)
         return {
           ...changes,
-          inputValue: replaceVariableName(
-            state?.inputValue,
-            changes.inputValue
-          ),
+          inputValue: newInputValue,
         }
+      }
       case Downshift.stateChangeTypes.changeInput:
         onChange(changes.inputValue || '')
         return {
@@ -159,6 +167,10 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
     <Downshift
       initialInputValue={`${value}`}
       stateReducer={stateReducer}
+      onSelect={() => {
+        // updates the cursor after onSelect is triggered
+        inputRef.current?.setSelectionRange(caretPos.current, caretPos.current)
+      }}
       itemToString={(item) => item?.id || ''}
     >
       {({
@@ -177,14 +189,15 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
           flex={1}
         >
           <Input
+            ref={inputRef}
             {...getInputProps({
               ...props,
               onChange: (e: React.FormEvent<HTMLInputElement>) => {
-                setCaretPos(e.currentTarget.selectionStart || -1)
+                caretPos.current = e.currentTarget.selectionStart || -1
               },
             })}
           />
-          {getCurrentQueryBlock(inputValue, caretPos) !== null ? (
+          {getCurrentQueryBlock(inputValue, caretPos.current) !== null ? (
             <UnorderedList
               {...getMenuProps()}
               listStyleType="none"
@@ -200,7 +213,7 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
             >
               {matchSorter(
                 items,
-                getCurrentQueryBlock(inputValue, caretPos)?.query || '',
+                getCurrentQueryBlock(inputValue, caretPos.current)?.query || '',
                 {
                   keys: ['id', 'title'],
                   baseSort,
