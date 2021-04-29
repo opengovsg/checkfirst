@@ -9,7 +9,7 @@ import {
 } from '@chakra-ui/react'
 
 import { Field } from '../../../types/checker'
-import { SearchDropdown } from './SearchDropdown'
+import { Combobox } from '../common/Combobox'
 
 export const DropdownField: FC<Field> = ({
   id,
@@ -26,17 +26,28 @@ export const DropdownField: FC<Field> = ({
       control={control}
       rules={{ required: true }}
       defaultValue={`${options[0]?.value}`}
-      render={({ ref, value, onChange }, { invalid }) => (
+      // combobox controls its own value independently of the controller
+      render={({ ref, onChange }, { invalid }) => (
         <FormControl isInvalid={invalid}>
           <FormLabel sx={styles.label} htmlFor={id}>
             {title}
           </FormLabel>
           {description && <FormHelperText mb={4}>{description}</FormHelperText>}
-          <SearchDropdown
-            ref={ref}
-            value={value}
+          <Combobox
             onChange={onChange}
-            options={options}
+            items={options.map((option) => ({
+              label: option.label,
+              value: option.value,
+            }))}
+            dropdownOptions={{
+              height: 224,
+              itemHeight: 48,
+              inset: 8,
+            }}
+            inputOptions={{
+              forwardRef: ref,
+              useClearButton: true,
+            }}
           />
           <FormErrorMessage>Field is required</FormErrorMessage>
         </FormControl>
