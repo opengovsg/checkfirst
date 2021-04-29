@@ -86,10 +86,10 @@
     }
   },
   "dependencies": {
-    "@chakra-ui/react": "^1.4.1",
+    "@chakra-ui/react": "^1.6.0",
     "@emotion/react": "^11.1.4",
     "@emotion/styled": "^11.3.0",
-    "@sentry/node": "^6.3.1",
+    "@sentry/node": "^6.3.4",
     "@sentry/react": "^6.3.0",
     "@sentry/tracing": "^6.2.3",
     "ace-builds": "^1.4.12",
