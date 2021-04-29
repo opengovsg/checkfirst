@@ -123,7 +123,7 @@
     "react-dom": "^17.0.2",
     "react-flatpickr": "^3.10.7",
     "react-ga": "^3.3.0",
-    "react-hook-form": "^6.15.5",
+    "react-hook-form": "^7.3.5",
     "react-icons": "^4.2.0",
     "react-query": "^3.13.12",
     "react-router-dom": "^5.2.0",
