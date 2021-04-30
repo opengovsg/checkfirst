@@ -34,6 +34,7 @@ export const DropdownField: FC<Field> = ({
           </FormLabel>
           {description && <FormHelperText mb={4}>{description}</FormHelperText>}
           <Combobox
+            label={title}
             onChange={onChange}
             items={options.map((option) => ({
               label: option.label,

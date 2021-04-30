@@ -54,13 +54,7 @@ interface ItemRendererProps extends Omit<ListChildComponentProps, 'data'> {
  * @returns A list item to be displayed in the dropdown
  */
 const ItemRenderer: FC<ItemRendererProps> = (props) => {
-  const {
-    items,
-    getItemProps,
-    highlightedIndex,
-    selectedItem,
-    topDropdownInset,
-  } = props.data
+  const { items, getItemProps, highlightedIndex, topDropdownInset } = props.data
   const item = items[props.index]
 
   return (
@@ -75,7 +69,6 @@ const ItemRenderer: FC<ItemRendererProps> = (props) => {
           },
           item,
           index: props.index,
-          isSelected: selectedItem === item,
         })}
         bg={highlightedIndex === props.index ? 'neutral.50' : 'none'}
         py={'12px'}
@@ -89,8 +82,9 @@ const ItemRenderer: FC<ItemRendererProps> = (props) => {
   )
 }
 
-interface ComboboxProps extends Omit<InputProps, 'onChange'> {
+interface ComboboxProps extends Omit<InputProps, 'onChange' | 'label'> {
   items: ComboboxItem[]
+  label: string
   dropdownOptions?: {
     height?: number
     itemHeight?: number
@@ -117,6 +111,7 @@ interface ComboboxProps extends Omit<InputProps, 'onChange'> {
  */
 export const Combobox: FC<ComboboxProps> = ({
   items,
+  label,
   dropdownOptions,
   searchOptions,
   inputOptions,
@@ -135,7 +130,7 @@ export const Combobox: FC<ComboboxProps> = ({
   const fallbackInputRef = useRef<HTMLInputElement>(null)
   const inputRef = inputOptions?.forwardRef || fallbackInputRef
 
-  const dropdownList = useRef<FixedSizeList>(null)
+  const dropdownList = useRef<FixedSizeList & HTMLElement>(null)
   const searchResults = useRef<ComboboxItem[]>(items)
 
   /**
@@ -169,11 +164,11 @@ export const Combobox: FC<ComboboxProps> = ({
    * @returns The height of the dropdown in pixels
    */
   const getDropdownHeight = (itemsLength: number) => {
-    return (
-      // remove dropdown inset from dropdownHeight to avoid double additions
-      Math.min(dropdownHeight - dropdownInset * 2, itemsLength * itemHeight) +
-      dropdownInset * 2
-    )
+    // remove dropdown inset from dropdownHeight to avoid double additions
+    return itemsLength > 0
+      ? Math.min(dropdownHeight - dropdownInset * 2, itemsLength * itemHeight) +
+          dropdownInset * 2
+      : 0
   }
 
   /**
@@ -255,6 +250,7 @@ export const Combobox: FC<ComboboxProps> = ({
       {({
         getRootProps,
         getMenuProps,
+        getLabelProps,
         getInputProps,
         getItemProps,
         highlightedIndex,
@@ -276,6 +272,9 @@ export const Combobox: FC<ComboboxProps> = ({
             backgroundColor="white"
             borderRadius="5px"
           >
+            <label {...getLabelProps()} hidden>
+              {label}
+            </label>
             <InputGroup>
               <Input
                 borderRadius={
@@ -297,11 +296,12 @@ export const Combobox: FC<ComboboxProps> = ({
 
                     // finally, toggle menu open
                     openMenu()
+                    dropdownList.current?.scrollTo(0)
                   },
                 })}
               />
               <InputRightElement pointerEvents="none">
-                <BiChevronDown color="black" />
+                <BiChevronDown aria-label="dropdown-icon" color="black" />
               </InputRightElement>
             </InputGroup>
             {inputOptions?.useClearButton ? (
@@ -318,41 +318,39 @@ export const Combobox: FC<ComboboxProps> = ({
               />
             ) : null}
           </HStack>
-          {isOpen && searchResults.current.length > 0 ? (
-            // wrap FixedSizeList with Box component to provide necessary props and styles
-            <Box
-              boxShadow="0px 0px 10px rgba(216, 222, 235, 0.5)"
-              position={'absolute'}
-              maxH={`${dropdownHeight}px`}
-              top={dropdownDir === DropdownDirection.down ? '40px' : undefined}
-              bottom={dropdownDir === DropdownDirection.up ? '40px' : undefined}
-              bg="white"
-              w="100%"
-              zIndex={99}
+          <Box
+            boxShadow="0px 0px 10px rgba(216, 222, 235, 0.5)"
+            position={'absolute'}
+            maxH={`${dropdownHeight}px`}
+            top={dropdownDir === DropdownDirection.down ? '40px' : undefined}
+            bottom={dropdownDir === DropdownDirection.up ? '40px' : undefined}
+            bg="white"
+            w="100%"
+            zIndex={99}
+          >
+            <FixedSizeList
+              {...getMenuProps({
+                ref: dropdownList,
+              })}
+              height={
+                isOpen ? getDropdownHeight(searchResults.current.length) : 0
+              }
+              itemSize={itemHeight}
+              itemCount={searchResults.current.length}
+              itemData={
+                {
+                  items: searchResults.current,
+                  highlightedIndex: highlightedIndex,
+                  getItemProps: getItemProps,
+                  selectedItem: selectedItem,
+                  topDropdownInset: dropdownInset,
+                } as ItemRendererProps['data']
+              }
+              innerElementType={innerElementType}
             >
-              <FixedSizeList
-                {...getMenuProps()}
-                ref={dropdownList}
-                height={
-                  isOpen ? getDropdownHeight(searchResults.current.length) : 0
-                }
-                itemSize={itemHeight}
-                itemCount={searchResults.current.length}
-                itemData={
-                  {
-                    items: searchResults.current,
-                    highlightedIndex: highlightedIndex,
-                    getItemProps: getItemProps,
-                    selectedItem: selectedItem,
-                    topDropdownInset: dropdownInset,
-                  } as ItemRendererProps['data']
-                }
-                innerElementType={innerElementType}
-              >
-                {ItemRenderer}
-              </FixedSizeList>
-            </Box>
-          ) : null}
+              {ItemRenderer}
+            </FixedSizeList>
+          </Box>
         </VStack>
       )}
     </Downshift>
