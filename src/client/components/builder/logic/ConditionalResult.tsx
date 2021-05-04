@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { isValidExpression, math } from '../../../core/evaluator'
-import update from 'immutability-helper'
+import update, { Spec } from 'immutability-helper'
 import {
   BiGitBranch,
   BiPlusCircle,
@@ -29,8 +29,13 @@ import { BuilderActionEnum, ConfigArrayEnum } from '../../../../util/enums'
 import { ExpressionInput } from './ExpressionInput'
 import { DefaultTooltip } from '../../common/DefaultTooltip'
 
+enum ConditionType {
+  And = 'AND',
+  Or = 'OR',
+}
+
 interface Condition {
-  type: 'AND' | 'OR'
+  type: ConditionType
   expression: string
 }
 
@@ -93,6 +98,7 @@ const toExpression = (state: IfelseState): string => {
 const InputComponent: OperationFieldComponent = ({ operation, index }) => {
   const { title, expression } = operation
   const { dispatch } = useCheckerContext()
+  const [conditionType, setConditionType] = useState(ConditionType.And)
   const [ifelseState, setIfelseState] = useState<IfelseState>(
     fromExpression(expression)
   )
@@ -135,7 +141,10 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
     )
   }
 
-  const updateCondition = (i: number, condition: Partial<Condition>) => {
+  const updateConditionExpression = (
+    i: number,
+    condition: Partial<Condition>
+  ) => {
     setIfelseState((s) =>
       update(s, {
         conditions: { [i]: { $merge: condition } },
@@ -143,9 +152,29 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
     )
   }
 
+  const updateAllConditionTypes = (conditionType: ConditionType) => {
+    // Set conditionType state
+    setConditionType(conditionType)
+
+    // Set all condition types in ifElseState
+    const updateAllConditionTypes: Record<string, Spec<Condition>> = {}
+
+    ifelseState.conditions.forEach((condition, conditionIndex) => {
+      updateAllConditionTypes[conditionIndex] = {
+        type: { $set: conditionType },
+      }
+    })
+
+    setIfelseState((s) =>
+      update(s, {
+        conditions: updateAllConditionTypes,
+      })
+    )
+  }
+
   const addCondition = () => {
     const emptyCondition: Condition = {
-      type: 'AND',
+      type: conditionType,
       expression: '',
     }
 
@@ -207,20 +236,32 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
         {ifelseState.conditions.map((cond, i) => (
           <HStack key={i}>
             <Menu>
-              <Box w="100px">
-                <MenuButton
-                  as={Button}
-                  variant="outline"
-                  rightIcon={<BiChevronDown />}
-                >
-                  {cond.type}
-                </MenuButton>
-              </Box>
+              {i === 0 ? (
+                <Box w="100px">
+                  <MenuButton
+                    as={Button}
+                    variant="outline"
+                    rightIcon={<BiChevronDown />}
+                  >
+                    {conditionType}
+                  </MenuButton>
+                </Box>
+              ) : (
+                <Box w="100px" pl={4}>
+                  <Heading as="h5" size="sm">
+                    {conditionType}
+                  </Heading>
+                </Box>
+              )}
               <MenuList>
-                <MenuItem onClick={() => updateCondition(i, { type: 'AND' })}>
+                <MenuItem
+                  onClick={() => updateAllConditionTypes(ConditionType.And)}
+                >
                   AND
                 </MenuItem>
-                <MenuItem onClick={() => updateCondition(i, { type: 'OR' })}>
+                <MenuItem
+                  onClick={() => updateAllConditionTypes(ConditionType.Or)}
+                >
                   OR
                 </MenuItem>
               </MenuList>
@@ -228,7 +269,9 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
             <ExpressionInput
               type="text"
               fontFamily="mono"
-              onChange={(expression) => updateCondition(i, { expression })}
+              onChange={(expression) =>
+                updateConditionExpression(i, { expression })
+              }
               value={cond.expression}
             />
             <HStack>
