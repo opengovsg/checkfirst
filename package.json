@@ -105,7 +105,7 @@
     "express-session": "^1.17.1",
     "framer-motion": "^4.1.11",
     "graphlib": "^2.1.8",
-    "helmet": "^4.5.0",
+    "helmet": "^4.6.0",
     "history": "^4.10.1",
     "immutability-helper": "^3.1.1",
     "joi": "^17.4.0",
