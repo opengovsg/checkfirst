@@ -6,10 +6,10 @@ import {
   FormLabel,
   FormHelperText,
   FormErrorMessage,
-  Select,
 } from '@chakra-ui/react'
 
 import { Field } from '../../../types/checker'
+import { Combobox } from '../common/Combobox'
 
 export const DropdownField: FC<Field> = ({
   id,
@@ -26,24 +26,30 @@ export const DropdownField: FC<Field> = ({
       control={control}
       rules={{ required: true }}
       defaultValue={`${options[0]?.value}`}
-      render={({ ref, value, onChange }, { invalid }) => (
+      // combobox controls its own value independently of the controller
+      render={({ ref, onChange }, { invalid }) => (
         <FormControl isInvalid={invalid}>
           <FormLabel sx={styles.label} htmlFor={id}>
             {title}
           </FormLabel>
           {description && <FormHelperText mb={4}>{description}</FormHelperText>}
-          <Select name={id} value={value} onChange={onChange}>
-            {options.map(
-              (
-                { value, label }: { value: number; label: string },
-                i: number
-              ) => (
-                <option key={i} ref={ref} value={`${value}`}>
-                  {label}
-                </option>
-              )
-            )}
-          </Select>
+          <Combobox
+            label={title}
+            onChange={onChange}
+            items={options.map((option) => ({
+              label: option.label,
+              value: option.value,
+            }))}
+            dropdownOptions={{
+              height: 224,
+              itemHeight: 48,
+              inset: 8,
+            }}
+            inputOptions={{
+              forwardRef: ref,
+              useClearButton: true,
+            }}
+          />
           <FormErrorMessage>Field is required</FormErrorMessage>
         </FormControl>
       )}
