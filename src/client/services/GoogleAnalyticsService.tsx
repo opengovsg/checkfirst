@@ -4,6 +4,7 @@ const GA_TRACKING_ID = process.env.GA_TRACKING_ID || ''
 
 const GA_USER_EVENTS = {
   SUBMIT: 'Submit',
+  BUILDER_HELP_BUTTON: 'Builder Help Button',
 }
 
 const initializeGA = (): void => {
