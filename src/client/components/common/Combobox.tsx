@@ -18,7 +18,7 @@ import Downshift, {
   StateChangeOptions,
 } from 'downshift'
 import { matchSorter, MatchSorterOptions } from 'match-sorter'
-import React, { FC, RefObject, useRef } from 'react'
+import React, { FC, RefObject, useRef, useState } from 'react'
 import { BiChevronDown, BiX } from 'react-icons/bi'
 import { FieldOption } from '../../../types/checker'
 
@@ -66,6 +66,7 @@ const ItemRenderer: FC<ItemRendererProps> = (props) => {
             // purely for adding padding insets to FixedStyleList
             // see https://codesandbox.io/s/react-window-list-padding-dg0pq
             top: `${parseFloat(`${props.style.top}`) + topDropdownInset}px`,
+            listStyle: 'none',
           },
           item,
           index: props.index,
@@ -122,16 +123,16 @@ export const Combobox: FC<ComboboxProps> = ({
   const itemHeight = dropdownOptions?.itemHeight || 40
   const dropdownInset = dropdownOptions?.inset || 0
 
-  // Avoid using refs for dropdown direction as it's only used
-  let dropdownDir = DropdownDirection.down
-
   // Note that inputRef is a merged ref as we may not want to
   // always provide a forward ref for the input
   const fallbackInputRef = useRef<HTMLInputElement>(null)
   const inputRef = inputOptions?.forwardRef || fallbackInputRef
 
-  const dropdownList = useRef<FixedSizeList & HTMLElement>(null)
-  const searchResults = useRef<ComboboxItem[]>(items)
+  const dropdownListRef = useRef<FixedSizeList & HTMLElement>(null)
+  const [searchResults, setSearchResults] = useState<ComboboxItem[]>(items)
+  const [dropdownDir, setDropdownDir] = useState<DropdownDirection>(
+    DropdownDirection.down
+  )
 
   /**
    * Calculates and returns array of the the items with the
@@ -140,20 +141,14 @@ export const Combobox: FC<ComboboxProps> = ({
    * @param inputValue The user query to search the dropdown with.
    * @returns An array of all matching items.
    */
-  const getTopSearchResults = (inputValue: string) => {
-    let searchResults: ComboboxItem[]
-    if (inputValue === '') {
-      searchResults = items
-    } else {
-      const matches = matchSorter(items, inputValue, {
-        keys: ['label'],
-        threshold: searchOptions?.threshold || matchSorter.rankings.CONTAINS,
-        ...searchOptions,
-      })
-      searchResults = matches
-    }
+  const updateSearchResults = (inputValue: string) => {
+    const newResults = matchSorter(items, inputValue, {
+      keys: ['label'],
+      threshold: searchOptions?.threshold || matchSorter.rankings.CONTAINS,
+      ...searchOptions,
+    })
 
-    return searchResults
+    setSearchResults(newResults)
   }
 
   /**
@@ -187,7 +182,7 @@ export const Combobox: FC<ComboboxProps> = ({
 
     if (
       inputRect.bottom +
-        getDropdownHeight(searchResults.current.length) +
+        getDropdownHeight(searchResults.length) +
         dropupThreshold <
       window.innerHeight
     ) {
@@ -204,8 +199,8 @@ export const Combobox: FC<ComboboxProps> = ({
     switch (changes.type) {
       case Downshift.stateChangeTypes.changeInput:
         // recalculate top search results and scroll back to top of list
-        searchResults.current = getTopSearchResults(changes.inputValue || '')
-        dropdownList.current?.scrollTo(0)
+        updateSearchResults(changes.inputValue || '')
+        dropdownListRef.current?.scrollTo(0)
         break
       case Downshift.stateChangeTypes.blurInput:
       case Downshift.stateChangeTypes.mouseUp:
@@ -281,7 +276,7 @@ export const Combobox: FC<ComboboxProps> = ({
                   inputOptions?.useClearButton ? '5px 0px 0px 5px' : '5px'
                 }
                 focusBorderColor={
-                  searchResults.current.length > 0 ? '#3182ce' : 'error.500'
+                  searchResults.length > 0 ? '#3182ce' : 'error.500'
                 }
                 {...getInputProps({
                   ...props,
@@ -289,14 +284,14 @@ export const Combobox: FC<ComboboxProps> = ({
                   onFocus: () => {
                     // reset field for new search
                     setState({ inputValue: '' })
-                    searchResults.current = getTopSearchResults('')
+                    updateSearchResults('')
 
                     // ensure that menu should be displayed within window bounds
-                    dropdownDir = calculateDropdownDirection()
+                    setDropdownDir(calculateDropdownDirection())
 
                     // finally, toggle menu open
                     openMenu()
-                    dropdownList.current?.scrollTo(0)
+                    dropdownListRef.current?.scrollTo(0)
                   },
                 })}
               />
@@ -330,16 +325,14 @@ export const Combobox: FC<ComboboxProps> = ({
           >
             <FixedSizeList
               {...getMenuProps({
-                ref: dropdownList,
+                ref: dropdownListRef,
               })}
-              height={
-                isOpen ? getDropdownHeight(searchResults.current.length) : 0
-              }
+              height={isOpen ? getDropdownHeight(searchResults.length) : 0}
               itemSize={itemHeight}
-              itemCount={searchResults.current.length}
+              itemCount={searchResults.length}
               itemData={
                 {
-                  items: searchResults.current,
+                  items: searchResults,
                   highlightedIndex: highlightedIndex,
                   getItemProps: getItemProps,
                   selectedItem: selectedItem,
