@@ -22,6 +22,14 @@ export const LandingNavbar: FC<{ login: () => void }> = ({ login }) => (
       <Box>
         <Link
           color="primary.500"
+          href="https://go.gov.sg/checkfirst-contact"
+          mr={6}
+          isExternal
+        >
+          Contact Us
+        </Link>
+        <Link
+          color="primary.500"
           href="https://guide.checkfirst.gov.sg"
           isExternal
         >
