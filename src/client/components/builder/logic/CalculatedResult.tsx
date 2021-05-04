@@ -1,11 +1,12 @@
 import React from 'react'
 import { BiCalculator } from 'react-icons/bi'
-import { VStack, HStack, Box, Text, Input } from '@chakra-ui/react'
+import { VStack, HStack, Box, Input } from '@chakra-ui/react'
 
 import { useCheckerContext } from '../../../contexts'
 import { createBuilderField, OperationFieldComponent } from '../BuilderField'
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../../util/enums'
 import { ExpressionInput } from './ExpressionInput'
+import { FormulaPreview } from './FormulaPreview'
 
 const InputComponent: OperationFieldComponent = ({ operation, index }) => {
   const { title, expression } = operation
@@ -63,15 +64,14 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
 }
 
 const PreviewComponent: OperationFieldComponent = ({ operation }) => {
-  const { title, expression } = operation
+  const { show, title, expression } = operation
   return (
-    <VStack align="stretch" w="50%" spacing={4}>
-      <HStack>
-        <BiCalculator fontSize="20px" />
-        <Text>{title}</Text>
-      </HStack>
-      <Text fontFamily="mono">{expression}</Text>
-    </VStack>
+    <FormulaPreview
+      show={show}
+      title={title}
+      expression={expression}
+      icon={BiCalculator}
+    />
   )
 }
 

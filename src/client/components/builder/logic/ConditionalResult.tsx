@@ -15,7 +15,6 @@ import {
   VStack,
   HStack,
   Box,
-  Text,
   Input,
   Menu,
   MenuButton,
@@ -28,6 +27,7 @@ import { createBuilderField, OperationFieldComponent } from '../BuilderField'
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../../util/enums'
 import { ExpressionInput } from './ExpressionInput'
 import { DefaultTooltip } from '../../common/DefaultTooltip'
+import { FormulaPreview } from './FormulaPreview'
 
 interface Condition {
   type: 'AND' | 'OR'
@@ -290,15 +290,14 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
 }
 
 const PreviewComponent: OperationFieldComponent = ({ operation }) => {
-  const { title, expression } = operation
+  const { show, title, expression } = operation
   return (
-    <VStack align="stretch" w="100%" spacing={4}>
-      <HStack>
-        <BiGitBranch fontSize="20px" />
-        <Text>{title}</Text>
-      </HStack>
-      <Text fontFamily="mono">{expression}</Text>
-    </VStack>
+    <FormulaPreview
+      show={show}
+      title={title}
+      expression={expression}
+      icon={BiGitBranch}
+    />
   )
 }
 
