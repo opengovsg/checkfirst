@@ -98,10 +98,15 @@ const toExpression = (state: IfelseState): string => {
 const InputComponent: OperationFieldComponent = ({ operation, index }) => {
   const { title, expression } = operation
   const { dispatch } = useCheckerContext()
-  const [conditionType, setConditionType] = useState(ConditionType.And)
   const [ifelseState, setIfelseState] = useState<IfelseState>(
     fromExpression(expression)
   )
+  // Retrieve condition type from ifelseState if there exist conditions; else use AND type as default
+  const initialConditionType =
+    ifelseState.conditions.length > 0
+      ? ifelseState.conditions[0].type
+      : ConditionType.And
+  const [conditionType, setConditionType] = useState(initialConditionType)
 
   useEffect(() => {
     const updatedExpr = toExpression(ifelseState)
