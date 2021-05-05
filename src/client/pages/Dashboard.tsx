@@ -44,9 +44,11 @@ const EmptyDashboardBody: FC = () => (
       </Heading>
       <Text>
         Start from scratch or use one of our templates. <br />
-        <Link href={GET_STARTED_URL} isExternal color="#1B3C87">
-          Learn how to get started
-        </Link>
+        <Center>
+          <Link href={GET_STARTED_URL} isExternal color="#1B3C87">
+            Learn how to get started
+          </Link>
+        </Center>
       </Text>
       <Image
         flex={1}
