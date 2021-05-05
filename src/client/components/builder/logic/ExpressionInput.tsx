@@ -128,14 +128,12 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
           state?.inputValue,
           changes?.inputValue
         )
-        onChange(newInputValue)
         return {
           ...changes,
           inputValue: newInputValue,
         }
       }
       case Downshift.stateChangeTypes.changeInput:
-        onChange(changes.inputValue || '')
         return {
           ...changes,
         }
@@ -170,6 +168,9 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
       onSelect={() => {
         // updates the cursor after onSelect is triggered
         inputRef.current?.setSelectionRange(caretPos.current, caretPos.current)
+      }}
+      onInputValueChange={(inputValue) => {
+        onChange(inputValue)
       }}
       itemToString={(item) => item?.id || ''}
     >
