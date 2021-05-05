@@ -35,7 +35,7 @@
     "@types/helmet": "^4.0.0",
     "@types/jest": "^26.0.23",
     "@types/joi": "^17.2.3",
-    "@types/mathjs": "^6.0.11",
+    "@types/mathjs": "^6.0.12",
     "@types/morgan": "^1.9.2",
     "@types/node": "^15.0.1",
     "@types/nodemailer": "^6.4.1",
