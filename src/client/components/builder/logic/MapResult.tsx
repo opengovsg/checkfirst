@@ -20,6 +20,7 @@ import {
 import { useCheckerContext } from '../../../contexts'
 import { createBuilderField, OperationFieldComponent } from '../BuilderField'
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../../util/enums'
+import { FormulaPreview } from './FormulaPreview'
 
 interface MapState {
   tableId: string
@@ -211,15 +212,14 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
 }
 
 const PreviewComponent: OperationFieldComponent = ({ operation }) => {
-  const { title, expression } = operation
+  const { show, title, expression } = operation
   return (
-    <VStack align="stretch" w="100%" spacing={4}>
-      <HStack>
-        <BiGitCompare fontSize="20px" />
-        <Text>{title}</Text>
-      </HStack>
-      <Text fontFamily="mono">{expression}</Text>
-    </VStack>
+    <FormulaPreview
+      show={show}
+      title={title}
+      expression={expression}
+      icon={BiGitCompare}
+    />
   )
 }
 

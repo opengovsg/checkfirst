@@ -13,9 +13,7 @@ const {
 } = GoogleAnalyticsService
 
 interface GoogleAnalyticsContextProps {
-  GA_USER_EVENTS: {
-    SUBMIT: string
-  }
+  GA_USER_EVENTS: typeof GA_USER_EVENTS
   setGAUserId: (userId: number | null) => void
   sendPageView: (path: string) => void
   sendUserEvent: (action: string, label?: string, value?: number) => void

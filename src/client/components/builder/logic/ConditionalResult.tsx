@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { isValidExpression, math } from '../../../core/evaluator'
-import update from 'immutability-helper'
+import update, { Spec } from 'immutability-helper'
 import {
   BiGitBranch,
   BiPlusCircle,
@@ -15,7 +15,6 @@ import {
   VStack,
   HStack,
   Box,
-  Text,
   Input,
   Menu,
   MenuButton,
@@ -28,9 +27,15 @@ import { createBuilderField, OperationFieldComponent } from '../BuilderField'
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../../util/enums'
 import { ExpressionInput } from './ExpressionInput'
 import { DefaultTooltip } from '../../common/DefaultTooltip'
+import { FormulaPreview } from './FormulaPreview'
+
+enum ConditionType {
+  And = 'AND',
+  Or = 'OR',
+}
 
 interface Condition {
-  type: 'AND' | 'OR'
+  type: ConditionType
   expression: string
 }
 
@@ -96,6 +101,12 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
   const [ifelseState, setIfelseState] = useState<IfelseState>(
     fromExpression(expression)
   )
+  // Retrieve condition type from ifelseState if there exist conditions; else use AND type as default
+  const initialConditionType =
+    ifelseState.conditions.length > 0
+      ? ifelseState.conditions[0].type
+      : ConditionType.And
+  const [conditionType, setConditionType] = useState(initialConditionType)
 
   useEffect(() => {
     const updatedExpr = toExpression(ifelseState)
@@ -135,7 +146,10 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
     )
   }
 
-  const updateCondition = (i: number, condition: Partial<Condition>) => {
+  const updateConditionExpression = (
+    i: number,
+    condition: Partial<Condition>
+  ) => {
     setIfelseState((s) =>
       update(s, {
         conditions: { [i]: { $merge: condition } },
@@ -143,9 +157,29 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
     )
   }
 
+  const updateAllConditionTypes = (conditionType: ConditionType) => {
+    // Set conditionType state
+    setConditionType(conditionType)
+
+    // Set all condition types in ifElseState
+    const updateAllConditionTypes: Record<string, Spec<Condition>> = {}
+
+    ifelseState.conditions.forEach((condition, conditionIndex) => {
+      updateAllConditionTypes[conditionIndex] = {
+        type: { $set: conditionType },
+      }
+    })
+
+    setIfelseState((s) =>
+      update(s, {
+        conditions: updateAllConditionTypes,
+      })
+    )
+  }
+
   const addCondition = () => {
     const emptyCondition: Condition = {
-      type: 'AND',
+      type: conditionType,
       expression: '',
     }
 
@@ -207,20 +241,32 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
         {ifelseState.conditions.map((cond, i) => (
           <HStack key={i}>
             <Menu>
-              <Box w="100px">
-                <MenuButton
-                  as={Button}
-                  variant="outline"
-                  rightIcon={<BiChevronDown />}
-                >
-                  {cond.type}
-                </MenuButton>
-              </Box>
+              {i === 0 ? (
+                <Box w="100px">
+                  <MenuButton
+                    as={Button}
+                    variant="outline"
+                    rightIcon={<BiChevronDown />}
+                  >
+                    {conditionType}
+                  </MenuButton>
+                </Box>
+              ) : (
+                <Box w="100px" pl={4}>
+                  <Heading as="h5" size="sm">
+                    {conditionType}
+                  </Heading>
+                </Box>
+              )}
               <MenuList>
-                <MenuItem onClick={() => updateCondition(i, { type: 'AND' })}>
+                <MenuItem
+                  onClick={() => updateAllConditionTypes(ConditionType.And)}
+                >
                   AND
                 </MenuItem>
-                <MenuItem onClick={() => updateCondition(i, { type: 'OR' })}>
+                <MenuItem
+                  onClick={() => updateAllConditionTypes(ConditionType.Or)}
+                >
                   OR
                 </MenuItem>
               </MenuList>
@@ -228,7 +274,9 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
             <ExpressionInput
               type="text"
               fontFamily="mono"
-              onChange={(expression) => updateCondition(i, { expression })}
+              onChange={(expression) =>
+                updateConditionExpression(i, { expression })
+              }
               value={cond.expression}
             />
             <HStack>
@@ -290,15 +338,14 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
 }
 
 const PreviewComponent: OperationFieldComponent = ({ operation }) => {
-  const { title, expression } = operation
+  const { show, title, expression } = operation
   return (
-    <VStack align="stretch" w="100%" spacing={4}>
-      <HStack>
-        <BiGitBranch fontSize="20px" />
-        <Text>{title}</Text>
-      </HStack>
-      <Text fontFamily="mono">{expression}</Text>
-    </VStack>
+    <FormulaPreview
+      show={show}
+      title={title}
+      expression={expression}
+      icon={BiGitBranch}
+    />
   )
 }
 
