@@ -25,6 +25,7 @@ import {
 import { useCheckerContext } from '../../contexts'
 
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../util/enums'
+import useActiveIndex from '../../hooks/use-active-index'
 
 // Images
 import emptyQuestionsTabImage from '../../assets/states/empty-questions.svg'
@@ -98,12 +99,12 @@ const generateDefaultDateField = (id: number): checker.Field => ({
 export const TITLE_FIELD_ID = 'TITLE'
 
 export const QuestionsTab: FC = () => {
-  const [activeIndex, setActiveIndex] = useState<number>(-1)
+  const { config, dispatch } = useCheckerContext()
+  const { title, description, fields } = config
+
+  const [activeIndex, setActiveIndex] = useActiveIndex(fields)
   const [offsetTop, setOffsetTop] = useState<number>(16)
   const [nextUniqueId, setNextUniqueId] = useState<number>(1)
-  const { config, dispatch } = useCheckerContext()
-
-  const { title, description, fields } = config
 
   useEffect(() => {
     let highestIndex = 0

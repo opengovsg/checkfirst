@@ -27,6 +27,7 @@ import { MapTable } from './constants'
 import { useCheckerContext } from '../../contexts'
 
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../util/enums'
+import useActiveIndex from '../../hooks/use-active-index'
 
 // Images
 import emptyConstantsTabImage from '../../assets/states/empty-constants.svg'
@@ -40,12 +41,12 @@ const generateDefaultMap = (id: number): checker.Constant => ({
 })
 
 export const ConstantsTab: FC = () => {
-  const [activeIndex, setActiveIndex] = useState<number>(0)
+  const { config, dispatch } = useCheckerContext()
+  const { constants } = config
+
+  const [activeIndex, setActiveIndex] = useActiveIndex(constants)
   const [offsetTop, setOffsetTop] = useState<number>(16)
   const [nextUniqueId, setNextUniqueId] = useState<number>(1)
-  const { config, dispatch } = useCheckerContext()
-
-  const { constants } = config
 
   useEffect(() => {
     let highestIndex = 0

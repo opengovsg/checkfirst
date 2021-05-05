@@ -34,6 +34,7 @@ import {
   DateResult,
 } from '../builder/logic'
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../util/enums'
+import useActiveIndex from '../../hooks/use-active-index'
 
 // Images
 import emptyLogicTabImage from '../../assets/states/empty-logic.svg'
@@ -73,10 +74,10 @@ const generateDefaultDateOp = (id: number): checker.Operation => ({
 })
 
 export const LogicTab: FC = () => {
-  const [activeIndex, setActiveIndex] = useState<number>(0)
+  const { dispatch, config } = useCheckerContext()
+  const [activeIndex, setActiveIndex] = useActiveIndex(config.operations)
   const [offsetTop, setOffsetTop] = useState<number>(16)
   const [nextUniqueId, setNextUniqueId] = useState<number>(1)
-  const { dispatch, config } = useCheckerContext()
 
   useEffect(() => {
     let highestIndex = 0
