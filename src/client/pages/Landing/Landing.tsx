@@ -36,3 +36,5 @@ export const Landing: FC = () => {
     </>
   )
 }
+
+export default Landing

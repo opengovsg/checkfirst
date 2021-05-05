@@ -58,3 +58,5 @@ export const Checker: FC = () => {
     </Flex>
   )
 }
+
+export default Checker
