@@ -31,7 +31,7 @@ import useActiveIndex from '../../hooks/use-active-index'
 import emptyQuestionsTabImage from '../../assets/states/empty-questions.svg'
 
 const TITLE_FIELD_INDEX = -1
-const QUESTIONS_GUIDE_URL = 'https://go.gov.sg/checkfirst-questions'
+const QUESTIONS_GUIDE_URL = 'https://go.gov.sg/checkfirst-formbuilder'
 
 const EmptyQuestionsTabBody: FC = () => (
   <Center py={16}>
