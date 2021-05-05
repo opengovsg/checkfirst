@@ -159,7 +159,7 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({ onClose }) => {
               <ModalBody>
                 <VStack spacing={4}>
                   <FormControl isInvalid={!!errors.title}>
-                    <FormLabel htmlFor="id">Title</FormLabel>
+                    <FormLabel htmlFor="id">Checker title</FormLabel>
                     <Input
                       isDisabled={isCheckerLoading || isTemplateLoading}
                       name="title"
@@ -169,7 +169,7 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({ onClose }) => {
                   </FormControl>
                   <FormControl>
                     <FormLabel htmlFor="description">
-                      Description{' '}
+                      Checker description{' '}
                       <Text as="span" color="grey">
                         (Optional)
                       </Text>
