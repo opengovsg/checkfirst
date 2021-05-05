@@ -24,6 +24,7 @@ import {
   FormErrorMessage,
   VStack,
   HStack,
+  Text,
 } from '@chakra-ui/react'
 import { useForm } from 'react-hook-form'
 import { v4 as uuidv4 } from 'uuid'
@@ -167,7 +168,12 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({ onClose }) => {
                     <FormErrorMessage>{errors.title?.message}</FormErrorMessage>
                   </FormControl>
                   <FormControl>
-                    <FormLabel htmlFor="description">Description</FormLabel>
+                    <FormLabel htmlFor="description">
+                      Description{' '}
+                      <Text as="span" color="grey">
+                        (Optional)
+                      </Text>
+                    </FormLabel>
                     <Textarea
                       isDisabled={isCheckerLoading || isTemplateLoading}
                       name="description"
