@@ -17,6 +17,7 @@ import '../../styles/date-picker.css'
 
 import { Field } from '../../../types/checker'
 import { BiCalendar } from 'react-icons/bi'
+import VirtualControllerInput from './VirtualControllerInput'
 
 export const DateField: FC<Field> = ({ id, title, description }) => {
   const styles = useStyles()
@@ -33,11 +34,11 @@ export const DateField: FC<Field> = ({ id, title, description }) => {
           <FormLabel sx={styles.label} htmlFor={id}>
             {title}
           </FormLabel>
+          <VirtualControllerInput ref={ref} />
           {description && <FormHelperText mb={4}>{description}</FormHelperText>}
           <Flatpickr
             onChange={([item]) => onChange(item)}
             value={value}
-            ref={ref}
             options={{
               dateFormat: 'j M Y',
             }}
