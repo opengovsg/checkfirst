@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { BiArrowBack, BiShow } from 'react-icons/bi'
+import { BiArrowBack, BiCheck, BiShow } from 'react-icons/bi'
 import { getApiErrorMessage } from '../../api'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import { Redirect } from 'react-router-dom'
@@ -188,12 +188,13 @@ export const Navbar: FC = () => {
         </Link>
         <Button
           variant="outline"
+          leftIcon={!isChanged ? <BiCheck size="24px" /> : undefined}
           colorScheme="primary"
           onClick={handleSave}
           disabled={!isChanged}
           isLoading={save.isLoading}
         >
-          Save Draft
+          {isChanged ? 'Save Draft' : 'Saved'}
         </Button>
         <Button
           variant="solid"
