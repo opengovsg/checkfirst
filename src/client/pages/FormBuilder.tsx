@@ -19,8 +19,10 @@ const WithNavBar: FC = ({ children }) => (
   <Flex direction="column" minH="100vh" bgColor="#F4F6F9">
     <Navbar />
     <HelpButton />
-    <Container maxW="756px" px={0} mt="80px">
-      {children}
+    <Container h="calc(100vh - 80px)" overflow="auto" mt="80px" maxW="100vw">
+      <Container maxW="756px" px={0}>
+        {children}
+      </Container>
     </Container>
   </Flex>
 )
@@ -28,8 +30,10 @@ const WithNavBar: FC = ({ children }) => (
 const WithPreviewNavBar: FC = ({ children }) => (
   <Flex direction="column" minH="100vh" bgColor="#F4F6F9">
     <PreviewNavBar />
-    <Container maxW="756px" px={0} mt="80px">
-      {children}
+    <Container h="calc(100vh - 80px)" overflow="auto" mt="80px" maxW="100vw">
+      <Container maxW="756px" px={0}>
+        {children}
+      </Container>
     </Container>
   </Flex>
 )
