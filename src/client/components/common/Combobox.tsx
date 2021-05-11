@@ -18,7 +18,7 @@ import Downshift, {
   StateChangeOptions,
 } from 'downshift'
 import { matchSorter, MatchSorterOptions } from 'match-sorter'
-import React, { FC, RefObject, useRef, useState } from 'react'
+import React, { FC, RefCallback, useRef, useState } from 'react'
 import { BiChevronDown, BiX } from 'react-icons/bi'
 import { FieldOption } from '../../../types/checker'
 
@@ -94,7 +94,7 @@ interface ComboboxProps extends Omit<InputProps, 'onChange' | 'label'> {
   }
   searchOptions?: MatchSorterOptions<ComboboxItem>
   inputOptions?: {
-    forwardRef?: RefObject<HTMLInputElement>
+    forwardRef?: RefCallback<HTMLInputElement>
     useClearButton?: boolean
   }
   onChange: (value: unknown) => void
@@ -119,14 +119,20 @@ export const Combobox: FC<ComboboxProps> = ({
   onChange,
   ...props
 }) => {
+  let input: HTMLInputElement
+  const inputRef = (instance: HTMLInputElement) => {
+    if (instance) {
+      input = instance
+
+      if (inputOptions?.forwardRef) {
+        inputOptions?.forwardRef(instance)
+      }
+    }
+  }
+
   const dropdownHeight = dropdownOptions?.height || 200
   const itemHeight = dropdownOptions?.itemHeight || 40
   const dropdownInset = dropdownOptions?.inset || 0
-
-  // Note that inputRef is a merged ref as we may not want to
-  // always provide a forward ref for the input
-  const fallbackInputRef = useRef<HTMLInputElement>(null)
-  const inputRef = inputOptions?.forwardRef || fallbackInputRef
 
   const dropdownListRef = useRef<FixedSizeList & HTMLElement>(null)
   const [searchResults, setSearchResults] = useState<ComboboxItem[]>(items)
@@ -173,11 +179,11 @@ export const Combobox: FC<ComboboxProps> = ({
    * @returns The direction the dropdown should be displayed.
    */
   const calculateDropdownDirection = () => {
-    if (!inputRef.current) {
+    if (!input) {
       return DropdownDirection.down
     }
 
-    const inputRect = inputRef.current.getBoundingClientRect()
+    const inputRect = input.getBoundingClientRect()
     const dropupThreshold = dropdownOptions?.dropupThreshold || 30
 
     if (
@@ -306,7 +312,7 @@ export const Combobox: FC<ComboboxProps> = ({
                   updateSearchResults('')
 
                   // refocus on input field
-                  inputRef.current?.focus()
+                  input.focus()
                 }}
               />
             ) : null}

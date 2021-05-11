@@ -26,7 +26,10 @@ export const CheckboxField: FC<Field> = ({
       name={id}
       control={control}
       defaultValue={[]}
-      render={({ ref, value, onChange }, { invalid }) => (
+      render={({
+        field: { ref, value, onChange },
+        fieldState: { invalid },
+      }) => (
         <FormControl isInvalid={invalid}>
           <FormLabel sx={styles.label} htmlFor={id}>
             {title}
