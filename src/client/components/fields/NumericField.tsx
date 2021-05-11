@@ -22,7 +22,10 @@ export const NumericField: FC<Field> = ({ id, title, description }) => {
       control={control}
       defaultValue={0}
       rules={{ required: true }}
-      render={({ ref, onChange, value }, { invalid }) => (
+      render={({
+        field: { ref, onChange, value },
+        fieldState: { invalid },
+      }) => (
         <FormControl isInvalid={invalid}>
           <FormLabel sx={styles.label} htmlFor={id}>
             {title}
