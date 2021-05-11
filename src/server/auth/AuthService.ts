@@ -41,10 +41,15 @@ export class AuthService {
 
   private secretFrom: (email: string) => string = (email) => this.secret + email
 
+  private formatEmail: (email: string) => string = (email) =>
+    email.toLowerCase()
+
   sendOTP: (email: string, ip: string) => Promise<SentMessageInfo> = async (
     email,
     ip
   ) => {
+    email = this.formatEmail(email)
+
     if (!this.emailValidator.match(email)) {
       throw new Error('Invalid email')
     }
@@ -72,6 +77,8 @@ export class AuthService {
     email: string,
     token: string
   ) => Promise<User | undefined> = async (email, token) => {
+    email = this.formatEmail(email)
+
     const isVerified = this.totp.verify({
       secret: this.secretFrom(email),
       token,
