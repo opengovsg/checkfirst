@@ -197,18 +197,13 @@ export const Combobox: FC<ComboboxProps> = ({
     changes: StateChangeOptions<ComboboxItem>
   ) => {
     switch (changes.type) {
-      case Downshift.stateChangeTypes.changeInput:
-        // recalculate top search results and scroll back to top of list
-        updateSearchResults(changes.inputValue || '')
-        dropdownListRef.current?.scrollTo(0)
-        break
       case Downshift.stateChangeTypes.blurInput:
       case Downshift.stateChangeTypes.mouseUp:
         // reset inputValue to last valid input value
         if (!changes.inputValue) {
           return {
             ...changes,
-            inputValue: state.selectedItem?.label || items[0]?.label || '',
+            inputValue: state.selectedItem?.label || '',
           }
         }
     }
@@ -230,15 +225,16 @@ export const Combobox: FC<ComboboxProps> = ({
 
   return (
     <Downshift
-      initialInputValue={items[0]?.label || ''}
-      initialSelectedItem={items[0] || null}
+      initialHighlightedIndex={0}
       stateReducer={stateReducer}
       itemToString={(item) => item?.label || ''}
       onChange={(item) => {
-        if (item) {
-          onChange(item.value)
-        }
-        inputRef.current?.blur()
+        onChange(`${item ? item.value : ''}`)
+      }}
+      onInputValueChange={(inputValue) => {
+        // recalculate top search results and scroll back to top of list
+        updateSearchResults(inputValue)
+        dropdownListRef.current?.scrollTo(0)
       }}
       defaultHighlightedIndex={0}
     >
@@ -272,6 +268,7 @@ export const Combobox: FC<ComboboxProps> = ({
             </label>
             <InputGroup>
               <Input
+                zIndex={100}
                 borderRadius={
                   inputOptions?.useClearButton ? '5px 0px 0px 5px' : '5px'
                 }
@@ -280,12 +277,9 @@ export const Combobox: FC<ComboboxProps> = ({
                 }
                 {...getInputProps({
                   ...props,
+                  placeholder: 'Select an option',
                   ref: inputRef,
                   onFocus: () => {
-                    // reset field for new search
-                    setState({ inputValue: '' })
-                    updateSearchResults('')
-
                     // ensure that menu should be displayed within window bounds
                     setDropdownDir(calculateDropdownDirection())
 
@@ -307,7 +301,11 @@ export const Combobox: FC<ComboboxProps> = ({
                 borderRadius="0px 5px 5px 0px"
                 icon={<BiX size="16px" />}
                 onClick={() => {
-                  // runs input onFocus clear/reset functionality
+                  // reset field for new search
+                  setState({ inputValue: '', selectedItem: null })
+                  updateSearchResults('')
+
+                  // refocus on input field
                   inputRef.current?.focus()
                 }}
               />

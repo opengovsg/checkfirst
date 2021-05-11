@@ -25,7 +25,7 @@ export const DropdownField: FC<Field> = ({
       name={id}
       control={control}
       rules={{ required: true }}
-      defaultValue={`${options[0]?.value}`}
+      defaultValue={''}
       // combobox controls its own value independently of the controller
       render={({ ref, onChange }, { invalid }) => (
         <FormControl isInvalid={invalid}>
