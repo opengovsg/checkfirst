@@ -54,10 +54,11 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({ onClose }) => {
   })
   const { isValid, errors } = formState
 
-  const { checkerId, templateId } = useParams<{
-    checkerId?: string
-    templateId?: string
-  }>()
+  const { checkerId, templateId } =
+    useParams<{
+      checkerId?: string
+      templateId?: string
+    }>()
 
   const {
     isLoading: isCheckerLoading,

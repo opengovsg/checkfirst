@@ -21,9 +21,11 @@ import Logo from '../assets/checkfirst-logo.svg'
 
 export const Checker: FC = () => {
   const { id } = useParams<{ id: string }>()
-  const { isLoading, isError, data: config } = useQuery(['checker', id], () =>
-    CheckerService.getPublishedChecker(id)
-  )
+  const {
+    isLoading,
+    isError,
+    data: config,
+  } = useQuery(['checker', id], () => CheckerService.getPublishedChecker(id))
 
   return (
     <Flex direction="column" bg="neutral.50" minH="100vh">
