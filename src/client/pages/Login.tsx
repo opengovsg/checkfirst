@@ -43,3 +43,5 @@ export const Login: FC = () => {
     </Flex>
   )
 }
+
+export default Login

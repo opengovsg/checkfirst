@@ -78,3 +78,5 @@ export const FormBuilder: FC = () => {
     </Switch>
   )
 }
+
+export default FormBuilder
