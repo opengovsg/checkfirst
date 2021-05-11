@@ -73,22 +73,20 @@ export class AuthService {
     return this.mailer.sendMail(mail)
   }
 
-  verifyOTP: (
-    email: string,
-    token: string
-  ) => Promise<User | undefined> = async (email, token) => {
-    email = this.formatEmail(email)
+  verifyOTP: (email: string, token: string) => Promise<User | undefined> =
+    async (email, token) => {
+      email = this.formatEmail(email)
 
-    const isVerified = this.totp.verify({
-      secret: this.secretFrom(email),
-      token,
-    })
-    const [user] = isVerified
-      ? await this.UserModel.findOrCreate({ where: { email } })
-      : []
+      const isVerified = this.totp.verify({
+        secret: this.secretFrom(email),
+        token,
+      })
+      const [user] = isVerified
+        ? await this.UserModel.findOrCreate({ where: { email } })
+        : []
 
-    return user
-  }
+      return user
+    }
 }
 
 export default AuthService

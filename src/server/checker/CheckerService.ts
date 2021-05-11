@@ -29,7 +29,7 @@ export class CheckerService {
       this.sequelize.getDialect() === 'sqlite' &&
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      ((this.sequelize as unknown) as Record<string, unknown>).options.storage
+      (this.sequelize as unknown as Record<string, unknown>).options.storage
   }
 
   create: (checker: Checker, user: User) => Promise<boolean> = async (
@@ -105,46 +105,43 @@ export class CheckerService {
     return result
   }
 
-  publish: (
-    id: string,
-    checker: Checker,
-    user: User
-  ) => Promise<Checker> = async (id, checker, user) => {
-    const transaction = await this.sequelize.transaction()
-    const transactionOptions = this.isSqliteFile ? {} : { transaction }
+  publish: (id: string, checker: Checker, user: User) => Promise<Checker> =
+    async (id, checker, user) => {
+      const transaction = await this.sequelize.transaction()
+      const transactionOptions = this.isSqliteFile ? {} : { transaction }
 
-    try {
-      const existingChecker = await this.findAndCheckAuth(id, user)
-      if (!existingChecker) throw new Error(`Checker ${id} not found`)
+      try {
+        const existingChecker = await this.findAndCheckAuth(id, user)
+        if (!existingChecker) throw new Error(`Checker ${id} not found`)
 
-      // Perform update in checkers and create in publishedCheckers with 1 transaction
-      await this.CheckerModel.update(checker, {
-        where: { id },
-        ...transactionOptions,
-      })
+        // Perform update in checkers and create in publishedCheckers with 1 transaction
+        await this.CheckerModel.update(checker, {
+          where: { id },
+          ...transactionOptions,
+        })
 
-      const createPublishedChecker: CreatePublishedCheckerDTO = {
-        title: checker.title,
-        description: checker.description,
-        fields: checker.fields,
-        constants: checker.constants,
-        operations: checker.operations,
-        displays: checker.displays,
-        checkerId: id, // we want to make sure that we are publishing the right checker
+        const createPublishedChecker: CreatePublishedCheckerDTO = {
+          title: checker.title,
+          description: checker.description,
+          fields: checker.fields,
+          constants: checker.constants,
+          operations: checker.operations,
+          displays: checker.displays,
+          checkerId: id, // we want to make sure that we are publishing the right checker
+        }
+
+        await this.PublishedCheckerModel.create(createPublishedChecker, {
+          ...transactionOptions,
+        })
+
+        await transaction.commit()
+        return checker
+      } catch (error) {
+        this.logger?.error(error)
+        await transaction.rollback()
+        throw error
       }
-
-      await this.PublishedCheckerModel.create(createPublishedChecker, {
-        ...transactionOptions,
-      })
-
-      await transaction.commit()
-      return checker
-    } catch (error) {
-      this.logger?.error(error)
-      await transaction.rollback()
-      throw error
     }
-  }
 
   private findAndCheckAuth: (
     id: string,
