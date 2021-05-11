@@ -94,7 +94,7 @@
     "@loadable/component": "^5.14.1",
     "@sentry/node": "^6.3.6",
     "@sentry/react": "^6.3.5",
-    "@sentry/tracing": "^6.3.5",
+    "@sentry/tracing": "^6.3.6",
     "ace-builds": "^1.4.12",
     "aws-sdk": "^2.904.0",
     "axios": "^0.21.1",
