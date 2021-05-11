@@ -28,7 +28,11 @@ export const OtpForm: FC<OtpFormProps> = ({ onSuccess }) => {
   const onSubmit = (data: { email: string }) => {
     sendOtp.reset()
     const { email } = data
-    sendOtp.mutate(email)
+
+    // format email to database expectations
+    const formattedEmail = email.toLowerCase()
+
+    sendOtp.mutate(formattedEmail)
   }
 
   const hasError = () => errors.email || sendOtp.isError
