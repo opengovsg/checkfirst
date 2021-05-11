@@ -197,13 +197,6 @@ export const Combobox: FC<ComboboxProps> = ({
     changes: StateChangeOptions<ComboboxItem>
   ) => {
     switch (changes.type) {
-      case Downshift.stateChangeTypes.clickItem:
-      case Downshift.stateChangeTypes.keyDownEnter:
-      case Downshift.stateChangeTypes.changeInput:
-        // recalculate top search results and scroll back to top of list
-        updateSearchResults(changes.inputValue || '')
-        dropdownListRef.current?.scrollTo(0)
-        break
       case Downshift.stateChangeTypes.blurInput:
       case Downshift.stateChangeTypes.mouseUp:
         // reset inputValue to last valid input value
@@ -237,6 +230,11 @@ export const Combobox: FC<ComboboxProps> = ({
       itemToString={(item) => item?.label || ''}
       onChange={(item) => {
         onChange(`${item ? item.value : ''}`)
+      }}
+      onInputValueChange={(inputValue) => {
+        // recalculate top search results and scroll back to top of list
+        updateSearchResults(inputValue)
+        dropdownListRef.current?.scrollTo(0)
       }}
       defaultHighlightedIndex={0}
     >
