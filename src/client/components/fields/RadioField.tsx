@@ -28,7 +28,10 @@ export const RadioField: FC<Field> = ({ id, title, description, options }) => {
           <FormLabel sx={styles.label} htmlFor={id}>
             {title}
           </FormLabel>
-          <VirtualControllerInput ref={ref} />
+          <VirtualControllerInput
+            ref={ref}
+            style={{ scrollMarginTop: '88px' }}
+          />
           {description && <FormHelperText mb={4}>{description}</FormHelperText>}
           <RadioGroup name={id} value={value} onChange={onChange}>
             <VStack align="stretch" spacing={4}>

@@ -32,7 +32,10 @@ export const CheckboxField: FC<Field> = ({
           <FormLabel sx={styles.label} htmlFor={id}>
             {title}
           </FormLabel>
-          <VirtualControllerInput ref={ref} />
+          <VirtualControllerInput
+            ref={ref}
+            style={{ scrollMarginTop: '88px' }}
+          />
           {description && <FormHelperText mb={4}>{description}</FormHelperText>}
           <CheckboxGroup onChange={onChange} value={value}>
             <VStack align="stretch" spacing={4}>

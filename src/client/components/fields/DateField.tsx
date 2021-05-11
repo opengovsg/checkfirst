@@ -34,7 +34,10 @@ export const DateField: FC<Field> = ({ id, title, description }) => {
           <FormLabel sx={styles.label} htmlFor={id}>
             {title}
           </FormLabel>
-          <VirtualControllerInput ref={ref} />
+          <VirtualControllerInput
+            ref={ref}
+            style={{ scrollMarginTop: '88px' }}
+          />
           {description && <FormHelperText mb={4}>{description}</FormHelperText>}
           <Flatpickr
             onChange={([item]) => onChange(item)}
