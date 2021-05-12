@@ -25,6 +25,12 @@ import * as checker from './../../types/checker'
 import { evaluate } from './../core/evaluator'
 import { unit, Unit } from 'mathjs'
 import { useGoogleAnalytics } from '../contexts'
+
+// polyfill for browsers that don't support smooth scroling
+if (!('scrollBehavior' in document.documentElement.style)) {
+  import('scroll-behavior-polyfill')
+}
+
 interface CheckerProps {
   config: checker.Checker
 }
