@@ -20,7 +20,11 @@ interface OtpFormProps {
 }
 
 export const OtpForm: FC<OtpFormProps> = ({ onSuccess }) => {
-  const { register, handleSubmit, errors } = useForm()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm()
   const sendOtp = useMutation(AuthService.getOtp, {
     onSuccess: (_, email) => onSuccess(email),
   })
@@ -28,7 +32,11 @@ export const OtpForm: FC<OtpFormProps> = ({ onSuccess }) => {
   const onSubmit = (data: { email: string }) => {
     sendOtp.reset()
     const { email } = data
-    sendOtp.mutate(email)
+
+    // format email to database expectations
+    const formattedEmail = email.toLowerCase()
+
+    sendOtp.mutate(formattedEmail)
   }
 
   const hasError = () => errors.email || sendOtp.isError
@@ -52,8 +60,7 @@ export const OtpForm: FC<OtpFormProps> = ({ onSuccess }) => {
           <Input
             h="48px"
             type="email"
-            name="email"
-            ref={register({ required: true })}
+            {...register('email', { required: true })}
             placeholder="e.g. jane@open.gov.sg"
           />
           {hasError() && (

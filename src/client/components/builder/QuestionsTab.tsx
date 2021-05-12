@@ -1,4 +1,5 @@
 import React, { FC, useEffect, useState } from 'react'
+import { noop } from 'lodash'
 import {
   BiHash,
   BiRadioCircleMarked,
@@ -238,7 +239,10 @@ export const QuestionsTab: FC = () => {
   ]
 
   const onSelect = ({ index }: { index: number }) => {
-    setActiveIndex(index)
+    // By default, setActiveIndex would not allow setting active index to -1 unless
+    // it's the last element in items. However, TitleField is a special case and we
+    // want to force an update to -1 index when we are selecting it
+    setActiveIndex(index, index === TITLE_FIELD_INDEX)
   }
 
   const onActive = ({ top }: { top: number }) => {
@@ -283,7 +287,7 @@ export const QuestionsTab: FC = () => {
         onSelect={onSelect}
         onActive={onActive}
         index={TITLE_FIELD_INDEX}
-        setActiveIndex={setActiveIndex}
+        setActiveIndex={noop}
         nextUniqueId={nextUniqueId}
         setNextUniqueId={setNextUniqueId}
       />

@@ -83,218 +83,220 @@ interface BuilderFieldProps {
   setNextUniqueId: (index: number) => void
 }
 
-export const createBuilderField = (
-  InputComponent: BuilderFieldComponent,
-  PreviewComponent: BuilderFieldComponent
-): FC<BuilderFieldProps> => ({
-  index,
-  active,
-  data,
-  onSelect,
-  onActive,
-  setActiveIndex,
-  nextUniqueId,
-  setNextUniqueId,
-  ...props
-}) => {
-  const [ref, { top }] = usePosition()
-  const { dispatch } = useCheckerContext()
-  const variant = active ? 'active' : ''
-  const styles = useMultiStyleConfig('BuilderField', { variant })
+export const createBuilderField =
+  (
+    InputComponent: BuilderFieldComponent,
+    PreviewComponent: BuilderFieldComponent
+  ): FC<BuilderFieldProps> =>
+  ({
+    index,
+    active,
+    data,
+    onSelect,
+    onActive,
+    setActiveIndex,
+    nextUniqueId,
+    setNextUniqueId,
+    ...props
+  }) => {
+    const [ref, { top }] = usePosition()
+    const { dispatch } = useCheckerContext()
+    const variant = active ? 'active' : ''
+    const styles = useMultiStyleConfig('BuilderField', { variant })
 
-  useEffect(() => {
-    if (active) onActive({ top })
-  }, [active, onActive, top])
+    useEffect(() => {
+      if (active) onActive({ top })
+    }, [active, onActive, top])
 
-  const handleSelect = () => {
-    if (!active && onSelect) onSelect({ index })
-  }
-
-  const renderContent = () => {
-    if (isFieldData(data)) {
-      const Content = (active
-        ? InputComponent
-        : PreviewComponent) as QuestionFieldComponent
-      return <Content {...props} field={data} index={index} />
+    const handleSelect = () => {
+      if (!active && onSelect) onSelect({ index })
     }
 
-    if (isConstantData(data)) {
-      const Content = (active
-        ? InputComponent
-        : PreviewComponent) as ConstantFieldComponent
-      return <Content {...props} constant={data} index={index} />
+    const renderContent = () => {
+      if (isFieldData(data)) {
+        const Content = (
+          active ? InputComponent : PreviewComponent
+        ) as QuestionFieldComponent
+        return <Content {...props} field={data} index={index} />
+      }
+
+      if (isConstantData(data)) {
+        const Content = (
+          active ? InputComponent : PreviewComponent
+        ) as ConstantFieldComponent
+        return <Content {...props} constant={data} index={index} />
+      }
+
+      if (isOperationData(data)) {
+        const Content = (
+          active ? InputComponent : PreviewComponent
+        ) as OperationFieldComponent
+        return <Content {...props} operation={data} index={index} />
+      }
+
+      const Content = (
+        active ? InputComponent : PreviewComponent
+      ) as TitleFieldComponent
+      return (
+        <Content
+          {...props}
+          {...(data as Pick<checker.Checker, 'title' | 'description'>)}
+        />
+      )
     }
 
-    if (isOperationData(data)) {
-      const Content = (active
-        ? InputComponent
-        : PreviewComponent) as OperationFieldComponent
-      return <Content {...props} operation={data} index={index} />
+    const getConfigArrName = (data: BuilderFieldData) => {
+      if (isConstantData(data)) return ConfigArrayEnum.Constants
+      if (isFieldData(data)) return ConfigArrayEnum.Fields
+      if (isOperationData(data)) return ConfigArrayEnum.Operations
     }
 
-    const Content = (active
-      ? InputComponent
-      : PreviewComponent) as TitleFieldComponent
-    return (
-      <Content
-        {...props}
-        {...(data as Pick<checker.Checker, 'title' | 'description'>)}
-      />
-    )
-  }
-
-  const getConfigArrName = (data: BuilderFieldData) => {
-    if (isConstantData(data)) return ConfigArrayEnum.Constants
-    if (isFieldData(data)) return ConfigArrayEnum.Fields
-    if (isOperationData(data)) return ConfigArrayEnum.Operations
-  }
-
-  const makeElement = <
-    T extends checker.Field | checker.Operation | checker.Constant
-  >(
-    data: T
-  ): T => {
-    const [prefix] = data.id.match(/^[^\d]+/) || []
-    return {
-      // Do a quick and dirty deep copy by serializing
-      // and deserializing. Note that this will only work so long
-      // as `data` only contains serializable properties
-      ...JSON.parse(JSON.stringify(data)),
-      id: `${prefix}${nextUniqueId}`,
-    }
-  }
-
-  const handleDuplicate = () => {
-    if (isFieldData(data) || isOperationData(data) || isConstantData(data)) {
-      const payload: BuilderAddPayload | undefined = isFieldData(data)
-        ? {
-            element: makeElement(data),
-            configArrName: ConfigArrayEnum.Fields,
-            newIndex: index + 1,
-          }
-        : isOperationData(data)
-        ? {
-            element: makeElement(data),
-            configArrName: ConfigArrayEnum.Operations,
-            newIndex: index + 1,
-          }
-        : isConstantData(data)
-        ? {
-            element: makeElement(data),
-            configArrName: ConfigArrayEnum.Constants,
-            newIndex: index + 1,
-          }
-        : undefined
-      if (payload) {
-        dispatch({
-          type: BuilderActionEnum.Add,
-          payload,
-        })
-        setActiveIndex(index + 1)
-        setNextUniqueId(nextUniqueId + 1)
+    const makeElement = <
+      T extends checker.Field | checker.Operation | checker.Constant
+    >(
+      data: T
+    ): T => {
+      const [prefix] = data.id.match(/^[^\d]+/) || []
+      return {
+        // Do a quick and dirty deep copy by serializing
+        // and deserializing. Note that this will only work so long
+        // as `data` only contains serializable properties
+        ...JSON.parse(JSON.stringify(data)),
+        id: `${prefix}${nextUniqueId}`,
       }
     }
-  }
 
-  const handleDelete = () => {
-    // adding the ! assert because only valid ConfigArrayEnum cards have the delete button
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const configArrName: ConfigArrayEnum = getConfigArrName(data)!
+    const handleDuplicate = () => {
+      if (isFieldData(data) || isOperationData(data) || isConstantData(data)) {
+        const payload: BuilderAddPayload | undefined = isFieldData(data)
+          ? {
+              element: makeElement(data),
+              configArrName: ConfigArrayEnum.Fields,
+              newIndex: index + 1,
+            }
+          : isOperationData(data)
+          ? {
+              element: makeElement(data),
+              configArrName: ConfigArrayEnum.Operations,
+              newIndex: index + 1,
+            }
+          : isConstantData(data)
+          ? {
+              element: makeElement(data),
+              configArrName: ConfigArrayEnum.Constants,
+              newIndex: index + 1,
+            }
+          : undefined
+        if (payload) {
+          dispatch({
+            type: BuilderActionEnum.Add,
+            payload,
+          })
+          setActiveIndex(index + 1)
+          setNextUniqueId(nextUniqueId + 1)
+        }
+      }
+    }
 
-    dispatch({
-      type: BuilderActionEnum.Remove,
-      payload: {
-        currIndex: index,
-        configArrName,
-      },
-    })
-    setActiveIndex(index - 1)
-  }
+    const handleDelete = () => {
+      // adding the ! assert because only valid ConfigArrayEnum cards have the delete button
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const configArrName: ConfigArrayEnum = getConfigArrName(data)!
 
-  const handleDisplayToggle = () => {
-    if (isOperationData(data)) {
       dispatch({
-        type: BuilderActionEnum.Update,
+        type: BuilderActionEnum.Remove,
         payload: {
           currIndex: index,
-          configArrName: ConfigArrayEnum.Operations,
-          element: {
-            ...data,
-            show: !data.show,
-          },
+          configArrName,
         },
       })
+      setActiveIndex(index - 1)
     }
-  }
 
-  return (
-    <StylesProvider value={styles}>
-      <Flex
-        ref={ref}
-        sx={styles.container}
-        direction="column"
-        onClick={handleSelect}
-      >
-        {(isFieldData(data) ||
-          isOperationData(data) ||
-          isConstantData(data)) && (
-          <Button colorScheme="primary" sx={styles.badge}>
-            {data.id}
-          </Button>
-        )}
-        <Flex sx={styles.content}>{renderContent()}</Flex>
-        {active && (
-          <HStack justifyContent="flex-end">
-            {isOperationData(data) && (
-              <ActionButton
-                aria-label="Duplicate"
-                icon={
-                  data.show ? (
-                    <DefaultTooltip label="Hide result">
-                      <span>
-                        <BiShow />
-                      </span>
-                    </DefaultTooltip>
-                  ) : (
-                    <DefaultTooltip label="Show result">
-                      <span>
-                        <BiHide />
-                      </span>
-                    </DefaultTooltip>
-                  )
-                }
-                onClick={handleDisplayToggle}
-              />
-            )}
-            {!isTitleData(data) && (
-              <>
+    const handleDisplayToggle = () => {
+      if (isOperationData(data)) {
+        dispatch({
+          type: BuilderActionEnum.Update,
+          payload: {
+            currIndex: index,
+            configArrName: ConfigArrayEnum.Operations,
+            element: {
+              ...data,
+              show: !data.show,
+            },
+          },
+        })
+      }
+    }
+
+    return (
+      <StylesProvider value={styles}>
+        <Flex
+          ref={ref}
+          sx={styles.container}
+          direction="column"
+          onClick={handleSelect}
+        >
+          {(isFieldData(data) ||
+            isOperationData(data) ||
+            isConstantData(data)) && (
+            <Button colorScheme="primary" sx={styles.badge}>
+              {data.id}
+            </Button>
+          )}
+          <Flex sx={styles.content}>{renderContent()}</Flex>
+          {active && (
+            <HStack justifyContent="flex-end">
+              {isOperationData(data) && (
                 <ActionButton
                   aria-label="Duplicate"
                   icon={
-                    <DefaultTooltip label="Duplicate">
-                      <span>
-                        <BiDuplicate />
-                      </span>
-                    </DefaultTooltip>
+                    data.show ? (
+                      <DefaultTooltip label="Hide result">
+                        <span>
+                          <BiShow />
+                        </span>
+                      </DefaultTooltip>
+                    ) : (
+                      <DefaultTooltip label="Show result">
+                        <span>
+                          <BiHide />
+                        </span>
+                      </DefaultTooltip>
+                    )
                   }
-                  onClick={handleDuplicate}
+                  onClick={handleDisplayToggle}
                 />
-                <ActionButton
-                  aria-label="Delete"
-                  icon={
-                    <DefaultTooltip label="Delete">
-                      <span>
-                        <BiTrash />
-                      </span>
-                    </DefaultTooltip>
-                  }
-                  onClick={handleDelete}
-                />
-              </>
-            )}
-          </HStack>
-        )}
-      </Flex>
-    </StylesProvider>
-  )
-}
+              )}
+              {!isTitleData(data) && (
+                <>
+                  <ActionButton
+                    aria-label="Duplicate"
+                    icon={
+                      <DefaultTooltip label="Duplicate">
+                        <span>
+                          <BiDuplicate />
+                        </span>
+                      </DefaultTooltip>
+                    }
+                    onClick={handleDuplicate}
+                  />
+                  <ActionButton
+                    aria-label="Delete"
+                    icon={
+                      <DefaultTooltip label="Delete">
+                        <span>
+                          <BiTrash />
+                        </span>
+                      </DefaultTooltip>
+                    }
+                    onClick={handleDelete}
+                  />
+                </>
+              )}
+            </HStack>
+          )}
+        </Flex>
+      </StylesProvider>
+    )
+  }

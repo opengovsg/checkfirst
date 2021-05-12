@@ -18,12 +18,25 @@ const requiredSentryEnvVar = [
 
 module.exports = () => {
   const jsBundle = {
-    entry: ['babel-polyfill', path.join(srcDirectory, 'index.tsx')],
+    entry: {
+      main: ['babel-polyfill', path.join(srcDirectory, 'index.tsx')],
+    },
     output: {
       path: path.join(__dirname, outputDirectory),
-      filename: 'bundle.js',
+      filename: 'assets/js/[name].bundle.js',
       publicPath: '/',
       assetModuleFilename: 'assets/[name][ext]',
+    },
+    optimization: {
+      splitChunks: {
+        cacheGroups: {
+          commons: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendor',
+            chunks: 'initial',
+          },
+        },
+      },
     },
     resolve: {
       extensions: ['.jsx', '.js', '.tsx', '.ts', '.json'],
