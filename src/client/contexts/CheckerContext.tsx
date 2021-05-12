@@ -48,11 +48,8 @@ export const reducer = (state: Checker, action: BuilderAction): Checker => {
     }
 
     case BuilderActionEnum.Update: {
-      const {
-        configArrName,
-        element,
-        currIndex,
-      } = payload as BuilderUpdatePayload
+      const { configArrName, element, currIndex } =
+        payload as BuilderUpdatePayload
 
       newState = update(state, {
         [configArrName]: {

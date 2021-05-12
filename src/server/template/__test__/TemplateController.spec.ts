@@ -4,14 +4,12 @@ import { TemplateController } from '..'
 import bodyParser from 'body-parser'
 
 describe('TemplateController', () => {
-  const sessionMiddleware = (session: Record<string, unknown>) => (
-    req: Request,
-    _res: Response,
-    next: NextFunction
-  ) => {
-    Object.assign(req, { session })
-    next()
-  }
+  const sessionMiddleware =
+    (session: Record<string, unknown>) =>
+    (req: Request, _res: Response, next: NextFunction) => {
+      Object.assign(req, { session })
+      next()
+    }
 
   const template = {
     id: 'test-template',

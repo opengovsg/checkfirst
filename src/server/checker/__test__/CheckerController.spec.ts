@@ -5,14 +5,12 @@ import express, { NextFunction, Request, Response } from 'express'
 import bodyParser from 'body-parser'
 
 describe('CheckerController', () => {
-  const sessionMiddleware = (session: Record<string, unknown>) => (
-    req: Request,
-    _res: Response,
-    next: NextFunction
-  ) => {
-    Object.assign(req, { session })
-    next()
-  }
+  const sessionMiddleware =
+    (session: Record<string, unknown>) =>
+    (req: Request, _res: Response, next: NextFunction) => {
+      Object.assign(req, { session })
+      next()
+    }
 
   const checker = {
     id: 'id',

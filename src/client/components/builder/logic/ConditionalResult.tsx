@@ -240,7 +240,7 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
         </HStack>
         {ifelseState.conditions.map((cond, i) => (
           <HStack key={i}>
-            <Menu>
+            <Menu autoSelect={false}>
               {i === 0 ? (
                 <Box w="100px">
                   <MenuButton
@@ -258,13 +258,29 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
                   </Heading>
                 </Box>
               )}
-              <MenuList>
+              <MenuList width="50px">
                 <MenuItem
+                  as={Button}
+                  borderRadius="0"
+                  fontWeight="normal"
+                  textAlign="start"
+                  justifyContent="initial"
+                  height="36px"
+                  isActive={conditionType === ConditionType.And}
+                  variant="ghost"
                   onClick={() => updateAllConditionTypes(ConditionType.And)}
                 >
                   AND
                 </MenuItem>
                 <MenuItem
+                  as={Button}
+                  borderRadius={0}
+                  fontWeight="normal"
+                  textAlign="start"
+                  justifyContent="initial"
+                  height="36px"
+                  isActive={conditionType === ConditionType.Or}
+                  variant="ghost"
                   onClick={() => updateAllConditionTypes(ConditionType.Or)}
                 >
                   OR

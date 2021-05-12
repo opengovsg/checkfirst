@@ -3,6 +3,7 @@ import { ChakraProvider } from '@chakra-ui/react'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { Router, Redirect, Route, Switch } from 'react-router-dom'
 import { createBrowserHistory } from 'history'
+import loadable from '@loadable/component'
 const history = createBrowserHistory()
 
 import * as Sentry from '@sentry/react'
@@ -10,7 +11,13 @@ import { Integrations } from '@sentry/tracing'
 
 import { theme } from './theme'
 import { PrivateRoute, Fallback } from './components'
-import { Checker, Landing, Login, Dashboard, FormBuilder } from './pages'
+
+const Checker = loadable(() => import('./pages/Checker'))
+const Landing = loadable(() => import('./pages/Landing/Landing'))
+const Login = loadable(() => import('./pages/Login'))
+const Dashboard = loadable(() => import('./pages/Dashboard'))
+const FormBuilder = loadable(() => import('./pages/FormBuilder'))
+
 import {
   AuthProvider,
   CheckerProvider,

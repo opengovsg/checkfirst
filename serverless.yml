@@ -67,15 +67,6 @@ functions:
           path: ""
           method: get
       - http:
-          path: bundle.js
-          method: get
-      - http:
-          path: bundle.js.map
-          method: get
-      - http:
-          path: bundle.js.LICENSE.txt
-          method: get
-      - http:
           path: logo.svg
           method: get
       - http:
@@ -95,6 +86,9 @@ functions:
           method: get
       - http:
           path: c/{proxy+}
+          method: get
+      - http:
+          path: "assets/js/{bundle+}"
           method: get
       - http:
           path: assets/{proxy+}

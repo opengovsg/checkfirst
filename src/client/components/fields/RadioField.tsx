@@ -23,7 +23,10 @@ export const RadioField: FC<Field> = ({ id, title, description, options }) => {
       name={id}
       control={control}
       rules={{ required: true }}
-      render={({ ref, value, onChange }, { invalid }) => (
+      render={({
+        field: { ref, value, onChange },
+        fieldState: { invalid },
+      }) => (
         <FormControl isInvalid={invalid}>
           <FormLabel sx={styles.label} htmlFor={id}>
             {title}

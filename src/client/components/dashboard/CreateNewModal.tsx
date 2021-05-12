@@ -54,10 +54,11 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({ onClose }) => {
   })
   const { isValid, errors } = formState
 
-  const { checkerId, templateId } = useParams<{
-    checkerId?: string
-    templateId?: string
-  }>()
+  const { checkerId, templateId } =
+    useParams<{
+      checkerId?: string
+      templateId?: string
+    }>()
 
   const {
     isLoading: isCheckerLoading,
@@ -162,8 +163,7 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({ onClose }) => {
                     <FormLabel htmlFor="id">Checker title</FormLabel>
                     <Input
                       isDisabled={isCheckerLoading || isTemplateLoading}
-                      name="title"
-                      ref={register({ required: 'Title is required' })}
+                      {...register('title', { required: 'Title is required' })}
                     />
                     <FormErrorMessage>{errors.title?.message}</FormErrorMessage>
                   </FormControl>
@@ -176,9 +176,8 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({ onClose }) => {
                     </FormLabel>
                     <Textarea
                       isDisabled={isCheckerLoading || isTemplateLoading}
-                      name="description"
+                      {...register('description')}
                       resize="none"
-                      ref={register}
                     />
                   </FormControl>
                 </VStack>

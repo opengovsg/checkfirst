@@ -29,7 +29,10 @@ export const DateField: FC<Field> = ({ id, title, description }) => {
       control={control}
       defaultValue={new Date()}
       rules={{ required: true }}
-      render={({ onChange, value, ref }, { invalid }) => (
+      render={({
+        field: { onChange, value, ref },
+        fieldState: { invalid },
+      }) => (
         <FormControl isInvalid={invalid} id={id}>
           <FormLabel sx={styles.label} htmlFor={id}>
             {title}

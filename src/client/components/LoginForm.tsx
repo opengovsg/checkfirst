@@ -27,7 +27,11 @@ export const LoginForm: FC<LoginFormProps> = ({ email, onLogin }) => {
   const auth = useAuth()
   const [canResend, setCanResend] = useState(false)
   const [resendTimer, setResendTimer] = useState(RESEND_WAIT_TIME / 1000)
-  const { register, handleSubmit, errors } = useForm()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm()
   const sendOtp = useMutation(AuthService.getOtp, {
     onSuccess: () => {
       setResendTimer(RESEND_WAIT_TIME / 1000)
@@ -89,9 +93,8 @@ export const LoginForm: FC<LoginFormProps> = ({ email, onLogin }) => {
             type="text"
             inputMode="numeric"
             pattern="\d{6}"
-            name="token"
+            {...register('token', { required: true })}
             autoComplete="one-time-code"
-            ref={register({ required: true })}
             placeholder="e.g. 111111"
           />
           {hasError() && (
