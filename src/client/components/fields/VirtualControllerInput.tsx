@@ -21,7 +21,7 @@ const VirtualControllerInput = forwardRef<
 >(({ style }, ref) => {
   return (
     <Box h="0" opacity="0" overflow="hidden" aria-hidden="true">
-      <Input ref={ref} style={style} readOnly />
+      <Input ref={ref} style={style} tabindex="-1" readOnly />
     </Box>
   )
 })
