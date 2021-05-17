@@ -92,7 +92,7 @@
     "@emotion/react": "^11.1.4",
     "@emotion/styled": "^11.3.0",
     "@loadable/component": "^5.14.1",
-    "@sentry/node": "^6.3.6",
+    "@sentry/node": "^6.4.0",
     "@sentry/react": "^6.3.5",
     "@sentry/tracing": "^6.3.6",
     "ace-builds": "^1.4.12",
