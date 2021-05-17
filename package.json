@@ -91,7 +91,7 @@
     "@chakra-ui/react": "^1.6.1",
     "@emotion/react": "^11.1.4",
     "@emotion/styled": "^11.3.0",
-    "@loadable/component": "^5.14.1",
+    "@loadable/component": "^5.15.0",
     "@sentry/node": "^6.4.0",
     "@sentry/react": "^6.3.5",
     "@sentry/tracing": "^6.3.6",
