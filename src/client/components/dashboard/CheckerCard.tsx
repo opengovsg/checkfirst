@@ -1,25 +1,97 @@
-import React, { FC } from 'react'
+import React, { FC, useRef } from 'react'
 import moment from 'moment-timezone'
 import { useQueryClient, useMutation } from 'react-query'
 import { useHistory, useRouteMatch, Link } from 'react-router-dom'
-import { BiDuplicate, BiTrash } from 'react-icons/bi'
+import { BiDuplicate, BiTrash, BiDotsHorizontalRounded } from 'react-icons/bi'
 import {
+  Box,
+  useOutsideClick,
   useDisclosure,
   useMultiStyleConfig,
   useToast,
   Text,
   VStack,
-  HStack,
+  Flex,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  IconButton,
 } from '@chakra-ui/react'
 
 import { DashboardCheckerDTO } from '../../../types/checker'
 import { getApiErrorMessage } from '../../api'
 import { CheckerService } from '../../services'
 import { ConfirmDialog } from '../ConfirmDialog'
-import { DefaultTooltip } from '../common/DefaultTooltip'
 
 type CheckerCardProps = {
   checker: DashboardCheckerDTO
+}
+
+type StatusIndicatorProps = {
+  status: 'published' | 'draft'
+}
+
+const StatusIndicator: FC<StatusIndicatorProps> = ({ status }) => {
+  const styles = useMultiStyleConfig('CheckerCard', {})
+  const color = status === 'published' ? '#46DBC9' : '#ECC953'
+
+  return (
+    <Flex sx={styles.indicator} direction="row">
+      <Box h="8px" w="8px" borderRadius="4px" bg={color} mr="8px" />
+      {status}
+    </Flex>
+  )
+}
+
+type ActionMenuProps = {
+  actions: Array<{
+    label: string
+    onClick: (e: React.MouseEvent) => void
+    icon?: JSX.Element
+  }>
+}
+
+const ActionMenu: FC<ActionMenuProps> = ({ actions }) => {
+  const ref = useRef(null)
+  const { isOpen, onClose, onToggle } = useDisclosure()
+  useOutsideClick({
+    ref,
+    handler: () => onClose(),
+  })
+
+  return (
+    <div ref={ref}>
+      <Menu isOpen={isOpen}>
+        <MenuButton
+          as={IconButton}
+          icon={<BiDotsHorizontalRounded />}
+          onClick={(e) => {
+            e.preventDefault()
+            onToggle()
+          }}
+          variant="ghost"
+        >
+          Click
+        </MenuButton>
+        <MenuList>
+          {actions.map(({ onClick, icon, label }, i) => (
+            <MenuItem
+              key={i}
+              icon={icon}
+              onClick={(e) => {
+                e.preventDefault()
+                onClose()
+                onClick(e)
+              }}
+            >
+              {label}
+            </MenuItem>
+          ))}
+        </MenuList>
+      </Menu>
+    </div>
+  )
 }
 
 export const CheckerCard: FC<CheckerCardProps> = ({ checker }) => {
@@ -48,44 +120,45 @@ export const CheckerCard: FC<CheckerCardProps> = ({ checker }) => {
     },
   })
 
-  const onClickDelete = (e: React.MouseEvent) => {
-    e.preventDefault()
-    onOpen()
-  }
+  const onDelete = () => onOpen()
 
   const onDeleteConfirm = () => deleteChecker.mutateAsync(checker.id)
 
-  const onDuplicateClick = (e: React.MouseEvent) => {
-    e.preventDefault()
+  const onDuplicateClick = () => {
     history.push(`${path}/duplicate/${checker.id}`, { checker })
   }
+
+  const actions = [
+    { label: 'Duplicate', icon: <BiDuplicate />, onClick: onDuplicateClick },
+    { label: 'Delete', icon: <BiTrash />, onClick: onDelete },
+  ]
 
   return (
     <>
       <Link to={{ pathname: `/builder/${checker.id}` }}>
         <VStack sx={styles.card} align="stretch" role="group">
-          <Text flex={1} sx={styles.title} isTruncated>
-            {checker.title}
-          </Text>
-          <Text flex={1} sx={styles.subtitle} isTruncated>
-            {moment(checker.updatedAt)
-              .tz('Asia/Singapore')
-              .format('DD MMM, YYYY')}
-          </Text>
-          <HStack sx={styles.actions}>
-            <DefaultTooltip label="Duplicate">
-              <span>
-                <BiDuplicate onClick={onDuplicateClick} size="24px" />
-              </span>
-            </DefaultTooltip>
-            <DefaultTooltip label="Delete">
-              <span>
-                <BiTrash onClick={onClickDelete} size="24px" />
-              </span>
-            </DefaultTooltip>
-          </HStack>
+          <VStack align="stretch" spacing="8px">
+            <Text flex={1} sx={styles.title} noOfLines={3}>
+              {checker.title}
+            </Text>
+            <Text flex={1} sx={styles.subtitle} isTruncated>
+              Modified&nbsp;
+              {moment(checker.updatedAt)
+                .tz('Asia/Singapore')
+                .format('DD MMM YYYY')}
+            </Text>
+          </VStack>
+          <Flex direction="row" sx={styles.actions}>
+            <StatusIndicator
+              status={
+                checker.publishedCheckers.length > 0 ? 'published' : 'draft'
+              }
+            />
+            <ActionMenu actions={actions} />
+          </Flex>
         </VStack>
       </Link>
+
       <ConfirmDialog
         isOpen={isOpen}
         onClose={onClose}
