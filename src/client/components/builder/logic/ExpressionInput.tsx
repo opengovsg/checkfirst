@@ -1,19 +1,27 @@
-import React, { FC, useMemo, useRef } from 'react'
-import { findIndex } from 'lodash'
+import React, {
+  FC,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import {
+  Badge,
   HStack,
-  VStack,
-  UnorderedList,
-  ListItem,
   Input,
   InputProps,
+  ListItem,
+  UnorderedList,
+  VStack,
   Text,
-  Badge,
 } from '@chakra-ui/react'
-import Downshift, { DownshiftState, StateChangeOptions } from 'downshift'
 import { matchSorter, RankingInfo } from 'match-sorter'
 
+import Downshift from 'downshift'
+
 import { useCheckerContext } from '../../../contexts'
+import { findIndex } from 'lodash'
 
 type Item = { id: string; type: 'FIELD' | 'OPERATION'; title: string }
 
@@ -32,18 +40,43 @@ type QueryBlock = {
   pos: number
 }
 
-interface ExpressionInputProps extends Omit<InputProps, 'onChange'> {
-  onChange: (expression: string) => void
+interface ExpressionInputProps extends Omit<InputProps, 'onChange' | 'value'> {
+  onChange: (expr: string) => void
+  value: string
 }
 
 export const ExpressionInput: FC<ExpressionInputProps> = ({
-  value,
   onChange,
+  value,
   ...props
 }) => {
-  const caretPos = useRef<number>(`${value}`.length)
+  const [inputValue, setInputValue] = useState<string>(value)
+  const [selection, setSelection] = useState<{ start: number; end: number }>()
+
   const inputRef = useRef<HTMLInputElement>(null)
 
+  // syncs input value with subsequent value updates
+  useEffect(() => {
+    setInputValue(value)
+  }, [value])
+
+  // syncs value updates to input value updates
+  useEffect(() => {
+    onChange(inputValue)
+
+    // avoid specifying onChange as a dependency, as it will lead to an infinite
+    // update loop!
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inputValue])
+
+  // sets the selection range on render, as it won't work before commit phase
+  useLayoutEffect(() => {
+    if (selection) {
+      inputRef.current?.setSelectionRange(selection.start, selection.end)
+    }
+  }, [selection, inputRef])
+
+  // load query replacement items from checker context
   const { config } = useCheckerContext()
   const items = useMemo<Item[]>(() => {
     let items: Item[] = []
@@ -76,7 +109,7 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
    * @returns the query string and index of the block within the expression
    */
   const getCurrentQueryBlock = (
-    inputStr: string | null | undefined,
+    inputStr: string | null,
     caretIndex: number
   ): QueryBlock | null => {
     if (!inputStr) return null
@@ -94,18 +127,54 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
     return null
   }
 
+  /**
+   * Gets all items that matches the current query being edited
+   * @returns The list of matching items, or null if there are no matches or no query block being edited
+   */
+  const getCurrentQueryMatches = () => {
+    const currentQueryBlock = getCurrentQueryBlock(
+      inputValue,
+      selection?.start || 0
+    )
+
+    if (currentQueryBlock) {
+      // The baseSort function is used to tie-break items that have the same ranking.
+      // This is useful in two main cases:
+      // - when the user types `@ `, we want to display all reference options on the Questions tab followed by the Logic tab; these reference options should be sorted according to their position on their respective tabs.
+      // - when the user types `@ <query>` and there are multiple reference options with titles that exactly match `<query>`, we want to sort these reference options according to their position on their Questions tab followed by the Logic tab.
+      const baseSort = (
+        { item: a }: RankedItem,
+        { item: b }: RankedItem
+      ): number => {
+        const itemAIndex = findIndex<Item>(items, (item) => item.id === a.id)
+        const itemBIndex = findIndex<Item>(items, (item) => item.id === b.id)
+        return itemAIndex < itemBIndex ? -1 : 1
+      }
+
+      const matches = matchSorter(items, currentQueryBlock?.query || '', {
+        keys: ['id', 'title'],
+        baseSort,
+      })
+
+      return matches.length > 0 ? matches : null
+    }
+
+    return null
+  }
+
   const replaceVariableName = (
     inputStr: string | null,
     variableName?: string | null
   ): string => {
-    const queryBlock = getCurrentQueryBlock(inputStr, caretPos.current)
+    const queryBlock = getCurrentQueryBlock(inputStr, selection?.start || 0)
     if (inputStr && queryBlock) {
       const replaceStart = queryBlock.pos
       // increment query length by 1 to account for the removed '@' character
       const replaceEnd = queryBlock.pos + (queryBlock.query.length + 1)
 
       // update cursor to after replaced variable
-      caretPos.current = replaceStart + (variableName?.length || 0)
+      const newCaretPos = replaceStart + (variableName?.length || 0)
+      setSelection({ start: newCaretPos, end: newCaretPos })
 
       return (
         inputStr.slice(0, replaceStart) +
@@ -117,67 +186,32 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
     return inputStr || ''
   }
 
-  const stateReducer = (
-    state: DownshiftState<Item>,
-    changes: StateChangeOptions<Item>
-  ) => {
-    switch (changes.type) {
-      case Downshift.stateChangeTypes.clickItem:
-      case Downshift.stateChangeTypes.keyDownEnter:
-        return {
-          ...changes,
-          inputValue: replaceVariableName(
-            state?.inputValue,
-            changes?.inputValue
-          ),
-        }
-      case Downshift.stateChangeTypes.changeInput:
-        return {
-          ...changes,
-        }
-      case Downshift.stateChangeTypes.blurInput:
-      case Downshift.stateChangeTypes.mouseUp:
-        // Prevent blur from resetting inputValue
-        return {
-          ...changes,
-          inputValue: state.inputValue,
-        }
-    }
-    return changes
-  }
-
-  // The baseSort function is used to tie-break items that have the same ranking.
-  // This is useful in two main cases:
-  // - when the user types `@ `, we want to display all reference options on the Questions tab followed by the Logic tab; these reference options should be sorted according to their position on their respective tabs.
-  // - when the user types `@ <query>` and there are multiple reference options with titles that exactly match `<query>`, we want to sort these reference options according to their position on their Questions tab followed by the Logic tab.
-  const baseSort = (
-    { item: a }: RankedItem,
-    { item: b }: RankedItem
-  ): number => {
-    const itemAIndex = findIndex<Item>(items, (item) => item.id === a.id)
-    const itemBIndex = findIndex<Item>(items, (item) => item.id === b.id)
-    return itemAIndex < itemBIndex ? -1 : 1
-  }
+  const currentMatches = getCurrentQueryMatches()
 
   return (
     <Downshift
-      initialInputValue={`${value}`}
-      stateReducer={stateReducer}
-      onSelect={() => {
-        // updates the cursor after onSelect is triggered
-        inputRef.current?.setSelectionRange(caretPos.current, caretPos.current)
-      }}
-      onStateChange={(_, state) => {
-        onChange(state.inputValue || '')
-      }}
+      // controlled values
+      inputValue={inputValue}
+      isOpen={!!currentMatches}
+      // item aria-label converter
       itemToString={(item) => item?.id || ''}
+      // default values
+      defaultHighlightedIndex={0}
+      defaultIsOpen={false}
+      // event handlers
+      onSelect={(item) => {
+        if (item) {
+          setInputValue(replaceVariableName(inputValue, item.id))
+        }
+      }}
     >
       {({
+        isOpen,
+        inputValue,
         getRootProps,
         getMenuProps,
         getInputProps,
         getItemProps,
-        inputValue,
         highlightedIndex,
       }) => (
         <VStack
@@ -188,57 +222,54 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
           flex={1}
         >
           <Input
-            ref={inputRef}
             {...getInputProps({
               ...props,
-              onChange: (e: React.FormEvent<HTMLInputElement>) => {
-                caretPos.current = e.currentTarget.selectionStart || -1
-              },
             })}
+            value={inputValue || ''}
+            ref={inputRef}
+            onChange={(e) => setInputValue(e.currentTarget.value)}
+            onSelect={(e) => {
+              const start = e.currentTarget.selectionStart || 0
+              const end = e.currentTarget.selectionEnd || 0
+              setSelection({ start: start, end: end })
+            }}
           />
-          {getCurrentQueryBlock(inputValue, caretPos.current) !== null ? (
-            <UnorderedList
-              {...getMenuProps()}
-              listStyleType="none"
-              border="solid 1px #E2E8F0"
-              borderBottomRadius="6px"
-              maxH="200px"
-              overflowY="auto"
-              position="absolute"
-              top="40px"
-              bg="white"
-              w="100%"
-              zIndex={99}
-            >
-              {matchSorter(
-                items,
-                getCurrentQueryBlock(inputValue, caretPos.current)?.query || '',
-                {
-                  keys: ['id', 'title'],
-                  baseSort,
-                }
-              ).map((item, index) => (
-                <ListItem
-                  {...getItemProps({ key: index, item })}
-                  bg={highlightedIndex === index ? 'neutral.50' : 'none'}
-                  py={2}
-                  px={2}
-                >
-                  <HStack spacing={4}>
-                    <Badge
-                      bg={item.type === 'FIELD' ? '#FB5D64' : '#46DBC9'}
-                      color="white"
-                      fontSize="sm"
-                      borderRadius="5px"
-                    >
-                      {item.id}
-                    </Badge>
-                    <Text isTruncated>{item.title}</Text>
-                  </HStack>
-                </ListItem>
-              ))}
-            </UnorderedList>
-          ) : null}
+          <UnorderedList
+            {...getMenuProps()}
+            listStyleType="none"
+            border={isOpen ? 'solid 1px #E2E8F0' : 0}
+            borderBottomRadius="6px"
+            maxH="200px"
+            overflowY="auto"
+            position="absolute"
+            top="40px"
+            bg="white"
+            w="100%"
+            zIndex={99}
+          >
+            {isOpen
+              ? currentMatches?.map((item, index) => (
+                  <ListItem
+                    {...getItemProps({ key: index, item })}
+                    bg={highlightedIndex === index ? 'neutral.50' : 'none'}
+                    py={2}
+                    px={2}
+                  >
+                    <HStack spacing={4}>
+                      <Badge
+                        bg={item.type === 'FIELD' ? '#FB5D64' : '#46DBC9'}
+                        color="white"
+                        fontSize="sm"
+                        borderRadius="5px"
+                      >
+                        {item.id}
+                      </Badge>
+                      <Text isTruncated>{item.title}</Text>
+                    </HStack>
+                  </ListItem>
+                ))
+              : null}
+          </UnorderedList>
         </VStack>
       )}
     </Downshift>
