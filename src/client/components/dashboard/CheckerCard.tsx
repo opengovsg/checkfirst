@@ -4,6 +4,7 @@ import { useQueryClient, useMutation } from 'react-query'
 import { useHistory, useRouteMatch, Link } from 'react-router-dom'
 import { BiDuplicate, BiTrash, BiDotsHorizontalRounded } from 'react-icons/bi'
 import {
+  CSSObject,
   Box,
   useOutsideClick,
   useDisclosure,
@@ -49,6 +50,7 @@ type ActionMenuProps = {
     label: string
     onClick: (e: React.MouseEvent) => void
     icon?: JSX.Element
+    style?: CSSObject
   }>
 }
 
@@ -75,10 +77,11 @@ const ActionMenu: FC<ActionMenuProps> = ({ actions }) => {
           Click
         </MenuButton>
         <MenuList>
-          {actions.map(({ onClick, icon, label }, i) => (
+          {actions.map(({ onClick, label, icon, style }, i) => (
             <MenuItem
               key={i}
               icon={icon}
+              sx={style}
               onClick={(e) => {
                 e.preventDefault()
                 onClose()
@@ -130,7 +133,12 @@ export const CheckerCard: FC<CheckerCardProps> = ({ checker }) => {
 
   const actions = [
     { label: 'Duplicate', icon: <BiDuplicate />, onClick: onDuplicateClick },
-    { label: 'Delete', icon: <BiTrash />, onClick: onDelete },
+    {
+      label: 'Delete',
+      icon: <BiTrash />,
+      onClick: onDelete,
+      style: { color: '#FB5D64' },
+    },
   ]
 
   return (
