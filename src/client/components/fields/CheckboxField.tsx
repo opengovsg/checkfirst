@@ -11,7 +11,8 @@ import {
 } from '@chakra-ui/react'
 
 import { Field } from '../../../types/checker'
-import VirtualControllerInput from './VirtualControllerInput'
+
+import '../../styles/checkbox-field-input.css'
 
 export const CheckboxField: FC<Field> = ({
   id,
@@ -35,10 +36,6 @@ export const CheckboxField: FC<Field> = ({
           <FormLabel sx={styles.label} htmlFor={id}>
             {title}
           </FormLabel>
-          <VirtualControllerInput
-            ref={ref}
-            style={{ scrollMarginTop: '88px' }}
-          />
           {description && <FormHelperText mb={4}>{description}</FormHelperText>}
           <CheckboxGroup onChange={onChange} value={value}>
             <VStack align="stretch" spacing={4}>
@@ -50,7 +47,7 @@ export const CheckboxField: FC<Field> = ({
                   <CheckboxInput
                     colorScheme="primary"
                     key={i}
-                    ref={ref}
+                    ref={i === 0 ? ref : undefined}
                     name={id}
                     value={`${value}`}
                   >

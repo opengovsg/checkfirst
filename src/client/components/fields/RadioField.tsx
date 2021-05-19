@@ -12,7 +12,8 @@ import {
 } from '@chakra-ui/react'
 
 import { Field } from '../../../types/checker'
-import VirtualControllerInput from './VirtualControllerInput'
+
+import '../../styles/radio-field-input.css'
 
 export const RadioField: FC<Field> = ({ id, title, description, options }) => {
   const styles = useStyles()
@@ -31,10 +32,6 @@ export const RadioField: FC<Field> = ({ id, title, description, options }) => {
           <FormLabel sx={styles.label} htmlFor={id}>
             {title}
           </FormLabel>
-          <VirtualControllerInput
-            ref={ref}
-            style={{ scrollMarginTop: '88px' }}
-          />
           {description && <FormHelperText mb={4}>{description}</FormHelperText>}
           <RadioGroup name={id} value={value} onChange={onChange}>
             <VStack align="stretch" spacing={4}>
@@ -46,6 +43,7 @@ export const RadioField: FC<Field> = ({ id, title, description, options }) => {
                   <RadioInput
                     colorScheme="primary"
                     key={i}
+                    ref={i === 0 ? ref : undefined}
                     name={id}
                     value={`${value}`}
                   >
