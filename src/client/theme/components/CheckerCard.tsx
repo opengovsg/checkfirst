@@ -2,30 +2,36 @@ export const CheckerCard = {
   parts: ['card', 'title', 'actions'],
   baseStyle: {
     card: {
-      h: '160px',
-      maxW: '160px',
-      textAlign: 'center',
+      h: '200px',
       justifyContent: 'space-between',
       boxShadow: 'md',
-      borderRadius: '12px',
+      borderRadius: '3px',
       bg: 'white',
-      p: 8,
+      p: '24px',
     },
     title: {
       fontSize: '16px',
-      fontWeight: '600',
+      fontWeight: '500',
+      lineHeight: '24px',
+      letterSpacing: '-0.011em',
     },
     subtitle: {
-      fontSize: '14px',
-      fontWeight: '500',
-      color: '#767676',
+      fontSize: '12px',
+      fontWeight: '400',
+      lineHeight: '16px',
+      color: '#A5ABB3',
     },
     actions: {
-      visibility: 'hidden',
-      justifyContent: 'center',
-      _groupHover: {
-        visibility: 'visible',
-      },
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    indicator: {
+      fontSize: '12px',
+      lineHeight: '16px',
+      fontWeight: '400',
+      color: '#2C3A4B',
+      textTransform: 'capitalize',
+      alignItems: 'center',
     },
   },
   variants: {
@@ -33,6 +39,8 @@ export const CheckerCard = {
       card: {
         bg: 'primary.500',
         color: 'white',
+        textAlign: 'center',
+        justifyContent: 'center',
       },
       title: {
         mt: '16px',

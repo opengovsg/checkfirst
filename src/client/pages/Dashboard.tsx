@@ -88,7 +88,7 @@ export const Dashboard: FC = () => {
               ) : (
                 <>
                   {checkers && checkers.length > 0 ? (
-                    <SimpleGrid columns={5} spacing={8}>
+                    <SimpleGrid columns={4} spacing="32px">
                       <CreateNewCard />
                       {checkers?.map((checker) => {
                         return (
