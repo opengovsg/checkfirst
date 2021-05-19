@@ -10,10 +10,12 @@ export const CreateNewCard: FC = () => {
   return (
     <>
       <Link to={{ pathname: `${path}/create` }}>
-        <VStack sx={styles.card}>
+        <VStack sx={styles.card} spacing="26px">
           <BiPlus size="50px" style={{ display: 'inline' }} />
           <Text mt="16px" sx={styles.title}>
-            Create New
+            Create new
+            <br />
+            checker
           </Text>
         </VStack>
       </Link>
