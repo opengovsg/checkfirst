@@ -113,7 +113,7 @@ module.exports = () => {
     jsBundle.plugins.push(
       new SentryCliPlugin({
         // plugin automatically extracts ENV vars: https://docs.sentry.io/product/cli/configuration/
-        include: '.',
+        include: ['build/client'],
         ignoreFile: '.gitignore',
         ignore: ['node_modules', 'webpack.config.js'],
         deploy: {
