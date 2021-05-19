@@ -213,9 +213,9 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
         />
       </HStack>
       <VStack align="stretch" spacing={4}>
-        <HStack>
+        <HStack align="start">
           <Box w="100px" pl={8}>
-            <Heading as="h5" size="sm">
+            <Heading as="h5" size="sm" lineHeight="40px">
               IF
             </Heading>
           </Box>
@@ -239,7 +239,7 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
           </HStack>
         </HStack>
         {ifelseState.conditions.map((cond, i) => (
-          <HStack key={i}>
+          <HStack key={i} align="start">
             <Menu autoSelect={false}>
               {i === 0 ? (
                 <Box w="100px">
@@ -253,7 +253,7 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
                 </Box>
               ) : (
                 <Box w="100px" pl={4}>
-                  <Heading as="h5" size="sm">
+                  <Heading as="h5" size="sm" lineHeight="40px">
                     {conditionType}
                   </Heading>
                 </Box>
@@ -320,9 +320,9 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
       </VStack>
       <Divider />
       <VStack align="stretch" spacing={4}>
-        <HStack>
+        <HStack align="start">
           <Box w="100px" pl={8}>
-            <Heading as="h5" size="sm">
+            <Heading as="h5" size="sm" lineHeight="40px">
               THEN
             </Heading>
           </Box>
@@ -334,9 +334,9 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
             value={ifelseState.thenExpr}
           />
         </HStack>
-        <HStack>
+        <HStack align="start">
           <Box w="100px" pl={8}>
-            <Heading as="h5" size="sm">
+            <Heading as="h5" size="sm" lineHeight="40px">
               ELSE
             </Heading>
           </Box>
