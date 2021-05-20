@@ -233,6 +233,7 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
               const end = e.currentTarget.selectionEnd || 0
               setSelection({ start: start, end: end })
             }}
+            onBlur={() => setSelection({ start: -1, end: -1 })}
           />
           <UnorderedList
             {...getMenuProps()}
