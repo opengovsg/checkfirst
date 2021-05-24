@@ -117,7 +117,7 @@
     "minimatch": "^3.0.4",
     "moment-timezone": "0.5.33",
     "morgan": "^1.10.0",
-    "nodemailer": "^6.6.0",
+    "nodemailer": "^6.6.1",
     "otplib": "^12.0.1",
     "pg": "^8.6.0",
     "pg-connection-string": "^2.5.0",
