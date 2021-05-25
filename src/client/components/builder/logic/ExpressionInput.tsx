@@ -322,8 +322,8 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
           backgroundColor="#F4F6F9"
           borderRadius="6px"
           border="solid 1px #DADCE3"
-          padding="5px 3px"
-          overflow="auto"
+          padding="3px 16px"
+          flexWrap="wrap"
           onClick={handleCalculatorChange}
         />
       ) : null}
