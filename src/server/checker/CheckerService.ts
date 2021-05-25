@@ -70,6 +70,10 @@ export class CheckerService {
           model: this.UserModel,
           where: { id: user.id },
         },
+        {
+          model: this.PublishedCheckerModel,
+          attributes: ['id', 'createdAt'],
+        },
       ],
       order: [['updatedAt', 'DESC']],
     })

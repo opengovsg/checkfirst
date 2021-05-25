@@ -28,6 +28,7 @@ export type DashboardCheckerDTO = Pick<
   | 'operations'
   | 'displays'
   | 'updatedAt'
+  | 'publishedCheckers'
 >
 
 export type CreatePublishedCheckerDTO = Pick<

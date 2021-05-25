@@ -89,12 +89,32 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
         setShowCalcBar(false)
       }
     }
-
     document.addEventListener('mousedown', handleClickOutside)
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [])
+
+  // syncs input value with subsequent value updates
+  useEffect(() => {
+    setInputValue(value)
+  }, [value])
+
+  // syncs value updates to input value updates
+  useEffect(() => {
+    onChange(inputValue)
+
+    // avoid specifying onChange as a dependency, as it will lead to an infinite
+    // update loop!
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inputValue])
+
+  // sets the selection range on render, as it won't work before commit phase
+  useLayoutEffect(() => {
+    if (selection) {
+      inputRef.current?.setSelectionRange(selection.start, selection.end)
+    }
+  }, [selection, inputRef])
 
   // load query replacement items from checker context
   const { config } = useCheckerContext()
