@@ -48,16 +48,18 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
           onChange={handleChange}
           value={title}
         />
-        <ExpressionInput
-          name="expression"
-          type="text"
-          placeholder="Enter expression"
-          fontFamily="mono"
-          value={expression}
-          onChange={(expression) =>
-            handleExpressionChange('expression', expression)
-          }
-        />
+        <HStack>
+          <ExpressionInput
+            name="expression"
+            type="text"
+            placeholder="Enter expression"
+            fontFamily="mono"
+            value={expression}
+            onChange={(expression) =>
+              handleExpressionChange('expression', expression)
+            }
+          />
+        </HStack>
       </VStack>
     </HStack>
   )
