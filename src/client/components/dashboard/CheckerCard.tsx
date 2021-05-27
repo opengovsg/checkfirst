@@ -35,7 +35,7 @@ type StatusIndicatorProps = {
 
 const StatusIndicator: FC<StatusIndicatorProps> = ({ status }) => {
   const styles = useMultiStyleConfig('CheckerCard', {})
-  const color = status === 'published' ? '#46DBC9' : '#ECC953'
+  const color = status === 'published' ? 'success.500' : 'warning.500'
 
   return (
     <Flex sx={styles.indicator} direction="row">
@@ -137,7 +137,7 @@ export const CheckerCard: FC<CheckerCardProps> = ({ checker }) => {
       label: 'Delete',
       icon: <BiTrash />,
       onClick: onDelete,
-      style: { color: '#FB5D64' },
+      style: { color: 'error.500' },
     },
   ]
 

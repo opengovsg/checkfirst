@@ -12,7 +12,7 @@ export const OgpFooter: FC = () => (
       direction={{ base: 'column', md: 'row' }}
       justifyContent={{ md: 'space-between' }}
       alignItems={{ md: 'flex-end' }}
-      color="grey"
+      color="#eeeeee"
       fontSize="10px"
       spacing={{ base: '48px', md: '0px]' }}
     >

@@ -128,7 +128,7 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
                   >
                     <HStack spacing={4}>
                       <Badge
-                        bg="#FB5D64"
+                        bg="error.500"
                         color="white"
                         fontSize="sm"
                         borderRadius="5px"
@@ -148,7 +148,7 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
                   >
                     <HStack spacing={4}>
                       <Badge
-                        bg="#46DBC9"
+                        bg="success.500"
                         color="white"
                         fontSize="sm"
                         borderRadius="5px"

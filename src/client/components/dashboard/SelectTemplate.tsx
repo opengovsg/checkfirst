@@ -24,16 +24,25 @@ interface TemplateInfoProps {
 }
 const TemplateInfo: FC<TemplateInfoProps> = ({ id, title, description }) => (
   <Link to={`/dashboard/create/template/${id}/preview`}>
-    <HStack justifyContent="center" p="24px" _hover={{ bgColor: '#F4F6F9' }}>
+    <HStack
+      justifyContent="center"
+      p="24px"
+      _hover={{ bgColor: 'neutral.200' }}
+    >
       <VStack spacing={0} align="stretch" width="90%">
-        <Text color="#1B3C87" textStyle="sub1">
+        <Text color="primary.500" textStyle="sub1">
           {title}
         </Text>
-        <Text textStyle="sub2" color="#6D7580" maxW="100%" noOfLines={2}>
+        <Text textStyle="sub2" color="neutral.600" maxW="100%" noOfLines={2}>
           {description ?? 'No description'}
         </Text>
       </VStack>
-      <Center flex={1} justifyContent="center" fontSize="20px" color="#1B3C87">
+      <Center
+        flex={1}
+        justifyContent="center"
+        fontSize="20px"
+        color="primary.500"
+      >
         <BiShow />
       </Center>
     </HStack>
@@ -57,7 +66,7 @@ export const SelectTemplate: FC = () => {
                   Create from scratch
                 </Button>
               </Link>
-              <Text textStyle="body2" color="#6D7580">
+              <Text textStyle="body2" color="neutral.600">
                 or choose from template below
               </Text>
             </HStack>

@@ -163,7 +163,7 @@ export const ConstantsTab: FC = () => {
       ) : (
         <Center py={16}>
           <VStack spacing={4} w="100%">
-            <Text textStyle="h2" color="#1B3C87">
+            <Text textStyle="h2" color="primary.500">
               Give each option a numeric value
             </Text>
             <Text textAlign="center">
@@ -171,7 +171,7 @@ export const ConstantsTab: FC = () => {
               of a radio question. <br />
               Especially useful when trying to make calculations based off a
               user’s choice. <br />
-              <Link href={CONSTANTS_GUIDE_URL} isExternal color="#1B3C87">
+              <Link href={CONSTANTS_GUIDE_URL} isExternal color="primary.500">
                 Learn how to work with constants
               </Link>
             </Text>

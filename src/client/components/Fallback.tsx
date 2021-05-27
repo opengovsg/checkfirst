@@ -18,7 +18,7 @@ export const Fallback: FC<FallbackProps> = ({ resetError }) => (
         height={{ base: '257px', lg: 'auto' }}
         mb={{ base: '24px', lg: '0px' }}
       />
-      <Heading size="md" color="#1B3C87">
+      <Heading size="md" color="primary.500">
         Something went wrong.
       </Heading>
       <Button

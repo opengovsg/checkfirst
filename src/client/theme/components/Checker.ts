@@ -9,14 +9,14 @@ export const Checker = {
     subtitle: {
       size: '16px',
       lineHeight: '24px',
-      color: '#7A7F8C',
+      color: 'secondary.400',
     },
     label: {
       fontSize: '20px',
       fontWeight: 600,
     },
     help: {
-      color: '#7A7F8C',
+      color: 'secondary.400',
     },
     input: {
       bg: 'white',

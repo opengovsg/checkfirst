@@ -147,7 +147,7 @@ const PreviewComponent: QuestionFieldComponent = ({ field }) => {
           <BiListCheck fontSize="20px" />
           <Text>{title}</Text>
         </HStack>
-        {description && <Text color="#718096">{description}</Text>}
+        {description && <Text color="secondary.400">{description}</Text>}
       </VStack>
       <CheckboxGroup>
         <VStack alignItems="left" spacing={2}>

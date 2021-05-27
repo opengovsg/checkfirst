@@ -21,7 +21,7 @@ export const Faq: FC = () => {
   })
 
   return (
-    <Section bg="#F4F6F9">
+    <Section bg="neutral.200">
       <VStack py="64px" align="stretch" spacing={{ base: '32px', md: '48px' }}>
         <Text
           textAlign={{ base: 'left', md: 'center' }}

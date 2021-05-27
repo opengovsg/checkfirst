@@ -54,7 +54,7 @@ export const PreviewNavBar: FC = () => {
     <Flex
       h="80px"
       direction="row"
-      bgColor="#EBEFFE"
+      bgColor="primary.100"
       px={10}
       alignItems="center"
       position="fixed"
@@ -62,7 +62,7 @@ export const PreviewNavBar: FC = () => {
       zIndex={999}
     >
       <HStack flex={1}>
-        <Text color="#1B3C87" fontWeight="600">
+        <Text color="primary.500" fontWeight="600">
           PREVIEW MODE
         </Text>
       </HStack>

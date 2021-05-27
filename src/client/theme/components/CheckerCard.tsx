@@ -19,7 +19,7 @@ export const CheckerCard = {
       fontSize: '12px',
       fontWeight: '400',
       lineHeight: '16px',
-      color: '#A5ABB3',
+      color: 'neutral.500',
     },
     actions: {
       justifyContent: 'space-between',
@@ -29,7 +29,7 @@ export const CheckerCard = {
       fontSize: '12px',
       lineHeight: '16px',
       fontWeight: '400',
-      color: '#2C3A4B',
+      color: 'neutral.900',
       textTransform: 'capitalize',
       alignItems: 'center',
     },
