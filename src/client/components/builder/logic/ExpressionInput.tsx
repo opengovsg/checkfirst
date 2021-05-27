@@ -275,6 +275,7 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
                 setSelection({ start: start, end: end })
               }}
               onFocus={() => setShowCalcBar(true)}
+              onBlur={() => setSelection({ start: -1, end: -1 })}
             />
             <UnorderedList
               {...getMenuProps()}
