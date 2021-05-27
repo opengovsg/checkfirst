@@ -52,20 +52,20 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
   ...props
 }) => {
   const [inputValue, setInputValue] = useState<string>(value)
-  const [showCalcBar, setShowCalcBar] = useState(false)
+  const [hasFocus, setHasFocus] = useState(false)
   const [selection, setSelection] = useState<{ start: number; end: number }>()
 
   const inputRef = useRef<HTMLInputElement>(null)
   const wrapperRef = useRef<HTMLDivElement>(null)
 
-  // hide calc bar when clicking outside of the component
+  // hide calc bar and reset selection when clicking outside of the component
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
         wrapperRef.current &&
         !wrapperRef.current.contains(event.target as Node)
       ) {
-        setShowCalcBar(false)
+        setHasFocus(false)
       }
     }
     document.addEventListener('mousedown', handleClickOutside)
@@ -223,7 +223,7 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
       }
     })
     inputRef.current?.focus()
-    setShowCalcBar(true)
+    setHasFocus(true)
   }
 
   const currentMatches = getCurrentQueryMatches()
@@ -233,7 +233,7 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
       <Downshift
         // controlled values
         inputValue={inputValue}
-        isOpen={!!currentMatches}
+        isOpen={!!currentMatches && hasFocus}
         // item aria-label converter
         itemToString={(item) => item?.id || ''}
         // default values
@@ -274,7 +274,7 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
                 const end = e.currentTarget.selectionEnd || 0
                 setSelection({ start: start, end: end })
               }}
-              onFocus={() => setShowCalcBar(true)}
+              onFocus={() => setHasFocus(true)}
             />
             <UnorderedList
               {...getMenuProps()}
@@ -315,7 +315,7 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
           </VStack>
         )}
       </Downshift>
-      {showCalcBar ? (
+      {hasFocus ? (
         <CalculatorBar
           minH="48px"
           backgroundColor="#F4F6F9"
