@@ -163,7 +163,7 @@ export const ConstantsTab: FC = () => {
       ) : (
         <Center py={16}>
           <VStack spacing={4} w="100%">
-            <Text textStyle="h2" color="primary.500">
+            <Text textStyle="heading2" color="primary.500">
               Give each option a numeric value
             </Text>
             <Text textAlign="center">

@@ -10,15 +10,10 @@ export const CheckerCard = {
       p: '24px',
     },
     title: {
-      fontSize: '16px',
-      fontWeight: '500',
-      lineHeight: '24px',
-      letterSpacing: '-0.011em',
+      textStyle: 'subhead1',
     },
     subtitle: {
-      fontSize: '12px',
-      fontWeight: '400',
-      lineHeight: '16px',
+      textStyle: 'caption1',
       color: 'neutral.500',
     },
     actions: {
@@ -26,9 +21,7 @@ export const CheckerCard = {
       alignItems: 'center',
     },
     indicator: {
-      fontSize: '12px',
-      lineHeight: '16px',
-      fontWeight: '400',
+      textStyle: 'caption1',
       color: 'neutral.900',
       textTransform: 'capitalize',
       alignItems: 'center',

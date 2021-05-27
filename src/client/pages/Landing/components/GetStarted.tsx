@@ -21,7 +21,7 @@ export const GetStarted: FC<{ login: () => void }> = ({ login }) => (
     >
       <VStack alignItems="flex-start" spacing="32px" py="64px">
         <VStack spacing="16px" align="stretch">
-          <Text textStyle="h2">Start using CheckFirst today</Text>
+          <Text textStyle="heading2">Start using CheckFirst today</Text>
           <Text color="primary.500">
             Sign in with your gov.sg email account. For non gov.sg email users,
             please fill out the following form. We will review your request

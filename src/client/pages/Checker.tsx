@@ -7,7 +7,6 @@ import {
   Flex,
   Spinner,
   Image,
-  Heading,
   Text,
   VStack,
 } from '@chakra-ui/react'
@@ -44,10 +43,10 @@ export const Checker: FC = () => {
               height={{ base: '257px', lg: 'auto' }}
               mb={{ base: '24px', lg: '0px' }}
             />
-            <Heading size="md" color="primary.500">
+            <Text textStyle="heading2" color="primary.500">
               There’s nothing here.
-            </Heading>
-            <Text>
+            </Text>
+            <Text textStyle="body1">
               If you think this is a mistake, please contact the agency that
               gave you the checker link.
             </Text>

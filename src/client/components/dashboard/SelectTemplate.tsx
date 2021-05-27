@@ -30,10 +30,10 @@ const TemplateInfo: FC<TemplateInfoProps> = ({ id, title, description }) => (
       _hover={{ bgColor: 'neutral.200' }}
     >
       <VStack spacing={0} align="stretch" width="90%">
-        <Text color="primary.500" textStyle="sub1">
+        <Text color="primary.500" textStyle="subhead1">
           {title}
         </Text>
-        <Text textStyle="sub2" color="neutral.600" maxW="100%" noOfLines={2}>
+        <Text textStyle="body2" color="neutral.600" maxW="100%" noOfLines={2}>
           {description ?? 'No description'}
         </Text>
       </VStack>

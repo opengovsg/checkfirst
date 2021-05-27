@@ -5,7 +5,6 @@ import {
   useMultiStyleConfig,
   StylesProvider,
   Container,
-  Heading,
   VStack,
   Flex,
   Button,
@@ -161,7 +160,7 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
           <form onSubmit={methods.handleSubmit(onSubmit)}>
             <VStack align="stretch" spacing={10}>
               <VStack spacing={2}>
-                <Heading sx={styles.title}>{title}</Heading>
+                <Text sx={styles.title}>{title}</Text>
                 {description && <Text sx={styles.subtitle}>{description}</Text>}
               </VStack>
               {fields.map(renderField)}

@@ -62,7 +62,7 @@ export const PreviewNavBar: FC = () => {
       zIndex={999}
     >
       <HStack flex={1}>
-        <Text color="primary.500" fontWeight="600">
+        <Text textStyle="subhead3" color="primary.500">
           PREVIEW MODE
         </Text>
       </HStack>

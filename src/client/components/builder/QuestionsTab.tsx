@@ -37,7 +37,7 @@ const QUESTIONS_GUIDE_URL = 'https://go.gov.sg/checkfirst-formbuilder'
 const EmptyQuestionsTabBody: FC = () => (
   <Center py={16}>
     <VStack spacing={4} w="100%">
-      <Text color="primary.500" textStyle="h2">
+      <Text textStyle="heading2" color="primary.500">
         Start building your checker
       </Text>
       <Text textAlign="center">

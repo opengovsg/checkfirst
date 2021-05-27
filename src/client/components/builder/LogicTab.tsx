@@ -236,7 +236,7 @@ export const LogicTab: FC = () => {
       ) : (
         <Center py={16}>
           <VStack spacing={4} w="100%">
-            <Text textStyle="h2" color="primary.500">
+            <Text textStyle="heading2" color="primary.500">
               Build a logical brain for your checker
             </Text>
             <Text textAlign="center">
