@@ -22,6 +22,7 @@ import Downshift from 'downshift'
 
 import { useCheckerContext } from '../../../contexts'
 import { findIndex } from 'lodash'
+import { CalculatorBar } from './CalculatorBar'
 
 type Item = { id: string; type: 'FIELD' | 'OPERATION'; title: string }
 
@@ -51,9 +52,27 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
   ...props
 }) => {
   const [inputValue, setInputValue] = useState<string>(value)
+  const [showCalcBar, setShowCalcBar] = useState(false)
   const [selection, setSelection] = useState<{ start: number; end: number }>()
 
   const inputRef = useRef<HTMLInputElement>(null)
+  const wrapperRef = useRef<HTMLDivElement>(null)
+
+  // hide calc bar when clicking outside of the component
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        wrapperRef.current &&
+        !wrapperRef.current.contains(event.target as Node)
+      ) {
+        setShowCalcBar(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
 
   // syncs input value with subsequent value updates
   useEffect(() => {
@@ -186,93 +205,127 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
     return inputStr || ''
   }
 
+  const handleCalculatorChange = (operand: string) => {
+    setInputValue((oldVal) => {
+      return (
+        oldVal.slice(undefined, selection?.start) +
+        operand +
+        oldVal.slice(selection?.end)
+      )
+    })
+    setSelection((oldSel) => {
+      if (!oldSel) return undefined
+
+      const newPos = oldSel.end + operand.length
+      return {
+        start: newPos,
+        end: newPos,
+      }
+    })
+    inputRef.current?.focus()
+    setShowCalcBar(true)
+  }
+
   const currentMatches = getCurrentQueryMatches()
 
   return (
-    <Downshift
-      // controlled values
-      inputValue={inputValue}
-      isOpen={!!currentMatches}
-      // item aria-label converter
-      itemToString={(item) => item?.id || ''}
-      // default values
-      defaultHighlightedIndex={0}
-      defaultIsOpen={false}
-      // event handlers
-      onSelect={(item) => {
-        if (item) {
-          setInputValue(replaceVariableName(inputValue, item.id))
-        }
-      }}
-    >
-      {({
-        isOpen,
-        inputValue,
-        getRootProps,
-        getMenuProps,
-        getInputProps,
-        getItemProps,
-        highlightedIndex,
-      }) => (
-        <VStack
-          {...getRootProps()}
-          align="stretch"
-          spacing={0}
-          position="relative"
-          flex={1}
-        >
-          <Input
-            {...getInputProps({
-              ...props,
-            })}
-            value={inputValue || ''}
-            ref={inputRef}
-            onChange={(e) => setInputValue(e.currentTarget.value)}
-            onSelect={(e) => {
-              const start = e.currentTarget.selectionStart || 0
-              const end = e.currentTarget.selectionEnd || 0
-              setSelection({ start: start, end: end })
-            }}
-            onBlur={() => setSelection({ start: -1, end: -1 })}
-          />
-          <UnorderedList
-            {...getMenuProps()}
-            listStyleType="none"
-            border={isOpen ? 'solid 1px #E2E8F0' : 0}
-            borderBottomRadius="6px"
-            maxH="200px"
-            overflowY="auto"
-            position="absolute"
-            top="40px"
-            bg="white"
-            w="100%"
-            zIndex={99}
+    <VStack align="stretch" position="relative" flex={1} w={0} ref={wrapperRef}>
+      <Downshift
+        // controlled values
+        inputValue={inputValue}
+        isOpen={!!currentMatches}
+        // item aria-label converter
+        itemToString={(item) => item?.id || ''}
+        // default values
+        defaultHighlightedIndex={0}
+        defaultIsOpen={false}
+        // event handlers
+        onSelect={(item) => {
+          if (item) {
+            setInputValue(replaceVariableName(inputValue, item.id))
+          }
+        }}
+      >
+        {({
+          isOpen,
+          inputValue,
+          getRootProps,
+          getMenuProps,
+          getInputProps,
+          getItemProps,
+          highlightedIndex,
+        }) => (
+          <VStack
+            {...getRootProps()}
+            align="stretch"
+            spacing={0}
+            position="relative"
+            flex={1}
           >
-            {isOpen
-              ? currentMatches?.map((item, index) => (
-                  <ListItem
-                    {...getItemProps({ key: index, item })}
-                    bg={highlightedIndex === index ? 'neutral.50' : 'none'}
-                    py={2}
-                    px={2}
-                  >
-                    <HStack spacing={4}>
-                      <Badge
-                        bg={item.type === 'FIELD' ? '#FB5D64' : '#46DBC9'}
-                        color="white"
-                        fontSize="sm"
-                        borderRadius="5px"
-                      >
-                        {item.id}
-                      </Badge>
-                      <Text isTruncated>{item.title}</Text>
-                    </HStack>
-                  </ListItem>
-                ))
-              : null}
-          </UnorderedList>
-        </VStack>
-      )}
-    </Downshift>
+            <Input
+              {...getInputProps({
+                ...props,
+              })}
+              value={inputValue || ''}
+              ref={inputRef}
+              onChange={(e) => setInputValue(e.currentTarget.value)}
+              onSelect={(e) => {
+                const start = e.currentTarget.selectionStart || 0
+                const end = e.currentTarget.selectionEnd || 0
+                setSelection({ start: start, end: end })
+              }}
+              onFocus={() => setShowCalcBar(true)}
+            />
+            <UnorderedList
+              {...getMenuProps()}
+              listStyleType="none"
+              border={isOpen ? 'solid 1px #E2E8F0' : 0}
+              borderBottomRadius="6px"
+              maxH="200px"
+              overflowY="auto"
+              position="absolute"
+              top="40px"
+              bg="white"
+              w="100%"
+              zIndex={99}
+            >
+              {isOpen
+                ? currentMatches?.map((item, index) => (
+                    <ListItem
+                      {...getItemProps({ key: index, item })}
+                      bg={highlightedIndex === index ? 'neutral.50' : 'none'}
+                      py={2}
+                      px={2}
+                    >
+                      <HStack spacing={4}>
+                        <Badge
+                          bg={item.type === 'FIELD' ? '#FB5D64' : '#46DBC9'}
+                          color="white"
+                          fontSize="sm"
+                          borderRadius="5px"
+                        >
+                          {item.id}
+                        </Badge>
+                        <Text isTruncated>{item.title}</Text>
+                      </HStack>
+                    </ListItem>
+                  ))
+                : null}
+            </UnorderedList>
+          </VStack>
+        )}
+      </Downshift>
+      {showCalcBar ? (
+        <CalculatorBar
+          minH="48px"
+          backgroundColor="#F4F6F9"
+          borderRadius="6px"
+          border="solid 1px #DADCE3"
+          padding="3px 16px"
+          flexWrap="wrap"
+          onClick={handleCalculatorChange}
+        />
+      ) : null}
+    </VStack>
   )
 }
