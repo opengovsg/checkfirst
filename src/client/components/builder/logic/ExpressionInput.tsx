@@ -58,27 +58,6 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
   const inputRef = useRef<HTMLInputElement>(null)
   const wrapperRef = useRef<HTMLDivElement>(null)
 
-  // syncs input value with subsequent value updates
-  useEffect(() => {
-    setInputValue(value)
-  }, [value])
-
-  // syncs value updates to input value updates
-  useEffect(() => {
-    onChange(inputValue)
-
-    // avoid specifying onChange as a dependency, as it will lead to an infinite
-    // update loop!
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inputValue])
-
-  // sets the selection range on render, as it won't work before commit phase
-  useLayoutEffect(() => {
-    if (selection) {
-      inputRef.current?.setSelectionRange(selection.start, selection.end)
-    }
-  }, [selection, inputRef])
-
   // hide calc bar when clicking outside of the component
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
