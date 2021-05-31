@@ -40,7 +40,9 @@ export const DateField: FC<Field> = ({ id, title, description }) => {
           <Flatpickr
             onChange={([item]) => onChange(item)}
             value={value}
-            ref={ref}
+            ref={(reactFlatpickr) => {
+              ref(reactFlatpickr?.flatpickr.input)
+            }}
             options={{
               dateFormat: 'j M Y',
             }}
@@ -51,6 +53,7 @@ export const DateField: FC<Field> = ({ id, title, description }) => {
                   placeholder="DD/MM/YYYY"
                   readOnly
                   ref={ref}
+                  style={{ scrollMarginTop: '88px' }}
                   bg="white"
                 />
                 <InputRightElement
