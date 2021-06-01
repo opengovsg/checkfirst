@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { isValidExpression, math } from '../../../core/evaluator'
+import {
+  ConditionType,
+  Condition,
+  IfelseState,
+} from '../../../../types/conditional'
+import { parseConditionalExpr } from '../../../core/parser'
+import { isValidExpression } from '../../../core/evaluator'
 import update, { Spec } from 'immutability-helper'
 import {
   BiGitBranch,
@@ -29,61 +35,6 @@ import { ExpressionInput } from './ExpressionInput'
 import { DefaultTooltip } from '../../common/DefaultTooltip'
 import { FormulaPreview } from './FormulaPreview'
 
-enum ConditionType {
-  And = 'AND',
-  Or = 'OR',
-}
-
-interface Condition {
-  type: ConditionType
-  expression: string
-}
-
-interface IfelseState {
-  ifExpr: string
-  conditions: Condition[]
-  elseExpr: string
-  thenExpr: string
-}
-
-const EMPTY_STATE: IfelseState = {
-  ifExpr: '',
-  conditions: [],
-  elseExpr: '',
-  thenExpr: '',
-}
-
-const fromExpression = (expression: string): IfelseState => {
-  const root = math.parse!(expression)
-  const args: string[] = []
-  root.forEach((node) => args.push(node.toString()))
-
-  if (args.length === 4) {
-    const { 1: conditionExpr, 2: thenExpr, 3: elseExpr } = args
-    const parts = conditionExpr.replace(/\b(and|or)\b/g, '#$1').split('#')
-
-    const conditions = parts.slice(1).map((p) => {
-      const partMatch = p.match(/\b(and|or)\b\s?\((.*?)\)/)
-      if (!partMatch) throw new Error('Invalid expression')
-
-      const { 1: boolOperator, 2: subExpr } = partMatch
-      return {
-        type: boolOperator.toUpperCase(),
-        expression: subExpr.trim(),
-      } as Condition
-    })
-
-    return {
-      ifExpr: parts[0].trim(),
-      conditions,
-      elseExpr: elseExpr.trim(),
-      thenExpr: thenExpr.trim(),
-    }
-  }
-
-  return EMPTY_STATE
-}
-
 const toExpression = (state: IfelseState): string => {
   const { ifExpr, conditions, elseExpr, thenExpr } = state
   const condition = conditions.reduce((acc, cond) => {
@@ -99,13 +50,11 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
   const { title, expression } = operation
   const { dispatch } = useCheckerContext()
   const [ifelseState, setIfelseState] = useState<IfelseState>(
-    fromExpression(expression)
+    parseConditionalExpr(expression)
   )
   // Retrieve condition type from ifelseState if there exist conditions; else use AND type as default
-  const initialConditionType =
-    ifelseState.conditions.length > 0
-      ? ifelseState.conditions[0].type
-      : ConditionType.And
+  const initialConditionType: ConditionType =
+    ifelseState.conditions.length > 0 ? ifelseState.conditions[0].type : 'AND'
   const [conditionType, setConditionType] = useState(initialConditionType)
 
   useEffect(() => {
@@ -164,7 +113,7 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
     // Set all condition types in ifElseState
     const updateAllConditionTypes: Record<string, Spec<Condition>> = {}
 
-    ifelseState.conditions.forEach((condition, conditionIndex) => {
+    ifelseState.conditions.forEach((_condition, conditionIndex) => {
       updateAllConditionTypes[conditionIndex] = {
         type: { $set: conditionType },
       }
@@ -266,9 +215,9 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
                   textAlign="start"
                   justifyContent="initial"
                   height="36px"
-                  isActive={conditionType === ConditionType.And}
+                  isActive={conditionType === 'AND'}
                   variant="ghost"
-                  onClick={() => updateAllConditionTypes(ConditionType.And)}
+                  onClick={() => updateAllConditionTypes('AND')}
                 >
                   AND
                 </MenuItem>
@@ -279,9 +228,9 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
                   textAlign="start"
                   justifyContent="initial"
                   height="36px"
-                  isActive={conditionType === ConditionType.Or}
+                  isActive={conditionType === 'OR'}
                   variant="ghost"
-                  onClick={() => updateAllConditionTypes(ConditionType.Or)}
+                  onClick={() => updateAllConditionTypes('OR')}
                 >
                   OR
                 </MenuItem>
