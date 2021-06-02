@@ -37,7 +37,7 @@ export const NumericField: FC<Field> = ({ id, title, description }) => {
             onChange={onChange}
             value={value}
           >
-            <NumberInputField ref={ref} />
+            <NumberInputField ref={ref} style={{ scrollMarginTop: '88px' }} />
           </NumberInput>
           <FormErrorMessage>Field is required</FormErrorMessage>
         </FormControl>
