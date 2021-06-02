@@ -8,9 +8,12 @@ import {
   FormHelperText,
   Checkbox as CheckboxInput,
   CheckboxGroup,
+  Box,
 } from '@chakra-ui/react'
 
 import { Field } from '../../../types/checker'
+
+import '../../styles/checker-field.css'
 
 export const CheckboxField: FC<Field> = ({
   id,
@@ -30,32 +33,36 @@ export const CheckboxField: FC<Field> = ({
         field: { ref, value, onChange },
         fieldState: { invalid },
       }) => (
-        <FormControl isInvalid={invalid}>
-          <FormLabel sx={styles.label} htmlFor={id}>
-            {title}
-          </FormLabel>
-          {description && <FormHelperText mb={4}>{description}</FormHelperText>}
-          <CheckboxGroup onChange={onChange} value={value}>
-            <VStack align="stretch" spacing={4}>
-              {options.map(
-                (
-                  { value, label }: { value: number; label: string },
-                  i: number
-                ) => (
-                  <CheckboxInput
-                    colorScheme="primary"
-                    key={i}
-                    ref={ref}
-                    name={id}
-                    value={`${value}`}
-                  >
-                    {label}
-                  </CheckboxInput>
-                )
-              )}
-            </VStack>
-          </CheckboxGroup>
-        </FormControl>
+        <Box className="checker-field">
+          <FormControl isInvalid={invalid}>
+            <FormLabel sx={styles.label} htmlFor={id}>
+              {title}
+            </FormLabel>
+            {description && (
+              <FormHelperText mb={4}>{description}</FormHelperText>
+            )}
+            <CheckboxGroup onChange={onChange} value={value}>
+              <VStack align="stretch" spacing={4}>
+                {options.map(
+                  (
+                    { value, label }: { value: number; label: string },
+                    i: number
+                  ) => (
+                    <CheckboxInput
+                      colorScheme="primary"
+                      key={i}
+                      ref={ref}
+                      name={id}
+                      value={`${value}`}
+                    >
+                      {label}
+                    </CheckboxInput>
+                  )
+                )}
+              </VStack>
+            </CheckboxGroup>
+          </FormControl>
+        </Box>
       )}
     />
   )
