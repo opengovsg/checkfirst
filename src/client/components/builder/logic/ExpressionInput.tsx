@@ -299,7 +299,9 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
                     >
                       <HStack spacing={4}>
                         <Badge
-                          bg={item.type === 'FIELD' ? 'error.500' : 'success.500'}
+                          bg={
+                            item.type === 'FIELD' ? 'error.500' : 'success.500'
+                          }
                           color="white"
                           fontSize="sm"
                           borderRadius="5px"
