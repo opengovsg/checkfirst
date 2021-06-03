@@ -122,4 +122,9 @@ export const colors = {
     100: '#EDEDED',
     50: '#F9F9F9',
   },
+  inactive: {
+    500: '#FBFCFD',
+    600: '#EEEEEE',
+    700: '#DADEE3',
+  },
 }

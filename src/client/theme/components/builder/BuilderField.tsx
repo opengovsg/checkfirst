@@ -1,4 +1,6 @@
-const CommonComponents = {
+import { ComponentMultiStyleConfig } from '@chakra-ui/theme'
+
+const CommonComponents: ComponentMultiStyleConfig = {
   parts: ['dummyInput'],
   baseStyle: {
     dummyInput: {
@@ -11,7 +13,7 @@ const CommonComponents = {
   },
 }
 
-export const BuilderField = {
+export const BuilderField: ComponentMultiStyleConfig = {
   parts: ['container', 'action', 'content', 'badge', ...CommonComponents.parts],
   baseStyle: {
     container: {
@@ -19,7 +21,7 @@ export const BuilderField = {
       px: 4,
       w: '100%',
       bg: 'white',
-      borderRadius: '12px',
+      borderRadius: '3px',
       cursor: 'pointer',
       position: 'relative',
     },
@@ -38,23 +40,25 @@ export const BuilderField = {
       left: `-${40 + 16}px`,
       zIndex: 9,
       transition: 'none',
+      color: 'neutral.800',
     },
     ...CommonComponents.baseStyle,
   },
   variants: {
-    active: {
+    active: ({ colorScheme }) => ({
       container: {
-        borderLeft: 'solid 12px',
-        borderLeftColor: 'primary.500',
+        borderLeft: 'solid 8px',
+        borderLeftColor: `${colorScheme}.500`,
         boxShadow: '0px 0px 10px #DADEE3',
         cursor: 'auto',
       },
       badge: {
-        left: `-${40 + 12 + 16}px`, // Add 12px for left border
+        left: `-${40 + 8 + 16}px`, // Add 8px for left border
+        color: 'white',
       },
       content: {
         mb: 6,
       },
-    },
+    }),
   },
 }
