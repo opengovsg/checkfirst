@@ -14,11 +14,16 @@ const CommonComponents: ComponentMultiStyleConfig = {
 }
 
 export const BuilderField: ComponentMultiStyleConfig = {
-  parts: ['container', 'action', 'content', 'badge', ...CommonComponents.parts],
+  parts: [
+    'container',
+    'action',
+    'content',
+    'badge',
+    'actionBar',
+    ...CommonComponents.parts,
+  ],
   baseStyle: {
     container: {
-      py: 8,
-      px: 4,
       w: '100%',
       bg: 'white',
       borderRadius: '3px',
@@ -32,6 +37,9 @@ export const BuilderField: ComponentMultiStyleConfig = {
         color: 'primary.300',
       },
     },
+    content: {
+      p: 8,
+    },
     badge: {
       w: '40px',
       h: '40px',
@@ -41,6 +49,13 @@ export const BuilderField: ComponentMultiStyleConfig = {
       zIndex: 9,
       transition: 'none',
       color: 'neutral.800',
+    },
+    actionBar: {
+      h: 12,
+      px: 4,
+      borderTop: 'solid 1px',
+      borderTopColor: 'secondary.200',
+      justifyContent: 'flex-end',
     },
     ...CommonComponents.baseStyle,
   },
@@ -57,7 +72,8 @@ export const BuilderField: ComponentMultiStyleConfig = {
         color: 'white',
       },
       content: {
-        mb: 6,
+        pl: 6,
+        pb: 6,
       },
     }),
   },

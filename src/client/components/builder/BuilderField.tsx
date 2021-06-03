@@ -254,8 +254,8 @@ export const createBuilderField =
             </Button>
           )}
           <Flex sx={styles.content}>{renderContent()}</Flex>
-          {active && (
-            <HStack justifyContent="flex-end">
+          {active && !isTitleData(data) && (
+            <HStack sx={styles.actionBar} spacing={0}>
               {isOperationData(data) && (
                 <ActionButton
                   aria-label="Duplicate"
