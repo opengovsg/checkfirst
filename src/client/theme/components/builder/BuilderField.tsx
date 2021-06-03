@@ -1,5 +1,18 @@
+const CommonComponents = {
+  parts: ['dummyInput'],
+  baseStyle: {
+    dummyInput: {
+      bg: 'neutral.200',
+      _disabled: {
+        opacity: 1.0,
+        cursor: 'not-allowed',
+      },
+    },
+  },
+}
+
 export const BuilderField = {
-  parts: ['container', 'action', 'dummyInput', 'content', 'badge'],
+  parts: ['container', 'action', 'content', 'badge', ...CommonComponents.parts],
   baseStyle: {
     container: {
       py: 8,
@@ -17,13 +30,6 @@ export const BuilderField = {
         color: 'primary.300',
       },
     },
-    dummyInput: {
-      bg: 'neutral.200',
-      _disabled: {
-        opacity: 1.0,
-        cursor: 'not-allowed',
-      },
-    },
     badge: {
       w: '40px',
       h: '40px',
@@ -33,6 +39,7 @@ export const BuilderField = {
       zIndex: 9,
       transition: 'none',
     },
+    ...CommonComponents.baseStyle,
   },
   variants: {
     active: {
