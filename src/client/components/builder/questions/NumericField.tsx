@@ -1,6 +1,15 @@
 import React from 'react'
 import { BiHash } from 'react-icons/bi'
-import { useStyles, Box, HStack, VStack, Text, Input } from '@chakra-ui/react'
+import {
+  useStyles,
+  HStack,
+  VStack,
+  Text,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  useMultiStyleConfig,
+} from '@chakra-ui/react'
 
 import { createBuilderField, QuestionFieldComponent } from '../BuilderField'
 import { useCheckerContext } from '../../../contexts'
@@ -8,7 +17,9 @@ import { BuilderActionEnum, ConfigArrayEnum } from '../../../../util/enums'
 
 const InputComponent: QuestionFieldComponent = ({ field, index }) => {
   const { title, description } = field
-  const styles = useStyles()
+  const commonStyles = useStyles()
+  const styles = useMultiStyleConfig('NumericField', {})
+
   const { dispatch } = useCheckerContext()
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -23,54 +34,59 @@ const InputComponent: QuestionFieldComponent = ({ field, index }) => {
   }
 
   return (
-    <HStack w="100%" alignItems="flex-start">
-      <Box fontSize="20px" pt={2}>
-        <BiHash />
-      </Box>
-      <VStack align="stretch" w="90%">
+    <VStack sx={commonStyles.fullWidthContainer} spacing={4}>
+      <InputGroup>
+        <InputLeftElement
+          sx={commonStyles.inputIconElement}
+          children={<BiHash />}
+        />
         <Input
           type="text"
+          sx={commonStyles.fieldInput}
           placeholder="Question"
           name="title"
           onChange={handleChange}
           value={title}
         />
-        <Input
-          type="text"
-          name="description"
-          placeholder="Description"
-          onChange={handleChange}
-          value={description}
-        />
-        <Input
-          type="text"
-          placeholder="Enter number"
-          w="50%"
-          sx={styles.dummyInput}
-          disabled
-        />
-      </VStack>
-    </HStack>
+      </InputGroup>
+      <Input
+        type="text"
+        sx={commonStyles.fieldInput}
+        name="description"
+        placeholder="Description"
+        onChange={handleChange}
+        value={description}
+      />
+      <Input
+        type="text"
+        placeholder="Enter number"
+        sx={{ ...commonStyles.dummyInput, ...styles.numericInput }}
+        disabled
+      />
+    </VStack>
   )
 }
 
 const PreviewComponent: QuestionFieldComponent = ({ field }) => {
   const { title, description } = field
-  const styles = useStyles()
+  const commonStyles = useStyles()
+  const styles = useMultiStyleConfig('NumericField', {})
+
   return (
-    <VStack align="stretch" w="100%" spacing={6}>
-      <VStack align="stretch">
+    <VStack sx={commonStyles.fullWidthContainer} spacing={3}>
+      <VStack sx={commonStyles.fullWidthContainer} spacing={0}>
         <HStack>
           <BiHash fontSize="20px" />
-          <Text>{title}</Text>
+          <Text sx={commonStyles.previewTitle}>{title}</Text>
         </HStack>
-        {description && <Text color="secondary.400">{description}</Text>}
+        {description && (
+          <Text sx={commonStyles.previewDescription}>{description}</Text>
+        )}
       </VStack>
       <Input
-        w="50%"
         type="text"
         placeholder="Enter number"
-        sx={styles.dummyInput}
+        sx={{ ...commonStyles.dummyInput, ...styles.numericInput }}
         disabled
       />
     </VStack>
