@@ -19,6 +19,7 @@ export const BuilderField: ComponentMultiStyleConfig = {
     'content',
     'badge',
     'actionBar',
+    'barSpacer',
     ...CommonComponents.parts,
   ],
   baseStyle: {
@@ -48,6 +49,9 @@ export const BuilderField: ComponentMultiStyleConfig = {
       borderTop: 'solid 1px',
       borderTopColor: 'secondary.200',
       justifyContent: 'flex-end',
+    },
+    barSpacer: {
+      h: 2,
     },
     ...CommonComponents.baseStyle,
   },
