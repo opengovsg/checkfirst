@@ -291,6 +291,7 @@ export const createBuilderField =
                     onClick={handleDuplicate}
                   />
                   <ActionButton
+                    colorScheme="error"
                     aria-label="Delete"
                     icon={
                       <DefaultTooltip label="Delete">

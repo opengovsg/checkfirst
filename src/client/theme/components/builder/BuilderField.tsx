@@ -16,7 +16,6 @@ const CommonComponents: ComponentMultiStyleConfig = {
 export const BuilderField: ComponentMultiStyleConfig = {
   parts: [
     'container',
-    'action',
     'content',
     'badge',
     'actionBar',
@@ -29,13 +28,6 @@ export const BuilderField: ComponentMultiStyleConfig = {
       borderRadius: '3px',
       cursor: 'pointer',
       position: 'relative',
-    },
-    action: {
-      color: 'secondary.500',
-      fontSize: '20px',
-      _hover: {
-        color: 'primary.300',
-      },
     },
     content: {
       p: 8,
