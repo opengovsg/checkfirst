@@ -9,6 +9,11 @@ export const TitleField: ComponentMultiStyleConfig = {
     descriptionPreview: {
       textStyle: 'body2',
       color: 'secondary.400',
+      whiteSpace: 'pre-wrap',
+    },
+    descriptionTextarea: {
+      resize: 'vertical',
+      textStyle: 'body1',
     },
   },
 }

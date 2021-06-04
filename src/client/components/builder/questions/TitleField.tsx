@@ -5,6 +5,7 @@ import {
   Input,
   useStyles,
   useMultiStyleConfig,
+  Textarea,
 } from '@chakra-ui/react'
 
 import { createBuilderField, TitleFieldComponent } from '../BuilderField'
@@ -19,8 +20,13 @@ const enum SettingsName {
 const InputComponent: TitleFieldComponent = ({ title, description }) => {
   const { dispatch } = useCheckerContext()
   const commonStyles = useStyles()
+  const styles = useMultiStyleConfig('TitleField', {})
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    e:
+      | React.ChangeEvent<HTMLInputElement>
+      | React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target
     const update = { settingsName: name as SettingsName, value }
 
@@ -40,9 +46,9 @@ const InputComponent: TitleFieldComponent = ({ title, description }) => {
         onChange={handleChange}
         value={title}
       />
-      <Input
+      <Textarea
         type="text"
-        sx={commonStyles.fieldInput}
+        sx={styles.descriptionTextarea}
         name={SettingsName.description}
         placeholder="Description"
         onChange={handleChange}

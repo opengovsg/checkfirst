@@ -11,6 +11,7 @@ export const Checker = {
       size: '16px',
       lineHeight: '24px',
       color: 'secondary.400',
+      whiteSpace: 'pre-wrap',
     },
     label: {
       textStyle: 'subhead1',
