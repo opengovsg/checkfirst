@@ -2,13 +2,13 @@ import React from 'react'
 import { BiCalendar } from 'react-icons/bi'
 import {
   useStyles,
-  Box,
   HStack,
   VStack,
   Text,
   Input,
   InputGroup,
   InputRightElement,
+  InputLeftElement,
 } from '@chakra-ui/react'
 
 import { createBuilderField, QuestionFieldComponent } from '../BuilderField'
@@ -17,7 +17,8 @@ import { BuilderActionEnum, ConfigArrayEnum } from '../../../../util/enums'
 
 const InputComponent: QuestionFieldComponent = ({ field, index }) => {
   const { title, description } = field
-  const styles = useStyles()
+  const commonStyles = useStyles()
+
   const { dispatch } = useCheckerContext()
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -32,59 +33,65 @@ const InputComponent: QuestionFieldComponent = ({ field, index }) => {
   }
 
   return (
-    <HStack w="100%" alignItems="flex-start">
-      <Box fontSize="20px" pt={2}>
-        <BiCalendar />
-      </Box>
-      <VStack align="stretch" w="90%">
+    <VStack sx={commonStyles.fullWidthContainer} spacing={4}>
+      <InputGroup>
+        <InputLeftElement
+          sx={commonStyles.inputIconElement}
+          children={<BiCalendar />}
+        />
         <Input
           type="text"
+          sx={commonStyles.fieldInput}
           placeholder="Question"
           name="title"
           onChange={handleChange}
           value={title}
         />
+      </InputGroup>
+      <Input
+        type="text"
+        sx={commonStyles.fieldInput}
+        name="description"
+        placeholder="Description"
+        onChange={handleChange}
+        value={description}
+      />
+      <InputGroup sx={commonStyles.halfWidthContainer}>
         <Input
           type="text"
-          name="description"
-          placeholder="Description"
-          onChange={handleChange}
-          value={description}
+          placeholder="DD/MM/YYYY"
+          sx={commonStyles.dummyInput}
+          disabled
         />
-        <InputGroup w="50%">
-          <Input
-            type="text"
-            placeholder="DD/MM/YYYY"
-            sx={styles.dummyInput}
-            disabled
-          />
-          <InputRightElement
-            pointerEvents="none"
-            children={<BiCalendar opacity={0.7} />}
-          />
-        </InputGroup>
-      </VStack>
-    </HStack>
+        <InputRightElement
+          pointerEvents="none"
+          children={<BiCalendar opacity={0.7} />}
+        />
+      </InputGroup>
+    </VStack>
   )
 }
 
 const PreviewComponent: QuestionFieldComponent = ({ field }) => {
   const { title, description } = field
-  const styles = useStyles()
+  const commonStyles = useStyles()
+
   return (
-    <VStack align="stretch" w="100%" spacing={6}>
-      <VStack align="stretch">
+    <VStack sx={commonStyles.fullWidthContainer} spacing={3}>
+      <VStack sx={commonStyles.fullWidthContainer} spacing={0}>
         <HStack>
           <BiCalendar fontSize="20px" />
-          <Text>{title}</Text>
+          <Text sx={commonStyles.previewTitle}>{title}</Text>
         </HStack>
-        {description && <Text color="secondary.400">{description}</Text>}
+        {description && (
+          <Text sx={commonStyles.previewDescription}>{description}</Text>
+        )}
       </VStack>
-      <InputGroup w="50%">
+      <InputGroup sx={commonStyles.halfWidthContainer}>
         <Input
           type="text"
           placeholder="DD/MM/YYYY"
-          sx={styles.dummyInput}
+          sx={commonStyles.dummyInput}
           disabled
         />
         <InputRightElement
