@@ -14,6 +14,7 @@ import {
 import { createBuilderField, QuestionFieldComponent } from '../BuilderField'
 import { useCheckerContext } from '../../../contexts'
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../../util/enums'
+import { FieldIndexText } from './FieldIndexText'
 
 const InputComponent: QuestionFieldComponent = ({ field, index }) => {
   const { title, description } = field
@@ -67,7 +68,7 @@ const InputComponent: QuestionFieldComponent = ({ field, index }) => {
   )
 }
 
-const PreviewComponent: QuestionFieldComponent = ({ field }) => {
+const PreviewComponent: QuestionFieldComponent = ({ field, index }) => {
   const { title, description } = field
   const commonStyles = useStyles()
   const styles = useMultiStyleConfig('NumericField', {})
@@ -76,7 +77,7 @@ const PreviewComponent: QuestionFieldComponent = ({ field }) => {
     <VStack sx={commonStyles.fullWidthContainer} spacing={3}>
       <VStack sx={commonStyles.fullWidthContainer} spacing={0}>
         <HStack>
-          <BiHash fontSize="20px" />
+          <FieldIndexText index={index} />
           <Text sx={commonStyles.previewTitle}>{title}</Text>
         </HStack>
         {description && (

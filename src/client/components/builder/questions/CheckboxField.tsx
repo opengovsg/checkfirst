@@ -23,6 +23,7 @@ import { useCheckerContext } from '../../../contexts'
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../../util/enums'
 
 import '../../../styles/big-checkbox.css'
+import { FieldIndexText } from './FieldIndexText'
 
 const InputComponent: QuestionFieldComponent = ({ field, index }) => {
   const { title, description } = field
@@ -156,7 +157,7 @@ const InputComponent: QuestionFieldComponent = ({ field, index }) => {
   )
 }
 
-const PreviewComponent: QuestionFieldComponent = ({ field }) => {
+const PreviewComponent: QuestionFieldComponent = ({ field, index }) => {
   const { title, description, options } = field
   const commonStyles = useStyles()
   const styles = useMultiStyleConfig('CheckboxField', {})
@@ -165,7 +166,7 @@ const PreviewComponent: QuestionFieldComponent = ({ field }) => {
     <VStack sx={commonStyles.fullWidthContainer} spacing={2}>
       <VStack sx={commonStyles.fullWidthContainer} spacing={0}>
         <HStack>
-          <BiSelectMultiple fontSize="20px" />
+          <FieldIndexText index={index} />
           <Text sx={commonStyles.previewTitle}>{title}</Text>
         </HStack>
         {description && (
