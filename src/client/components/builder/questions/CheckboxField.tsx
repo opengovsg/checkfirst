@@ -90,7 +90,11 @@ const InputComponent: QuestionFieldComponent = ({ field, index }) => {
   const renderOption = (option: checker.FieldOption, i: number) => {
     return (
       <HStack key={i} spacing={4}>
-        <Checkbox sx={styles.checkbox} isChecked={false} />
+        <Checkbox
+          sx={styles.checkbox}
+          className="big-checkbox"
+          isChecked={false}
+        />
         <Input
           type="text"
           value={option.label}
@@ -174,6 +178,7 @@ const PreviewComponent: QuestionFieldComponent = ({ field }) => {
             <Flex key={i} sx={styles.previewOptionRowContainer}>
               <Checkbox
                 sx={styles.checkbox}
+                className="big-checkbox"
                 spacing={4}
                 value={value}
                 isChecked={false}
