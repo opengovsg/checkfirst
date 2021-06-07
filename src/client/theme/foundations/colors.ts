@@ -127,4 +127,7 @@ export const colors = {
     600: '#EEEEEE',
     700: '#DADEE3',
   },
+  table: {
+    100: '#DADEE3',
+  },
 }

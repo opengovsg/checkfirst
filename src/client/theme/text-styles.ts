@@ -85,4 +85,11 @@ export const textStyles = {
     letterSpacing: '-0.022em',
     fontFeatureSettings: "'cv05' on",
   },
+  tablehead: {
+    fontSize: '0.75rem',
+    lineHeight: '1rem',
+    fontWeight: 500,
+    letterSpacing: '0em',
+    fontFeatureSettings: "'tnum' on, 'lnum' on, 'cv05' on",
+  },
 }

@@ -1,9 +1,8 @@
 import React from 'react'
-import { BiTable, BiTrash, BiPlusCircle } from 'react-icons/bi'
+import { BiTable, BiTrash, BiPlus } from 'react-icons/bi'
 import {
   IconButton,
   Button,
-  Box,
   HStack,
   VStack,
   Text,
@@ -14,6 +13,10 @@ import {
   Tr,
   Th,
   Td,
+  InputGroup,
+  InputLeftElement,
+  useMultiStyleConfig,
+  useStyles,
 } from '@chakra-ui/react'
 
 import * as checker from '../../../../types/checker'
@@ -25,6 +28,8 @@ import { DefaultTooltip } from '../../common/DefaultTooltip'
 const InputComponent: ConstantFieldComponent = ({ constant, index }) => {
   const { title, table } = constant
   const { dispatch } = useCheckerContext()
+  const commonStyles = useStyles()
+  const styles = useMultiStyleConfig('MapTable', {})
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -79,112 +84,132 @@ const InputComponent: ConstantFieldComponent = ({ constant, index }) => {
   }
 
   return (
-    <>
-      <HStack w="100%" alignItems="flex-start">
-        <Box fontSize="20px" pt={2}>
-          <BiTable />
-        </Box>
-        <VStack align="stretch" w="100%">
-          <Input
-            type="text"
-            placeholder="Table Name"
-            name="title"
-            onChange={handleTitleChange}
-            value={title}
-          />
-          <Table variant="simple">
-            <Thead>
-              <Tr>
-                <Th>Reference</Th>
-                <Th>Constant</Th>
-                <Th />
-              </Tr>
-            </Thead>
-          </Table>
+    <VStack
+      sx={{ ...commonStyles.fullWidthContainer, ...styles.fieldContainer }}
+      spacing={4}
+    >
+      <InputGroup>
+        <InputLeftElement
+          sx={commonStyles.inputIconElement}
+          children={<BiTable />}
+        />
+        <Input
+          type="text"
+          sx={commonStyles.fieldInput}
+          placeholder="Table Name"
+          name="title"
+          onChange={handleTitleChange}
+          value={title}
+        />
+      </InputGroup>
+      <Table sx={styles.table} variant="simple" colorScheme="table">
+        <Thead>
+          <Tr>
+            <Th sx={styles.tableHead}>
+              <Text sx={styles.tableHeadText}>Reference</Text>
+            </Th>
+            <Th sx={styles.tableHead}>
+              <Text sx={styles.tableHeadText}>Constant</Text>
+            </Th>
+            <Th />
+          </Tr>
+        </Thead>
+        <Tbody>
           {table.map(({ key, value }, index) => (
-            <HStack w="100%" alignItems="flex-start" key={index}>
-              <Input
-                type="text"
-                placeholder="Reference"
-                name="Reference"
-                onChange={(e) => {
-                  handleUpdateTableRow({ key: e.target.value, value }, index)
-                }}
-                value={key}
-                w="45%"
-              />
-              <Input
-                type="number"
-                placeholder="Constant"
-                name="constant"
-                onChange={(e) => {
-                  handleUpdateTableRow(
-                    { key, value: Number(e.target.value) },
-                    index
-                  )
-                }}
-                value={value}
-                w="45%"
-              />
-              <DefaultTooltip label="Delete mapping" placement="right">
-                <IconButton
-                  borderRadius={0}
-                  variant="ghost"
-                  aria-label="delete item"
-                  fontSize="20px"
-                  icon={<BiTrash />}
-                  onClick={() => handleDeleteTableRow(index)}
+            <Tr key={index}>
+              <Td sx={styles.tableCell}>
+                <Input
+                  sx={styles.tableInput}
+                  type="text"
+                  placeholder="Reference"
+                  name="Reference"
+                  onChange={(e) => {
+                    handleUpdateTableRow({ key: e.target.value, value }, index)
+                  }}
+                  value={key}
                 />
-              </DefaultTooltip>
-            </HStack>
+              </Td>
+              <Td sx={styles.tableCell}>
+                <Input
+                  sx={styles.tableInput}
+                  type="number"
+                  placeholder="Numeric Value"
+                  name="constant"
+                  onChange={(e) => {
+                    handleUpdateTableRow(
+                      { key, value: Number(e.target.value) },
+                      index
+                    )
+                  }}
+                  value={value}
+                />
+              </Td>
+              <Td sx={styles.deleteCell}>
+                <DefaultTooltip label="Delete mapping" placement="right">
+                  <IconButton
+                    sx={styles.deleteButton}
+                    variant="link"
+                    colorScheme="error"
+                    aria-label="delete item"
+                    icon={<BiTrash />}
+                    onClick={() => handleDeleteTableRow(index)}
+                  />
+                </DefaultTooltip>
+              </Td>
+            </Tr>
           ))}
-          <Button
-            leftIcon={<BiPlusCircle />}
-            variant="outline"
-            colorScheme="primary"
-            aria-label="add map item"
-            onClick={handleAddTableRow}
-            w="91.25%"
-          >
-            Add map constant
-          </Button>
-        </VStack>
-      </HStack>
-    </>
+        </Tbody>
+      </Table>
+      <Button
+        leftIcon={<BiPlus />}
+        sx={styles.addRowButton}
+        variant="solid"
+        colorScheme="primary"
+        aria-label="add map item"
+        onClick={handleAddTableRow}
+      >
+        Add row
+      </Button>
+    </VStack>
   )
 }
 
 const PreviewComponent: ConstantFieldComponent = ({ constant }) => {
   const { title, table } = constant
+  const commonStyles = useStyles()
+  const styles = useMultiStyleConfig('MapTable', {})
+
   return (
-    <VStack align="stretch" w="100%" spacing={6}>
-      <VStack align="stretch">
-        <HStack>
-          <BiTable fontSize="20px" />
-          <Text>{title}</Text>
-        </HStack>
-        <HStack>
-          <Table variant="simple">
-            <Thead>
-              <Tr>
-                <Th>Reference</Th>
-                <Th>Constant</Th>
-                <Th />
+    <VStack sx={commonStyles.fullWidthContainer} spacing={3}>
+      <HStack>
+        <BiTable fontSize="20px" />
+        <Text sx={commonStyles.previewTitle}>{title}</Text>
+      </HStack>
+      <HStack>
+        <Table sx={styles.table} variant="simple" colorScheme="table">
+          <Thead>
+            <Tr>
+              <Th sx={styles.tableHead}>
+                <Text sx={styles.tableHeadText}>Reference</Text>
+              </Th>
+              <Th sx={styles.tableHead}>
+                <Text sx={styles.tableHeadText}>Constant</Text>
+              </Th>
+              <Th />
+            </Tr>
+          </Thead>
+          <Tbody sx={styles.previewTableBody}>
+            {table.map(({ key, value }, index) => (
+              <Tr key={index}>
+                <Td>{key}</Td>
+                {/* Hide NaN value */}
+                {isNaN(value) ? <Td /> : <Td>{value}</Td>}
+                <Td />
               </Tr>
-            </Thead>
-            <Tbody>
-              {table.map(({ key, value }, index) => (
-                <Tr key={index}>
-                  <Td>{key}</Td>
-                  {/* Hide NaN value */}
-                  {isNaN(value) ? <Td /> : <Td>{value}</Td>}
-                  <Td />
-                </Tr>
-              ))}
-            </Tbody>
-          </Table>
-        </HStack>
-      </VStack>
+            ))}
+          </Tbody>
+        </Table>
+      </HStack>
     </VStack>
   )
 }
