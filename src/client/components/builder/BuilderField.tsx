@@ -102,15 +102,15 @@ export const createBuilderField =
     const [ref, { top }] = usePosition()
     const { dispatch } = useCheckerContext()
     const variant = active ? 'active' : ''
-    const colorScheme = !active
-      ? 'inactive'
-      : isFieldData(data) || isTitleData(data)
-      ? 'success'
-      : isConstantData(data)
-      ? 'warning'
-      : isOperationData(data)
-      ? 'primary'
-      : 'primary' // fallback
+
+    const getVariant = (data: BuilderFieldData): string => {
+      if (!active) return 'inactive'
+      if (isFieldData(data) || isTitleData(data)) return 'success'
+      if (isConstantData(data)) return 'warning'
+      if (isOperationData(data)) return 'primary'
+      return 'primary'
+    }
+    const colorScheme = getVariant(data)
     const styles = useMultiStyleConfig('BuilderField', { variant, colorScheme })
 
     useEffect(() => {
