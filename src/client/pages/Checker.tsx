@@ -7,7 +7,6 @@ import {
   Flex,
   Spinner,
   Image,
-  Heading,
   Text,
   VStack,
 } from '@chakra-ui/react'
@@ -28,7 +27,7 @@ export const Checker: FC = () => {
   } = useQuery(['checker', id], () => CheckerService.getPublishedChecker(id))
 
   return (
-    <Flex direction="column" bg="neutral.50" minH="100vh">
+    <Flex direction="column" bg="neutral.200" minH="100vh">
       {!isLoading && !isError && config && <CheckerComponent config={config} />}
       {isLoading && (
         <Center py={16}>
@@ -44,10 +43,10 @@ export const Checker: FC = () => {
               height={{ base: '257px', lg: 'auto' }}
               mb={{ base: '24px', lg: '0px' }}
             />
-            <Heading size="md" color="#1B3C87">
+            <Text textStyle="heading2" color="primary.500">
               There’s nothing here.
-            </Heading>
-            <Text>
+            </Text>
+            <Text textStyle="body1">
               If you think this is a mistake, please contact the agency that
               gave you the checker link.
             </Text>

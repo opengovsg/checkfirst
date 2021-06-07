@@ -18,9 +18,7 @@ export const SiteMap: FC = () => (
         direction={{ base: 'column', md: 'row' }}
         spacing={{ base: '8px', md: '16px' }}
       >
-        <Text fontSize="24px" fontWeight="600">
-          CheckFirst
-        </Text>
+        <Text textStyle="heading2">CheckFirst</Text>
         <Text fontStyle="italic">Don't Know? CheckFirst.</Text>
       </Stack>
       <Divider display={{ md: 'none' }} />

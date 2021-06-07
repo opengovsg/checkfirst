@@ -78,7 +78,7 @@ const PreviewComponent: QuestionFieldComponent = ({ field }) => {
           <BiCalendar fontSize="20px" />
           <Text>{title}</Text>
         </HStack>
-        {description && <Text color="#718096">{description}</Text>}
+        {description && <Text color="secondary.400">{description}</Text>}
       </VStack>
       <InputGroup w="50%">
         <Input

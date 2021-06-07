@@ -89,7 +89,7 @@ const PreviewComponent: QuestionFieldComponent = ({ field }) => {
           <BiListUl fontSize="20px" />
           <Text>{title}</Text>
         </HStack>
-        {description && <Text color="#718096">{description}</Text>}
+        {description && <Text color="secondary.400">{description}</Text>}
       </VStack>
       <Select isDisabled sx={styles.dummyInput}>
         {options.map(({ value, label }, i) => (

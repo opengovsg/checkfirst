@@ -52,8 +52,8 @@ export const OtpForm: FC<OtpFormProps> = ({ onSuccess }) => {
     <form onSubmit={handleSubmit(onSubmit)}>
       <VStack spacing="32px" align="stretch">
         <FormControl id="email" isInvalid={hasError()}>
-          <FormLabel label="#11263C">Login</FormLabel>
-          <Text color="#6D7580" mb="24px">
+          <FormLabel label="neutral.900">Login</FormLabel>
+          <Text color="neutral.700" mb="24px">
             Only available for use by public officers with a{' '}
             <strong>gov.sg</strong> email.
           </Text>

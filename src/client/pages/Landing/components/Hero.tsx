@@ -26,7 +26,7 @@ export const Hero: FC<{ login: () => void }> = ({ login }) => {
   }
 
   return (
-    <Section bg="#F4F6F9">
+    <Section bg="neutral.200">
       <Box my={{ base: '48px', lg: '0px' }}>
         <LandingNavbar login={login} />
 

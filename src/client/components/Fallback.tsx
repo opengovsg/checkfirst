@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Box, Button, Center, Image, VStack, Heading } from '@chakra-ui/react'
+import { Box, Button, Center, Image, VStack, Text } from '@chakra-ui/react'
 
 // Images
 import notFoundErrorImage from '../assets/states/error-404.svg'
@@ -18,9 +18,9 @@ export const Fallback: FC<FallbackProps> = ({ resetError }) => (
         height={{ base: '257px', lg: 'auto' }}
         mb={{ base: '24px', lg: '0px' }}
       />
-      <Heading size="md" color="#1B3C87">
+      <Text textStyle="heading2" color="primary.500">
         Something went wrong.
-      </Heading>
+      </Text>
       <Button
         colorScheme="primary"
         onClick={() => {

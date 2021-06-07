@@ -39,13 +39,13 @@ const GET_STARTED_URL = 'https://go.gov.sg/checkfirst-formbuilder'
 const EmptyDashboardBody: FC = () => (
   <Center py={16}>
     <VStack spacing={4}>
-      <Heading size="md" color="#1B3C87">
+      <Heading size="md" color="primary.500">
         You don't have any checkers yet
       </Heading>
       <Text>
         Start from scratch or use one of our templates. <br />
         <Center>
-          <Link href={GET_STARTED_URL} isExternal color="#1B3C87">
+          <Link href={GET_STARTED_URL} isExternal color="primary.500">
             Learn how to get started
           </Link>
         </Center>
@@ -70,7 +70,7 @@ export const Dashboard: FC = () => {
   })
 
   return (
-    <Flex direction="column" minH="100vh" bgColor="#F4F6F9">
+    <Flex direction="column" minH="100vh" bgColor="neutral.200">
       <Switch>
         <Route
           exact

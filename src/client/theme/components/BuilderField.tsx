@@ -11,14 +11,14 @@ export const BuilderField = {
       position: 'relative',
     },
     action: {
-      color: '#09101D',
+      color: 'secondary.500',
       fontSize: '20px',
       _hover: {
-        color: '#1B3C87',
+        color: 'primary.300',
       },
     },
     dummyInput: {
-      bg: '#F4F6F9',
+      bg: 'neutral.200',
       _disabled: {
         opacity: 1.0,
         cursor: 'not-allowed',
@@ -37,7 +37,8 @@ export const BuilderField = {
   variants: {
     active: {
       container: {
-        borderLeft: 'solid 12px #1B3C87',
+        borderLeft: 'solid 12px',
+        borderLeftColor: 'primary.500',
         boxShadow: '0px 0px 10px #DADEE3',
         cursor: 'auto',
       },

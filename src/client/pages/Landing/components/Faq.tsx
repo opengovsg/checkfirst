@@ -12,18 +12,19 @@ import { Section } from './Section'
 
 export const Faq: FC = () => {
   const sectionHeader = useBreakpointValue({
-    base: 'h2',
+    base: 'heading2',
     lg: 'display2',
   })
   const infoHeader = useBreakpointValue({
-    base: 'h3',
-    lg: 'h2',
+    base: 'heading3',
+    lg: 'heading2',
   })
 
   return (
-    <Section bg="#F4F6F9">
+    <Section bg="neutral.200">
       <VStack py="64px" align="stretch" spacing={{ base: '32px', md: '48px' }}>
         <Text
+          color="primary.500"
           textAlign={{ base: 'left', md: 'center' }}
           textStyle={sectionHeader}
         >
@@ -31,7 +32,9 @@ export const Faq: FC = () => {
         </Text>
 
         <VStack alignItems="left" justifyContent="center" spacing="16px">
-          <Text textStyle={infoHeader}>What can CheckFirst do?</Text>
+          <Text color="primary.500" textStyle={infoHeader}>
+            What can CheckFirst do?
+          </Text>
           <Text color="primary.500">
             CheckFirst allows the user to build a custom eligibility checker,
             calculator, or quiz easily.
@@ -39,7 +42,7 @@ export const Faq: FC = () => {
         </VStack>
 
         <VStack alignItems="left" justifyContent="center" spacing="16px">
-          <Text textStyle={infoHeader}>
+          <Text color="primary.500" textStyle={infoHeader}>
             What problems are CheckFirst solving?
           </Text>
           <Box>

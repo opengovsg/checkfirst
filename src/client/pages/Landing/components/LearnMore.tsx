@@ -15,12 +15,12 @@ import UpdateLogic from '../../../assets/landing/update-logic.svg'
 
 export const LearnMore: FC = () => {
   const sectionHeader = useBreakpointValue({
-    base: 'h2',
+    base: 'heading2',
     lg: 'display2',
   })
   const infoHeader = useBreakpointValue({
-    base: 'h3',
-    lg: 'h2',
+    base: 'heading3',
+    lg: 'heading2',
   })
 
   const Info = ({
@@ -42,7 +42,9 @@ export const LearnMore: FC = () => {
         <Image src={image} />
       </HStack>
       <VStack flex={1} alignItems="left" justifyContent="center">
-        <Text textStyle={infoHeader}>{title}</Text>
+        <Text color="primary.500" textStyle={infoHeader}>
+          {title}
+        </Text>
         <Text color="primary.500">{children}</Text>
       </VStack>
     </Stack>
@@ -52,6 +54,7 @@ export const LearnMore: FC = () => {
     <Section id="learn-more" bg="white">
       <VStack align="stretch" spacing="64px" py="64px">
         <Text
+          color="primary.500"
           textAlign={{ base: 'left', md: 'center' }}
           textStyle={sectionHeader}
         >

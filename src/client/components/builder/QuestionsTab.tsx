@@ -37,12 +37,12 @@ const QUESTIONS_GUIDE_URL = 'https://go.gov.sg/checkfirst-formbuilder'
 const EmptyQuestionsTabBody: FC = () => (
   <Center py={16}>
     <VStack spacing={4} w="100%">
-      <Text color="#1B3C87" textStyle="h2">
+      <Text textStyle="heading2" color="primary.500">
         Start building your checker
       </Text>
       <Text textAlign="center">
         Add questions to get started.{' '}
-        <Link href={QUESTIONS_GUIDE_URL} isExternal color="#1B3C87">
+        <Link href={QUESTIONS_GUIDE_URL} isExternal color="primary.500">
           Learn how to work with questions
         </Link>
       </Text>
