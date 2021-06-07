@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { IconType } from 'react-icons'
-import { VStack, HStack, Text } from '@chakra-ui/react'
+import { VStack, HStack, Text, useStyles } from '@chakra-ui/react'
 
 interface FormulaPreviewProps {
   show: boolean
@@ -15,13 +15,19 @@ export const FormulaPreview: FC<FormulaPreviewProps> = ({
   expression,
   icon: Icon,
 }) => {
+  const commonStyles = useStyles()
+
   return (
-    <VStack align="stretch" w="50%" spacing={4} opacity={show ? 1 : 0.5}>
+    <VStack
+      sx={commonStyles.fullWidthContainer}
+      spacing={4}
+      opacity={show ? 1 : 0.5}
+    >
       <HStack>
-        <Icon fontSize="20px" />
-        <Text>{title}</Text>
+        <Icon fontSize="16px" />
+        <Text sx={commonStyles.previewTitle}>{title}</Text>
       </HStack>
-      <Text fontFamily="mono">{expression}</Text>
+      <Text sx={commonStyles.expressionInput}>{expression}</Text>
     </VStack>
   )
 }
