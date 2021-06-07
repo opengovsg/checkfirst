@@ -85,6 +85,12 @@ export const BuilderField: ComponentMultiStyleConfig = {
     barSpacer: {
       h: 2,
     },
+    logicCaption: {
+      pl: 2,
+      color: 'neutral.500',
+      textStyle: 'caption1',
+      fontStyle: 'italic',
+    },
     ...CommonComponents.baseStyle,
   },
   variants: {

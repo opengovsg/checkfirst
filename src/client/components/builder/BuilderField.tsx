@@ -7,6 +7,8 @@ import {
   Flex,
   HStack,
   Button,
+  Text,
+  Spacer,
 } from '@chakra-ui/react'
 
 import { useCheckerContext } from '../../contexts'
@@ -259,6 +261,14 @@ export const createBuilderField =
               sx={isTitleData(data) ? styles.barSpacer : styles.actionBar}
               spacing={0}
             >
+              {isOperationData(data) && (
+                <Text sx={styles.logicCaption}>
+                  {data.show
+                    ? 'The outcome of this block will be shown in your results'
+                    : 'The outcome of this block will not be shown as a result'}
+                </Text>
+              )}
+              <Spacer />
               {isOperationData(data) && (
                 <ActionButton
                   aria-label="Duplicate"
