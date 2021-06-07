@@ -85,11 +85,4 @@ export const textStyles = {
     letterSpacing: '-0.022em',
     fontFeatureSettings: "'cv05' on",
   },
-  h1: {
-    fontFamily: 'inter',
-    fontSize: '48px',
-    fontWeight: 600,
-    lineHeight: '60px',
-    color: 'primary.500',
-  },
 }
