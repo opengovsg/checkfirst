@@ -113,7 +113,7 @@
     "joi": "^17.4.0",
     "lodash": "^4.17.21",
     "match-sorter": "^6.3.0",
-    "mathjs": "^9.4.1",
+    "mathjs": "^9.4.2",
     "minimatch": "^3.0.4",
     "moment-timezone": "0.5.33",
     "morgan": "^1.10.0",
