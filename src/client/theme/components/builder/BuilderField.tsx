@@ -4,6 +4,7 @@ const CommonComponents: ComponentMultiStyleConfig = {
   parts: [
     'dummyInput',
     'fieldInput',
+    'expressionInput',
     'inputIconElement',
     'fullWidthContainer',
     'halfWidthContainer',
@@ -20,6 +21,9 @@ const CommonComponents: ComponentMultiStyleConfig = {
     },
     fieldInput: {
       textStyle: 'body1',
+    },
+    expressionInput: {
+      fontFamily: 'mono',
     },
     inputIconElement: {
       pointerEvents: 'none',
