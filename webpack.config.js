@@ -23,7 +23,7 @@ module.exports = () => {
     },
     output: {
       path: path.join(__dirname, outputDirectory),
-      filename: 'assets/js/[name].bundle.js',
+      filename: 'assets/js/[name].[contenthash].bundle.js',
       publicPath: '/',
       assetModuleFilename: 'assets/[name][ext]',
     },
