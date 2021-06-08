@@ -16,7 +16,10 @@ export function noCacheHeaders(
   res: Response,
   next: NextFunction
 ): void {
-  // Prevent caching at all and set max-age to 0 to invalidate existing cache.
-  res.setHeader('Cache-Control', 'no-store, max-age=0')
+  // Use no-cache to force re-validation for every request and support
+  // 304s if etag remains the same.
+  res.setHeader('Cache-Control', 'no-cache')
+  // for HTTP1.0 backward compatibility
+  res.setHeader('Pragma', 'no-cache')
   next()
 }
