@@ -1,4 +1,4 @@
-import React, { FC, useState, useRef, useLayoutEffect } from 'react'
+import React, { FC, useState, useRef } from 'react'
 import { isEmpty, filter } from 'lodash'
 import {
   useToast,
@@ -48,19 +48,6 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
   const [variables, setVariables] = useState<checker.VariableResults>({})
   const googleAnalytics = useGoogleAnalytics()
   const outcomes = useRef<HTMLDivElement | null>(null)
-
-  // conditionally toggle description label between center align (1 line) and left align (> 1 line)
-  const descriptionRef = useRef<HTMLParagraphElement>(null)
-  useLayoutEffect(() => {
-    if (descriptionRef.current && styles.subtitle.lineHeight) {
-      const height = descriptionRef.current.clientHeight
-      const singleLineHeight = parseInt(
-        styles.subtitle.lineHeight.toString().slice(0, -2), // slice removes 'px' suffix
-        10
-      )
-      if (height > singleLineHeight) descriptionRef.current.style.width = '100%'
-    }
-  }, [descriptionRef, description, styles.subtitle.lineHeight])
 
   const renderField = (field: checker.Field, i: number) => {
     switch (field.type) {
@@ -174,11 +161,7 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
             <VStack align="stretch" spacing={10}>
               <VStack spacing={2}>
                 <Text sx={styles.title}>{title}</Text>
-                {description && (
-                  <Text sx={styles.subtitle} ref={descriptionRef}>
-                    {description}
-                  </Text>
-                )}
+                {description && <Text sx={styles.subtitle}>{description}</Text>}
               </VStack>
               {fields.map(renderField)}
               <Button colorScheme="primary" width="100%" type="submit">

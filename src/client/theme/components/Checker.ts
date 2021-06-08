@@ -5,7 +5,7 @@ export const Checker = {
       fontSize: '26px',
       lineHeight: '32px',
       fontWeight: 600,
-      textAlign: 'center',
+      maxW: '100%',
     },
     subtitle: {
       size: '16px',
