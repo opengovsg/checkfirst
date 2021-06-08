@@ -28,6 +28,7 @@ module.exports = () => {
       assetModuleFilename: 'assets/[name][ext]',
     },
     optimization: {
+      moduleIds: 'deterministic',
       splitChunks: {
         cacheGroups: {
           commons: {
