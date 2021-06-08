@@ -90,7 +90,7 @@ export const LogicTab: FC = () => {
 
   const addMenu = [
     {
-      label: 'Calculated result',
+      label: 'Calculation',
       icon: <BiCalculator />,
       onClick: () => {
         dispatch({
@@ -106,7 +106,7 @@ export const LogicTab: FC = () => {
       },
     },
     {
-      label: 'Conditional result',
+      label: 'Conditional',
       icon: <BiGitBranch />,
       onClick: () => {
         dispatch({
@@ -122,7 +122,7 @@ export const LogicTab: FC = () => {
       },
     },
     {
-      label: 'Map constant',
+      label: 'Map constants',
       icon: <BiGitCompare />,
       disabled: config.constants.length === 0,
       onClick: () => {
@@ -139,7 +139,7 @@ export const LogicTab: FC = () => {
       },
     },
     {
-      label: 'Date result',
+      label: 'Date calculation',
       icon: <BiCalendar />,
       onClick: () => {
         dispatch({
