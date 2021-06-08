@@ -48,6 +48,7 @@ functions:
       BACKEND_SENTRY_DSN: ${env:BACKEND_SENTRY_DSN}
       CSP_REPORT_URI: ${env:CSP_REPORT_URI}
       APP_HOST: ${env:APP_HOST}
+      DEPLOY_TIMESTAMP: ${env:DEPLOY_TIMESTAMP}
     events:
       - http:
           path: api/v1/{proxy+}
@@ -62,6 +63,7 @@ functions:
     environment:
       FRONTEND_SENTRY_DSN: ${env:FRONTEND_SENTRY_DSN}
       CSP_REPORT_URI: ${env:CSP_REPORT_URI}
+      DEPLOY_TIMESTAMP: ${env:DEPLOY_TIMESTAMP}
     events:
       - http:
           path: ""
