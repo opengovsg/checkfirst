@@ -1,7 +1,15 @@
 import { ComponentMultiStyleConfig } from '@chakra-ui/theme'
 
 const CommonComponents: ComponentMultiStyleConfig = {
-  parts: ['dummyInput'],
+  parts: [
+    'dummyInput',
+    'fieldInput',
+    'inputIconElement',
+    'fullWidthContainer',
+    'halfWidthContainer',
+    'previewTitle',
+    'previewDescription',
+  ],
   baseStyle: {
     dummyInput: {
       bg: 'neutral.200',
@@ -9,6 +17,30 @@ const CommonComponents: ComponentMultiStyleConfig = {
         opacity: 1.0,
         cursor: 'not-allowed',
       },
+    },
+    fieldInput: {
+      textStyle: 'body1',
+    },
+    inputIconElement: {
+      pointerEvents: 'none',
+      fontSize: '16px',
+      pl: 1,
+    },
+    fullWidthContainer: {
+      alignItems: 'stretch',
+      width: '100%',
+    },
+    halfWidthContainer: {
+      alignItems: 'stretch',
+      width: '50%',
+    },
+    previewTitle: {
+      textStyle: 'subhead1',
+      fontWeight: 500,
+    },
+    previewDescription: {
+      textStyle: 'body2',
+      color: 'secondary.400',
     },
   },
 }

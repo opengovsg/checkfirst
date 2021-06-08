@@ -1,0 +1,24 @@
+/*
+  Applies custom width and height styles for Chakra UI checkboxes.
+
+  This is necessary, as width and height theme props are not applied onto the control
+  element, but rather the encapsulating label element. Additionally, the `size` prop only
+  accepts 'sm'/'md'/'lg' strings, and cannot parse pixel values.
+
+  As such, the current workaround for now is to directly apply the width and height styles
+  directly through class selector styling methods, which will bypass the Chakra theming system.
+
+  ---
+
+  Usage:
+  
+  <Checkbox className="big-checkbox">...</Checkbox>
+
+  ---
+
+  Refer to https://chakra-ui.com/docs/form/checkbox for more information.
+*/
+.big-checkbox .chakra-checkbox__control {
+  width: 24px;
+  height: 24px;
+}
