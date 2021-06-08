@@ -182,7 +182,7 @@ const PreviewComponent: ConstantFieldComponent = ({ constant }) => {
   return (
     <VStack sx={commonStyles.fullWidthContainer} spacing={3}>
       <HStack>
-        <BiTable fontSize="20px" />
+        <BiTable fontSize="16px" />
         <Text sx={commonStyles.previewTitle}>{title}</Text>
       </HStack>
       <HStack>
