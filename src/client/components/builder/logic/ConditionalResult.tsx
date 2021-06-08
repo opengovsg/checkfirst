@@ -248,6 +248,7 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
           type="text"
           sx={commonStyles.expressionInput}
           name="thenExpr"
+          placeholder="Use this field as a ‘true/false’ statement, or show a result"
           onChange={(expr) => handleExprChange('thenExpr', expr)}
           value={ifelseState.thenExpr}
         />
@@ -258,6 +259,7 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
           type="text"
           sx={commonStyles.expressionInput}
           name="elseExpr"
+          placeholder="Use this field as a ‘true/false’ statement, or show a result"
           onChange={(expr) => handleExprChange('elseExpr', expr)}
           value={ifelseState.elseExpr}
         />

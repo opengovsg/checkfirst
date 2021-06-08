@@ -49,6 +49,7 @@ interface ExpressionInputProps extends Omit<InputProps, 'onChange' | 'value'> {
 export const ExpressionInput: FC<ExpressionInputProps> = ({
   onChange,
   value,
+  placeholder,
   ...props
 }) => {
   const [inputValue, setInputValue] = useState<string>(value)
@@ -264,6 +265,8 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
           >
             <Input
               {...getInputProps({
+                placeholder:
+                  placeholder || 'Type @ to reference a block in your formula',
                 ...props,
               })}
               value={inputValue || ''}

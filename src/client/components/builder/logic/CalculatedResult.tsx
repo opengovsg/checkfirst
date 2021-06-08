@@ -64,7 +64,6 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
           name="expression"
           sx={commonStyles.expressionInput}
           type="text"
-          placeholder="Enter formula"
           value={expression}
           onChange={(expression) =>
             handleExpressionChange('expression', expression)
