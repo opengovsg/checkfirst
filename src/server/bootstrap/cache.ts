@@ -23,3 +23,13 @@ export function noCacheHeaders(
   res.setHeader('Pragma', 'no-cache')
   next()
 }
+
+export function noStoreHeaders(
+  _req: Request,
+  res: Response,
+  next: NextFunction
+): void {
+  // Do not cache at all and set max-age to expire all existing cached
+  res.setHeader('Cache-Control', 'no-store, max-age=0')
+  next()
+}

@@ -81,7 +81,7 @@ functions:
           path: login
           method: get
       - http:
-          path: dashboard
+          path: dashboard/{proxy+}
           method: get
       - http:
           path: builder/{proxy+}
