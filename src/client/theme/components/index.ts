@@ -3,6 +3,7 @@ import { FloatingToolbar } from './FloatingToolbar'
 import { CheckerCard } from './CheckerCard'
 import { Checker } from './Checker'
 import { LineDisplay } from './LineDisplay'
+import { StyledToast } from './StyledToast'
 
 export const components = {
   ...builder,
@@ -10,4 +11,5 @@ export const components = {
   CheckerCard,
   Checker,
   LineDisplay,
+  StyledToast,
 }

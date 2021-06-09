@@ -9,7 +9,6 @@ import {
   useOutsideClick,
   useDisclosure,
   useMultiStyleConfig,
-  useToast,
   Text,
   VStack,
   Flex,
@@ -24,6 +23,7 @@ import { DashboardCheckerDTO } from '../../../types/checker'
 import { getApiErrorMessage } from '../../api'
 import { CheckerService } from '../../services'
 import { ConfirmDialog } from '../ConfirmDialog'
+import { StyledToast, useStyledToast } from '../common/StyledToast'
 
 type CheckerCardProps = {
   checker: DashboardCheckerDTO
@@ -101,24 +101,32 @@ export const CheckerCard: FC<CheckerCardProps> = ({ checker }) => {
   const history = useHistory()
   const { path } = useRouteMatch()
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const toast = useToast({ position: 'bottom-right', variant: 'solid' })
+  const styledToast = useStyledToast()
   const styles = useMultiStyleConfig('CheckerCard', {})
 
   const queryClient = useQueryClient()
   const deleteChecker = useMutation(CheckerService.deleteChecker, {
     onSuccess: () => {
       queryClient.invalidateQueries('checkers')
-      toast({
-        status: 'success',
-        title: 'Checker deleted',
-        description: `${checker.title} has been successfully deleted`,
+      styledToast({
+        render: (props) => (
+          <StyledToast
+            status="success"
+            message={`${checker.title} has been successfully deleted`}
+            {...props}
+          />
+        ),
       })
     },
     onError: (err) => {
-      toast({
-        status: 'error',
-        title: 'An error has occurred',
-        description: getApiErrorMessage(err),
+      styledToast({
+        render: (props) => (
+          <StyledToast
+            status="error"
+            message={getApiErrorMessage(err)}
+            {...props}
+          />
+        ),
       })
     },
   })

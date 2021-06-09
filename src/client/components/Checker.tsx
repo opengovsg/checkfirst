@@ -1,7 +1,6 @@
 import React, { FC, useState, useRef } from 'react'
 import { isEmpty, filter } from 'lodash'
 import {
-  useToast,
   useMultiStyleConfig,
   StylesProvider,
   Container,
@@ -24,6 +23,7 @@ import * as checker from './../../types/checker'
 import { evaluate } from './../core/evaluator'
 import { unit, Unit } from 'mathjs'
 import { useGoogleAnalytics } from '../contexts'
+import { StyledToast, useStyledToast } from './common/StyledToast'
 
 // polyfill for browsers that don't support smooth scroling
 if (!('scrollBehavior' in document.documentElement.style)) {
@@ -41,7 +41,7 @@ function isUnit(
 }
 
 export const Checker: FC<CheckerProps> = ({ config }) => {
-  const toast = useToast({ position: 'bottom-right', variant: 'solid' })
+  const styledToast = useStyledToast()
   const styles = useMultiStyleConfig('Checker', {})
   const methods = useForm()
   const { title, description, fields, operations, constants } = config
@@ -124,11 +124,14 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
     })
 
     if (!isCheckerComplete()) {
-      toast({
-        status: 'warning',
-        title: 'No checker logic found',
-        description:
-          'Results cannot be shown because checker logic is not available.',
+      styledToast({
+        render: (props) => (
+          <StyledToast
+            status="warning"
+            message="Results cannot be shown because checker logic is not available."
+            {...props}
+          />
+        ),
       })
     }
 
@@ -140,10 +143,14 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
         block: 'nearest',
       })
     } catch (err) {
-      toast({
-        status: 'error',
-        title: err.name,
-        description: err.message,
+      styledToast({
+        render: (props) => (
+          <StyledToast
+            status="error"
+            message={`${err.name}: ${err.message}`}
+            {...props}
+          />
+        ),
       })
     }
 

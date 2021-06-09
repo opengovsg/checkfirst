@@ -8,7 +8,6 @@ import {
 } from 'react-router-dom'
 import { useQueryClient, useQuery, useMutation } from 'react-query'
 import {
-  useToast,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -32,6 +31,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { CheckerService, TemplateService } from '../../services'
 import { getApiErrorMessage } from '../../api'
 import { SelectTemplate } from './SelectTemplate'
+import { StyledToast, useStyledToast } from '../common/StyledToast'
 
 export type CreateNewModalProps = {
   onClose: () => void
@@ -48,7 +48,7 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({ onClose }) => {
     displays: [],
   }
 
-  const toast = useToast({ position: 'bottom-right', variant: 'solid' })
+  const styledToast = useStyledToast()
   const { trigger, register, handleSubmit, formState, setValue } = useForm({
     mode: 'onChange',
   })
@@ -106,19 +106,27 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({ onClose }) => {
   const createChecker = useMutation(CheckerService.createChecker, {
     onSuccess: (created) => {
       queryClient.invalidateQueries('checkers')
-      toast({
-        status: 'success',
-        title: 'Checker created',
-        description: `${created?.title} has been created successfully`,
+      styledToast({
+        render: (props) => (
+          <StyledToast
+            status="success"
+            message={`${created?.title} has been created successfully`}
+            {...props}
+          />
+        ),
       })
       onClose()
       history.push(`/builder/${created.id}`)
     },
     onError: (err) => {
-      toast({
-        status: 'error',
-        title: 'Unable to create checker',
-        description: getApiErrorMessage(err),
+      styledToast({
+        render: (props) => (
+          <StyledToast
+            status="error"
+            message={getApiErrorMessage(err)}
+            {...props}
+          />
+        ),
       })
     },
   })

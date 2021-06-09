@@ -14,7 +14,6 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
-  useToast,
   FormControl,
   FormLabel,
   Input,
@@ -24,6 +23,7 @@ import {
 } from '@chakra-ui/react'
 import { Checker } from '../../../types/checker'
 import { DefaultTooltip } from '../common/DefaultTooltip'
+import { StyledToast, useStyledToast } from '../common/StyledToast'
 
 type EmbedFieldProps = {
   name: string
@@ -32,12 +32,13 @@ type EmbedFieldProps = {
 
 const EmbedField: FC<EmbedFieldProps> = ({ name, value, children }) => {
   const { onCopy } = useClipboard(value)
-  const toast = useToast({ position: 'bottom-right', variant: 'solid' })
+  const styledToast = useStyledToast()
   const onClick = () => {
     onCopy()
-    toast({
-      status: 'success',
-      title: 'Copied!',
+    styledToast({
+      render: (props) => (
+        <StyledToast status="success" message="Copied!" {...props} />
+      ),
     })
   }
   return (
