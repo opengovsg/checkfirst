@@ -18,8 +18,13 @@ export const LineDisplay = {
       fontSize: '24px',
       lineHeight: '32px',
     },
+    hyperlink: {
+      textDecorationLine: 'underline',
+    },
     hyperlinkIcon: {
       mx: 0,
+      ml: 1,
+      mb: 0.5,
       boxSize: 4,
     },
   },

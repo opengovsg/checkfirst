@@ -44,8 +44,14 @@ export const LineDisplay: FC<LineDisplayProps> = ({ label, value }) => {
       }
 
       outputNode.push(
-        <Link key={keyIndex++} href={getValidLink(linkParams[1])} isExternal>
-          {linkParams[0]} <Icon as={BiLinkExternal} sx={styles.hyperlinkIcon} />
+        <Link
+          key={keyIndex++}
+          href={getValidLink(linkParams[1])}
+          isExternal
+          sx={styles.hyperlink}
+        >
+          {linkParams[0]}
+          <Icon as={BiLinkExternal} sx={styles.hyperlinkIcon} />
         </Link>
       )
     }
