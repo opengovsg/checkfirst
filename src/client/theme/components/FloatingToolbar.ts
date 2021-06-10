@@ -3,16 +3,17 @@ export const FloatingToolbar = {
   baseStyle: {
     container: {
       bg: 'white',
-      py: 3,
-      borderRadius: '12px',
+      py: 2,
+      borderRadius: '3px',
       boxShadow: '0px 0px 10px #DADEE3',
     },
     menuItem: {
       borderRadius: 0,
       fontWeight: 'normal',
-      w: '100%',
+      w: '192px',
+      h: '48px',
       justifyContent: 'flex-start',
-      px: 6,
+      pl: 5,
       my: 0,
     },
   },
