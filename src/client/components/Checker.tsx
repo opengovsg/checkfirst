@@ -96,7 +96,7 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
 
     fields.forEach((field) => {
       const { id, type, options } = field
-      if (!inputs[id]) return
+      if (inputs[id] === null || inputs[id] === undefined) return
 
       switch (type) {
         case 'NUMERIC': {
