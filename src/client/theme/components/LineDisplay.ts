@@ -1,5 +1,5 @@
 export const LineDisplay = {
-  parts: ['container', 'label', 'value'],
+  parts: ['container', 'label', 'value', 'hyperlinkIcon'],
   baseStyle: {
     container: {
       flexDirection: { base: 'column', md: 'row' },
@@ -17,6 +17,10 @@ export const LineDisplay = {
       fontWeight: 'bold',
       fontSize: '24px',
       lineHeight: '32px',
+    },
+    hyperlinkIcon: {
+      mx: 0,
+      boxSize: 4,
     },
   },
   variants: {
