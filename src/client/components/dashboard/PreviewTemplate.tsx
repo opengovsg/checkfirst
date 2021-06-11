@@ -1,12 +1,23 @@
 import React, { FC } from 'react'
-import { BiArrowBack, BiX } from 'react-icons/bi'
-import { Link, useParams } from 'react-router-dom'
+import { BiX } from 'react-icons/bi'
+import { Link as RouterLink, useHistory, useParams } from 'react-router-dom'
 import { useQuery } from 'react-query'
-import { Flex, IconButton, Button, HStack, Container } from '@chakra-ui/react'
+import {
+  Flex,
+  IconButton,
+  Button,
+  HStack,
+  Container,
+  Text,
+  Link,
+  useMultiStyleConfig,
+} from '@chakra-ui/react'
 
 import * as checker from '../../../types/checker'
 import { TemplateService } from '../../services'
 import { Checker } from '..'
+import { NavbarContainer } from '../common/navbar/NavbarContainer'
+import { NavbarBack } from '../common/navbar/NavbarBack'
 
 export const PreviewTemplate: FC = () => {
   const { templateId } = useParams<{ templateId: string }>()
@@ -14,57 +25,42 @@ export const PreviewTemplate: FC = () => {
     TemplateService.getTemplate(templateId)
   )
   const config = { ...template, id: 'preview' } as checker.Checker
+  const history = useHistory()
+  const navStyles = useMultiStyleConfig('NavbarComponents', {})
+  const styles = useMultiStyleConfig('PreviewTemplate', {})
 
   return (
-    <Flex minH="100vh" direction="column">
-      <Flex
-        h="80px"
-        direction="row"
-        bgColor="white"
-        px={10}
-        alignItems="center"
-        position="fixed"
-        w="100%"
-        zIndex={999}
-      >
-        <HStack w="100%" justifyContent="space-between">
-          <HStack>
-            <Link to="/dashboard/create">
-              <Button
-                aria-label="Back"
-                variant="ghost"
-                leftIcon={<BiArrowBack />}
-                textStyle="body1"
-              >
-                Back to templates
+    <Flex sx={styles.container}>
+      <NavbarContainer
+        leftElement={
+          <NavbarBack
+            label={'Back to templates'}
+            handleClick={() => history.push('/dashboard/create')}
+          />
+        }
+        centerElement={<Text sx={styles.title}>{config.title}</Text>}
+        rightElement={
+          <HStack spacing={5}>
+            <Link
+              as={RouterLink}
+              to={`/dashboard/create/template/${templateId}`}
+            >
+              <Button colorScheme="primary" sx={navStyles.button}>
+                Use template
               </Button>
             </Link>
-          </HStack>
-          <HStack spacing="16px">
-            <Link to={`/dashboard/create/template/${templateId}`}>
-              <Button colorScheme="primary">Use template</Button>
-            </Link>
-            <Link to="/dashboard">
+            <Link as={RouterLink} to="/dashboard" sx={styles.closeLink}>
               <IconButton
-                color="neutral.400"
-                fontSize="20px"
+                variant="link"
+                sx={styles.closeButton}
                 aria-label="Close"
-                variant="ghost"
                 icon={<BiX />}
               />
             </Link>
           </HStack>
-        </HStack>
-      </Flex>
-      <Container
-        mt="144px"
-        mb="64px"
-        maxW="xl"
-        pt="32px"
-        px="0px"
-        bg="white"
-        borderRadius="12px"
-      >
+        }
+      />
+      <Container sx={styles.checkerContainer}>
         {!isLoading ? <Checker config={config} /> : null}
       </Container>
     </Flex>

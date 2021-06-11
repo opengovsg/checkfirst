@@ -5,6 +5,7 @@ import { CheckerCard } from './CheckerCard'
 import { Checker } from './Checker'
 import { LineDisplay } from './LineDisplay'
 import { StyledToast } from './StyledToast'
+import { PreviewTemplate } from './PreviewTemplate'
 
 export const components = {
   ...builder,
@@ -14,4 +15,5 @@ export const components = {
   Checker,
   LineDisplay,
   StyledToast,
+  PreviewTemplate,
 }
