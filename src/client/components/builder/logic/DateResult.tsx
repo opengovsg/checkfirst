@@ -137,35 +137,55 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
       </InputGroup>
       <HStack sx={styles.dateContainer} spacing={4}>
         <Menu matchWidth>
-          <MenuButton
-            as={Button}
-            sx={styles.questionButton}
-            variant="outline"
-            rightIcon={<BiChevronDown />}
-          >
-            <Text
-              sx={styles.menuButtonText}
-              textColor={dateState.variableId ? 'secondary.700' : 'neutral.500'}
-            >
-              {dateState.variableId ? dateState.variableId : 'Select question'}
-            </Text>
-          </MenuButton>
-          <MenuList>
-            {config.fields
-              .filter(({ type }) => type === 'DATE')
-              .map(({ id, title }, i) => (
-                <MenuItem key={i} onClick={() => updateState('variableId', id)}>
-                  {renderBadgeWithTitle(id, title, 'success.500')}
-                </MenuItem>
-              ))}
-            {config.operations
-              .filter(({ id, type }) => type === 'DATE' && id !== currentId)
-              .map(({ id, title }, i) => (
-                <MenuItem key={i} onClick={() => updateState('variableId', id)}>
-                  {renderBadgeWithTitle(id, title, 'primary.500')}
-                </MenuItem>
-              ))}
-          </MenuList>
+          {({ onClose }) => (
+            <>
+              <MenuButton
+                as={Button}
+                sx={styles.questionButton}
+                variant="outline"
+                rightIcon={<BiChevronDown />}
+              >
+                <Text
+                  sx={styles.menuButtonText}
+                  textColor={
+                    dateState.variableId ? 'secondary.700' : 'neutral.500'
+                  }
+                >
+                  {dateState.variableId
+                    ? dateState.variableId
+                    : 'Select question'}
+                </Text>
+              </MenuButton>
+              <MenuList>
+                {config.fields
+                  .filter(({ type }) => type === 'DATE')
+                  .map(({ id, title }, i) => (
+                    <MenuItem
+                      key={i}
+                      onClick={() => {
+                        updateState('variableId', id)
+                        onClose()
+                      }}
+                    >
+                      {renderBadgeWithTitle(id, title, 'success.500')}
+                    </MenuItem>
+                  ))}
+                {config.operations
+                  .filter(({ id, type }) => type === 'DATE' && id !== currentId)
+                  .map(({ id, title }, i) => (
+                    <MenuItem
+                      key={i}
+                      onClick={() => {
+                        updateState('variableId', id)
+                        onClose()
+                      }}
+                    >
+                      {renderBadgeWithTitle(id, title, 'primary.500')}
+                    </MenuItem>
+                  ))}
+              </MenuList>
+            </>
+          )}
         </Menu>
         <Menu matchWidth>
           <MenuButton

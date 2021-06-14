@@ -138,60 +138,86 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
       <HStack sx={styles.mapContainer} spacing={4}>
         <Text sx={styles.mapText}>MAP</Text>
         <Menu matchWidth preventOverflow={false}>
-          <MenuButton
-            as={Button}
-            sx={styles.menuButton}
-            variant="outline"
-            rightIcon={<BiChevronDown />}
-          >
-            <Text
-              sx={styles.menuButtonText}
-              textColor={mapState.variableId ? 'secondary.700' : 'neutral.500'}
-            >
-              {mapState.variableId ? mapState.variableId : 'Select question'}
-            </Text>
-          </MenuButton>
-          <MenuList sx={styles.menuList}>
-            {config.fields.map(({ id, title }, i) => (
-              <MenuItem
-                key={i}
-                onClick={() => handleExprChange('variableId', id)}
+          {({ onClose }) => (
+            <>
+              <MenuButton
+                as={Button}
+                sx={styles.menuButton}
+                variant="outline"
+                rightIcon={<BiChevronDown />}
               >
-                {renderBadgeWithTitle(id, title, 'error.500')}
-              </MenuItem>
-            ))}
-            {config.operations.map(({ id, title }, i) => (
-              <MenuItem
-                key={i}
-                onClick={() => handleExprChange('variableId', id)}
-              >
-                {renderBadgeWithTitle(id, title, 'success.500')}
-              </MenuItem>
-            ))}
-          </MenuList>
+                <Text
+                  sx={styles.menuButtonText}
+                  textColor={
+                    mapState.variableId ? 'secondary.700' : 'neutral.500'
+                  }
+                >
+                  {mapState.variableId
+                    ? mapState.variableId
+                    : 'Select question'}
+                </Text>
+              </MenuButton>
+              <MenuList sx={styles.menuList}>
+                {config.fields.map(({ id, title }, i) => (
+                  <MenuItem
+                    key={i}
+                    onClick={() => {
+                      handleExprChange('variableId', id)
+                      onClose()
+                    }}
+                  >
+                    {renderBadgeWithTitle(id, title, 'error.500')}
+                  </MenuItem>
+                ))}
+                {config.operations.map(({ id, title }, i) => (
+                  <MenuItem
+                    key={i}
+                    onClick={() => {
+                      handleExprChange('variableId', id)
+                      onClose()
+                    }}
+                  >
+                    {renderBadgeWithTitle(id, title, 'success.500')}
+                  </MenuItem>
+                ))}
+              </MenuList>
+            </>
+          )}
         </Menu>
         <Text sx={styles.toText}>TO</Text>
         <Menu matchWidth>
-          <MenuButton
-            as={Button}
-            sx={styles.menuButton}
-            variant="outline"
-            rightIcon={<BiChevronDown />}
-          >
-            <Text
-              sx={styles.menuButtonText}
-              textColor={mapState.tableId ? 'secondary.700' : 'neutral.500'}
-            >
-              {mapState.tableId ? mapState.tableId : 'Select constant table'}
-            </Text>
-          </MenuButton>
-          <MenuList sx={styles.menuList}>
-            {config.constants.map(({ id, title }, i) => (
-              <MenuItem key={i} onClick={() => handleExprChange('tableId', id)}>
-                {renderBadgeWithTitle(id, title, 'warning.500')}
-              </MenuItem>
-            ))}
-          </MenuList>
+          {({ onClose }) => (
+            <>
+              <MenuButton
+                as={Button}
+                sx={styles.menuButton}
+                variant="outline"
+                rightIcon={<BiChevronDown />}
+              >
+                <Text
+                  sx={styles.menuButtonText}
+                  textColor={mapState.tableId ? 'secondary.700' : 'neutral.500'}
+                >
+                  {mapState.tableId
+                    ? mapState.tableId
+                    : 'Select constant table'}
+                </Text>
+              </MenuButton>
+              <MenuList sx={styles.menuList}>
+                {config.constants.map(({ id, title }, i) => (
+                  <MenuItem
+                    key={i}
+                    onClick={() => {
+                      handleExprChange('tableId', id)
+                      onClose()
+                    }}
+                  >
+                    {renderBadgeWithTitle(id, title, 'warning.500')}
+                  </MenuItem>
+                ))}
+              </MenuList>
+            </>
+          )}
         </Menu>
       </HStack>
     </VStack>
