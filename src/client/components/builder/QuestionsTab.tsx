@@ -122,7 +122,7 @@ export const QuestionsTab: FC = () => {
       label: 'Add question',
       menu: [
         {
-          label: 'Numeric field',
+          label: 'Number',
           icon: <BiHash />,
           onClick: () => {
             dispatch({
@@ -154,7 +154,7 @@ export const QuestionsTab: FC = () => {
           },
         },
         {
-          label: 'Dropdown List',
+          label: 'Dropdown',
           icon: <IoIosArrowDropdown />,
           onClick: () => {
             dispatch({
