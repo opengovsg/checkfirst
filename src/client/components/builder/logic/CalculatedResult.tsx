@@ -1,6 +1,13 @@
 import React from 'react'
 import { BiCalculator } from 'react-icons/bi'
-import { VStack, HStack, Box, Input } from '@chakra-ui/react'
+import {
+  VStack,
+  HStack,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  useStyles,
+} from '@chakra-ui/react'
 
 import { useCheckerContext } from '../../../contexts'
 import { createBuilderField, OperationFieldComponent } from '../BuilderField'
@@ -11,6 +18,7 @@ import { FormulaPreview } from './FormulaPreview'
 const InputComponent: OperationFieldComponent = ({ operation, index }) => {
   const { title, expression } = operation
   const { dispatch } = useCheckerContext()
+  const commonStyles = useStyles()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -36,32 +44,34 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
   }
 
   return (
-    <HStack w="100%" alignItems="flex-start">
-      <Box fontSize="20px" pt={2}>
-        <BiCalculator />
-      </Box>
-      <VStack align="stretch" w="100%">
+    <VStack sx={commonStyles.fullWidthContainer} spacing={4}>
+      <InputGroup>
+        <InputLeftElement
+          sx={commonStyles.inputIconElement}
+          children={<BiCalculator />}
+        />
         <Input
           name="title"
+          sx={commonStyles.fieldInput}
           type="text"
           placeholder="Operation title"
           onChange={handleChange}
           value={title}
         />
-        <HStack>
-          <ExpressionInput
-            name="expression"
-            type="text"
-            placeholder="Enter expression"
-            fontFamily="mono"
-            value={expression}
-            onChange={(expression) =>
-              handleExpressionChange('expression', expression)
-            }
-          />
-        </HStack>
-      </VStack>
-    </HStack>
+      </InputGroup>
+      <HStack>
+        <ExpressionInput
+          name="expression"
+          sx={commonStyles.expressionInput}
+          type="text"
+          placeholder="Enter formula"
+          value={expression}
+          onChange={(expression) =>
+            handleExpressionChange('expression', expression)
+          }
+        />
+      </HStack>
+    </VStack>
   )
 }
 
