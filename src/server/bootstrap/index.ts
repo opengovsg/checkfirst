@@ -34,6 +34,7 @@ import logger from './logger'
 import morgan from './morgan'
 import addStaticRoutes from './static'
 import helmet from './helmet'
+import { noCacheHeaders } from './cache'
 
 const step = config.get('otpExpiry') / 2
 
@@ -154,6 +155,7 @@ export async function bootstrap(): Promise<{
     sessionMiddleware,
     bodyParser.json(),
     sentrySessionMiddleware, // TODO: debug why user info isn't sent
+    noCacheHeaders,
   ]
   app.use('/api/v1', apiMiddleware, api({ checker, auth, template }))
 
