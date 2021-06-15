@@ -8,7 +8,6 @@ const CommonComponents: ComponentMultiStyleConfig = {
     'inputIconElement',
     'fullWidthContainer',
     'halfWidthContainer',
-    'previewTitle',
     'previewDescription',
   ],
   baseStyle: {
@@ -37,10 +36,6 @@ const CommonComponents: ComponentMultiStyleConfig = {
     halfWidthContainer: {
       alignItems: 'stretch',
       width: '50%',
-    },
-    previewTitle: {
-      textStyle: 'subhead1',
-      fontWeight: 500,
     },
     previewDescription: {
       textStyle: 'body2',
