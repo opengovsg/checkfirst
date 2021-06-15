@@ -26,7 +26,7 @@ import {
 import { EmbedModal } from '.'
 import { useCheckerContext } from '../../contexts'
 import { DefaultTooltip } from '../common/DefaultTooltip'
-import { StyledToast, useStyledToast } from '../common/StyledToast'
+import { useStyledToast } from '../common/StyledToast'
 
 const ROUTES = ['questions', 'constants', 'logic']
 
@@ -73,23 +73,13 @@ export const Navbar: FC = () => {
     try {
       await save.mutateAsync()
       styledToast({
-        render: (props) => (
-          <StyledToast
-            status="success"
-            message="Your checker has been saved successfully."
-            {...props}
-          />
-        ),
+        status: 'success',
+        description: 'Your checker has been saved successfully.',
       })
     } catch (err) {
       styledToast({
-        render: (props) => (
-          <StyledToast
-            status="error"
-            message={getApiErrorMessage(err)}
-            {...props}
-          />
-        ),
+        status: 'error',
+        description: getApiErrorMessage(err),
       })
     }
   }
@@ -98,23 +88,13 @@ export const Navbar: FC = () => {
     try {
       await publish.mutateAsync()
       styledToast({
-        render: (props) => (
-          <StyledToast
-            status="success"
-            message="Your checker is now live."
-            {...props}
-          />
-        ),
+        status: 'success',
+        description: 'Your checker is now live.',
       })
     } catch (err) {
       styledToast({
-        render: (props) => (
-          <StyledToast
-            status="error"
-            message={getApiErrorMessage(err)}
-            {...props}
-          />
-        ),
+        status: 'error',
+        description: getApiErrorMessage(err),
       })
     }
   }

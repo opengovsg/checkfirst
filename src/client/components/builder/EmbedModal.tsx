@@ -23,7 +23,7 @@ import {
 } from '@chakra-ui/react'
 import { Checker } from '../../../types/checker'
 import { DefaultTooltip } from '../common/DefaultTooltip'
-import { StyledToast, useStyledToast } from '../common/StyledToast'
+import { useStyledToast } from '../common/StyledToast'
 
 type EmbedFieldProps = {
   name: string
@@ -36,9 +36,8 @@ const EmbedField: FC<EmbedFieldProps> = ({ name, value, children }) => {
   const onClick = () => {
     onCopy()
     styledToast({
-      render: (props) => (
-        <StyledToast status="success" message="Copied!" {...props} />
-      ),
+      status: 'success',
+      description: 'Copied!',
     })
   }
   return (

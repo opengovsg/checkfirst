@@ -31,7 +31,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { CheckerService, TemplateService } from '../../services'
 import { getApiErrorMessage } from '../../api'
 import { SelectTemplate } from './SelectTemplate'
-import { StyledToast, useStyledToast } from '../common/StyledToast'
+import { useStyledToast } from '../common/StyledToast'
 
 export type CreateNewModalProps = {
   onClose: () => void
@@ -107,26 +107,16 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({ onClose }) => {
     onSuccess: (created) => {
       queryClient.invalidateQueries('checkers')
       styledToast({
-        render: (props) => (
-          <StyledToast
-            status="success"
-            message={`${created?.title} has been created successfully`}
-            {...props}
-          />
-        ),
+        status: 'success',
+        description: `${created?.title} has been created successfully`,
       })
       onClose()
       history.push(`/builder/${created.id}`)
     },
     onError: (err) => {
       styledToast({
-        render: (props) => (
-          <StyledToast
-            status="error"
-            message={getApiErrorMessage(err)}
-            {...props}
-          />
-        ),
+        status: 'error',
+        description: getApiErrorMessage(err),
       })
     },
   })

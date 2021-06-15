@@ -6,7 +6,7 @@ import { BiEditAlt } from 'react-icons/bi'
 import { EmbedModal } from '.'
 
 import { useCheckerContext } from '../../contexts'
-import { StyledToast, useStyledToast } from '../common/StyledToast'
+import { useStyledToast } from '../common/StyledToast'
 
 export const PreviewNavBar: FC = () => {
   const {
@@ -31,23 +31,13 @@ export const PreviewNavBar: FC = () => {
     try {
       await publish.mutateAsync()
       styledToast({
-        render: (props) => (
-          <StyledToast
-            status="success"
-            message="Your checker is now live."
-            {...props}
-          />
-        ),
+        status: 'success',
+        description: 'Your checker is now live.',
       })
     } catch (err) {
       styledToast({
-        render: (props) => (
-          <StyledToast
-            status="error"
-            message={getApiErrorMessage(err)}
-            {...props}
-          />
-        ),
+        status: 'error',
+        description: getApiErrorMessage(err),
       })
     }
   }

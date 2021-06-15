@@ -23,7 +23,7 @@ import { DashboardCheckerDTO } from '../../../types/checker'
 import { getApiErrorMessage } from '../../api'
 import { CheckerService } from '../../services'
 import { ConfirmDialog } from '../ConfirmDialog'
-import { StyledToast, useStyledToast } from '../common/StyledToast'
+import { useStyledToast } from '../common/StyledToast'
 
 type CheckerCardProps = {
   checker: DashboardCheckerDTO
@@ -109,24 +109,14 @@ export const CheckerCard: FC<CheckerCardProps> = ({ checker }) => {
     onSuccess: () => {
       queryClient.invalidateQueries('checkers')
       styledToast({
-        render: (props) => (
-          <StyledToast
-            status="success"
-            message={`${checker.title} has been successfully deleted`}
-            {...props}
-          />
-        ),
+        status: 'success',
+        description: `${checker.title} has been successfully deleted`,
       })
     },
     onError: (err) => {
       styledToast({
-        render: (props) => (
-          <StyledToast
-            status="error"
-            message={getApiErrorMessage(err)}
-            {...props}
-          />
-        ),
+        status: 'error',
+        description: getApiErrorMessage(err),
       })
     },
   })

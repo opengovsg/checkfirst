@@ -23,7 +23,7 @@ import * as checker from './../../types/checker'
 import { evaluate } from './../core/evaluator'
 import { unit, Unit } from 'mathjs'
 import { useGoogleAnalytics } from '../contexts'
-import { StyledToast, useStyledToast } from './common/StyledToast'
+import { useStyledToast } from './common/StyledToast'
 
 // polyfill for browsers that don't support smooth scroling
 if (!('scrollBehavior' in document.documentElement.style)) {
@@ -125,13 +125,9 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
 
     if (!isCheckerComplete()) {
       styledToast({
-        render: (props) => (
-          <StyledToast
-            status="warning"
-            message="Results cannot be shown because checker logic is not available."
-            {...props}
-          />
-        ),
+        status: 'warning',
+        description:
+          'Results cannot be shown because checker logic is not available.',
       })
     }
 
@@ -144,13 +140,8 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
       })
     } catch (err) {
       styledToast({
-        render: (props) => (
-          <StyledToast
-            status="error"
-            message={`${err.name}: ${err.message}`}
-            {...props}
-          />
-        ),
+        status: 'error',
+        description: `${err.name}: ${err.message}`,
       })
     }
 
