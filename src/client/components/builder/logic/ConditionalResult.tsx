@@ -239,7 +239,7 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
         onClick={addCondition}
         leftIcon={<BiPlus />}
       >
-        Add New
+        Add condition
       </Button>
       <Divider sx={styles.divider} />
       <HStack sx={styles.inputContainer}>
