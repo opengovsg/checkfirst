@@ -17,6 +17,7 @@ export const StyledToast: ComponentMultiStyleConfig = {
       right: 0,
       px: 2,
       justifyContent: 'center',
+      pointerEvents: 'none',
     },
     toastBox: {
       w: { base: '100%', md: '680px' },
@@ -26,6 +27,7 @@ export const StyledToast: ComponentMultiStyleConfig = {
       borderWidth: '1px',
       borderColor: `${colorScheme}.500`,
       borderRadius: '3px',
+      pointerEvents: 'auto',
     },
     container: {
       alignItems: 'stretch',
