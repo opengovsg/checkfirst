@@ -21,7 +21,7 @@ import * as checker from '../../../../types/checker'
 import { useCheckerContext } from '../../../contexts'
 import { createBuilderField, QuestionFieldComponent } from '../BuilderField'
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../../util/enums'
-import { FieldIndexText } from './FieldIndexText'
+import { TitlePreviewText } from './TitlePreviewText'
 
 const InputComponent: QuestionFieldComponent = ({ field, index }) => {
   const { title, description } = field
@@ -159,10 +159,7 @@ const PreviewComponent: QuestionFieldComponent = ({ field, index }) => {
   return (
     <VStack sx={commonStyles.fullWidthContainer} spacing={2}>
       <VStack sx={commonStyles.fullWidthContainer} spacing={0}>
-        <HStack>
-          <FieldIndexText index={index} />
-          <Text sx={commonStyles.previewTitle}>{title}</Text>
-        </HStack>
+        <TitlePreviewText index={index}>{title}</TitlePreviewText>
         {description && (
           <Text sx={commonStyles.previewDescription}>{description}</Text>
         )}
