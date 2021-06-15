@@ -73,6 +73,7 @@ export const BuilderField: ComponentMultiStyleConfig = {
       zIndex: 9,
       transition: 'none',
       color: 'neutral.800',
+      bg: 'white',
     },
     actionBar: {
       h: 12,
@@ -103,6 +104,7 @@ export const BuilderField: ComponentMultiStyleConfig = {
       badge: {
         left: `-${40 + 8 + 16}px`, // Add 8px for left border
         color: 'white',
+        bg: `${colorScheme}.500`,
       },
       content: {
         pl: 6,
