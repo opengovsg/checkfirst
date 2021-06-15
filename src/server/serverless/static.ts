@@ -10,6 +10,7 @@ const BINARY_CONTENT_TYPES = ['image/png']
 const app = express()
 app.use(morgan)
 app.use(helmet)
+
 addStaticRoutes(app)
 
 export const handler: Handler = serverless(app, {
