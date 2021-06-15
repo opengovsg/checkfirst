@@ -1,18 +1,12 @@
 import React, { FC } from 'react'
 import { Link, Redirect, useRouteMatch } from 'react-router-dom'
 import { getApiErrorMessage } from '../../api'
-import {
-  Button,
-  Flex,
-  HStack,
-  Text,
-  useDisclosure,
-  useToast,
-} from '@chakra-ui/react'
+import { Button, Flex, HStack, Text, useDisclosure } from '@chakra-ui/react'
 import { BiEditAlt } from 'react-icons/bi'
 import { EmbedModal } from '.'
 
 import { useCheckerContext } from '../../contexts'
+import { useStyledToast } from '../common/StyledToast'
 
 export const PreviewNavBar: FC = () => {
   const {
@@ -21,7 +15,7 @@ export const PreviewNavBar: FC = () => {
     onClose: onEmbedClose,
   } = useDisclosure()
   const { publish, isChanged, config: checker } = useCheckerContext()
-  const toast = useToast({ position: 'bottom-right', variant: 'solid' })
+  const styledToast = useStyledToast()
 
   const match = useRouteMatch<{ id: string; action: string }>({
     path: '/builder/:id/:action',
@@ -36,15 +30,13 @@ export const PreviewNavBar: FC = () => {
   const handlePublish = async () => {
     try {
       await publish.mutateAsync()
-      toast({
+      styledToast({
         status: 'success',
-        title: 'Checker published',
         description: 'Your checker is now live.',
       })
     } catch (err) {
-      toast({
+      styledToast({
         status: 'error',
-        title: 'An error occurred',
         description: getApiErrorMessage(err),
       })
     }
