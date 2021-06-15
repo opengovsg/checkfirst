@@ -145,7 +145,7 @@ const InputComponent: ConstantFieldComponent = ({ constant, index }) => {
                 />
               </Td>
               <Td sx={styles.deleteCell}>
-                <DefaultTooltip label="Delete mapping" placement="right">
+                <DefaultTooltip label="Delete row">
                   <IconButton
                     sx={styles.deleteButton}
                     variant="link"

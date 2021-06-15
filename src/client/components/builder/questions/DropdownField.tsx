@@ -1,5 +1,5 @@
 import React from 'react'
-import { BiListUl } from 'react-icons/bi'
+import { IoIosArrowDropdown } from 'react-icons/io'
 import {
   VStack,
   Text,
@@ -52,7 +52,7 @@ const InputComponent: QuestionFieldComponent = ({ field, index }) => {
       <InputGroup>
         <InputLeftElement
           sx={commonStyles.inputIconElement}
-          children={<BiListUl />}
+          children={<IoIosArrowDropdown />}
         />
         <Input
           type="text"

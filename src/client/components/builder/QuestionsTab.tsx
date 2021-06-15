@@ -3,11 +3,11 @@ import { noop } from 'lodash'
 import {
   BiHash,
   BiRadioCircleMarked,
-  BiCheckboxChecked,
   BiPlusCircle,
   BiUpArrowAlt,
   BiDownArrowAlt,
   BiCalendar,
+  BiSelectMultiple,
 } from 'react-icons/bi'
 import { IoIosArrowDropdown } from 'react-icons/io'
 import { Center, Image, Link, Text, VStack } from '@chakra-ui/react'
@@ -171,7 +171,7 @@ export const QuestionsTab: FC = () => {
         },
         {
           label: 'Checkbox',
-          icon: <BiCheckboxChecked />,
+          icon: <BiSelectMultiple />,
           onClick: () => {
             dispatch({
               type: BuilderActionEnum.Add,
