@@ -57,7 +57,7 @@ export const BuilderField: ComponentMultiStyleConfig = {
     container: {
       w: '100%',
       bg: 'white',
-      borderRadius: '3px',
+      borderRadius: '4px',
       cursor: 'pointer',
       position: 'relative',
     },
@@ -74,6 +74,7 @@ export const BuilderField: ComponentMultiStyleConfig = {
       transition: 'none',
       color: 'neutral.800',
       bg: 'white',
+      borderRadius: '4px',
     },
     actionBar: {
       h: 12,

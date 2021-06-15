@@ -5,7 +5,7 @@ export const CheckerCard = {
       h: '200px',
       justifyContent: 'space-between',
       boxShadow: 'md',
-      borderRadius: '3px',
+      borderRadius: '4px',
       bg: 'white',
       p: '24px',
     },

@@ -4,7 +4,7 @@ export const FloatingToolbar = {
     container: {
       bg: 'white',
       py: 2,
-      borderRadius: '3px',
+      borderRadius: '4px',
       boxShadow: '0px 0px 10px #DADEE3',
     },
     menuItem: {
