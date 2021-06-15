@@ -51,7 +51,7 @@ const EmbedField: FC<EmbedFieldProps> = ({ name, value, children }) => {
           cursor="pointer"
           onClick={onClick}
           children={
-            <DefaultTooltip label="Copy" placement="right">
+            <DefaultTooltip label="Copy">
               <span>
                 <BiCopy />
               </span>

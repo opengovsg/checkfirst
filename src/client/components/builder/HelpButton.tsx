@@ -15,7 +15,7 @@ export const HelpButton: FC = () => {
           target="_blank"
           eventLabel={GA_USER_EVENTS.BUILDER_HELP_BUTTON}
         >
-          <DefaultTooltip label="Help & Resources" placement="right">
+          <DefaultTooltip label="Help & Resources">
             <Circle size="40px" bg="primary.500" color="white">
               <BiQuestionMark size="24px" />
             </Circle>
