@@ -4,7 +4,6 @@ import { BiCalendar, BiChevronDown } from 'react-icons/bi'
 import {
   VStack,
   HStack,
-  Box,
   Text,
   Input,
   Badge,
@@ -15,6 +14,10 @@ import {
   MenuList,
   NumberInput,
   NumberInputField,
+  InputGroup,
+  InputLeftElement,
+  useStyles,
+  useMultiStyleConfig,
 } from '@chakra-ui/react'
 
 import { useCheckerContext } from '../../../contexts'
@@ -63,6 +66,9 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
     fromExpression(expression)
   )
 
+  const commonStyles = useStyles()
+  const styles = useMultiStyleConfig('DateResult', {})
+
   useEffect(() => {
     const updatedExpression = toExpression(dateState)
     if (
@@ -100,91 +106,116 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
     )
   }
 
+  const renderBadgeWithTitle = (
+    id: string,
+    title: string,
+    badgeCol: string
+  ) => (
+    <HStack sx={styles.menuRowContainer} spacing={4}>
+      <Badge sx={styles.menuRowBadge} bg={badgeCol}>
+        {id}
+      </Badge>
+      <Text isTruncated>{title}</Text>
+    </HStack>
+  )
+
   return (
-    <HStack w="100%" alignItems="flex-start">
-      <Box fontSize="20px" pt={2}>
-        <BiCalendar />
-      </Box>
-      <VStack align="stretch" w="100%">
+    <VStack sx={commonStyles.fullWidthContainer} spacing={4}>
+      <InputGroup>
+        <InputLeftElement
+          sx={commonStyles.inputIconElement}
+          children={<BiCalendar />}
+        />
         <Input
           name="title"
+          sx={commonStyles.fieldInput}
           type="text"
           placeholder="Operation title"
           onChange={handleChange}
           value={title}
         />
-        <HStack>
-          <Menu>
-            <MenuButton as={Button} rightIcon={<BiChevronDown />}>
-              {dateState.variableId ? dateState.variableId : 'SELECT INPUT'}
-            </MenuButton>
-            <MenuList>
-              {config.fields
-                .filter(({ type }) => type === 'DATE')
-                .map(({ id, title }, i) => (
-                  <MenuItem
-                    key={i}
-                    onClick={() => updateState('variableId', id)}
-                  >
-                    <HStack spacing={4}>
-                      <Badge
-                        bg="#FB5D64"
-                        color="white"
-                        fontSize="sm"
-                        borderRadius="5px"
-                      >
-                        {id}
-                      </Badge>
-                      <Text isTruncated>{title}</Text>
-                    </HStack>
-                  </MenuItem>
-                ))}
-              {config.operations
-                .filter(({ id, type }) => type === 'DATE' && id !== currentId)
-                .map(({ id, title }, i) => (
-                  <MenuItem
-                    key={i}
-                    onClick={() => updateState('variableId', id)}
-                  >
-                    <HStack spacing={4}>
-                      <Badge
-                        bg="#46DBC9"
-                        color="white"
-                        fontSize="sm"
-                        borderRadius="5px"
-                      >
-                        {id}
-                      </Badge>
-                      <Text isTruncated>{title}</Text>
-                    </HStack>
-                  </MenuItem>
-                ))}
-            </MenuList>
-          </Menu>
-          <Menu>
-            <MenuButton as={Button} rightIcon={<BiChevronDown />}>
-              {dateState.isAdd ? '+' : '-'}
-            </MenuButton>
-            <MenuList>
-              <MenuItem onClick={() => updateState('isAdd', true)}>+</MenuItem>
-              <MenuItem onClick={() => updateState('isAdd', false)}>-</MenuItem>
-            </MenuList>
-          </Menu>
-          <NumberInput
-            precision={0}
-            step={1}
-            min={0}
-            defaultValue={
-              dateState.numberOfIntervals && dateState.numberOfIntervals
-            }
-            onChange={(value) => updateState('numberOfIntervals', value)}
+      </InputGroup>
+      <HStack sx={styles.dateContainer} spacing={4}>
+        <Menu matchWidth>
+          {({ onClose }) => (
+            <>
+              <MenuButton
+                as={Button}
+                sx={styles.questionButton}
+                variant="outline"
+                rightIcon={<BiChevronDown />}
+              >
+                <Text
+                  sx={styles.menuButtonText}
+                  textColor={
+                    dateState.variableId ? 'secondary.700' : 'neutral.500'
+                  }
+                >
+                  {dateState.variableId
+                    ? dateState.variableId
+                    : 'Select question'}
+                </Text>
+              </MenuButton>
+              <MenuList>
+                {config.fields
+                  .filter(({ type }) => type === 'DATE')
+                  .map(({ id, title }, i) => (
+                    <MenuItem
+                      key={i}
+                      onClick={() => {
+                        updateState('variableId', id)
+                        onClose()
+                      }}
+                    >
+                      {renderBadgeWithTitle(id, title, 'success.500')}
+                    </MenuItem>
+                  ))}
+                {config.operations
+                  .filter(({ id, type }) => type === 'DATE' && id !== currentId)
+                  .map(({ id, title }, i) => (
+                    <MenuItem
+                      key={i}
+                      onClick={() => {
+                        updateState('variableId', id)
+                        onClose()
+                      }}
+                    >
+                      {renderBadgeWithTitle(id, title, 'primary.500')}
+                    </MenuItem>
+                  ))}
+              </MenuList>
+            </>
+          )}
+        </Menu>
+        <Menu matchWidth>
+          <MenuButton
+            as={Button}
+            sx={styles.operatorButton}
+            variant="outline"
+            rightIcon={<BiChevronDown />}
           >
-            <NumberInputField placeholder="Number" />
-          </NumberInput>
-          <Text>days</Text>
-        </HStack>
-      </VStack>
-    </HStack>
+            <Text sx={styles.menuButtonText}>
+              {dateState.isAdd ? '+' : '-'}
+            </Text>
+          </MenuButton>
+          <MenuList sx={styles.operatorMenuList}>
+            <MenuItem onClick={() => updateState('isAdd', true)}>+</MenuItem>
+            <MenuItem onClick={() => updateState('isAdd', false)}>-</MenuItem>
+          </MenuList>
+        </Menu>
+        <NumberInput
+          sx={styles.numberInput}
+          precision={0}
+          step={1}
+          min={0}
+          defaultValue={dateState.numberOfIntervals || undefined}
+          onChange={(value) => updateState('numberOfIntervals', value)}
+        >
+          <NumberInputField sx={styles.numberField} placeholder="Number" />
+        </NumberInput>
+        <Text sx={styles.daysText}>DAYS</Text>
+      </HStack>
+    </VStack>
   )
 }
 

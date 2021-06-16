@@ -1,7 +1,6 @@
 import { extendTheme } from '@chakra-ui/react'
 
-import { fonts } from './fonts'
-import { colors } from './colors'
+import { colors, fonts } from './foundations'
 import { textStyles } from './text-styles'
 import { layerStyles } from './layer-styles'
 

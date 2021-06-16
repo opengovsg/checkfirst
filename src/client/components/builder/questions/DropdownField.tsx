@@ -1,23 +1,25 @@
 import React from 'react'
-import { BiListUl } from 'react-icons/bi'
+import { IoIosArrowDropdown } from 'react-icons/io'
 import {
-  Box,
-  HStack,
   VStack,
   Text,
   Input,
   Select,
   Textarea,
   useStyles,
+  InputGroup,
+  InputLeftElement,
 } from '@chakra-ui/react'
 
 import { useCheckerContext } from '../../../contexts'
 import { createBuilderField, QuestionFieldComponent } from '../BuilderField'
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../../util/enums'
+import { TitlePreviewText } from './TitlePreviewText'
 
 const InputComponent: QuestionFieldComponent = ({ field, index }) => {
   const { title, description } = field
   const { dispatch } = useCheckerContext()
+  const commonStyles = useStyles()
 
   const updateTitleOrDescription = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -46,52 +48,54 @@ const InputComponent: QuestionFieldComponent = ({ field, index }) => {
   }
 
   return (
-    <HStack w="100%" alignItems="flex-start">
-      <Box fontSize="20px" pt={2}>
-        <BiListUl />
-      </Box>
-      <VStack align="stretch" w="90%" spacing={6}>
-        <VStack align="stretch" spacing={2}>
-          <Input
-            type="text"
-            name="title"
-            placeholder="Question"
-            onChange={updateTitleOrDescription}
-            value={title}
-          />
-          <Input
-            type="text"
-            name="description"
-            placeholder="Description"
-            onChange={updateTitleOrDescription}
-            value={description}
-          />
-        </VStack>
-        <VStack spacing={4} alignItems="left" w="50%">
-          <Textarea
-            value={field.options.map((o) => o.label).join('\n')}
-            onChange={changeOptions}
-            placeholder="Enter each option on a new line"
-          />
-        </VStack>
+    <VStack sx={commonStyles.fullWidthContainer} spacing={4}>
+      <InputGroup>
+        <InputLeftElement
+          sx={commonStyles.inputIconElement}
+          children={<IoIosArrowDropdown />}
+        />
+        <Input
+          type="text"
+          sx={commonStyles.fieldInput}
+          name="title"
+          placeholder="Question"
+          onChange={updateTitleOrDescription}
+          value={title}
+        />
+      </InputGroup>
+      <Input
+        type="text"
+        sx={commonStyles.fieldInput}
+        name="description"
+        placeholder="Description"
+        onChange={updateTitleOrDescription}
+        value={description}
+      />
+      <VStack sx={commonStyles.halfWidthContainer} spacing={4}>
+        <Textarea
+          sx={commonStyles.fieldInput}
+          value={field.options.map((o) => o.label).join('\n')}
+          onChange={changeOptions}
+          placeholder="Enter each option on a new line"
+        />
       </VStack>
-    </HStack>
+    </VStack>
   )
 }
 
-const PreviewComponent: QuestionFieldComponent = ({ field }) => {
+const PreviewComponent: QuestionFieldComponent = ({ field, index }) => {
   const { title, description, options } = field
-  const styles = useStyles()
+  const commonStyles = useStyles()
+
   return (
-    <VStack align="stretch" w="100%" spacing={6}>
-      <VStack align="stretch">
-        <HStack>
-          <BiListUl fontSize="20px" />
-          <Text>{title}</Text>
-        </HStack>
-        {description && <Text color="#718096">{description}</Text>}
+    <VStack sx={commonStyles.fullWidthContainer} spacing={3}>
+      <VStack sx={commonStyles.fullWidthContainer} spacing={0}>
+        <TitlePreviewText index={index}>{title}</TitlePreviewText>
+        {description && (
+          <Text sx={commonStyles.previewDescription}>{description}</Text>
+        )}
       </VStack>
-      <Select isDisabled sx={styles.dummyInput}>
+      <Select isDisabled sx={commonStyles.dummyInput}>
         {options.map(({ value, label }, i) => (
           <option key={i} value={value}>
             {label}

@@ -3,11 +3,11 @@ import { noop } from 'lodash'
 import {
   BiHash,
   BiRadioCircleMarked,
-  BiCheckboxChecked,
   BiPlusCircle,
   BiUpArrowAlt,
   BiDownArrowAlt,
   BiCalendar,
+  BiSelectMultiple,
 } from 'react-icons/bi'
 import { IoIosArrowDropdown } from 'react-icons/io'
 import { Center, Image, Link, Text, VStack } from '@chakra-ui/react'
@@ -37,12 +37,12 @@ const QUESTIONS_GUIDE_URL = 'https://go.gov.sg/checkfirst-formbuilder'
 const EmptyQuestionsTabBody: FC = () => (
   <Center py={16}>
     <VStack spacing={4} w="100%">
-      <Text color="#1B3C87" textStyle="h2">
+      <Text textStyle="heading2" color="primary.500">
         Start building your checker
       </Text>
       <Text textAlign="center">
         Add questions to get started.{' '}
-        <Link href={QUESTIONS_GUIDE_URL} isExternal color="#1B3C87">
+        <Link href={QUESTIONS_GUIDE_URL} isExternal color="primary.500">
           Learn how to work with questions
         </Link>
       </Text>
@@ -122,7 +122,7 @@ export const QuestionsTab: FC = () => {
       label: 'Add question',
       menu: [
         {
-          label: 'Numeric field',
+          label: 'Number',
           icon: <BiHash />,
           onClick: () => {
             dispatch({
@@ -154,7 +154,7 @@ export const QuestionsTab: FC = () => {
           },
         },
         {
-          label: 'Dropdown List',
+          label: 'Dropdown',
           icon: <IoIosArrowDropdown />,
           onClick: () => {
             dispatch({
@@ -171,7 +171,7 @@ export const QuestionsTab: FC = () => {
         },
         {
           label: 'Checkbox',
-          icon: <BiCheckboxChecked />,
+          icon: <BiSelectMultiple />,
           onClick: () => {
             dispatch({
               type: BuilderActionEnum.Add,

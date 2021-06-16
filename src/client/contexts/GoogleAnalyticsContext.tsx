@@ -21,8 +21,9 @@ interface GoogleAnalyticsContextProps {
   sendException: (description: string) => void
 }
 
-export const GoogleAnalyticsContext =
-  createContext<GoogleAnalyticsContextProps | undefined>(undefined)
+export const GoogleAnalyticsContext = createContext<
+  GoogleAnalyticsContextProps | undefined
+>(undefined)
 
 export const useGoogleAnalytics = (): GoogleAnalyticsContextProps => {
   const GoogleAnalytics = useContext(GoogleAnalyticsContext)

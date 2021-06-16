@@ -7,7 +7,7 @@ import React, { FC } from 'react'
  * @see Docs     https://chakra-ui.com/components/tooltip
  */
 export const DefaultTooltip: FC<TooltipProps> = ({ ...props }) => (
-  <Tooltip {...props} closeOnMouseDown closeOnClick />
+  <Tooltip {...props} placement="right" closeOnMouseDown closeOnClick />
 )
 
 DefaultTooltip.defaultProps = {

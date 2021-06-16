@@ -17,7 +17,11 @@ export const Login: FC = () => {
     <Flex direction="column" h="100vh" align="stretch">
       <Masthead />
       <Flex flex={1} direction="row">
-        <Center flex={1} bg="#1B3C87" display={{ base: 'none', lg: 'flex' }}>
+        <Center
+          flex={1}
+          bg="primary.500"
+          display={{ base: 'none', lg: 'flex' }}
+        >
           <Image src={SignIn} htmlWidth="80%" minWidth="480px" mr="-50%" />
         </Center>
         <Flex

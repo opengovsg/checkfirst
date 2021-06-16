@@ -1,11 +1,9 @@
 import React, { FC, useState, useRef } from 'react'
 import { isEmpty, filter } from 'lodash'
 import {
-  useToast,
   useMultiStyleConfig,
   StylesProvider,
   Container,
-  Heading,
   VStack,
   Flex,
   Button,
@@ -25,6 +23,7 @@ import * as checker from './../../types/checker'
 import { evaluate } from './../core/evaluator'
 import { unit, Unit } from 'mathjs'
 import { useGoogleAnalytics } from '../contexts'
+import { useStyledToast } from './common/StyledToast'
 
 // polyfill for browsers that don't support smooth scroling
 if (!('scrollBehavior' in document.documentElement.style)) {
@@ -42,7 +41,7 @@ function isUnit(
 }
 
 export const Checker: FC<CheckerProps> = ({ config }) => {
-  const toast = useToast({ position: 'bottom-right', variant: 'solid' })
+  const styledToast = useStyledToast()
   const styles = useMultiStyleConfig('Checker', {})
   const methods = useForm()
   const { title, description, fields, operations, constants } = config
@@ -96,7 +95,7 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
 
     fields.forEach((field) => {
       const { id, type, options } = field
-      if (!inputs[id]) return
+      if (inputs[id] === null || inputs[id] === undefined) return
 
       switch (type) {
         case 'NUMERIC': {
@@ -125,9 +124,8 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
     })
 
     if (!isCheckerComplete()) {
-      toast({
+      styledToast({
         status: 'warning',
-        title: 'No checker logic found',
         description:
           'Results cannot be shown because checker logic is not available.',
       })
@@ -141,10 +139,9 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
         block: 'nearest',
       })
     } catch (err) {
-      toast({
+      styledToast({
         status: 'error',
-        title: err.name,
-        description: err.message,
+        description: `${err.name}: ${err.message}`,
       })
     }
 
@@ -161,7 +158,7 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
           <form onSubmit={methods.handleSubmit(onSubmit)}>
             <VStack align="stretch" spacing={10}>
               <VStack spacing={2}>
-                <Heading sx={styles.title}>{title}</Heading>
+                <Text sx={styles.title}>{title}</Text>
                 {description && <Text sx={styles.subtitle}>{description}</Text>}
               </VStack>
               {fields.map(renderField)}
@@ -175,7 +172,7 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
 
       {!isEmpty(variables) && isCheckerComplete() && (
         <Flex bg="primary.500" as="div" ref={outcomes} flex={1}>
-          <Container maxW="xl" pt={8} pb={16} px={8} color="#F4F6F9">
+          <Container maxW="xl" pt={8} pb={16} px={8} color="neutral.200">
             <VStack align="stretch" spacing={8}>
               {operations.map(renderDisplay)}
             </VStack>

@@ -7,17 +7,11 @@ import {
 import { parseConditionalExpr } from '../../../core/parser'
 import { isValidExpression } from '../../../core/evaluator'
 import update, { Spec } from 'immutability-helper'
-import {
-  BiGitBranch,
-  BiPlusCircle,
-  BiTrash,
-  BiChevronDown,
-} from 'react-icons/bi'
+import { BiGitBranch, BiTrash, BiChevronDown, BiPlus } from 'react-icons/bi'
 import {
   Divider,
   Button,
   IconButton,
-  Heading,
   VStack,
   HStack,
   Box,
@@ -26,6 +20,11 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  InputGroup,
+  InputLeftElement,
+  Text,
+  useMultiStyleConfig,
+  useStyles,
 } from '@chakra-ui/react'
 
 import { useCheckerContext } from '../../../contexts'
@@ -52,6 +51,9 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
   const [ifelseState, setIfelseState] = useState<IfelseState>(
     parseConditionalExpr(expression)
   )
+  const commonStyles = useStyles()
+  const styles = useMultiStyleConfig('ConditionalResult', {})
+
   // Retrieve condition type from ifelseState if there exist conditions; else use AND type as default
   const initialConditionType: ConditionType =
     ifelseState.conditions.length > 0 ? ifelseState.conditions[0].type : 'AND'
@@ -148,156 +150,120 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
   }
 
   return (
-    <VStack w="100%" align="stretch" spacing={6}>
-      <HStack w="100%" alignItems="flex-start">
-        <Box fontSize="20px" pt={2}>
-          <BiGitBranch />
-        </Box>
+    <VStack sx={commonStyles.fullWidthContainer} spacing={4}>
+      <InputGroup>
+        <InputLeftElement
+          sx={commonStyles.inputIconElement}
+          children={<BiGitBranch />}
+        />
         <Input
           name="title"
+          sx={commonStyles.fieldInput}
           type="text"
           placeholder="Result description"
           onChange={handleChange}
           value={title}
         />
+      </InputGroup>
+      <HStack sx={styles.inputContainer}>
+        <Text sx={styles.inputLabel}>IF</Text>
+        <ExpressionInput
+          type="text"
+          sx={commonStyles.expressionInput}
+          name="ifExpr"
+          onChange={(expr) => handleExprChange('ifExpr', expr)}
+          value={ifelseState.ifExpr}
+        />
+        <Box sx={styles.deleteSpacer} />
       </HStack>
-      <VStack align="stretch" spacing={4}>
-        <HStack align="start">
-          <Box w="100px" pl={8}>
-            <Heading as="h5" size="sm" lineHeight="40px">
-              IF
-            </Heading>
-          </Box>
-          <ExpressionInput
-            type="text"
-            name="ifExpr"
-            fontFamily="mono"
-            onChange={(expr) => handleExprChange('ifExpr', expr)}
-            value={ifelseState.ifExpr}
-          />
-          <HStack>
-            <DefaultTooltip label="Add condition" placement="right">
-              <IconButton
-                variant="ghost"
-                aria-label="Add condition"
-                fontSize="20px"
-                onClick={addCondition}
-                icon={<BiPlusCircle />}
-              />
-            </DefaultTooltip>
-          </HStack>
-        </HStack>
-        {ifelseState.conditions.map((cond, i) => (
-          <HStack key={i} align="start">
+      {ifelseState.conditions.map((cond, i) => (
+        <HStack key={i} sx={styles.inputContainer}>
+          {i === 0 ? (
             <Menu autoSelect={false}>
-              {i === 0 ? (
-                <Box w="100px">
-                  <MenuButton
-                    as={Button}
-                    variant="outline"
-                    rightIcon={<BiChevronDown />}
-                  >
-                    {conditionType}
-                  </MenuButton>
-                </Box>
-              ) : (
-                <Box w="100px" pl={4}>
-                  <Heading as="h5" size="sm" lineHeight="40px">
-                    {conditionType}
-                  </Heading>
-                </Box>
-              )}
-              <MenuList width="50px">
+              <MenuButton
+                as={Button}
+                variant="outline"
+                sx={styles.menuButton}
+                rightIcon={<BiChevronDown />}
+              >
+                {conditionType}
+              </MenuButton>
+              <MenuList sx={styles.menuList}>
                 <MenuItem
                   as={Button}
-                  borderRadius="0"
-                  fontWeight="normal"
-                  textAlign="start"
-                  justifyContent="initial"
-                  height="36px"
-                  isActive={conditionType === 'AND'}
                   variant="ghost"
+                  sx={styles.menuItem}
+                  isActive={conditionType === 'AND'}
                   onClick={() => updateAllConditionTypes('AND')}
                 >
-                  AND
+                  And
                 </MenuItem>
                 <MenuItem
                   as={Button}
-                  borderRadius={0}
-                  fontWeight="normal"
-                  textAlign="start"
-                  justifyContent="initial"
-                  height="36px"
-                  isActive={conditionType === 'OR'}
                   variant="ghost"
+                  sx={styles.menuItem}
+                  isActive={conditionType === 'OR'}
                   onClick={() => updateAllConditionTypes('OR')}
                 >
-                  OR
+                  Or
                 </MenuItem>
               </MenuList>
             </Menu>
-            <ExpressionInput
-              type="text"
-              fontFamily="mono"
-              onChange={(expression) =>
-                updateConditionExpression(i, { expression })
-              }
-              value={cond.expression}
+          ) : (
+            <Text sx={styles.spacedInputLabel}>{conditionType}</Text>
+          )}
+          <ExpressionInput
+            type="text"
+            sx={commonStyles.expressionInput}
+            onChange={(expression) =>
+              updateConditionExpression(i, { expression })
+            }
+            value={cond.expression}
+          />
+          <DefaultTooltip label="Delete condition">
+            <IconButton
+              variant="ghost"
+              sx={styles.deleteButton}
+              aria-label="Delete condition"
+              onClick={() => deleteCondition(i)}
+              icon={<BiTrash />}
             />
-            <HStack>
-              <DefaultTooltip label="Delete condition">
-                <IconButton
-                  variant="ghost"
-                  aria-label="Delete condition"
-                  fontSize="20px"
-                  onClick={() => deleteCondition(i)}
-                  icon={<BiTrash />}
-                />
-              </DefaultTooltip>
-              <DefaultTooltip label="Add condition" placement="right">
-                <IconButton
-                  variant="ghost"
-                  aria-label="Add condition"
-                  fontSize="20px"
-                  onClick={addCondition}
-                  icon={<BiPlusCircle />}
-                />
-              </DefaultTooltip>
-            </HStack>
-          </HStack>
-        ))}
-      </VStack>
-      <Divider />
-      <VStack align="stretch" spacing={4}>
-        <HStack align="start">
-          <Box w="100px" pl={8}>
-            <Heading as="h5" size="sm" lineHeight="40px">
-              THEN
-            </Heading>
-          </Box>
-          <ExpressionInput
-            type="text"
-            name="thenExpr"
-            fontFamily="mono"
-            onChange={(expr) => handleExprChange('thenExpr', expr)}
-            value={ifelseState.thenExpr}
-          />
+          </DefaultTooltip>
         </HStack>
-        <HStack align="start">
-          <Box w="100px" pl={8}>
-            <Heading as="h5" size="sm" lineHeight="40px">
-              ELSE
-            </Heading>
-          </Box>
-          <ExpressionInput
-            type="text"
-            name="elseExpr"
-            fontFamily="mono"
-            onChange={(expr) => handleExprChange('elseExpr', expr)}
-            value={ifelseState.elseExpr}
-          />
-        </HStack>
-      </VStack>
+      ))}
+      <Button
+        variant="solid"
+        sx={styles.addButton}
+        colorScheme="primary"
+        aria-label="Add condition"
+        onClick={addCondition}
+        leftIcon={<BiPlus />}
+      >
+        Add condition
+      </Button>
+      <Divider sx={styles.divider} />
+      <HStack sx={styles.inputContainer}>
+        <Text sx={styles.inputLabel}>THEN</Text>
+        <ExpressionInput
+          type="text"
+          sx={commonStyles.expressionInput}
+          name="thenExpr"
+          placeholder="Use this field as a ‘true/false’ statement, or show a result"
+          onChange={(expr) => handleExprChange('thenExpr', expr)}
+          value={ifelseState.thenExpr}
+        />
+      </HStack>
+      <HStack sx={styles.inputContainer}>
+        <Text sx={styles.inputLabel}>ELSE</Text>
+        <ExpressionInput
+          type="text"
+          sx={commonStyles.expressionInput}
+          name="elseExpr"
+          placeholder="Use this field as a ‘true/false’ statement, or show a result"
+          onChange={(expr) => handleExprChange('elseExpr', expr)}
+          value={ifelseState.elseExpr}
+        />
+      </HStack>
     </VStack>
   )
 }

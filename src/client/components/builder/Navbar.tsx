@@ -21,12 +21,12 @@ import {
   ModalBody,
   ModalCloseButton,
   useDisclosure,
-  useToast,
 } from '@chakra-ui/react'
 
 import { EmbedModal } from '.'
 import { useCheckerContext } from '../../contexts'
 import { DefaultTooltip } from '../common/DefaultTooltip'
+import { useStyledToast } from '../common/StyledToast'
 
 const ROUTES = ['questions', 'constants', 'logic']
 
@@ -42,7 +42,7 @@ export const Navbar: FC = () => {
     onClose: onEmbedClose,
   } = useDisclosure()
   const history = useHistory()
-  const toast = useToast({ position: 'bottom-right', variant: 'solid' })
+  const styledToast = useStyledToast()
   const match = useRouteMatch<{ id: string; action: string }>({
     path: '/builder/:id/:action',
     exact: true,
@@ -72,15 +72,13 @@ export const Navbar: FC = () => {
   const handleSave = async () => {
     try {
       await save.mutateAsync()
-      toast({
+      styledToast({
         status: 'success',
-        title: 'Checker saved',
         description: 'Your checker has been saved successfully.',
       })
     } catch (err) {
-      toast({
+      styledToast({
         status: 'error',
-        title: 'An error occurred',
         description: getApiErrorMessage(err),
       })
     }
@@ -89,15 +87,13 @@ export const Navbar: FC = () => {
   const handlePublish = async () => {
     try {
       await publish.mutateAsync()
-      toast({
+      styledToast({
         status: 'success',
-        title: 'Checker published',
-        description: `Your checker is now live.`,
+        description: 'Your checker is now live.',
       })
     } catch (err) {
-      toast({
+      styledToast({
         status: 'error',
-        title: 'An error occurred',
         description: getApiErrorMessage(err),
       })
     }
