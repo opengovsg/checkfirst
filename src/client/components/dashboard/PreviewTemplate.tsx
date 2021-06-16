@@ -46,7 +46,7 @@ export const PreviewTemplate: FC = () => {
             </Link>
             <Link to="/dashboard">
               <IconButton
-                color="#A5ABB3"
+                color="neutral.400"
                 fontSize="20px"
                 aria-label="Close"
                 variant="ghost"

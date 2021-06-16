@@ -90,7 +90,7 @@ export const LogicTab: FC = () => {
 
   const addMenu = [
     {
-      label: 'Calculated result',
+      label: 'Calculation',
       icon: <BiCalculator />,
       onClick: () => {
         dispatch({
@@ -106,7 +106,7 @@ export const LogicTab: FC = () => {
       },
     },
     {
-      label: 'Conditional result',
+      label: 'Conditional',
       icon: <BiGitBranch />,
       onClick: () => {
         dispatch({
@@ -122,7 +122,7 @@ export const LogicTab: FC = () => {
       },
     },
     {
-      label: 'Map constant',
+      label: 'Map constants',
       icon: <BiGitCompare />,
       disabled: config.constants.length === 0,
       onClick: () => {
@@ -139,7 +139,7 @@ export const LogicTab: FC = () => {
       },
     },
     {
-      label: 'Date result',
+      label: 'Date calculation',
       icon: <BiCalendar />,
       onClick: () => {
         dispatch({
@@ -236,14 +236,18 @@ export const LogicTab: FC = () => {
       ) : (
         <Center py={16}>
           <VStack spacing={4} w="100%">
-            <Text textStyle="h2" color="#1B3C87">
+            <Text textStyle="heading2" color="primary.500">
               Build a logical brain for your checker
             </Text>
             <Text textAlign="center">
               Use input from questions to make calculations or generate a logic
               outcome.
               <br />
-              <Link href={LOGIC_CONSTANTS_GUIDE_URL} isExternal color="#1B3C87">
+              <Link
+                href={LOGIC_CONSTANTS_GUIDE_URL}
+                isExternal
+                color="primary.500"
+              >
                 Learn how to work with logic
               </Link>
             </Text>

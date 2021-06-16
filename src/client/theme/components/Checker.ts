@@ -4,19 +4,21 @@ export const Checker = {
     title: {
       fontSize: '26px',
       lineHeight: '32px',
-      textAlign: 'center',
+      fontWeight: 600,
+      maxW: '100%',
     },
     subtitle: {
       size: '16px',
       lineHeight: '24px',
-      color: '#7A7F8C',
+      color: 'secondary.400',
+      whiteSpace: 'pre-wrap',
     },
     label: {
-      fontSize: '20px',
-      fontWeight: 600,
+      textStyle: 'subhead1',
     },
     help: {
-      color: '#7A7F8C',
+      textStyle: 'body2',
+      color: 'secondary.400',
     },
     input: {
       bg: 'white',

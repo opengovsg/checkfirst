@@ -7,6 +7,8 @@ import {
   Flex,
   HStack,
   Button,
+  Text,
+  Spacer,
 } from '@chakra-ui/react'
 
 import { useCheckerContext } from '../../contexts'
@@ -102,7 +104,16 @@ export const createBuilderField =
     const [ref, { top }] = usePosition()
     const { dispatch } = useCheckerContext()
     const variant = active ? 'active' : ''
-    const styles = useMultiStyleConfig('BuilderField', { variant })
+
+    const getVariant = (data: BuilderFieldData): string => {
+      if (!active) return 'inactive'
+      if (isFieldData(data) || isTitleData(data)) return 'success'
+      if (isConstantData(data)) return 'warning'
+      if (isOperationData(data)) return 'primary'
+      return 'primary'
+    }
+    const colorScheme = getVariant(data)
+    const styles = useMultiStyleConfig('BuilderField', { variant, colorScheme })
 
     useEffect(() => {
       if (active) onActive({ top })
@@ -240,13 +251,24 @@ export const createBuilderField =
           {(isFieldData(data) ||
             isOperationData(data) ||
             isConstantData(data)) && (
-            <Button colorScheme="primary" sx={styles.badge}>
+            <Button colorScheme={colorScheme} sx={styles.badge}>
               {data.id}
             </Button>
           )}
           <Flex sx={styles.content}>{renderContent()}</Flex>
           {active && (
-            <HStack justifyContent="flex-end">
+            <HStack
+              sx={isTitleData(data) ? styles.barSpacer : styles.actionBar}
+              spacing={0}
+            >
+              {isOperationData(data) && (
+                <Text sx={styles.logicCaption}>
+                  {data.show
+                    ? 'The outcome of this block will be shown in your results'
+                    : 'The outcome of this block will not be shown as a result'}
+                </Text>
+              )}
+              <Spacer />
               {isOperationData(data) && (
                 <ActionButton
                   aria-label="Duplicate"
@@ -282,6 +304,7 @@ export const createBuilderField =
                     onClick={handleDuplicate}
                   />
                   <ActionButton
+                    colorScheme="error"
                     aria-label="Delete"
                     icon={
                       <DefaultTooltip label="Delete">

@@ -1,15 +1,20 @@
 import React from 'react'
-import { BiListCheck, BiX } from 'react-icons/bi'
+import { BiPlus, BiSelectMultiple, BiTrash } from 'react-icons/bi'
 import {
   Button,
   IconButton,
-  Box,
   HStack,
   VStack,
   Text,
   Input,
   Checkbox,
   CheckboxGroup,
+  useStyles,
+  InputGroup,
+  InputLeftElement,
+  useMultiStyleConfig,
+  Icon,
+  Flex,
 } from '@chakra-ui/react'
 
 import * as checker from '../../../../types/checker'
@@ -17,9 +22,14 @@ import { createBuilderField, QuestionFieldComponent } from '../BuilderField'
 import { useCheckerContext } from '../../../contexts'
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../../util/enums'
 
+import '../../../styles/big-checkbox.css'
+import { TitlePreviewText } from './TitlePreviewText'
+
 const InputComponent: QuestionFieldComponent = ({ field, index }) => {
   const { title, description } = field
   const { dispatch } = useCheckerContext()
+  const commonStyles = useStyles()
+  const styles = useMultiStyleConfig('CheckboxField', {})
 
   const updateTitleOrDescription = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -80,8 +90,12 @@ const InputComponent: QuestionFieldComponent = ({ field, index }) => {
 
   const renderOption = (option: checker.FieldOption, i: number) => {
     return (
-      <HStack key={i}>
-        <Checkbox isChecked={false} />
+      <HStack key={i} spacing={4}>
+        <Checkbox
+          sx={styles.checkbox}
+          className="big-checkbox"
+          isChecked={false}
+        />
         <Input
           type="text"
           value={option.label}
@@ -90,9 +104,11 @@ const InputComponent: QuestionFieldComponent = ({ field, index }) => {
           }}
         />
         <IconButton
+          sx={styles.deleteOptionButton}
+          colorScheme="error"
           aria-label="Delete option"
-          fontSize="20px"
-          icon={<BiX />}
+          variant="link"
+          icon={<BiTrash />}
           disabled={field.options.length <= 1}
           onClick={() => deleteOption(option, i)}
         />
@@ -101,60 +117,73 @@ const InputComponent: QuestionFieldComponent = ({ field, index }) => {
   }
 
   return (
-    <HStack w="100%" alignItems="flex-start">
-      <Box fontSize="20px" pt={2}>
-        <BiListCheck />
-      </Box>
-      <VStack align="stretch" w="90%" spacing={6}>
-        <VStack align="stretch" spacing={2}>
-          <Input
-            type="text"
-            name="title"
-            placeholder="Question"
-            onChange={updateTitleOrDescription}
-            value={title}
-          />
-          <Input
-            type="text"
-            name="description"
-            placeholder="Description"
-            onChange={updateTitleOrDescription}
-            value={description}
-          />
-        </VStack>
-        <VStack spacing={4} alignItems="left" w="50%">
-          {field.options.map(renderOption)}
-          <HStack h={10}>
-            <Checkbox isChecked={false} />
-            <Box pl={2}>
-              <Button variant="link" onClick={addOption}>
-                Add new option
-              </Button>
-            </Box>
-          </HStack>
-        </VStack>
+    <VStack sx={commonStyles.fullWidthContainer} spacing={4}>
+      <InputGroup>
+        <InputLeftElement
+          sx={commonStyles.inputIconElement}
+          children={<BiSelectMultiple />}
+        />
+        <Input
+          type="text"
+          sx={commonStyles.fieldInput}
+          name="title"
+          placeholder="Question"
+          onChange={updateTitleOrDescription}
+          value={title}
+        />
+      </InputGroup>
+      <Input
+        type="text"
+        sx={commonStyles.fieldInput}
+        name="description"
+        placeholder="Description"
+        onChange={updateTitleOrDescription}
+        value={description}
+      />
+      <VStack sx={commonStyles.halfWidthContainer} spacing={4}>
+        {field.options.map(renderOption)}
+        <HStack sx={styles.addOptionContainer} spacing={4}>
+          <Icon as={BiPlus} sx={styles.addOptionIcon} />
+          <Button
+            variant="link"
+            sx={styles.addOptionButton}
+            onClick={addOption}
+          >
+            Add option
+          </Button>
+        </HStack>
       </VStack>
-    </HStack>
+    </VStack>
   )
 }
 
-const PreviewComponent: QuestionFieldComponent = ({ field }) => {
+const PreviewComponent: QuestionFieldComponent = ({ field, index }) => {
   const { title, description, options } = field
+  const commonStyles = useStyles()
+  const styles = useMultiStyleConfig('CheckboxField', {})
+
   return (
-    <VStack align="stretch" w="100%" spacing={6}>
-      <VStack align="stretch">
-        <HStack>
-          <BiListCheck fontSize="20px" />
-          <Text>{title}</Text>
-        </HStack>
-        {description && <Text color="#718096">{description}</Text>}
+    <VStack sx={commonStyles.fullWidthContainer} spacing={2}>
+      <VStack sx={commonStyles.fullWidthContainer} spacing={0}>
+        <TitlePreviewText index={index}>{title}</TitlePreviewText>
+        {description && (
+          <Text sx={commonStyles.previewDescription}>{description}</Text>
+        )}
       </VStack>
       <CheckboxGroup>
-        <VStack alignItems="left" spacing={2}>
+        <VStack sx={styles.previewOptionsContainer} spacing={0}>
           {options.map(({ value, label }, i) => (
-            <Checkbox key={i} value={value} isChecked={false}>
-              {label}
-            </Checkbox>
+            <Flex key={i} sx={styles.previewOptionRowContainer}>
+              <Checkbox
+                sx={styles.checkbox}
+                className="big-checkbox"
+                spacing={4}
+                value={value}
+                isChecked={false}
+              >
+                <Text sx={styles.checkboxText}>{label}</Text>
+              </Checkbox>
+            </Flex>
           ))}
         </VStack>
       </CheckboxGroup>
