@@ -30,7 +30,7 @@ export const StyledToast: ComponentMultiStyleConfig = {
       pointerEvents: 'auto',
     },
     container: {
-      alignItems: 'stretch',
+      alignItems: 'start',
     },
     icon: {
       boxSize: '24px',
@@ -38,6 +38,10 @@ export const StyledToast: ComponentMultiStyleConfig = {
     },
     message: {
       textStyle: 'body1',
+      textOverflow: 'ellipsis',
+      overflow: 'hidden',
+      whiteSpace: { md: 'nowrap' },
+      maxHeight: 12,
     },
     closeButton: {
       minW: '24px',
