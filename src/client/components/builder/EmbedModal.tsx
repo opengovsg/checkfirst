@@ -88,7 +88,8 @@ export const EmbedModal: FC<EmbedModalProps> = ({
           onClick={onEmbedOpen}
           aria-label="Embed or Share"
           variant="ghost"
-          icon={<BiCode size="24px" />}
+          color="primary.500"
+          icon={<BiCode size="16px" />}
         />
       </DefaultTooltip>
       <Modal isOpen={isEmbedOpen} onClose={onEmbedClose} size="lg">

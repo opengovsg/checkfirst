@@ -1,12 +1,19 @@
 import React, { FC } from 'react'
 import { Link, Redirect, useRouteMatch } from 'react-router-dom'
 import { getApiErrorMessage } from '../../api'
-import { Button, Flex, HStack, Text, useDisclosure } from '@chakra-ui/react'
+import {
+  Button,
+  HStack,
+  Text,
+  useDisclosure,
+  useMultiStyleConfig,
+} from '@chakra-ui/react'
 import { BiEditAlt } from 'react-icons/bi'
 import { EmbedModal } from '.'
 
 import { useCheckerContext } from '../../contexts'
 import { useStyledToast } from '../common/StyledToast'
+import { NavbarContainer } from '../common/navbar/NavbarContainer'
 
 export const PreviewNavBar: FC = () => {
   const {
@@ -16,6 +23,8 @@ export const PreviewNavBar: FC = () => {
   } = useDisclosure()
   const { publish, isChanged, config: checker } = useCheckerContext()
   const styledToast = useStyledToast()
+
+  const navStyles = useMultiStyleConfig('NavbarComponents', {})
 
   const match = useRouteMatch<{ id: string; action: string }>({
     path: '/builder/:id/:action',
@@ -43,47 +52,45 @@ export const PreviewNavBar: FC = () => {
   }
 
   return (
-    <Flex
-      h="80px"
-      direction="row"
-      bgColor="primary.100"
-      px={10}
-      alignItems="center"
-      position="fixed"
-      w="100%"
-      zIndex={999}
-    >
-      <HStack flex={1}>
+    <NavbarContainer
+      variant="preview"
+      leftElement={
         <Text textStyle="subhead3" color="primary.500">
           PREVIEW MODE
         </Text>
-      </HStack>
-      <HStack flex={1} spacing={4} justifyContent="flex-end">
-        <EmbedModal
-          isEmbedOpen={isEmbedOpen}
-          onEmbedOpen={onEmbedOpen}
-          onEmbedClose={onEmbedClose}
-          checker={checker}
-          isChanged={isChanged}
-        />
-        <Link to={`/builder/${params.id}/questions`}>
+      }
+      rightElement={
+        <HStack>
+          <HStack spacing={0}>
+            <EmbedModal
+              isEmbedOpen={isEmbedOpen}
+              onEmbedOpen={onEmbedOpen}
+              onEmbedClose={onEmbedClose}
+              checker={checker}
+              isChanged={isChanged}
+            />
+          </HStack>
+          <Link to={`/builder/${params.id}/questions`}>
+            <Button
+              variant="outline"
+              sx={navStyles.button}
+              colorScheme="primary"
+              leftIcon={<BiEditAlt size="20px" />}
+            >
+              Edit
+            </Button>
+          </Link>
           <Button
-            variant="outline"
+            variant="solid"
+            sx={navStyles.button}
             colorScheme="primary"
-            leftIcon={<BiEditAlt size="20px" />}
+            onClick={handlePublish}
+            isLoading={publish.isLoading}
           >
-            Edit
+            Publish changes
           </Button>
-        </Link>
-        <Button
-          variant="solid"
-          colorScheme="primary"
-          onClick={handlePublish}
-          isLoading={publish.isLoading}
-        >
-          Publish
-        </Button>
-      </HStack>
-    </Flex>
+        </HStack>
+      }
+    />
   )
 }
