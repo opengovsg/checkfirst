@@ -12,6 +12,5 @@ export const DefaultTooltip: FC<TooltipProps> = ({ ...props }) => (
 
 DefaultTooltip.defaultProps = {
   gutter: 16,
-  openDelay: 800,
   hasArrow: true,
 }
