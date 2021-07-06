@@ -20,7 +20,10 @@ import { BiCalendar } from 'react-icons/bi'
 
 export const DateField: FC<Field> = ({ id, title, description }) => {
   const styles = useStyles()
-  const { control } = useFormContext()
+  const {
+    control,
+    formState: { isSubmitSuccessful },
+  } = useFormContext()
 
   return (
     <Controller
@@ -55,10 +58,12 @@ export const DateField: FC<Field> = ({ id, title, description }) => {
                   ref={ref}
                   style={{ scrollMarginTop: '88px' }}
                   bg="white"
+                  isDisabled={isSubmitSuccessful}
                 />
                 <InputRightElement
                   pointerEvents="none"
                   children={<BiCalendar />}
+                  color={isSubmitSuccessful ? '#A5ABB3' : 'black'}
                 />
               </InputGroup>
             )}

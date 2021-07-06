@@ -98,6 +98,7 @@ interface ComboboxProps extends Omit<InputProps, 'onChange' | 'label'> {
     useClearButton?: boolean
   }
   onChange: (value: unknown) => void
+  isDisabled?: boolean
 }
 
 /**
@@ -117,6 +118,7 @@ export const Combobox: FC<ComboboxProps> = ({
   searchOptions,
   inputOptions,
   onChange,
+  isDisabled,
   ...props
 }) => {
   let input: HTMLInputElement
@@ -274,6 +276,7 @@ export const Combobox: FC<ComboboxProps> = ({
             </label>
             <InputGroup>
               <Input
+                isDisabled={isDisabled}
                 zIndex={100}
                 borderRadius={
                   inputOptions?.useClearButton ? '5px 0px 0px 5px' : '5px'
@@ -296,11 +299,15 @@ export const Combobox: FC<ComboboxProps> = ({
                 })}
               />
               <InputRightElement pointerEvents="none">
-                <BiChevronDown aria-label="dropdown-icon" color="black" />
+                <BiChevronDown
+                  aria-label="dropdown-icon"
+                  color={isDisabled ? '#A5ABB3' : 'black'}
+                />
               </InputRightElement>
             </InputGroup>
             {inputOptions?.useClearButton ? (
               <IconButton
+                isDisabled={isDisabled}
                 style={{ marginLeft: '-1px' }}
                 aria-label="Clear"
                 variant="outline"

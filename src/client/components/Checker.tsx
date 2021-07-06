@@ -134,9 +134,13 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
     try {
       const computed = evaluate(parsedInputs, constants, operations)
       setVariables(computed)
-      outcomes.current?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'nearest',
+      // Required to wrap this in requestAnimationFrame frame due to bug in React.
+      // See https://github.com/facebook/react/issues/20770
+      requestAnimationFrame(() => {
+        outcomes.current?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+        })
       })
     } catch (err) {
       styledToast({
@@ -162,7 +166,12 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
                 {description && <Text sx={styles.subtitle}>{description}</Text>}
               </VStack>
               {fields.map(renderField)}
-              <Button colorScheme="primary" width="100%" type="submit">
+              <Button
+                colorScheme="primary"
+                width="100%"
+                type="submit"
+                isDisabled={methods.formState.isSubmitSuccessful}
+              >
                 Submit
               </Button>
             </VStack>

@@ -18,7 +18,10 @@ export const DropdownField: FC<Field> = ({
   options,
 }) => {
   const styles = useStyles()
-  const { control } = useFormContext()
+  const {
+    control,
+    formState: { isSubmitSuccessful },
+  } = useFormContext()
 
   return (
     <Controller
@@ -50,6 +53,7 @@ export const DropdownField: FC<Field> = ({
               forwardRef: ref,
               useClearButton: true,
             }}
+            isDisabled={isSubmitSuccessful}
           />
           <FormErrorMessage>Field is required</FormErrorMessage>
         </FormControl>
