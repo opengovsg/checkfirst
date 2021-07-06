@@ -1,4 +1,5 @@
 import 'flatpickr/dist/themes/light.css'
+import moment from 'moment'
 import React, { FC } from 'react'
 import { useFormContext, Controller } from 'react-hook-form'
 import Flatpickr from 'react-flatpickr'
@@ -46,27 +47,31 @@ export const DateField: FC<Field> = ({ id, title, description }) => {
             ref={(reactFlatpickr) => {
               ref(reactFlatpickr?.flatpickr.input)
             }}
-            options={{
-              dateFormat: 'j M Y',
+            render={({ value }, ref) => {
+              const formattedDate = moment(
+                value as Date | string | number
+              ).format('D MMM YYYY')
+
+              return (
+                <InputGroup>
+                  <Input
+                    type="text"
+                    value={formattedDate}
+                    placeholder="DD/MM/YYYY"
+                    readOnly
+                    ref={ref}
+                    style={{ scrollMarginTop: '88px' }}
+                    bg="white"
+                    isDisabled={isSubmitSuccessful}
+                  />
+                  <InputRightElement
+                    pointerEvents="none"
+                    children={<BiCalendar />}
+                    color={isSubmitSuccessful ? '#A5ABB3' : 'black'}
+                  />
+                </InputGroup>
+              )
             }}
-            render={(_, ref) => (
-              <InputGroup>
-                <Input
-                  type="text"
-                  placeholder="DD/MM/YYYY"
-                  readOnly
-                  ref={ref}
-                  style={{ scrollMarginTop: '88px' }}
-                  bg="white"
-                  isDisabled={isSubmitSuccessful}
-                />
-                <InputRightElement
-                  pointerEvents="none"
-                  children={<BiCalendar />}
-                  color={isSubmitSuccessful ? '#A5ABB3' : 'black'}
-                />
-              </InputGroup>
-            )}
           />
           <FormErrorMessage>Field is required</FormErrorMessage>
         </FormControl>
