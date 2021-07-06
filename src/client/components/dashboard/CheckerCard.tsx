@@ -2,7 +2,12 @@ import React, { FC, useRef } from 'react'
 import moment from 'moment-timezone'
 import { useQueryClient, useMutation } from 'react-query'
 import { useHistory, useRouteMatch, Link } from 'react-router-dom'
-import { BiDuplicate, BiTrash, BiDotsHorizontalRounded } from 'react-icons/bi'
+import {
+  BiDuplicate,
+  BiTrash,
+  BiDotsHorizontalRounded,
+  BiCog,
+} from 'react-icons/bi'
 import {
   CSSObject,
   Box,
@@ -24,6 +29,7 @@ import { getApiErrorMessage } from '../../api'
 import { CheckerService } from '../../services'
 import { ConfirmDialog } from '../ConfirmDialog'
 import { useStyledToast } from '../common/StyledToast'
+import { SettingsModal } from './SettingsModal'
 
 type CheckerCardProps = {
   checker: DashboardCheckerDTO
@@ -100,7 +106,16 @@ const ActionMenu: FC<ActionMenuProps> = ({ actions }) => {
 export const CheckerCard: FC<CheckerCardProps> = ({ checker }) => {
   const history = useHistory()
   const { path } = useRouteMatch()
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const {
+    isOpen: isDeleteOpen,
+    onOpen: onDeleteOpen,
+    onClose: onDeleteClose,
+  } = useDisclosure()
+  const {
+    isOpen: isSettingsOpen,
+    onOpen: onSettingsOpen,
+    onClose: onSettingsClose,
+  } = useDisclosure()
   const styledToast = useStyledToast()
   const styles = useMultiStyleConfig('CheckerCard', {})
 
@@ -121,7 +136,7 @@ export const CheckerCard: FC<CheckerCardProps> = ({ checker }) => {
     },
   })
 
-  const onDelete = () => onOpen()
+  const onDelete = () => onDeleteOpen()
 
   const onDeleteConfirm = () => deleteChecker.mutateAsync(checker.id)
 
@@ -129,8 +144,11 @@ export const CheckerCard: FC<CheckerCardProps> = ({ checker }) => {
     history.push(`${path}/duplicate/${checker.id}`, { checker })
   }
 
+  const onSettings = () => onSettingsOpen()
+
   const actions = [
     { label: 'Duplicate', icon: <BiDuplicate />, onClick: onDuplicateClick },
+    { label: 'Settings', icon: <BiCog />, onClick: onSettings },
     {
       label: 'Delete',
       icon: <BiTrash />,
@@ -166,11 +184,17 @@ export const CheckerCard: FC<CheckerCardProps> = ({ checker }) => {
       </Link>
 
       <ConfirmDialog
-        isOpen={isOpen}
-        onClose={onClose}
+        isOpen={isDeleteOpen}
+        onClose={onDeleteClose}
         onConfirm={onDeleteConfirm}
         title="Delete checker"
         description="Are you sure? You cannot undo this action afterwards."
+      />
+
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onClose={onSettingsClose}
+        checker={checker}
       />
     </>
   )

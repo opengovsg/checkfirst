@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { BiCheck, BiShow } from 'react-icons/bi'
+import { BiCheck, BiCog, BiShow } from 'react-icons/bi'
 import { getApiErrorMessage } from '../../api'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import { Redirect } from 'react-router-dom'
@@ -19,11 +19,11 @@ import {
   useMultiStyleConfig,
 } from '@chakra-ui/react'
 
-import { EmbedModal } from '.'
 import { useCheckerContext } from '../../contexts'
 import { DefaultTooltip } from '../common/DefaultTooltip'
 import { useStyledToast } from '../common/StyledToast'
 import { NavbarContainer, NavbarTabs, NavbarBack } from '../common/navbar'
+import { SettingsModal } from '../dashboard/SettingsModal'
 
 const ROUTES = ['questions', 'constants', 'logic']
 
@@ -116,12 +116,17 @@ export const Navbar: FC = () => {
         rightElement={
           <HStack>
             <HStack spacing={0} pr={2}>
-              <EmbedModal
-                isEmbedOpen={isEmbedOpen}
-                onEmbedOpen={onEmbedOpen}
-                onEmbedClose={onEmbedClose}
+              <IconButton
+                onClick={onEmbedOpen}
+                aria-label="Embed or Share"
+                variant="ghost"
+                color="primary.500"
+                icon={<BiCog size="16px" />}
+              />
+              <SettingsModal
+                isOpen={isEmbedOpen}
+                onClose={onEmbedClose}
                 checker={checker}
-                isChanged={isChanged}
               />
               <Link href={`/builder/${params.id}/preview`} isExternal>
                 <DefaultTooltip label="Preview">

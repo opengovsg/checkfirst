@@ -1,6 +1,7 @@
 import { ApiClient } from '../api'
 
 import * as checker from '../../types/checker'
+import User from '../../types/user'
 
 const getChecker = async (id: string): Promise<checker.Checker> => {
   return ApiClient.get(`/c/drafts/${id}`).then((res) => res.data)
@@ -43,6 +44,32 @@ const publishChecker = async (
   )
 }
 
+const listCollaborators = async (id: string): Promise<User[]> => {
+  return ApiClient.get(`/c/drafts/${id}/collaborator`).then((res) => res.data)
+}
+
+const addCollaborator = async ({
+  id,
+  collaboratorEmail,
+}: {
+  id: string
+  collaboratorEmail: string
+}): Promise<void> => {
+  return ApiClient.post(`/c/drafts/${id}/collaborator`, { collaboratorEmail })
+}
+
+const deleteCollaborator = async ({
+  id,
+  collaboratorEmail,
+}: {
+  id: string
+  collaboratorEmail: string
+}): Promise<void> => {
+  return ApiClient.delete(`/c/drafts/${id}/collaborator`, {
+    data: { collaboratorEmail },
+  })
+}
+
 export const CheckerService = {
   getChecker,
   listCheckers,
@@ -51,4 +78,7 @@ export const CheckerService = {
   createChecker,
   getPublishedChecker,
   publishChecker,
+  listCollaborators,
+  addCollaborator,
+  deleteCollaborator,
 }

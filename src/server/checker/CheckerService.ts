@@ -52,7 +52,11 @@ export class CheckerService {
         const checkerInstance = await this.CheckerModel.create(checker, options)
         // We definitely know that userInstance can add associations
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await (userInstance as any).addChecker(checkerInstance, options)
+        await (userInstance as any).addChecker(
+          checkerInstance,
+          { through: { isOwner: true } },
+          options
+        )
       }
       await transaction.commit()
       return existingChecker === null
@@ -153,7 +157,13 @@ export class CheckerService {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ) => Promise<(Model<Checker, any> & Checker) | null> = async (id, user) => {
     const checker = await this.CheckerModel.findByPk(id, {
-      include: [this.UserModel],
+      include: [
+        this.UserModel,
+        {
+          model: this.PublishedCheckerModel,
+          attributes: ['id', 'createdAt'],
+        },
+      ],
     })
     if (checker) {
       const isAuthorized = checker.users?.some((u) => u.id === user.id)
@@ -162,6 +172,89 @@ export class CheckerService {
       }
     }
     return checker
+  }
+
+  private findAndCheckAuthOwner: (
+    id: string,
+    user: User | null
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ) => Promise<(Model<Checker, any> & Checker) | null> = async (id, user) => {
+    const checker = await this.CheckerModel.findByPk(id, {
+      include: [this.UserModel],
+    })
+    if (checker) {
+      const isAuthorized = checker.users?.some(
+        (u) => u.UserToChecker.isOwner && u.id === user?.id
+      )
+      if (!isAuthorized) {
+        throw new Error('Unauthorized')
+      }
+    }
+    return checker
+  }
+
+  listCollaborators: (id: string, user: User) => Promise<User[]> = async (
+    id,
+    user
+  ) => {
+    const checker = await this.findAndCheckAuth(id, user)
+    if (checker) {
+      return checker.users
+    } else return []
+  }
+
+  addCollaborator: (
+    id: string,
+    user: User,
+    collaboratorEmail: string
+  ) => Promise<void> = async (id, user, collaboratorEmail) => {
+    const transaction = await this.sequelize.transaction()
+    const options = this.isSqliteFile ? {} : { transaction }
+
+    try {
+      const checker = await this.findAndCheckAuth(id, user)
+      collaboratorEmail = collaboratorEmail.toLowerCase()
+
+      if (checker) {
+        // should a check for collaborator email validity be done here?
+        // user model already has validation for email formatting
+
+        // if collaborator email does not exist, should user be rejected or created?
+        const collaboratorUser = await this.UserModel.findOne({
+          where: { email: collaboratorEmail },
+        })
+
+        if (collaboratorUser) {
+          await collaboratorUser.addChecker(
+            checker,
+            { through: { isOwner: false } },
+            options
+          )
+          await transaction.commit()
+        } else {
+          throw new Error('No such user')
+        }
+      }
+    } catch (error) {
+      this.logger?.error(error)
+      await transaction.rollback()
+      throw error
+    }
+  }
+
+  deleteCollaborator: (
+    id: string,
+    user: User,
+    collaboratorEmail: string
+  ) => Promise<void> = async (id, user, collaboratorEmail) => {
+    const checker = await this.findAndCheckAuth(id, user)
+    if (checker) {
+      const collaborator = checker.users?.find(
+        (u) => u.email == collaboratorEmail && !u.isOwner
+      )
+      if (!collaborator) throw new Error('Error removing collaborator')
+      else await checker.removeUser(collaborator)
+    }
   }
 
   update: (
@@ -181,7 +274,7 @@ export class CheckerService {
   }
 
   delete: (id: string, user: User) => Promise<number> = async (id, user) => {
-    const checker = await this.findAndCheckAuth(id, user)
+    const checker = await this.findAndCheckAuthOwner(id, user)
     if (checker) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await (checker as any).setUsers([])

@@ -28,6 +28,11 @@ export default (options: {
   api.put('/c/drafts/:id', checker.put)
   api.delete('/c/drafts/:id', checker.delete)
 
+  // Adding and deleting collaborators
+  api.get('/c/drafts/:id/collaborator', checker.listCollaborators)
+  api.post('/c/drafts/:id/collaborator', checker.addCollaborator)
+  api.delete('/c/drafts/:id/collaborator', checker.deleteCollaborator)
+
   // CRUD for checker template
   api.get('/c/:id', checker.getPublished)
   api.post('/c/drafts/:id/publish', checker.publish)

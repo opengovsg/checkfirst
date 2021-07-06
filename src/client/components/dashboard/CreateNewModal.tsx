@@ -129,6 +129,7 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({ onClose }) => {
     createChecker.mutate({
       ...base,
       ...data,
+      publishedCheckers: [],
       id: uuidv4(), // Set id to be a random uuid string
     })
   }

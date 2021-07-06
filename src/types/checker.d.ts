@@ -16,6 +16,7 @@ export type Checker = Pick<
   | 'constants'
   | 'operations'
   | 'displays'
+  | 'publishedCheckers'
 >
 
 export type DashboardCheckerDTO = Pick<
