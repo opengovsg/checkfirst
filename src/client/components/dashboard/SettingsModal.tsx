@@ -151,9 +151,10 @@ export const SettingsModal: FC<CreateSettingsModalProps> = ({
 
   // Is checker published toggle switch state
   // TODO implement isActive toggle
+  // TODO does not automatically change on first publish
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isPublished, setIsPublished] = useState(
-    checker.publishedCheckers.length > 0
+    JSON.parse(localStorage.getItem('hasPublished') as string)[checker.id]
   )
 
   // External live checker link

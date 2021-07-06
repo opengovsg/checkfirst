@@ -29,6 +29,9 @@ describe('CheckerController', () => {
     delete: jest.fn(),
     retrievePublished: jest.fn(),
     publish: jest.fn(),
+    listCollaborators: jest.fn(),
+    addCollaborator: jest.fn(),
+    deleteCollaborator: jest.fn(),
   }
   const controller = new CheckerController({ service })
 

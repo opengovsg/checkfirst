@@ -66,6 +66,19 @@ export const Dashboard: FC = () => {
   const { path } = useRouteMatch()
   const { isLoading, data: checkers } = useQuery('checkers', async () => {
     const response = await CheckerService.listCheckers()
+    // Store whether checker has a published version. Used to enable checker active toggle switch in settings modal
+    window.localStorage.setItem(
+      'hasPublished',
+      JSON.stringify(
+        response.reduce((map, checker) => {
+          const dashboardChecker = checker as DashboardCheckerDTO
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          map[checker.id] = dashboardChecker.publishedCheckers.length > 0
+          return map
+        }, {})
+      )
+    )
     return response as DashboardCheckerDTO[]
   })
 

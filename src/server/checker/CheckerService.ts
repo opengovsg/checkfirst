@@ -157,13 +157,7 @@ export class CheckerService {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ) => Promise<(Model<Checker, any> & Checker) | null> = async (id, user) => {
     const checker = await this.CheckerModel.findByPk(id, {
-      include: [
-        this.UserModel,
-        {
-          model: this.PublishedCheckerModel,
-          attributes: ['id', 'createdAt'],
-        },
-      ],
+      include: [this.UserModel],
     })
     if (checker) {
       const isAuthorized = checker.users?.some((u) => u.id === user.id)
@@ -184,6 +178,8 @@ export class CheckerService {
     })
     if (checker) {
       const isAuthorized = checker.users?.some(
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         (u) => u.UserToChecker.isOwner && u.id === user?.id
       )
       if (!isAuthorized) {
@@ -199,6 +195,8 @@ export class CheckerService {
   ) => {
     const checker = await this.findAndCheckAuth(id, user)
     if (checker) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       return checker.users
     } else return []
   }
@@ -225,6 +223,8 @@ export class CheckerService {
         })
 
         if (collaboratorUser) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           await collaboratorUser.addChecker(
             checker,
             { through: { isOwner: false } },
@@ -249,10 +249,15 @@ export class CheckerService {
   ) => Promise<void> = async (id, user, collaboratorEmail) => {
     const checker = await this.findAndCheckAuth(id, user)
     if (checker) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       const collaborator = checker.users?.find(
-        (u) => u.email == collaboratorEmail && !u.isOwner
+        (u: { email: string; isOwner: any }) =>
+          u.email == collaboratorEmail && !u.isOwner
       )
       if (!collaborator) throw new Error('Error removing collaborator')
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       else await checker.removeUser(collaborator)
     }
   }
