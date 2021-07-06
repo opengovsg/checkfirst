@@ -30,7 +30,10 @@ export const DropdownField: FC<Field> = ({
       rules={{ required: true }}
       defaultValue={''}
       // combobox controls its own value independently of the controller
-      render={({ field: { ref, onChange }, fieldState: { invalid } }) => (
+      render={({
+        field: { ref, onChange, value },
+        fieldState: { invalid },
+      }) => (
         <FormControl isInvalid={invalid}>
           <FormLabel sx={styles.label} htmlFor={id}>
             {title}
@@ -38,6 +41,7 @@ export const DropdownField: FC<Field> = ({
           {description && <FormHelperText mb={4}>{description}</FormHelperText>}
           <Combobox
             style={{ scrollMarginTop: '88px' }}
+            value={value}
             label={title}
             onChange={onChange}
             items={options.map((option) => ({
