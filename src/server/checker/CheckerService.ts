@@ -96,21 +96,26 @@ export class CheckerService {
   ) => Promise<GetPublishedCheckerWithoutDraftCheckerDTO | null> = async (
     id
   ) => {
-    const result = await this.PublishedCheckerModel.findOne({
-      attributes: [
-        ['checkerId', 'id'], // rename checkerId as id
-        'title',
-        'description',
-        'fields',
-        'constants',
-        'operations',
-        'displays',
-      ],
-      where: { checkerId: id },
-      order: [['createdAt', 'DESC']],
+    // Check if checker is active
+    const checker = await this.CheckerModel.findByPk(id, {
+      attributes: ['isActive'],
     })
-
-    return result
+    if (checker?.isActive) {
+      const result = await this.PublishedCheckerModel.findOne({
+        attributes: [
+          ['checkerId', 'id'], // rename checkerId as id
+          'title',
+          'description',
+          'fields',
+          'constants',
+          'operations',
+          'displays',
+        ],
+        where: { checkerId: id },
+        order: [['createdAt', 'DESC']],
+      })
+      return result
+    } else return null
   }
 
   publish: (id: string, checker: Checker, user: User) => Promise<Checker> =
@@ -252,7 +257,7 @@ export class CheckerService {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       const collaborator = checker.users?.find(
-        (u: { email: string; isOwner: any }) =>
+        (u: { email: string; isOwner: boolean }) =>
           u.email == collaboratorEmail && !u.isOwner
       )
       if (!collaborator) throw new Error('Error removing collaborator')

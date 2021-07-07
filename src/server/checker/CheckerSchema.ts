@@ -48,6 +48,7 @@ export const CheckerSchema = Joi.object().keys({
   id: Joi.string().required(),
   title: Joi.string().required(),
   description: Joi.string().allow(''),
+  isActive: Joi.boolean().required(),
 
   fields: Joi.array().items(FieldSchema).required(),
   constants: Joi.array().items(ConstantSchema).required(),

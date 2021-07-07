@@ -32,11 +32,16 @@ describe('CheckerService', () => {
     constants: [],
     operations: [],
     displays: [],
+    isActive: true,
   }
+
   const newPublishedChecker: Checker = {
     ...checker,
     title: 'New Published Title',
+    description: null,
   }
+
+  delete newPublishedChecker.isActive
 
   const anotherUser: User = { id: 2, email: 'another-user@agency.gov.sg' }
   const anotherChecker: Checker = {
@@ -46,6 +51,7 @@ describe('CheckerService', () => {
     constants: [],
     operations: [],
     displays: [],
+    isActive: true,
   }
 
   beforeAll(async () => {

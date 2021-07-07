@@ -43,6 +43,7 @@ const initialChecker: Checker = {
   operations: [initialOperation],
   constants: [initialConstant],
   displays: [initialDisplay],
+  isActive: true,
 }
 
 // Objects to be used by the test cases

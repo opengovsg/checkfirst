@@ -126,6 +126,7 @@ const initialConfig = {
   operations: [],
   displays: [],
   constants: [],
+  isActive: false,
   // TO-DO: add operations, displays, and constants
 }
 

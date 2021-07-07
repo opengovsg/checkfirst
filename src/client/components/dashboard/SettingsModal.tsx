@@ -27,6 +27,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react'
 import { Checker } from '../../../types/checker'
+import _ from 'lodash'
 import { Box, Text } from '@chakra-ui/layout'
 import { useStyledToast } from '../common/StyledToast'
 import { DefaultTooltip } from '../common/DefaultTooltip'
@@ -150,12 +151,47 @@ export const SettingsModal: FC<CreateSettingsModalProps> = ({
   }) => setInputEmail(event.target.value)
 
   // Is checker published toggle switch state
-  // TODO implement isActive toggle
-  // TODO does not automatically change on first publish
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [isPublished, setIsPublished] = useState(
-    JSON.parse(localStorage.getItem('hasPublished') as string)[checker.id]
-  )
+  // TODO does not automatically change hasPublished on first publish
+  const hasPublished = JSON.parse(
+    localStorage.getItem('hasPublished') as string
+  )[checker.id]
+  // Set whether toggle switch is enabled
+  const [isDisabled, setIsDisabled] = useState(!hasPublished)
+  const [isActive, setIsActive] = useState(checker.isActive)
+
+  const setActive = useMutation(CheckerService.updateChecker, {
+    onSuccess: (data) => {
+      styledToast({
+        status: 'success',
+        description: `Your checker has been ${
+          isActive ? 'inactivated' : 'activated'
+        }`,
+      })
+      setIsActive(data.isActive)
+      queryClient.invalidateQueries(['builder', data.id])
+      setIsDisabled(false)
+    },
+    onError: (err) => {
+      styledToast({
+        status: 'error',
+        description: getApiErrorMessage(err),
+      })
+      setIsDisabled(false)
+      setIsActive(isActive)
+    },
+  })
+
+  const onSwitchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setIsDisabled(true)
+    let sanitizedChecker: Checker = { ...checker }
+    // REEEEEEEE
+    sanitizedChecker = _.omit(sanitizedChecker, 'updatedAt')
+    sanitizedChecker = _.omit(sanitizedChecker, 'publishedCheckers')
+    setActive.mutate({
+      ...sanitizedChecker,
+      isActive: event.target.checked,
+    })
+  }
 
   // External live checker link
   const linkToChecker = `${window?.location?.origin}/c/${checker.id}`
@@ -170,7 +206,6 @@ export const SettingsModal: FC<CreateSettingsModalProps> = ({
         return {
           id: user.id,
           email: user.email,
-          // TODO typing
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           isOwner: user.UserToChecker.isOwner,
@@ -247,6 +282,52 @@ export const SettingsModal: FC<CreateSettingsModalProps> = ({
     })
   }
 
+  const checkerActiveLabel = (hasPublished: boolean, isActive: boolean) => {
+    if (hasPublished) {
+      if (isActive) {
+        return (
+          <FormLabel htmlFor="isPublished">
+            Your checker is{' '}
+            {
+              <Text as="span" color="green">
+                active
+              </Text>
+            }{' '}
+            and accessible by the public
+            <Text color="grey" fontSize="xs">
+              Checker will show your latest published changes
+            </Text>
+          </FormLabel>
+        )
+      } else {
+        return (
+          <FormLabel htmlFor="isPublished">
+            Your checker is{' '}
+            {
+              <Text as="span" color="red">
+                inactive
+              </Text>
+            }{' '}
+            and inaccessible by the public
+            <Text color="grey" fontSize="xs">
+              Citizens will see an error message if they come across your
+              checker
+            </Text>
+          </FormLabel>
+        )
+      }
+    } else {
+      return (
+        <FormLabel htmlFor="isPublished">
+          Your checker is a draft and inaccessible by the public
+          <Text color="grey" fontSize="xs">
+            Publish your changes to activate your checker
+          </Text>
+        </FormLabel>
+      )
+    }
+  }
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="xl">
       <ModalOverlay />
@@ -257,19 +338,14 @@ export const SettingsModal: FC<CreateSettingsModalProps> = ({
           <VStack spacing={4}>
             <FormControl>
               <HStack spacing={0}>
-                <FormLabel htmlFor="isPublished">
-                  {isPublished
-                    ? `Your checker is published and accessible to the public`
-                    : `Your checker is a draft and inaccessible by the public`}
-                  <Text color="grey" fontSize="xs">
-                    Publish your changes to activate your checker
-                  </Text>
-                </FormLabel>
+                {checkerActiveLabel(hasPublished, isActive)}
                 <Spacer />
                 <Switch
                   id="isPublished"
-                  defaultChecked={isPublished}
+                  isChecked={isActive}
                   colorScheme="teal"
+                  isDisabled={isDisabled}
+                  onChange={onSwitchChange}
                 />
               </HStack>
             </FormControl>
@@ -291,7 +367,7 @@ export const SettingsModal: FC<CreateSettingsModalProps> = ({
                 <Spacer />
                 <DefaultTooltip
                   label={
-                    isPublished
+                    isActive
                       ? `Open live checker`
                       : `Publish your checker first`
                   }
@@ -302,7 +378,7 @@ export const SettingsModal: FC<CreateSettingsModalProps> = ({
                     icon={<BiLinkExternal />}
                     onClick={openLinkToChecker}
                     rounded="md"
-                    isDisabled={!isPublished}
+                    isDisabled={!isActive}
                   />
                 </DefaultTooltip>
               </HStack>

@@ -19,6 +19,7 @@ describe('CheckerController', () => {
     constants: [],
     displays: [],
     operations: [],
+    isActive: false,
   }
 
   const service = {

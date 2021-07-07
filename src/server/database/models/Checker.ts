@@ -35,7 +35,7 @@ export class Checker extends Model {
     type: DataType.TEXT,
     allowNull: true,
   })
-  description?: string
+  description?: string | null
 
   @Column({
     type: DataType.JSON,
@@ -60,6 +60,12 @@ export class Checker extends Model {
     allowNull: false,
   })
   displays!: Display[]
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  isActive?: boolean
 
   @BelongsToMany(() => User, () => UserToChecker)
   users!: User[]

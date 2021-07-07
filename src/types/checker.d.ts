@@ -16,6 +16,7 @@ export type Checker = Pick<
   | 'constants'
   | 'operations'
   | 'displays'
+  | 'isActive'
 >
 
 export type DashboardCheckerDTO = Pick<
@@ -28,6 +29,7 @@ export type DashboardCheckerDTO = Pick<
   | 'operations'
   | 'displays'
   | 'updatedAt'
+  | 'isActive'
   | 'publishedCheckers'
 >
 
