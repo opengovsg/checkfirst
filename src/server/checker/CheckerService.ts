@@ -219,14 +219,13 @@ export class CheckerService {
       collaboratorEmail = collaboratorEmail.toLowerCase()
 
       if (checker) {
-        // should a check for collaborator email validity be done here?
-        // user model already has validation for email formatting
-
-        // if collaborator email does not exist, should user be rejected or created?
         const collaboratorUser = await this.UserModel.findOne({
           where: { email: collaboratorEmail },
         })
-
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        if (checker.users?.some((u) => u.email === collaboratorEmail))
+          throw new Error('User is already a collaborator')
         if (collaboratorUser) {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
