@@ -27,7 +27,7 @@
     "@commitlint/cli": "^12.1.4",
     "@commitlint/config-conventional": "^12.1.4",
     "@commitlint/travis-cli": "^12.1.4",
-    "@sentry/webpack-plugin": "^1.15.1",
+    "@sentry/webpack-plugin": "^1.16.0",
     "@types/convict": "^6.1.1",
     "@types/express": "^4.17.12",
     "@types/express-session": "^1.17.4",
