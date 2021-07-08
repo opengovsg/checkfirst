@@ -37,7 +37,7 @@
     "@types/joi": "^17.2.3",
     "@types/loadable__component": "^5.13.3",
     "@types/mathjs": "^9.4.2",
-    "@types/morgan": "^1.9.2",
+    "@types/morgan": "^1.9.3",
     "@types/node": "^15.6.1",
     "@types/nodemailer": "^6.4.2",
     "@types/react-dom": "^17.0.8",
