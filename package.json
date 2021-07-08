@@ -29,7 +29,7 @@
     "@commitlint/travis-cli": "^12.1.4",
     "@sentry/webpack-plugin": "^1.16.0",
     "@types/convict": "^6.1.1",
-    "@types/express": "^4.17.12",
+    "@types/express": "^4.17.13",
     "@types/express-session": "^1.17.4",
     "@types/graphlib": "^2.1.8",
     "@types/helmet": "^4.0.0",
