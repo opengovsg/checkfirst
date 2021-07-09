@@ -136,7 +136,7 @@
     "sequelize": "^6.6.2",
     "sequelize-typescript": "^2.1.0",
     "serverless-http": "^2.7.0",
-    "style-loader": "^2.0.0",
+    "style-loader": "^3.0.0",
     "uuid": "^8.3.2",
     "winston": "^3.3.3"
   }
