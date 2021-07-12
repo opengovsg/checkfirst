@@ -165,7 +165,7 @@ const PreviewComponent: QuestionFieldComponent = ({ field, index }) => {
         )}
       </VStack>
       <RadioGroup>
-        <VStack sx={styles.previewOptionsContainer} spacing={0}>
+        <VStack sx={styles.previewOptionsContainer} spacing="24px">
           {options.map(({ value, label }, i) => (
             <Flex key={i} sx={styles.previewOptionRowContainer}>
               <Radio
