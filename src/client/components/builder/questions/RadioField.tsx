@@ -23,6 +23,8 @@ import { createBuilderField, QuestionFieldComponent } from '../BuilderField'
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../../util/enums'
 import { TitlePreviewText } from './TitlePreviewText'
 
+import '../../../styles/builder-field.css'
+
 const InputComponent: QuestionFieldComponent = ({ field, index }) => {
   const { title, description } = field
   const { dispatch } = useCheckerContext()
@@ -167,7 +169,11 @@ const PreviewComponent: QuestionFieldComponent = ({ field, index }) => {
       <RadioGroup>
         <VStack sx={styles.previewOptionsContainer} spacing="24px">
           {options.map(({ value, label }, i) => (
-            <Flex key={i} sx={styles.previewOptionRowContainer}>
+            <Flex
+              key={i}
+              sx={styles.previewOptionRowContainer}
+              className="builder-field"
+            >
               <Radio
                 sx={styles.radio}
                 spacing={4}

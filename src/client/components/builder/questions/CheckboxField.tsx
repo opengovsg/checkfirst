@@ -23,6 +23,7 @@ import { useCheckerContext } from '../../../contexts'
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../../util/enums'
 
 import '../../../styles/big-checkbox.css'
+import '../../../styles/builder-field.css'
 import { TitlePreviewText } from './TitlePreviewText'
 
 const InputComponent: QuestionFieldComponent = ({ field, index }) => {
@@ -173,7 +174,11 @@ const PreviewComponent: QuestionFieldComponent = ({ field, index }) => {
       <CheckboxGroup>
         <VStack sx={styles.previewOptionsContainer} spacing="24px">
           {options.map(({ value, label }, i) => (
-            <Flex key={i} sx={styles.previewOptionRowContainer}>
+            <Flex
+              key={i}
+              sx={styles.previewOptionRowContainer}
+              className="builder-field"
+            >
               <Checkbox
                 sx={styles.checkbox}
                 className="big-checkbox"
