@@ -163,7 +163,7 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
               </VStack>
               {fields.map(renderField)}
               <Button colorScheme="primary" width="100%" type="submit">
-                Submit
+                Show results
               </Button>
             </VStack>
           </form>
