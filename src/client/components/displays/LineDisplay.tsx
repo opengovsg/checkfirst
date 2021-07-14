@@ -21,7 +21,9 @@ export const LineDisplay: FC<LineDisplayProps> = ({ label, value }) => {
 
   const sanitizeHtml = (html: string) => {
     const sanitizedHtml = xss(html, {
-      whiteList: { a: ['href', 'target', 'referrerpolicy', 'title', 'class'] },
+      whiteList: { a: ['class', 'target', 'rel', 'href'] },
+      stripIgnoreTag: true,
+      stripIgnoreTagBody: ['script'],
     })
 
     return sanitizedHtml
