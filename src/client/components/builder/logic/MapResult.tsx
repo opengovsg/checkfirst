@@ -5,16 +5,18 @@ import { BiGitCompare, BiChevronDown } from 'react-icons/bi'
 import {
   Badge,
   Button,
-  Heading,
   VStack,
   HStack,
-  Box,
   Text,
   Input,
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
+  InputGroup,
+  InputLeftElement,
+  useStyles,
+  useMultiStyleConfig,
 } from '@chakra-ui/react'
 
 import { useCheckerContext } from '../../../contexts'
@@ -63,6 +65,9 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
   const { config, dispatch } = useCheckerContext()
   const [mapState, setMapState] = useState<MapState>(fromExpression(expression))
 
+  const commonStyles = useStyles()
+  const styles = useMultiStyleConfig('MapResult', {})
+
   useEffect(() => {
     const updatedExpr = toExpression(mapState)
     // TODO: Check args length is 2
@@ -101,112 +106,120 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
     )
   }
 
+  const renderBadgeWithTitle = (
+    id: string,
+    title: string,
+    badgeCol: string
+  ) => (
+    <HStack sx={styles.menuRowContainer} spacing={4}>
+      <Badge sx={styles.menuRowBadge} bg={badgeCol}>
+        {id}
+      </Badge>
+      <Text isTruncated>{title}</Text>
+    </HStack>
+  )
+
   return (
-    <VStack w="100%" align="stretch" spacing={6}>
-      <HStack w="100%" alignItems="flex-start">
-        <Box fontSize="20px" pt={2}>
-          <BiGitCompare />
-        </Box>
+    <VStack sx={commonStyles.fullWidthContainer} spacing={4}>
+      <InputGroup>
+        <InputLeftElement
+          sx={commonStyles.inputIconElement}
+          children={<BiGitCompare />}
+        />
         <Input
           name="title"
+          sx={commonStyles.fieldInput}
           type="text"
           placeholder="Result description"
           onChange={handleChange}
           value={title}
         />
+      </InputGroup>
+      <HStack sx={styles.mapContainer} spacing={4}>
+        <Text sx={styles.mapText}>MAP</Text>
+        <Menu matchWidth preventOverflow={false}>
+          {({ onClose }) => (
+            <>
+              <MenuButton
+                as={Button}
+                sx={styles.menuButton}
+                variant="outline"
+                rightIcon={<BiChevronDown />}
+              >
+                <Text
+                  sx={styles.menuButtonText}
+                  textColor={
+                    mapState.variableId ? 'secondary.700' : 'neutral.500'
+                  }
+                >
+                  {mapState.variableId
+                    ? mapState.variableId
+                    : 'Select question'}
+                </Text>
+              </MenuButton>
+              <MenuList sx={styles.menuList}>
+                {config.fields.map(({ id, title }, i) => (
+                  <MenuItem
+                    key={i}
+                    onClick={() => {
+                      handleExprChange('variableId', id)
+                      onClose()
+                    }}
+                  >
+                    {renderBadgeWithTitle(id, title, 'error.500')}
+                  </MenuItem>
+                ))}
+                {config.operations.map(({ id, title }, i) => (
+                  <MenuItem
+                    key={i}
+                    onClick={() => {
+                      handleExprChange('variableId', id)
+                      onClose()
+                    }}
+                  >
+                    {renderBadgeWithTitle(id, title, 'success.500')}
+                  </MenuItem>
+                ))}
+              </MenuList>
+            </>
+          )}
+        </Menu>
+        <Text sx={styles.toText}>TO</Text>
+        <Menu matchWidth>
+          {({ onClose }) => (
+            <>
+              <MenuButton
+                as={Button}
+                sx={styles.menuButton}
+                variant="outline"
+                rightIcon={<BiChevronDown />}
+              >
+                <Text
+                  sx={styles.menuButtonText}
+                  textColor={mapState.tableId ? 'secondary.700' : 'neutral.500'}
+                >
+                  {mapState.tableId
+                    ? mapState.tableId
+                    : 'Select constant table'}
+                </Text>
+              </MenuButton>
+              <MenuList sx={styles.menuList}>
+                {config.constants.map(({ id, title }, i) => (
+                  <MenuItem
+                    key={i}
+                    onClick={() => {
+                      handleExprChange('tableId', id)
+                      onClose()
+                    }}
+                  >
+                    {renderBadgeWithTitle(id, title, 'warning.500')}
+                  </MenuItem>
+                ))}
+              </MenuList>
+            </>
+          )}
+        </Menu>
       </HStack>
-      <VStack align="stretch" spacing={4}>
-        <HStack>
-          <Box w="100px" pl={8}>
-            <Heading as="h5" size="sm">
-              MAP
-            </Heading>
-          </Box>
-          <Menu>
-            <MenuButton
-              as={Button}
-              variant="outline"
-              rightIcon={<BiChevronDown />}
-            >
-              {mapState.variableId ? mapState.variableId : 'SELECT INPUT'}
-            </MenuButton>
-            <MenuList>
-              {config.fields.map(({ id, title }, i) => (
-                <MenuItem
-                  key={i}
-                  onClick={() => handleExprChange('variableId', id)}
-                >
-                  <HStack spacing={4}>
-                    <Badge
-                      bg="#FB5D64"
-                      color="white"
-                      fontSize="sm"
-                      borderRadius="5px"
-                    >
-                      {id}
-                    </Badge>
-                    <Text isTruncated>{title}</Text>
-                  </HStack>
-                </MenuItem>
-              ))}
-              {config.operations.map(({ id, title }, i) => (
-                <MenuItem
-                  key={i}
-                  onClick={() => handleExprChange('variableId', id)}
-                >
-                  <HStack spacing={4}>
-                    <Badge
-                      bg="#46DBC9"
-                      color="white"
-                      fontSize="sm"
-                      borderRadius="5px"
-                    >
-                      {id}
-                    </Badge>
-                    <Text isTruncated>{title}</Text>
-                  </HStack>
-                </MenuItem>
-              ))}
-            </MenuList>
-          </Menu>
-        </HStack>
-        <HStack>
-          <Box w="100px" pl={8}>
-            <Heading as="h5" size="sm">
-              TO
-            </Heading>
-          </Box>
-          <Menu>
-            <MenuButton
-              as={Button}
-              variant="outline"
-              rightIcon={<BiChevronDown />}
-            >
-              {mapState.tableId ? mapState.tableId : 'SELECT MAP TABLE'}
-            </MenuButton>
-            <MenuList>
-              {config.constants.map(({ id, title }, i) => (
-                <MenuItem
-                  key={i}
-                  onClick={() => handleExprChange('tableId', id)}
-                >
-                  <HStack spacing={4}>
-                    <Badge
-                      bg="#1b3c87"
-                      color="white"
-                      fontSize="sm"
-                      borderRadius="5px"
-                    >
-                      {id}
-                    </Badge>
-                    <Text isTruncated>{title}</Text>
-                  </HStack>
-                </MenuItem>
-              ))}
-            </MenuList>
-          </Menu>
-        </HStack>
-      </VStack>
     </VStack>
   )
 }

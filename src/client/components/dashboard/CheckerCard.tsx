@@ -9,7 +9,6 @@ import {
   useOutsideClick,
   useDisclosure,
   useMultiStyleConfig,
-  useToast,
   Text,
   VStack,
   Flex,
@@ -24,6 +23,7 @@ import { DashboardCheckerDTO } from '../../../types/checker'
 import { getApiErrorMessage } from '../../api'
 import { CheckerService } from '../../services'
 import { ConfirmDialog } from '../ConfirmDialog'
+import { useStyledToast } from '../common/StyledToast'
 
 type CheckerCardProps = {
   checker: DashboardCheckerDTO
@@ -35,7 +35,7 @@ type StatusIndicatorProps = {
 
 const StatusIndicator: FC<StatusIndicatorProps> = ({ status }) => {
   const styles = useMultiStyleConfig('CheckerCard', {})
-  const color = status === 'published' ? '#46DBC9' : '#ECC953'
+  const color = status === 'published' ? 'success.500' : 'warning.500'
 
   return (
     <Flex sx={styles.indicator} direction="row">
@@ -101,23 +101,21 @@ export const CheckerCard: FC<CheckerCardProps> = ({ checker }) => {
   const history = useHistory()
   const { path } = useRouteMatch()
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const toast = useToast({ position: 'bottom-right', variant: 'solid' })
+  const styledToast = useStyledToast()
   const styles = useMultiStyleConfig('CheckerCard', {})
 
   const queryClient = useQueryClient()
   const deleteChecker = useMutation(CheckerService.deleteChecker, {
     onSuccess: () => {
       queryClient.invalidateQueries('checkers')
-      toast({
+      styledToast({
         status: 'success',
-        title: 'Checker deleted',
         description: `${checker.title} has been successfully deleted`,
       })
     },
     onError: (err) => {
-      toast({
+      styledToast({
         status: 'error',
-        title: 'An error has occurred',
         description: getApiErrorMessage(err),
       })
     },
@@ -137,7 +135,7 @@ export const CheckerCard: FC<CheckerCardProps> = ({ checker }) => {
       label: 'Delete',
       icon: <BiTrash />,
       onClick: onDelete,
-      style: { color: '#FB5D64' },
+      style: { color: 'error.500' },
     },
   ]
 

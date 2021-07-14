@@ -14,7 +14,6 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
-  useToast,
   FormControl,
   FormLabel,
   Input,
@@ -24,6 +23,7 @@ import {
 } from '@chakra-ui/react'
 import { Checker } from '../../../types/checker'
 import { DefaultTooltip } from '../common/DefaultTooltip'
+import { useStyledToast } from '../common/StyledToast'
 
 type EmbedFieldProps = {
   name: string
@@ -32,12 +32,12 @@ type EmbedFieldProps = {
 
 const EmbedField: FC<EmbedFieldProps> = ({ name, value, children }) => {
   const { onCopy } = useClipboard(value)
-  const toast = useToast({ position: 'bottom-right', variant: 'solid' })
+  const styledToast = useStyledToast()
   const onClick = () => {
     onCopy()
-    toast({
+    styledToast({
       status: 'success',
-      title: 'Copied!',
+      description: 'Copied!',
     })
   }
   return (
@@ -51,7 +51,7 @@ const EmbedField: FC<EmbedFieldProps> = ({ name, value, children }) => {
           cursor="pointer"
           onClick={onClick}
           children={
-            <DefaultTooltip label="Copy" placement="right">
+            <DefaultTooltip label="Copy">
               <span>
                 <BiCopy />
               </span>
@@ -88,7 +88,8 @@ export const EmbedModal: FC<EmbedModalProps> = ({
           onClick={onEmbedOpen}
           aria-label="Embed or Share"
           variant="ghost"
-          icon={<BiCode size="24px" />}
+          color="primary.500"
+          icon={<BiCode size="16px" />}
         />
       </DefaultTooltip>
       <Modal isOpen={isEmbedOpen} onClose={onEmbedClose} size="lg">

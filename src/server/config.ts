@@ -121,6 +121,11 @@ const config = convict({
     format: '*',
     default: '',
   },
+  deployTimestamp: {
+    doc: 'Deployment timestamp used for providing value of Last-Modified header',
+    env: 'DEPLOY_TIMESTAMP',
+    default: new Date().toUTCString(),
+  },
 })
 
 export default config

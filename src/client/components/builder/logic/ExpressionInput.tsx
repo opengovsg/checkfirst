@@ -49,6 +49,7 @@ interface ExpressionInputProps extends Omit<InputProps, 'onChange' | 'value'> {
 export const ExpressionInput: FC<ExpressionInputProps> = ({
   onChange,
   value,
+  placeholder,
   ...props
 }) => {
   const [inputValue, setInputValue] = useState<string>(value)
@@ -264,6 +265,8 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
           >
             <Input
               {...getInputProps({
+                placeholder:
+                  placeholder || 'Type @ to reference a block in your formula',
                 ...props,
               })}
               value={inputValue || ''}
@@ -293,13 +296,15 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
                 ? currentMatches?.map((item, index) => (
                     <ListItem
                       {...getItemProps({ key: index, item })}
-                      bg={highlightedIndex === index ? 'neutral.50' : 'none'}
+                      bg={highlightedIndex === index ? 'neutral.100' : 'none'}
                       py={2}
                       px={2}
                     >
                       <HStack spacing={4}>
                         <Badge
-                          bg={item.type === 'FIELD' ? '#FB5D64' : '#46DBC9'}
+                          bg={
+                            item.type === 'FIELD' ? 'error.500' : 'success.500'
+                          }
                           color="white"
                           fontSize="sm"
                           borderRadius="5px"

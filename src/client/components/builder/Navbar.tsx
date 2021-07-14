@@ -1,17 +1,12 @@
 import React, { FC } from 'react'
-import { BiArrowBack, BiCheck, BiShow } from 'react-icons/bi'
+import { BiCheck, BiShow } from 'react-icons/bi'
 import { getApiErrorMessage } from '../../api'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import { Redirect } from 'react-router-dom'
 import {
   Link,
-  Text,
-  Tabs,
-  TabList,
-  Tab,
   IconButton,
   Button,
-  Flex,
   HStack,
   Modal,
   ModalOverlay,
@@ -21,12 +16,14 @@ import {
   ModalBody,
   ModalCloseButton,
   useDisclosure,
-  useToast,
+  useMultiStyleConfig,
 } from '@chakra-ui/react'
 
 import { EmbedModal } from '.'
 import { useCheckerContext } from '../../contexts'
 import { DefaultTooltip } from '../common/DefaultTooltip'
+import { useStyledToast } from '../common/StyledToast'
+import { NavbarContainer, NavbarTabs, NavbarBack } from '../common/navbar'
 
 const ROUTES = ['questions', 'constants', 'logic']
 
@@ -42,12 +39,14 @@ export const Navbar: FC = () => {
     onClose: onEmbedClose,
   } = useDisclosure()
   const history = useHistory()
-  const toast = useToast({ position: 'bottom-right', variant: 'solid' })
+  const styledToast = useStyledToast()
   const match = useRouteMatch<{ id: string; action: string }>({
     path: '/builder/:id/:action',
     exact: true,
   })
   const { save, publish, isChanged, config: checker } = useCheckerContext()
+
+  const navStyles = useMultiStyleConfig('NavbarComponents', {})
 
   const params = match?.params
   if (!params || !params.id || !params.action) {
@@ -72,15 +71,13 @@ export const Navbar: FC = () => {
   const handleSave = async () => {
     try {
       await save.mutateAsync()
-      toast({
+      styledToast({
         status: 'success',
-        title: 'Checker saved',
         description: 'Your checker has been saved successfully.',
       })
     } catch (err) {
-      toast({
+      styledToast({
         status: 'error',
-        title: 'An error occurred',
         description: getApiErrorMessage(err),
       })
     }
@@ -89,122 +86,101 @@ export const Navbar: FC = () => {
   const handlePublish = async () => {
     try {
       await publish.mutateAsync()
-      toast({
+      styledToast({
         status: 'success',
-        title: 'Checker published',
-        description: `Your checker is now live.`,
+        description: 'Your checker is now live.',
       })
     } catch (err) {
-      toast({
+      styledToast({
         status: 'error',
-        title: 'An error occurred',
         description: getApiErrorMessage(err),
       })
     }
   }
 
   return (
-    <Flex
-      h="80px"
-      direction="row"
-      bgColor="white"
-      px={10}
-      alignItems="center"
-      position="fixed"
-      w="100%"
-      zIndex={999}
-    >
-      <HStack flex={1}>
-        <IconButton
-          onClick={checkBeforeBack}
-          aria-label="Back"
-          variant="ghost"
-          icon={<BiArrowBack />}
-        />
-        <Modal isOpen={isBackPromptOpen} onClose={onBackPromptClose} size="lg">
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>Discard changes?</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              You have unsaved changes. Do you wish to discard them?
-            </ModalBody>
-            <ModalFooter>
-              <Button onClick={onBackPromptClose} variant="ghost">
-                Cancel
-              </Button>
-              <Button
-                onClick={() => history.push('/dashboard')}
-                colorScheme="error"
-              >
-                Discard
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
-        <Text fontWeight="600">{checker.title}</Text>
-      </HStack>
-      <HStack h="100%" flex={1} justifyContent="center" spacing={0}>
-        <Tabs
-          defaultIndex={0}
-          onChange={handleTabChange}
-          w="250px"
-          h="100%"
-          align="center"
-          colorScheme="primary"
-          isFitted
-          index={index}
-        >
-          <TabList h="100%">
-            {ROUTES.map((routeName) => (
-              <Tab
-                key={routeName}
-                borderBottom="solid 4px"
-                fontWeight="bold"
-                textTransform="capitalize"
-              >
-                {routeName}
-              </Tab>
-            ))}
-          </TabList>
-        </Tabs>
-      </HStack>
-      <HStack flex={1} spacing={4} justifyContent="flex-end">
-        <EmbedModal
-          isEmbedOpen={isEmbedOpen}
-          onEmbedOpen={onEmbedOpen}
-          onEmbedClose={onEmbedClose}
-          checker={checker}
-          isChanged={isChanged}
-        />
-        <Link href={`/builder/${params.id}/preview`} isExternal>
-          <DefaultTooltip label="Preview">
-            <IconButton
-              aria-label="Preview"
-              variant="ghost"
-              icon={<BiShow size="24px" />}
-            />
-          </DefaultTooltip>
-        </Link>
-        <Button
-          variant="outline"
-          leftIcon={!isChanged ? <BiCheck size="24px" /> : undefined}
-          colorScheme="primary"
-          onClick={handleSave}
-          disabled={!isChanged}
-          isLoading={save.isLoading}
-        >
-          {isChanged ? 'Save Draft' : 'Saved'}
-        </Button>
-        <Button
-          variant="solid"
-          colorScheme="primary"
-          onClick={handlePublish}
-          isLoading={publish.isLoading}
-        >
-          Publish
-        </Button>
-      </HStack>
-    </Flex>
+    <>
+      <NavbarContainer
+        leftElement={
+          <NavbarBack label={checker.title} handleClick={checkBeforeBack} />
+        }
+        centerElement={
+          <NavbarTabs
+            defaultIndex={0}
+            onChange={handleTabChange}
+            align="center"
+            index={index}
+            tabTitles={ROUTES}
+          />
+        }
+        rightElement={
+          <HStack>
+            <HStack spacing={0} pr={2}>
+              <EmbedModal
+                isEmbedOpen={isEmbedOpen}
+                onEmbedOpen={onEmbedOpen}
+                onEmbedClose={onEmbedClose}
+                checker={checker}
+                isChanged={isChanged}
+              />
+              <Link href={`/builder/${params.id}/preview`} isExternal>
+                <DefaultTooltip label="Preview">
+                  <IconButton
+                    aria-label="Preview"
+                    variant="ghost"
+                    sx={navStyles.button}
+                    color="primary.500"
+                    icon={<BiShow size="16px" />}
+                  />
+                </DefaultTooltip>
+              </Link>
+            </HStack>
+            <Button
+              variant="outline"
+              sx={navStyles.button}
+              leftIcon={!isChanged ? <BiCheck size="24px" /> : undefined}
+              colorScheme="primary"
+              onClick={handleSave}
+              disabled={!isChanged}
+              isLoading={save.isLoading}
+            >
+              {isChanged ? 'Save draft' : 'Saved'}
+            </Button>
+            <Button
+              variant="solid"
+              sx={navStyles.button}
+              colorScheme="primary"
+              onClick={handlePublish}
+              isLoading={publish.isLoading}
+            >
+              Publish changes
+            </Button>
+          </HStack>
+        }
+      />
+
+      {/* Unsaved Changes Modal */}
+      <Modal isOpen={isBackPromptOpen} onClose={onBackPromptClose} size="lg">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Discard changes?</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            You have unsaved changes. Do you wish to discard them?
+          </ModalBody>
+          <ModalFooter>
+            <Button onClick={onBackPromptClose} variant="ghost">
+              Cancel
+            </Button>
+            <Button
+              onClick={() => history.push('/dashboard')}
+              colorScheme="error"
+            >
+              Discard
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
   )
 }

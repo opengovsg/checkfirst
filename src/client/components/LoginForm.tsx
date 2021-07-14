@@ -84,8 +84,8 @@ export const LoginForm: FC<LoginFormProps> = ({ email, onLogin }) => {
     <form onSubmit={handleSubmit(onSubmit)}>
       <VStack spacing="32px" align="stretch">
         <FormControl id="email" isInvalid={hasError()}>
-          <FormLabel color="#11263C">One time password</FormLabel>
-          <Text color="#6D7580" mb="24px">
+          <FormLabel color="neutral.900">One time password</FormLabel>
+          <Text color="neutral.700" mb="24px">
             Please enter the OTP sent to {email}.
           </Text>
           <Input
