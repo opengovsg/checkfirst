@@ -118,6 +118,63 @@ describe('countif', () => {
   })
 })
 
+describe('link', () => {
+  function expectedLink(displayText: string, url: string) {
+    return `<a class="inline-external-link" target="_blank" rel="noopener noreferrer" href="${url}">${displayText}</a>`
+  }
+
+  it('should return an HTML link', () => {
+    const displayText = 'Google'
+    const url = 'https://google.com'
+    const expr = `link("${displayText}", "${url}")`
+
+    const output = evaluateOperation(expr, {})
+    expect(output).toBe(expectedLink(displayText, url))
+  })
+
+  it('should support concatenation with another string', () => {
+    const displayText = 'Google'
+    const url = 'https://google.com'
+    const expr = `"Hello " + link("${displayText}", "${url}")`
+
+    const output = evaluateOperation(expr, {})
+    expect(output).toBe(`Hello ${expectedLink(displayText, url)}`)
+  })
+
+  it('should append https by default when protocol is not provided', () => {
+    const displayText = 'Google'
+    const url = 'google.com'
+    const expr = `"Hello " + link("${displayText}", "${url}")`
+
+    const output = evaluateOperation(expr, {})
+
+    const normalizedUrl = `https://${url}`
+    expect(output).toBe(`Hello ${expectedLink(displayText, normalizedUrl)}`)
+  })
+
+  it('should strip off all HTML tags in display text', () => {
+    const displayText = '<b>Google</b><script>const a = 1</script>'
+    const url = 'https://google.com'
+    const expr = `"Hello " + link("${displayText}", "${url}")`
+
+    const output = evaluateOperation(expr, {})
+
+    const sanitizedText = 'Google'
+    expect(output).toBe(`Hello ${expectedLink(sanitizedText, url)}`)
+  })
+
+  it('should strip off all HTML tags in link', () => {
+    const displayText = 'Google'
+    const url = '<b>https://google.com</b><script>const a = 1</script>'
+    const expr = `"Hello " + link("${displayText}", "${url}")`
+
+    const output = evaluateOperation(expr, {})
+
+    const sanitizedLink = 'https://google.com'
+    expect(output).toBe(`Hello ${expectedLink(displayText, sanitizedLink)}`)
+  })
+})
+
 describe('variableReducer', () => {
   it('should apply evaluateOperation and accumulate variables', () => {
     const op: checker.Operation = {
