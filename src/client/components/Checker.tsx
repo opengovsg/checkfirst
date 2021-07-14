@@ -160,9 +160,6 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
   const isCheckerComplete = () => filter(operations, 'show').length > 0
 
   const reset = (keepValues = false) => {
-    methods.reset({}, { keepValues, keepDefaultValues: true })
-    setVariables({})
-
     // Reset values only if keepValues is false
     if (!keepValues) {
       fields.forEach((field) => {
@@ -179,9 +176,15 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
           case 'CHECKBOX':
             methods.setValue(field.id, [])
             break
+          case 'DROPDOWN':
+            methods.setValue(field.id, '')
+            break
         }
       })
     }
+
+    methods.reset({}, { keepValues: true })
+    setVariables({})
 
     requestAnimationFrame(() => {
       header.current?.scrollIntoView({
