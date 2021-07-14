@@ -1,18 +1,29 @@
-/*  
-  Scroll-margin-top styling for checkbox and radio inputs.
+.checker-field .chakra-checkbox__input,
+.checker-field .chakra-radio__input {
+  /*
+    Scroll-margin-top styling for checkbox and radio inputs.
 
-  This style cannot be passed directly to CheckboxInput / RadioInput due to how Chakra composes
-  custom checkboxes.
+    This style cannot be passed directly to CheckboxInput / RadioInput due to how Chakra composes
+    custom checkboxes.
 
-  In this case, Chakra uses a hidden native checkbox/radio input in conjunction with a styled
-  control element. Styles props passed to CheckboxInput / RadioInput are passed down to
-  the control element instead, which would work for 99% of use cases.
-  
-  However, the ref element returned by CheckboxInput / RadioInput, which we pass to react-hook-form
-  for handling scroll-into-view, refers to the hidden native input element instead. As this element
-  does not recieve the styles from the style prop passed to CheckboxInput / RadioInput, we thus
-  resort to using CSS class style overrides to implement scroll margins instead.
-*/
-.checker-field .chakra-checkbox__input, .checker-field .chakra-radio__input {
+    In this case, Chakra uses a hidden native checkbox/radio input in conjunction with a styled
+    control element. Styles props passed to CheckboxInput / RadioInput are passed down to
+    the control element instead, which would work for 99% of use cases.
+
+    However, the ref element returned by CheckboxInput / RadioInput, which we pass to react-hook-form
+    for handling scroll-into-view, refers to the hidden native input element instead. As this element
+    does not recieve the styles from the style prop passed to CheckboxInput / RadioInput, we thus
+    resort to using CSS class style overrides to implement scroll margins instead.
+  */
   scroll-margin-top: 88px;
+}
+
+.checker-field .chakra-checkbox,
+.checker-field .chakra-radio {
+  align-items: flex-start;
+}
+
+.checker-field .chakra-checkbox__control,
+.checker-field .chakra-radio__control {
+  margin-top: 8px;
 }

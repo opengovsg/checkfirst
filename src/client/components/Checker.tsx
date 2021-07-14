@@ -210,7 +210,7 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
                 type="submit"
                 isDisabled={methods.formState.isSubmitSuccessful}
               >
-                Submit
+                Show results
               </Button>
             </VStack>
           </form>
