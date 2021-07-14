@@ -1,4 +1,5 @@
-import React, { FC, useState } from 'react'
+import _ from 'lodash'
+import React, { FC, useEffect, useState } from 'react'
 import {
   Modal,
   ModalOverlay,
@@ -14,7 +15,6 @@ import {
   Spacer,
   Divider,
   Link,
-  useClipboard,
   InputGroup,
   Input,
   InputRightElement,
@@ -24,27 +24,22 @@ import {
   Tbody,
   Tr,
   Td,
+  useClipboard,
   useDisclosure,
 } from '@chakra-ui/react'
-import { Checker } from '../../../types/checker'
-import _ from 'lodash'
 import { Box, Text } from '@chakra-ui/layout'
-import { useStyledToast } from '../common/StyledToast'
-import { DefaultTooltip } from '../common/DefaultTooltip'
 import { BiCopy, BiLinkExternal, BiTrash } from 'react-icons/bi'
-import User from '../../../types/user'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { useHistory, useLocation, useParams } from 'react-router-dom'
+import { useAuth } from '../../contexts'
+import { useStyledToast } from '../common/StyledToast'
+import { ConfirmDialog } from '../ConfirmDialog'
+import { DefaultTooltip } from '../common/DefaultTooltip'
 import { getApiErrorMessage } from '../../api'
 import { CheckerService } from '../../services'
-import { ConfirmDialog } from '../ConfirmDialog'
-import { useAuth } from '../../contexts'
-import { useHistory } from 'react-router-dom'
 
-export type CreateSettingsModalProps = {
-  isOpen: boolean
-  onClose: () => void
-  checker: Checker
-}
+import { Checker } from '../../../types/checker'
+import User from '../../../types/user'
 
 type EmbedFieldProps = {
   name: string
@@ -60,6 +55,10 @@ type CollaboratorsData = {
 type CollaboratorsTableProps = {
   collaboratorsData: CollaboratorsData[] | undefined
   onDelete: (collaboratorEmail: string) => () => void
+}
+
+type LocationState = {
+  checker: Checker
 }
 
 const EmbedField: FC<EmbedFieldProps> = ({ name, value, children }) => {
@@ -95,7 +94,6 @@ const EmbedField: FC<EmbedFieldProps> = ({ name, value, children }) => {
   )
 }
 
-// TODO set component style for tables
 const CollaboratorsList: FC<CollaboratorsTableProps> = ({
   collaboratorsData,
   onDelete,
@@ -135,73 +133,50 @@ const CollaboratorsList: FC<CollaboratorsTableProps> = ({
   return <Tbody>{tableItems}</Tbody>
 }
 
-export const SettingsModal: FC<CreateSettingsModalProps> = ({
-  isOpen,
-  onClose,
-  checker,
-}) => {
+export const SettingsModal: FC = () => {
   const { user } = useAuth()
   const queryClient = useQueryClient()
   const styledToast = useStyledToast()
+  const history = useHistory()
+  const location = useLocation<LocationState>()
 
-  // Hold email of collaborator to be added from input field
+  const checkerId =
+    useParams<{
+      id?: string
+    }>().id || ''
+  let propChecker = location.state?.checker
+  propChecker = _.omit(propChecker, [
+    'publishedCheckers',
+    'updatedAt',
+  ]) as Checker
+
+  const [selectedCollaborator, setSelectedCollaborator] = useState('')
+  const [isDisabled, setIsDisabled] = useState(true)
+  const [isActive, setIsActive] = useState(false)
   const [inputEmail, setInputEmail] = useState('')
-  const handleInputChange = (event: {
-    target: { value: React.SetStateAction<string> }
-  }) => setInputEmail(event.target.value)
 
-  // Is checker published toggle switch state
-  // TODO does not automatically change hasPublished on first publish
-  const hasPublished = JSON.parse(
-    localStorage.getItem('hasPublished') as string
-  )[checker.id]
-  // Set whether toggle switch is enabled
-  const [isDisabled, setIsDisabled] = useState(!hasPublished)
-  const [isActive, setIsActive] = useState(checker.isActive)
-
-  const setActive = useMutation(CheckerService.updateChecker, {
-    onSuccess: (data) => {
-      styledToast({
-        status: 'success',
-        description: `Your checker has been ${
-          isActive ? 'inactivated' : 'activated'
-        }`,
-      })
-      setIsActive(data.isActive)
-      queryClient.invalidateQueries(['builder', data.id])
-      setIsDisabled(false)
-    },
-    onError: (err) => {
-      styledToast({
-        status: 'error',
-        description: getApiErrorMessage(err),
-      })
-      setIsDisabled(false)
-      setIsActive(isActive)
-    },
-  })
-
-  const onSwitchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setIsDisabled(true)
-    let sanitizedChecker: Checker = { ...checker }
-    // REEEEEEEE
-    sanitizedChecker = _.omit(sanitizedChecker, 'updatedAt')
-    sanitizedChecker = _.omit(sanitizedChecker, 'publishedCheckers')
-    setActive.mutate({
-      ...sanitizedChecker,
-      isActive: event.target.checked,
-    })
-  }
-
+  const onClose = () => history.goBack()
   // External live checker link
-  const linkToChecker = `${window?.location?.origin}/c/${checker.id}`
-  const openLinkToChecker = () => window.open(linkToChecker)
+  const linkToChecker = `${window?.location?.origin}/c/${checkerId}`
+
+  const {
+    isOpen: isConfirmRemoveOpen,
+    onOpen: onConfirmRemoveOpen,
+    onClose: onConfirmRemoveClose,
+  } = useDisclosure()
+
+  // Get published checker
+  const { data: publishedChecker } = useQuery(
+    [checkerId, 'publishedChecker'],
+    () => CheckerService.getPublishedChecker(checkerId),
+    { refetchOnWindowFocus: false }
+  )
 
   // Get list of checker collaborators
-  const { data: collaboratorsData, refetch } = useQuery(
-    [checker.id, 'collaborators'],
+  const { data: collaboratorsData, refetch: refetchCollaborators } = useQuery(
+    [checkerId, 'collaborators'],
     async () => {
-      const users = await CheckerService.listCollaborators(checker.id)
+      const users = await CheckerService.listCollaborators(checkerId)
       return users.map((user: User) => {
         return {
           id: user.id,
@@ -214,10 +189,38 @@ export const SettingsModal: FC<CreateSettingsModalProps> = ({
     }
   )
 
+  // Set initial state of is checker active switch
+  useEffect(() => {
+    setIsDisabled(!publishedChecker)
+    setIsActive(!!publishedChecker?.isActive)
+  }, [publishedChecker])
+
+  // Update checker isActive
+  const setActive = useMutation(CheckerService.updateChecker, {
+    onSuccess: (data) => {
+      styledToast({
+        status: 'success',
+        description: `Your checker has been ${
+          isActive ? 'inactivated' : 'activated'
+        }`,
+      })
+      setIsActive(data.isActive)
+      setIsDisabled(false)
+    },
+    onError: (err) => {
+      styledToast({
+        status: 'error',
+        description: getApiErrorMessage(err),
+      })
+      setIsDisabled(false)
+      setIsActive(isActive)
+    },
+  })
+
   // Adding a collaborator
   const addCollaborator = useMutation(CheckerService.addCollaborator, {
     onSuccess: () => {
-      refetch()
+      refetchCollaborators()
       setInputEmail('')
       styledToast({
         status: 'success',
@@ -232,33 +235,19 @@ export const SettingsModal: FC<CreateSettingsModalProps> = ({
     },
   })
 
-  const onAddCollaborator = () => {
-    addCollaborator.mutate({
-      id: checker.id,
-      collaboratorEmail: inputEmail,
-    })
-  }
-
   // Removing a collaborator
-  const [selectedCollaborator, setSelectedCollaborator] = useState('')
-  const {
-    isOpen: isConfirmRemoveOpen,
-    onOpen: onConfirmRemoveOpen,
-    onClose: onConfirmRemoveClose,
-  } = useDisclosure()
-  const history = useHistory()
   const deleteCollaborator = useMutation(CheckerService.deleteCollaborator, {
     onSuccess: (_, variables) => {
       styledToast({
         status: 'success',
         description: `Collaborator ${variables.collaboratorEmail} has been deleted successfully`,
       })
-      // Remove checker from dashboard if user is deleting themself as a collaborator
+      // Requery checker dashboard list and kick user back to dashboard if they are removing themselves
       if (variables.collaboratorEmail === user?.email) {
         queryClient.invalidateQueries('checkers')
         onClose()
         history.push('/dashboard')
-      } else refetch()
+      } else refetchCollaborators()
     },
     onError: (err) => {
       styledToast({
@@ -268,20 +257,43 @@ export const SettingsModal: FC<CreateSettingsModalProps> = ({
     },
   })
 
-  // Table row delete button on click
+  // Handle is active switch toggle
+  const onSwitchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setIsDisabled(true)
+    setActive.mutate({
+      ...propChecker,
+      isActive: event.target.checked,
+    })
+  }
+
+  // Handle collaborator email input field on change
+  const handleInputChange = (event: {
+    target: { value: React.SetStateAction<string> }
+  }) => setInputEmail(event.target.value)
+
+  // Handle add button collaborator on click
+  const onAddCollaborator = () => {
+    addCollaborator.mutate({
+      id: checkerId,
+      collaboratorEmail: inputEmail,
+    })
+  }
+
+  // Handle remove collaborator button on click, opens confirmation modal
   const onRemoveCollaborator = (collaboratorEmail: string) => () => {
     setSelectedCollaborator(collaboratorEmail)
     onConfirmRemoveOpen()
   }
 
-  // Remove collaborator confirm dialog on click
+  // Handle confirm delete collaborator modal button on click
   const onRemoveConfirm = () => {
     deleteCollaborator.mutate({
-      id: checker.id,
+      id: checkerId,
       collaboratorEmail: selectedCollaborator,
     })
   }
 
+  // Label component with display logic for whether checker is active or not
   const checkerActiveLabel = (hasPublished: boolean, isActive: boolean) => {
     if (hasPublished) {
       if (isActive) {
@@ -329,7 +341,7 @@ export const SettingsModal: FC<CreateSettingsModalProps> = ({
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="xl">
+    <Modal isOpen onClose={onClose} size="xl">
       <ModalOverlay />
       <ModalContent py="16px">
         <ModalHeader>Checker Settings</ModalHeader>
@@ -338,7 +350,7 @@ export const SettingsModal: FC<CreateSettingsModalProps> = ({
           <VStack spacing={4}>
             <FormControl>
               <HStack spacing={0}>
-                {checkerActiveLabel(hasPublished, isActive)}
+                {checkerActiveLabel(!!publishedChecker, isActive)}
                 <Spacer />
                 <Switch
                   id="isPublished"
@@ -372,14 +384,16 @@ export const SettingsModal: FC<CreateSettingsModalProps> = ({
                       : `Publish your checker first`
                   }
                 >
-                  <IconButton
-                    colorScheme="primary"
-                    aria-label="Open published form link"
-                    icon={<BiLinkExternal />}
-                    onClick={openLinkToChecker}
-                    rounded="md"
-                    isDisabled={!isActive}
-                  />
+                  <Link href={linkToChecker} isExternal>
+                    <IconButton
+                      colorScheme="primary"
+                      aria-label="Open published form link"
+                      icon={<BiLinkExternal />}
+                      type="submit"
+                      rounded="md"
+                      isDisabled={!isActive}
+                    />
+                  </Link>
                 </DefaultTooltip>
               </HStack>
             </FormControl>

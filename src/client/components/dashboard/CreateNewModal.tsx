@@ -109,7 +109,6 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({ onClose }) => {
         status: 'success',
         description: `${created?.title} has been created successfully`,
       })
-      onClose()
       history.push(`/builder/${created.id}`)
     },
     onError: (err) => {

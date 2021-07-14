@@ -29,7 +29,6 @@ import { getApiErrorMessage } from '../../api'
 import { CheckerService } from '../../services'
 import { ConfirmDialog } from '../ConfirmDialog'
 import { useStyledToast } from '../common/StyledToast'
-import { SettingsModal } from './SettingsModal'
 
 type CheckerCardProps = {
   checker: DashboardCheckerDTO
@@ -111,11 +110,6 @@ export const CheckerCard: FC<CheckerCardProps> = ({ checker }) => {
     onOpen: onDeleteOpen,
     onClose: onDeleteClose,
   } = useDisclosure()
-  const {
-    isOpen: isSettingsOpen,
-    onOpen: onSettingsOpen,
-    onClose: onSettingsClose,
-  } = useDisclosure()
   const styledToast = useStyledToast()
   const styles = useMultiStyleConfig('CheckerCard', {})
 
@@ -144,7 +138,9 @@ export const CheckerCard: FC<CheckerCardProps> = ({ checker }) => {
     history.push(`${path}/duplicate/${checker.id}`, { checker })
   }
 
-  const onSettings = () => onSettingsOpen()
+  const onSettings = () => {
+    history.push(`${path}/settings/${checker.id}`, { checker })
+  }
 
   const actions = [
     { label: 'Duplicate', icon: <BiDuplicate />, onClick: onDuplicateClick },
@@ -189,12 +185,6 @@ export const CheckerCard: FC<CheckerCardProps> = ({ checker }) => {
         onConfirm={onDeleteConfirm}
         title="Delete checker"
         description="Are you sure? You cannot undo this action afterwards."
-      />
-
-      <SettingsModal
-        isOpen={isSettingsOpen}
-        onClose={onSettingsClose}
-        checker={checker}
       />
     </>
   )

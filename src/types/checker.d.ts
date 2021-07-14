@@ -56,7 +56,7 @@ export type GetPublishedCheckerWithoutDraftCheckerDTO = Pick<
   | 'createdAt'
   | 'updatedAt'
   | 'checkerId'
->
+> & { isActive: boolean }
 
 export type ConfigArrayName = 'fields' | 'operations' | 'displays' | 'constants'
 

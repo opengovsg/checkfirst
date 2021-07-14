@@ -38,7 +38,6 @@ describe('CheckerService', () => {
   const newPublishedChecker: Checker = {
     ...checker,
     title: 'New Published Title',
-    description: null,
   }
 
   delete newPublishedChecker.isActive

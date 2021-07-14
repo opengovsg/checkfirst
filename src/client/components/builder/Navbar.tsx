@@ -23,7 +23,6 @@ import { useCheckerContext } from '../../contexts'
 import { DefaultTooltip } from '../common/DefaultTooltip'
 import { useStyledToast } from '../common/StyledToast'
 import { NavbarContainer, NavbarTabs, NavbarBack } from '../common/navbar'
-import { SettingsModal } from '../dashboard/SettingsModal'
 
 const ROUTES = ['questions', 'constants', 'logic']
 
@@ -33,16 +32,10 @@ export const Navbar: FC = () => {
     onOpen: onBackPromptOpen,
     onClose: onBackPromptClose,
   } = useDisclosure()
-  const {
-    isOpen: isEmbedOpen,
-    onOpen: onEmbedOpen,
-    onClose: onEmbedClose,
-  } = useDisclosure()
   const history = useHistory()
   const styledToast = useStyledToast()
   const match = useRouteMatch<{ id: string; action: string }>({
     path: '/builder/:id/:action',
-    exact: true,
   })
   const { save, publish, isChanged, config: checker } = useCheckerContext()
 
@@ -88,7 +81,7 @@ export const Navbar: FC = () => {
       await publish.mutateAsync()
       styledToast({
         status: 'success',
-        description: 'Your checker is now live.',
+        description: 'Your changes have been saved to your published checker.',
       })
     } catch (err) {
       styledToast({
@@ -96,6 +89,10 @@ export const Navbar: FC = () => {
         description: getApiErrorMessage(err),
       })
     }
+  }
+
+  const onSettings = () => {
+    history.push(`${match?.url}/settings`, { checker })
   }
 
   return (
@@ -117,16 +114,11 @@ export const Navbar: FC = () => {
           <HStack>
             <HStack spacing={0} pr={2}>
               <IconButton
-                onClick={onEmbedOpen}
+                onClick={onSettings}
                 aria-label="Embed or Share"
                 variant="ghost"
                 color="primary.500"
                 icon={<BiCog size="16px" />}
-              />
-              <SettingsModal
-                isOpen={isEmbedOpen}
-                onClose={onEmbedClose}
-                checker={checker}
               />
               <Link href={`/builder/${params.id}/preview`} isExternal>
                 <DefaultTooltip label="Preview">

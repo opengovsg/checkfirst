@@ -28,13 +28,15 @@ export const Checker: FC = () => {
 
   return (
     <Flex direction="column" bg="neutral.200" minH="100vh">
-      {!isLoading && !isError && config && <CheckerComponent config={config} />}
+      {!isLoading && !isError && config && config.isActive && (
+        <CheckerComponent config={config} />
+      )}
       {isLoading && (
         <Center py={16}>
           <Spinner size="xl" color="primary.500" thickness="4px" />
         </Center>
       )}
-      {isError && (
+      {(isError || !config?.isActive) && (
         <Center py={16}>
           <VStack spacing={4}>
             <Image

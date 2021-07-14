@@ -33,6 +33,7 @@ import { CheckerService } from '../services'
 
 // Images
 import emptyDashboardImage from '../assets/states/empty-dashboard.svg'
+import { SettingsModal } from '../components/dashboard/SettingsModal'
 
 const GET_STARTED_URL = 'https://go.gov.sg/checkfirst-formbuilder'
 
@@ -67,18 +68,6 @@ export const Dashboard: FC = () => {
   const { isLoading, data: checkers } = useQuery('checkers', async () => {
     const response = await CheckerService.listCheckers()
     // Store whether checker has a published version. Used to enable checker active toggle switch in settings modal
-    window.localStorage.setItem(
-      'hasPublished',
-      JSON.stringify(
-        response.reduce((map, checker) => {
-          const dashboardChecker = checker as DashboardCheckerDTO
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          map[checker.id] = dashboardChecker.publishedCheckers.length > 0
-          return map
-        }, {})
-      )
-    )
     return response as DashboardCheckerDTO[]
   })
 
@@ -125,9 +114,12 @@ export const Dashboard: FC = () => {
                 `${path}/create/template/:templateId`,
                 `${path}/duplicate/:checkerId`,
               ]}
-              render={() => (
-                <CreateNewModal onClose={() => history.push(path)} />
-              )}
+              render={() => <CreateNewModal onClose={() => history.goBack()} />}
+            />
+            <Route
+              exact
+              path={`${path}/settings/:id`}
+              component={SettingsModal}
             />
             <Redirect to={path} />
           </Switch>

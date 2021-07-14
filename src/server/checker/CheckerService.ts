@@ -100,22 +100,26 @@ export class CheckerService {
     const checker = await this.CheckerModel.findByPk(id, {
       attributes: ['isActive'],
     })
-    if (checker?.isActive) {
-      const result = await this.PublishedCheckerModel.findOne({
-        attributes: [
-          ['checkerId', 'id'], // rename checkerId as id
-          'title',
-          'description',
-          'fields',
-          'constants',
-          'operations',
-          'displays',
-        ],
-        where: { checkerId: id },
-        order: [['createdAt', 'DESC']],
-      })
-      return result
-    } else return null
+    const result = await this.PublishedCheckerModel.findOne({
+      attributes: [
+        ['checkerId', 'id'], // rename checkerId as id
+        'title',
+        'description',
+        'fields',
+        'constants',
+        'operations',
+        'displays',
+      ],
+      where: { checkerId: id },
+      order: [['createdAt', 'DESC']],
+    })
+
+    if (result)
+      return {
+        ...result.toJSON(),
+        isActive: !!checker?.isActive,
+      } as GetPublishedCheckerWithoutDraftCheckerDTO
+    else return null
   }
 
   publish: (id: string, checker: Checker, user: User) => Promise<Checker> =
