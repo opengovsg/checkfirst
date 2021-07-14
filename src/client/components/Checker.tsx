@@ -160,28 +160,29 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
   const isCheckerComplete = () => filter(operations, 'show').length > 0
 
   const reset = (keepValues = false) => {
-    const defaultValues = fields.reduce((defaults, field) => {
-      switch (field.type) {
-        case 'NUMERIC':
-          defaults[field.id] = 0
-          break
-        case 'DATE':
-          defaults[field.id] = new Date()
-          break
-        case 'RADIO':
-          defaults[field.id] = ''
-          break
-        case 'CHECKBOX':
-          defaults[field.id] = []
-          break
-      }
-      return defaults
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    }, {} as Record<string, any>)
-
-    methods.reset(defaultValues, { keepValues, keepDefaultValues: true })
+    methods.reset({}, { keepValues, keepDefaultValues: true })
     setVariables({})
+
+    // Reset values only if keepValues is false
+    if (!keepValues) {
+      fields.forEach((field) => {
+        switch (field.type) {
+          case 'NUMERIC':
+            methods.setValue(field.id, 0)
+            break
+          case 'DATE':
+            methods.setValue(field.id, new Date())
+            break
+          case 'RADIO':
+            methods.setValue(field.id, '')
+            break
+          case 'CHECKBOX':
+            methods.setValue(field.id, [])
+            break
+        }
+      })
+    }
+
     requestAnimationFrame(() => {
       header.current?.scrollIntoView({
         behavior: 'smooth',
@@ -229,6 +230,7 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
               >
                 <Button
                   w={{ base: '100%', md: 'auto' }}
+                  _hover={{ bg: 'primary.300' }}
                   rightIcon={<BiEditAlt />}
                   variant="outline"
                   onClick={() => reset(true)}
@@ -237,6 +239,7 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
                 </Button>
                 <Button
                   w={{ base: '100%', md: 'auto' }}
+                  _hover={{ bg: 'primary.300' }}
                   rightIcon={<VscDebugRestart />}
                   variant="outline"
                   onClick={() => reset()}
