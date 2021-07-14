@@ -33,9 +33,7 @@ export const RadioField: ComponentMultiStyleConfig = {
       alignItems: 'start',
     },
     previewOptionRowContainer: {
-      h: '40px',
       px: 2,
-      alignItems: 'center',
     },
     radio: {
       h: 6,
