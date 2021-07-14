@@ -397,4 +397,143 @@ describe('CheckerController', () => {
       expect(service.publish).toHaveBeenCalledWith(id, checker, user)
     })
   })
+
+  describe('listCollaborators', () => {
+    const user = { id: 1, email: 'user@agency.gov.sg' }
+    const userCollaborator = {
+      ...user,
+      UserToChecker: {
+        isOwner: true,
+      },
+    }
+    const app = express()
+    app.use(bodyParser.json())
+    app.use(sessionMiddleware({ user }))
+    app.get('/c/drafts/:id/collaborator', controller.listCollaborators)
+
+    beforeEach(() => {
+      service.listCollaborators.mockReset()
+    })
+
+    it('allows authenticated listing of collaborators', async () => {
+      service.listCollaborators.mockResolvedValue([userCollaborator])
+      const response = await request(app)
+        .get(`/c/drafts/${checker.id}/collaborator`)
+        .expect(200)
+      expect(response.body).toStrictEqual([userCollaborator])
+      expect(service.listCollaborators).toHaveBeenCalledWith(checker.id, user)
+    })
+
+    it('rejects non-authenticated listing of collaborators', async () => {
+      const app = express()
+      app.use(bodyParser.json())
+      app.use(sessionMiddleware({}))
+      app.get('/c/drafts/:id/collaborator', controller.listCollaborators)
+      await request(app).get(`/c/drafts/${checker.id}/collaborator`).expect(401)
+      expect(service.listCollaborators).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('addCollaborators', () => {
+    const user = { id: 1, email: 'user@agency.gov.sg' }
+    const collaboratorEmail = 'another-user@agency.gov.sg'
+    const app = express()
+    app.use(bodyParser.json())
+    app.use(sessionMiddleware({ user }))
+    app.post('/c/drafts/:id/collaborator', controller.addCollaborator)
+
+    beforeEach(() => {
+      service.addCollaborator.mockReset()
+    })
+
+    it('rejects non-authenticated adding of collaborators', async () => {
+      const app = express()
+      app.use(bodyParser.json())
+      app.use(sessionMiddleware({}))
+      app.post('/c/drafts/:id/collaborator', controller.addCollaborator)
+      await request(app)
+        .post(`/c/drafts/${checker.id}/collaborator`)
+        .send({ collaboratorEmail })
+        .expect(401)
+      expect(service.addCollaborator).not.toHaveBeenCalled()
+    })
+
+    it('allows authenticated adding of collaborators', async () => {
+      await request(app)
+        .post(`/c/drafts/${checker.id}/collaborator`)
+        .send({ collaboratorEmail })
+        .expect(200)
+      expect(service.addCollaborator).toHaveBeenCalledWith(
+        checker.id,
+        user,
+        collaboratorEmail
+      )
+    })
+
+    it('returns error on user exception', async () => {
+      const message = 'No such user'
+      service.addCollaborator.mockRejectedValue(new Error(message))
+      const response = await request(app)
+        .post(`/c/drafts/${checker.id}/collaborator`)
+        .send({ collaboratorEmail })
+        .expect(400)
+      expect(response.body).toStrictEqual({ message })
+      expect(service.addCollaborator).toHaveBeenCalledWith(
+        checker.id,
+        user,
+        collaboratorEmail
+      )
+    })
+  })
+
+  describe('deleteCollaborator', () => {
+    const user = { id: 1, email: 'user@agency.gov.sg' }
+    const collaboratorEmail = 'another-user@agency.gov.sg'
+    const app = express()
+    app.use(bodyParser.json())
+    app.use(sessionMiddleware({ user }))
+    app.delete('/c/drafts/:id/collaborator', controller.deleteCollaborator)
+
+    beforeEach(() => {
+      service.deleteCollaborator.mockReset()
+    })
+
+    it('rejects non-authenticated deletion of collaborator', async () => {
+      const app = express()
+      app.use(bodyParser.json())
+      app.use(sessionMiddleware({}))
+      app.delete('/c/drafts/:id/collaborator', controller.deleteCollaborator)
+      await request(app)
+        .delete(`/c/drafts/${checker.id}/collaborator`)
+        .send({ collaboratorEmail })
+        .expect(401)
+      expect(service.deleteCollaborator).not.toHaveBeenCalled()
+    })
+
+    it('accepts authenticated deletion of collaborator', async () => {
+      await request(app)
+        .delete(`/c/drafts/${checker.id}/collaborator`)
+        .send({ collaboratorEmail })
+        .expect(200)
+      expect(service.deleteCollaborator).toHaveBeenCalledWith(
+        checker.id,
+        user,
+        collaboratorEmail
+      )
+    })
+
+    it('return error on user exception', async () => {
+      const message = 'Error removing collaborator'
+      service.deleteCollaborator.mockRejectedValue(new Error(message))
+      await request(app)
+        .delete(`/c/drafts/${checker.id}/collaborator`)
+        .send({ collaboratorEmail })
+        .expect(400)
+      expect(service.deleteCollaborator).toHaveBeenCalledWith(
+        checker.id,
+        user,
+        collaboratorEmail
+      )
+    })
+  })
 })

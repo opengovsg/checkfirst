@@ -15,20 +15,17 @@ import {
   Spacer,
   Divider,
   Link,
-  InputGroup,
   Input,
-  InputRightElement,
   IconButton,
   Button,
   Table,
   Tbody,
   Tr,
   Td,
-  useClipboard,
   useDisclosure,
 } from '@chakra-ui/react'
 import { Box, Text } from '@chakra-ui/layout'
-import { BiCopy, BiLinkExternal, BiTrash } from 'react-icons/bi'
+import { BiLinkExternal, BiTrash } from 'react-icons/bi'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import { useAuth } from '../../contexts'
@@ -39,59 +36,16 @@ import { getApiErrorMessage } from '../../api'
 import { CheckerService } from '../../services'
 
 import { Checker } from '../../../types/checker'
-import User from '../../../types/user'
-
-type EmbedFieldProps = {
-  name: string
-  value: string
-}
-
-type CollaboratorsData = {
-  id: number
-  email: string
-  isOwner: boolean
-}
+import { EmbedField } from '../common/EmbedField'
+import { CollaboratorUser } from '../../../types/user'
 
 type CollaboratorsTableProps = {
-  collaboratorsData: CollaboratorsData[] | undefined
+  collaboratorsData: CollaboratorUser[] | undefined
   onDelete: (collaboratorEmail: string) => () => void
 }
 
 type LocationState = {
   checker: Checker
-}
-
-const EmbedField: FC<EmbedFieldProps> = ({ name, value, children }) => {
-  const { onCopy } = useClipboard(value)
-  const styledToast = useStyledToast()
-  const onClick = () => {
-    onCopy()
-    styledToast({
-      status: 'success',
-      description: 'Copied!',
-    })
-  }
-  return (
-    <FormControl mb="1rem">
-      <FormLabel htmlFor={name} mb="0">
-        <HStack spacing="1">{children}</HStack>
-      </FormLabel>
-      <InputGroup>
-        <Input readOnly name={name} value={value} />
-        <InputRightElement
-          cursor="pointer"
-          onClick={onClick}
-          children={
-            <DefaultTooltip label="Copy">
-              <span>
-                <BiCopy />
-              </span>
-            </DefaultTooltip>
-          }
-        />
-      </InputGroup>
-    </FormControl>
-  )
 }
 
 const CollaboratorsList: FC<CollaboratorsTableProps> = ({
@@ -107,14 +61,14 @@ const CollaboratorsList: FC<CollaboratorsTableProps> = ({
             (collaborator.email === user?.email ? ' (you)' : '')}
         </Td>
         <Td px={0} py={0}>
-          {collaborator.isOwner ? (
+          {collaborator.UserToChecker.isOwner ? (
             <Text color="grey">Owner</Text>
           ) : (
             <Text>Editor</Text>
           )}
         </Td>
         <Td px={0} py={0}>
-          {collaborator.isOwner ? (
+          {collaborator.UserToChecker.isOwner ? (
             <Box height="40px" />
           ) : (
             <IconButton
@@ -175,18 +129,8 @@ export const SettingsModal: FC = () => {
   // Get list of checker collaborators
   const { data: collaboratorsData, refetch: refetchCollaborators } = useQuery(
     [checkerId, 'collaborators'],
-    async () => {
-      const users = await CheckerService.listCollaborators(checkerId)
-      return users.map((user: User) => {
-        return {
-          id: user.id,
-          email: user.email,
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          isOwner: user.UserToChecker.isOwner,
-        } as CollaboratorsData
-      })
-    }
+    async () =>
+      (await CheckerService.listCollaborators(checkerId)) as CollaboratorUser[]
   )
 
   // Set initial state of is checker active switch
@@ -260,7 +204,7 @@ export const SettingsModal: FC = () => {
   // Handle is active switch toggle
   const onSwitchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setIsDisabled(true)
-    setActive.mutate({
+    setActive.mutateAsync({
       ...propChecker,
       isActive: event.target.checked,
     })
@@ -273,7 +217,7 @@ export const SettingsModal: FC = () => {
 
   // Handle add button collaborator on click
   const onAddCollaborator = () => {
-    addCollaborator.mutate({
+    addCollaborator.mutateAsync({
       id: checkerId,
       collaboratorEmail: inputEmail,
     })
@@ -287,7 +231,7 @@ export const SettingsModal: FC = () => {
 
   // Handle confirm delete collaborator modal button on click
   const onRemoveConfirm = () => {
-    deleteCollaborator.mutate({
+    deleteCollaborator.mutateAsync({
       id: checkerId,
       collaboratorEmail: selectedCollaborator,
     })

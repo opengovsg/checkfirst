@@ -3,7 +3,7 @@ import {
   CreatePublishedCheckerDTO,
   GetPublishedCheckerWithoutDraftCheckerDTO,
 } from '../../types/checker'
-import { User } from '../../types/user'
+import { CollaboratorUser, User } from '../../types/user'
 import { Model, Sequelize } from 'sequelize-typescript'
 import { Logger } from 'winston'
 import {
@@ -198,17 +198,15 @@ export class CheckerService {
     return checker
   }
 
-  listCollaborators: (id: string, user: User) => Promise<User[]> = async (
-    id,
-    user
-  ) => {
-    const checker = await this.findAndCheckAuth(id, user)
-    if (checker) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      return checker.users
-    } else return []
-  }
+  listCollaborators: (id: string, user: User) => Promise<CollaboratorUser[]> =
+    async (id, user) => {
+      const checker = await this.findAndCheckAuth(id, user)
+      if (checker) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        return checker.users
+      } else return []
+    }
 
   addCollaborator: (
     id: string,
@@ -260,8 +258,8 @@ export class CheckerService {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       const collaborator = checker.users?.find(
-        (u: { email: string; isOwner: boolean }) =>
-          u.email == collaboratorEmail && !u.isOwner
+        (u: CollaboratorUser) =>
+          u.email === collaboratorEmail && !u.UserToChecker.isOwner
       )
       if (!collaborator) throw new Error('Error removing collaborator')
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment

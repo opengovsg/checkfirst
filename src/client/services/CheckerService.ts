@@ -1,7 +1,7 @@
 import { ApiClient } from '../api'
 
 import * as checker from '../../types/checker'
-import User from '../../types/user'
+import CollaboratorUser from '../../types/user'
 
 const getChecker = async (id: string): Promise<checker.Checker> => {
   return ApiClient.get(`/c/drafts/${id}`).then((res) => res.data)
@@ -44,7 +44,7 @@ const publishChecker = async (
   )
 }
 
-const listCollaborators = async (id: string): Promise<User[]> => {
+const listCollaborators = async (id: string): Promise<CollaboratorUser[]> => {
   return ApiClient.get(`/c/drafts/${id}/collaborator`).then((res) => res.data)
 }
 

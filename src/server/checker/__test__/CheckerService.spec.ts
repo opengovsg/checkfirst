@@ -7,7 +7,7 @@ import {
   PublishedChecker as PublishedCheckerModel,
 } from '../../database/models'
 import { Checker } from '../../../types/checker'
-import { User } from '../../../types/user'
+import { CollaboratorUser, User } from '../../../types/user'
 
 describe('CheckerService', () => {
   const sequelize = new Sequelize({
@@ -39,8 +39,6 @@ describe('CheckerService', () => {
     ...checker,
     title: 'New Published Title',
   }
-
-  delete newPublishedChecker.isActive
 
   const anotherUser: User = { id: 2, email: 'another-user@agency.gov.sg' }
   const anotherChecker: Checker = {
@@ -230,6 +228,81 @@ describe('CheckerService', () => {
       expect(actualPublishedChecker).toMatchObject({
         ...newPublishedChecker,
       })
+    })
+  })
+
+  describe('collaborators', () => {
+    const collaboratorUser: CollaboratorUser = {
+      ...user,
+      UserToChecker: {
+        isOwner: true,
+      },
+    }
+    const anotherCollaboratorUser: CollaboratorUser = {
+      ...anotherUser,
+      UserToChecker: {
+        isOwner: false,
+      },
+    }
+    beforeEach(async () => {
+      await CheckerModel.destroy({ truncate: true })
+      await UserModel.destroy({ truncate: true })
+      await UserModel.create(user)
+      await UserModel.create(anotherUser)
+      await service.create(checker, user)
+    })
+
+    it('listing collaborators should throw error if user is not collaborator of checker', async () => {
+      await expect(
+        service.listCollaborators(checker.id, anotherUser)
+      ).rejects.toMatchObject(new Error('Unauthorized'))
+    })
+
+    it('should list all collaborators of the checker if user is collaborator of checker', async () => {
+      const collaborators = await service.listCollaborators(checker.id, user)
+      expect(collaborators.length).toBe(1)
+      expect(collaborators[0]).toMatchObject(collaboratorUser)
+    })
+
+    it('does not add collaborator if not already user', async () => {
+      await UserModel.destroy({ where: { email: anotherUser.email } })
+      await expect(
+        service.addCollaborator(checker.id, user, anotherUser.email)
+      ).rejects.toMatchObject(new Error('No such user'))
+      const collaborators = await service.listCollaborators(checker.id, user)
+      expect(collaborators.length).toBe(1)
+    })
+
+    it('does not add collaborator if user to add is already a collaborator', async () => {
+      await expect(
+        service.addCollaborator(checker.id, user, user.email)
+      ).rejects.toMatchObject(new Error('User is already a collaborator'))
+      const collaborators = await service.listCollaborators(checker.id, user)
+      expect(collaborators.length).toBe(1)
+    })
+
+    it('successfully adds new user as collaborator', async () => {
+      await service.addCollaborator(checker.id, user, anotherUser.email)
+      const collaborators = await service.listCollaborators(checker.id, user)
+      expect(collaborators.length).toBe(2)
+      expect(collaborators[1]).toMatchObject(anotherCollaboratorUser)
+    })
+
+    it('should not delete collaborator if collaborator to delete is owner', async () => {
+      await service.addCollaborator(checker.id, user, anotherUser.email)
+      await expect(
+        service.deleteCollaborator(checker.id, anotherUser, user.email)
+      ).rejects.toMatchObject(new Error('Error removing collaborator'))
+      const collaborators = await service.listCollaborators(checker.id, user)
+      expect(collaborators.length).toBe(2)
+    })
+
+    it('successfully deletes collaborator if collaborator is not owner', async () => {
+      await service.addCollaborator(checker.id, user, anotherUser.email)
+      await service.deleteCollaborator(checker.id, user, anotherUser.email)
+      const collaborators = await service.listCollaborators(checker.id, user)
+      expect(collaborators.length).toBe(1)
+      expect(collaborators[0]).toMatchObject(collaboratorUser)
     })
   })
 
