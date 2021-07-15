@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { typed, create, all, factory } from 'mathjs'
+import { typed, create, all, factory, Unit } from 'mathjs'
 import * as mathjs from 'mathjs'
 import { Graph, alg } from 'graphlib'
 import * as checker from '../../types/checker'
@@ -114,7 +114,7 @@ const UNITS = Object.keys(mathjs.Unit.UNITS)
 export const evaluateOperation = (
   expression: string,
   variables: checker.VariableResults
-): number => {
+): string | number | Unit => {
   const node = math.parse!(expression)
   const blacklisted = node.filter(
     (n) => n.isFunctionNode && n.name && BLACKLIST.includes(n.name)
