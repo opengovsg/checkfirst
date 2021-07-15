@@ -1,0 +1,9 @@
+.builder-field .chakra-checkbox,
+.builder-field .chakra-radio {
+  align-items: flex-start;
+}
+
+.builder-field .chakra-checkbox__control,
+.builder-field .chakra-radio__control {
+  margin-top: 8px;
+}

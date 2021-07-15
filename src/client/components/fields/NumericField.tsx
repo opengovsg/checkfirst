@@ -14,7 +14,10 @@ import { Field } from '../../../types/checker'
 
 export const NumericField: FC<Field> = ({ id, title, description }) => {
   const styles = useStyles()
-  const { control } = useFormContext()
+  const {
+    control,
+    formState: { isSubmitSuccessful },
+  } = useFormContext()
 
   return (
     <Controller
@@ -36,6 +39,7 @@ export const NumericField: FC<Field> = ({ id, title, description }) => {
             name={id}
             onChange={onChange}
             value={value}
+            isDisabled={isSubmitSuccessful}
           >
             <NumberInputField ref={ref} style={{ scrollMarginTop: '88px' }} />
           </NumberInput>

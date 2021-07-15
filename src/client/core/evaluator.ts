@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { typed, create, all, factory } from 'mathjs'
+import { typed, create, all, factory, Unit } from 'mathjs'
 import * as mathjs from 'mathjs'
 import { Graph, alg } from 'graphlib'
-import * as checker from './../../types/checker'
+import * as checker from '../../types/checker'
+import xss from 'xss'
 
 export class EvaluationCycleError extends Error {
   cycles: string[][]
@@ -33,6 +34,7 @@ const factories = {
       return a !== b
     }
   ),
+
   // Custom if-else function
   createIfElse: factory('ifelse', [], () =>
     typed('ifelse', {
@@ -58,8 +60,41 @@ const factories = {
       },
     })
   ),
+  // Custom link function
+  link: factory('link', [], () => (displayText: string, link: string) => {
+    const stripHtml = (val: string) => {
+      return xss(val, {
+        whiteList: {},
+        stripIgnoreTag: true,
+        stripIgnoreTagBody: ['script'],
+      })
+    }
+
+    // turn incomplete links into valid ones (e.g 'www.google.com')
+    const getValidLink = (link: string) => {
+      if (!link.startsWith('https://') && !link.startsWith('http://')) {
+        return `https://${link}`
+      }
+
+      return link
+    }
+
+    const a = `<a class="inline-external-link" target="_blank" rel="noopener noreferrer" href="${getValidLink(
+      stripHtml(link)
+    )}">${stripHtml(displayText)}</a>`
+
+    return a
+  }),
 }
 export const math = create(factories, config)
+math.import!(
+  {
+    add: typed('add', {
+      'string, string': (a: string, b: string) => a + b,
+    }),
+  },
+  {}
+)
 
 const BLACKLIST = [
   'evaluate',
@@ -79,7 +114,7 @@ const UNITS = Object.keys(mathjs.Unit.UNITS)
 export const evaluateOperation = (
   expression: string,
   variables: checker.VariableResults
-): number => {
+): string | number | Unit => {
   const node = math.parse!(expression)
   const blacklisted = node.filter(
     (n) => n.isFunctionNode && n.name && BLACKLIST.includes(n.name)

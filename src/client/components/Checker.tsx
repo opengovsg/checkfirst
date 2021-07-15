@@ -1,10 +1,13 @@
 import React, { FC, useState, useRef } from 'react'
+import { BiEditAlt } from 'react-icons/bi'
+import { VscDebugRestart } from 'react-icons/vsc'
 import { isEmpty, filter } from 'lodash'
 import {
   useMultiStyleConfig,
   StylesProvider,
   Container,
   VStack,
+  Stack,
   Flex,
   Button,
   Text,
@@ -48,6 +51,7 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
   const [variables, setVariables] = useState<checker.VariableResults>({})
   const googleAnalytics = useGoogleAnalytics()
   const outcomes = useRef<HTMLDivElement | null>(null)
+  const header = useRef<HTMLDivElement | null>(null)
 
   const renderField = (field: checker.Field, i: number) => {
     switch (field.type) {
@@ -134,9 +138,13 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
     try {
       const computed = evaluate(parsedInputs, constants, operations)
       setVariables(computed)
-      outcomes.current?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'nearest',
+      // Required to wrap this in requestAnimationFrame frame due to bug in React.
+      // See https://github.com/facebook/react/issues/20770
+      requestAnimationFrame(() => {
+        outcomes.current?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+        })
       })
     } catch (err) {
       styledToast({
@@ -151,6 +159,41 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
   // Ensure that at least one operation with `show: true`
   const isCheckerComplete = () => filter(operations, 'show').length > 0
 
+  const reset = (keepValues = false) => {
+    // Reset values only if keepValues is false
+    if (!keepValues) {
+      fields.forEach((field) => {
+        switch (field.type) {
+          case 'NUMERIC':
+            methods.setValue(field.id, 0)
+            break
+          case 'DATE':
+            methods.setValue(field.id, new Date())
+            break
+          case 'RADIO':
+            methods.setValue(field.id, '')
+            break
+          case 'CHECKBOX':
+            methods.setValue(field.id, [])
+            break
+          case 'DROPDOWN':
+            methods.setValue(field.id, '')
+            break
+        }
+      })
+    }
+
+    methods.reset({}, { keepValues: true })
+    setVariables({})
+
+    requestAnimationFrame(() => {
+      header.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+      })
+    })
+  }
+
   return (
     <StylesProvider value={styles}>
       <Container maxW="xl" p={8} mb={4} sx={{ overscrollBehavior: 'contain' }}>
@@ -158,12 +201,19 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
           <form onSubmit={methods.handleSubmit(onSubmit)}>
             <VStack align="stretch" spacing={10}>
               <VStack spacing={2}>
-                <Text sx={styles.title}>{title}</Text>
+                <Text ref={header} sx={styles.title}>
+                  {title}
+                </Text>
                 {description && <Text sx={styles.subtitle}>{description}</Text>}
               </VStack>
               {fields.map(renderField)}
-              <Button colorScheme="primary" width="100%" type="submit">
-                Submit
+              <Button
+                colorScheme="primary"
+                width="100%"
+                type="submit"
+                isDisabled={methods.formState.isSubmitSuccessful}
+              >
+                Show results
               </Button>
             </VStack>
           </form>
@@ -173,8 +223,33 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
       {!isEmpty(variables) && isCheckerComplete() && (
         <Flex bg="primary.500" as="div" ref={outcomes} flex={1}>
           <Container maxW="xl" pt={8} pb={16} px={8} color="neutral.200">
-            <VStack align="stretch" spacing={8}>
+            <VStack align="stretch" spacing="40px">
               {operations.map(renderDisplay)}
+              <Stack
+                direction={{ base: 'column', md: 'row' }}
+                alignItems="center"
+                justifyContent="center"
+                spacing="16px"
+              >
+                <Button
+                  w={{ base: '100%', md: 'auto' }}
+                  _hover={{ bg: 'primary.300' }}
+                  rightIcon={<BiEditAlt />}
+                  variant="outline"
+                  onClick={() => reset(true)}
+                >
+                  Edit fields
+                </Button>
+                <Button
+                  w={{ base: '100%', md: 'auto' }}
+                  _hover={{ bg: 'primary.300' }}
+                  rightIcon={<VscDebugRestart />}
+                  variant="outline"
+                  onClick={() => reset()}
+                >
+                  Restart checker
+                </Button>
+              </Stack>
             </VStack>
           </Container>
         </Flex>

@@ -18,7 +18,7 @@ import Downshift, {
   StateChangeOptions,
 } from 'downshift'
 import { matchSorter, MatchSorterOptions } from 'match-sorter'
-import React, { FC, RefCallback, useRef, useState } from 'react'
+import React, { FC, RefCallback, useMemo, useRef, useState } from 'react'
 import { BiChevronDown, BiX } from 'react-icons/bi'
 import { FieldOption } from '../../../types/checker'
 
@@ -86,6 +86,7 @@ const ItemRenderer: FC<ItemRendererProps> = (props) => {
 interface ComboboxProps extends Omit<InputProps, 'onChange' | 'label'> {
   items: ComboboxItem[]
   label: string
+  value: string
   dropdownOptions?: {
     height?: number
     itemHeight?: number
@@ -98,6 +99,7 @@ interface ComboboxProps extends Omit<InputProps, 'onChange' | 'label'> {
     useClearButton?: boolean
   }
   onChange: (value: unknown) => void
+  isDisabled?: boolean
 }
 
 /**
@@ -117,6 +119,8 @@ export const Combobox: FC<ComboboxProps> = ({
   searchOptions,
   inputOptions,
   onChange,
+  isDisabled,
+  value,
   ...props
 }) => {
   let input: HTMLInputElement
@@ -139,6 +143,10 @@ export const Combobox: FC<ComboboxProps> = ({
   const [dropdownDir, setDropdownDir] = useState<DropdownDirection>(
     DropdownDirection.down
   )
+  const selectedItem = useMemo(() => {
+    const filtered = items.filter((item) => `${item.value}` === value)
+    return filtered.length > 0 ? filtered[0] : null
+  }, [items, value])
 
   /**
    * Calculates and returns array of the the items with the
@@ -199,7 +207,7 @@ export const Combobox: FC<ComboboxProps> = ({
   }
 
   const stateReducer = (
-    state: DownshiftState<ComboboxItem>,
+    _state: DownshiftState<ComboboxItem>,
     changes: StateChangeOptions<ComboboxItem>
   ) => {
     switch (changes.type) {
@@ -209,7 +217,7 @@ export const Combobox: FC<ComboboxProps> = ({
         if (!changes.inputValue) {
           return {
             ...changes,
-            inputValue: state.selectedItem?.label || '',
+            inputValue: selectedItem?.label || '',
           }
         }
     }
@@ -232,10 +240,11 @@ export const Combobox: FC<ComboboxProps> = ({
   return (
     <Downshift
       initialHighlightedIndex={0}
+      selectedItem={selectedItem}
       stateReducer={stateReducer}
       itemToString={(item) => item?.label || ''}
-      onChange={(item) => {
-        onChange(`${item ? item.value : ''}`)
+      onStateChange={({ selectedItem }) => {
+        if (selectedItem) onChange(`${selectedItem ? selectedItem.value : ''}`)
       }}
       onInputValueChange={(inputValue) => {
         // recalculate top search results and scroll back to top of list
@@ -251,7 +260,6 @@ export const Combobox: FC<ComboboxProps> = ({
         getInputProps,
         getItemProps,
         highlightedIndex,
-        selectedItem,
         isOpen,
         openMenu,
         setState,
@@ -274,6 +282,7 @@ export const Combobox: FC<ComboboxProps> = ({
             </label>
             <InputGroup>
               <Input
+                isDisabled={isDisabled}
                 zIndex={100}
                 borderRadius={
                   inputOptions?.useClearButton ? '5px 0px 0px 5px' : '5px'
@@ -296,11 +305,15 @@ export const Combobox: FC<ComboboxProps> = ({
                 })}
               />
               <InputRightElement pointerEvents="none">
-                <BiChevronDown aria-label="dropdown-icon" color="black" />
+                <BiChevronDown
+                  aria-label="dropdown-icon"
+                  color={isDisabled ? '#A5ABB3' : 'black'}
+                />
               </InputRightElement>
             </InputGroup>
             {inputOptions?.useClearButton ? (
               <IconButton
+                isDisabled={isDisabled}
                 style={{ marginLeft: '-1px' }}
                 aria-label="Clear"
                 variant="outline"
@@ -308,7 +321,8 @@ export const Combobox: FC<ComboboxProps> = ({
                 icon={<BiX size="16px" />}
                 onClick={() => {
                   // reset field for new search
-                  setState({ inputValue: '', selectedItem: null })
+                  setState({ inputValue: '' })
+                  onChange('')
                   updateSearchResults('')
 
                   // refocus on input field
