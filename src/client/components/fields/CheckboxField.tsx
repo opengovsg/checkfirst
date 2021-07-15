@@ -22,7 +22,10 @@ export const CheckboxField: FC<Field> = ({
   options,
 }) => {
   const styles = useStyles()
-  const { control } = useFormContext()
+  const {
+    control,
+    formState: { isSubmitSuccessful },
+  } = useFormContext()
 
   return (
     <Controller
@@ -54,6 +57,7 @@ export const CheckboxField: FC<Field> = ({
                       ref={ref}
                       name={id}
                       value={`${value}`}
+                      isDisabled={isSubmitSuccessful}
                     >
                       {label}
                     </CheckboxInput>

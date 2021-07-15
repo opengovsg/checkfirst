@@ -4,20 +4,13 @@ import xss from 'xss'
 
 import '../../styles/inline-external-link.css'
 
-// If the value is over this threshold, the result will be rendered as horizontal
-// regardless of whether it is in mobile view.
-const OVERFLOW_LENGTH = 25
-
 interface LineDisplayProps {
   label: string
   value: string
 }
 
 export const LineDisplay: FC<LineDisplayProps> = ({ label, value }) => {
-  const isOverflow = value.length > OVERFLOW_LENGTH
-  const styles = useMultiStyleConfig('LineDisplay', {
-    variant: isOverflow ? 'column' : 'base',
-  })
+  const styles = useMultiStyleConfig('LineDisplay', { variant: 'base' })
 
   const sanitizeHtml = (html: string) => {
     const sanitizedHtml = xss(html, {
@@ -30,7 +23,7 @@ export const LineDisplay: FC<LineDisplayProps> = ({ label, value }) => {
   }
 
   return (
-    <Stack sx={styles.container} spacing="8px">
+    <Stack sx={styles.container} spacing="4px">
       <Text sx={styles.label}>{label}</Text>
       <Text
         sx={styles.value}
