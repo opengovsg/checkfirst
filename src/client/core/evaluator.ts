@@ -34,13 +34,7 @@ const factories = {
       return a !== b
     }
   ),
-  // Override for string concatenation
-  createAdd: factory('add', [], () =>
-    typed('add', {
-      'string, string': (a: string, b: string) => a + b,
-      'number, number': (a: number, b: number) => a + b,
-    })
-  ),
+
   // Custom if-else function
   createIfElse: factory('ifelse', [], () =>
     typed('ifelse', {
@@ -93,6 +87,14 @@ const factories = {
   }),
 }
 export const math = create(factories, config)
+math.import!(
+  {
+    add: typed('add', {
+      'string, string': (a: string, b: string) => a + b,
+    }),
+  },
+  {}
+)
 
 const BLACKLIST = [
   'evaluate',
