@@ -1,3 +1,4 @@
+import { unit, Unit } from 'mathjs'
 import * as checker from '../../../types/checker'
 import {
   evaluateOperation,
@@ -32,6 +33,38 @@ describe('Operation', () => {
       const expr = 'a == b'
       const output = evaluateOperation(expr, { a: 1, b: 'world' })
       expect(output).toBe(false)
+    })
+  })
+
+  describe('custom add', () => {
+    it('should support [string, string] addition', () => {
+      const expr = '"hello" + " " + "world"'
+      const output = evaluateOperation(expr, {})
+      expect(output).toBe('hello world')
+    })
+
+    it('should support [number, number] addition', () => {
+      const expr = '1 + 1'
+      const output = evaluateOperation(expr, {})
+      expect(output).toBe(2)
+    })
+
+    it('should support date addition', () => {
+      const expr = 'D1 + 14 days'
+      const startDate = new Date(2021, 0, 1)
+      const D1 = unit(Math.round(startDate.getTime() / 1000), 'seconds')
+      const output = evaluateOperation(expr, { D1 }) as Unit
+
+      const getDateStr = (date: Date) =>
+        date.toLocaleString('default', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+        })
+      const dateStr = getDateStr(new Date(output.toNumber('seconds') * 1000))
+      const expectedDateStr = getDateStr(new Date(2021, 0, 15))
+
+      expect(dateStr).toBe(expectedDateStr)
     })
   })
 
