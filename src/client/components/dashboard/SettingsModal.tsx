@@ -325,10 +325,10 @@ export const SettingsModal: FC = () => {
                   label={
                     isActive
                       ? `Open live checker`
-                      : `Publish your checker first`
+                      : `Publish and activate your checker first`
                   }
                 >
-                  <Link href={linkToChecker} isExternal>
+                  <Link href={isActive ? linkToChecker : undefined} isExternal>
                     <IconButton
                       colorScheme="primary"
                       aria-label="Open published form link"
