@@ -1,3 +1,4 @@
+import { unit, Unit } from 'mathjs'
 import * as checker from '../../../types/checker'
 import {
   evaluateOperation,
@@ -32,6 +33,38 @@ describe('Operation', () => {
       const expr = 'a == b'
       const output = evaluateOperation(expr, { a: 1, b: 'world' })
       expect(output).toBe(false)
+    })
+  })
+
+  describe('custom add', () => {
+    it('should support [string, string] addition', () => {
+      const expr = '"hello" + " " + "world"'
+      const output = evaluateOperation(expr, {})
+      expect(output).toBe('hello world')
+    })
+
+    it('should support [number, number] addition', () => {
+      const expr = '1 + 1'
+      const output = evaluateOperation(expr, {})
+      expect(output).toBe(2)
+    })
+
+    it('should support date addition', () => {
+      const expr = 'D1 + 14 days'
+      const startDate = new Date(2021, 0, 1)
+      const D1 = unit(Math.round(startDate.getTime() / 1000), 'seconds')
+      const output = evaluateOperation(expr, { D1 }) as Unit
+
+      const getDateStr = (date: Date) =>
+        date.toLocaleString('default', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+        })
+      const dateStr = getDateStr(new Date(output.toNumber('seconds') * 1000))
+      const expectedDateStr = getDateStr(new Date(2021, 0, 15))
+
+      expect(dateStr).toBe(expectedDateStr)
     })
   })
 
@@ -115,6 +148,63 @@ describe('countif', () => {
   it('should not accept a non-array inputs as the first argument', () => {
     const expr = 'countif(a, 7)'
     expect(() => evaluateOperation(expr, { a: 7 })).toThrowError()
+  })
+})
+
+describe('link', () => {
+  function expectedLink(displayText: string, url: string) {
+    return `<a class="inline-external-link" target="_blank" rel="noopener noreferrer" href="${url}">${displayText}</a>`
+  }
+
+  it('should return an HTML link', () => {
+    const displayText = 'Google'
+    const url = 'https://google.com'
+    const expr = `link("${displayText}", "${url}")`
+
+    const output = evaluateOperation(expr, {})
+    expect(output).toBe(expectedLink(displayText, url))
+  })
+
+  it('should support concatenation with another string', () => {
+    const displayText = 'Google'
+    const url = 'https://google.com'
+    const expr = `"Hello " + link("${displayText}", "${url}")`
+
+    const output = evaluateOperation(expr, {})
+    expect(output).toBe(`Hello ${expectedLink(displayText, url)}`)
+  })
+
+  it('should append https by default when protocol is not provided', () => {
+    const displayText = 'Google'
+    const url = 'google.com'
+    const expr = `"Hello " + link("${displayText}", "${url}")`
+
+    const output = evaluateOperation(expr, {})
+
+    const normalizedUrl = `https://${url}`
+    expect(output).toBe(`Hello ${expectedLink(displayText, normalizedUrl)}`)
+  })
+
+  it('should strip off all HTML tags in display text', () => {
+    const displayText = '<b>Google</b><script>const a = 1</script>'
+    const url = 'https://google.com'
+    const expr = `"Hello " + link("${displayText}", "${url}")`
+
+    const output = evaluateOperation(expr, {})
+
+    const sanitizedText = 'Google'
+    expect(output).toBe(`Hello ${expectedLink(sanitizedText, url)}`)
+  })
+
+  it('should strip off all HTML tags in link', () => {
+    const displayText = 'Google'
+    const url = '<b>https://google.com</b><script>const a = 1</script>'
+    const expr = `"Hello " + link("${displayText}", "${url}")`
+
+    const output = evaluateOperation(expr, {})
+
+    const sanitizedLink = 'https://google.com'
+    expect(output).toBe(`Hello ${expectedLink(displayText, sanitizedLink)}`)
   })
 })
 

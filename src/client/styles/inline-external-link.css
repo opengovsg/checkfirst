@@ -1,0 +1,8 @@
+.inline-external-link {
+  text-decoration-line: underline;
+}
+
+.inline-external-link::after {
+  content: url('../assets/svg-icons/link-external.svg'); 
+  margin-inline-start: 4px;
+}
