@@ -10,6 +10,7 @@ import {
   Checker as CheckerModel,
   User as UserModel,
   PublishedChecker as PublishedCheckerModel,
+  UserToChecker as UserToCheckerModel,
 } from '../database/models'
 
 export class CheckerService {
@@ -18,6 +19,7 @@ export class CheckerService {
   private CheckerModel: typeof CheckerModel
   private UserModel: typeof UserModel
   private PublishedCheckerModel: typeof PublishedCheckerModel
+  private UserToCheckerModel: typeof UserToCheckerModel
   private isSqliteFile: boolean
   constructor(options: { sequelize: Sequelize; logger?: Logger }) {
     this.sequelize = options.sequelize
@@ -25,6 +27,7 @@ export class CheckerService {
     this.CheckerModel = CheckerModel
     this.UserModel = UserModel
     this.PublishedCheckerModel = PublishedCheckerModel
+    this.UserToCheckerModel = UserToCheckerModel
     this.isSqliteFile =
       this.sequelize.getDialect() === 'sqlite' &&
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -44,17 +47,18 @@ export class CheckerService {
         options
       )
       if (!existingChecker) {
-        const userInstance = await this.UserModel.findByPk(user.id)
+        const userInstance = await this.UserModel.findByPk(user.id, options)
         if (!userInstance) {
           throw new Error(`User ${user.id} [${user.email}] not found`)
         }
 
         const checkerInstance = await this.CheckerModel.create(checker, options)
-        // We definitely know that userInstance can add associations
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await (userInstance as any).addChecker(
-          checkerInstance,
-          { through: { isOwner: true } },
+        await this.UserToCheckerModel.create(
+          {
+            checkerId: checkerInstance.id,
+            userId: userInstance.id,
+            isOwner: true,
+          },
           options
         )
       }
