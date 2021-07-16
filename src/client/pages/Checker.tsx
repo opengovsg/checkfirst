@@ -36,7 +36,7 @@ export const Checker: FC = () => {
           <Spinner size="xl" color="primary.500" thickness="4px" />
         </Center>
       )}
-      {(isError || !config?.isActive) && (
+      {!isLoading && (isError || !config?.isActive) && (
         <Center py={16}>
           <VStack spacing={4}>
             <Image

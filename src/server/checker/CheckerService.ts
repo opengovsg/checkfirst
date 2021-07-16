@@ -100,30 +100,39 @@ export class CheckerService {
   ) => Promise<GetPublishedCheckerWithoutDraftCheckerDTO | null> = async (
     id
   ) => {
-    // Check if checker is active
-    const checker = await this.CheckerModel.findByPk(id, {
-      attributes: ['isActive'],
-    })
-    const result = await this.PublishedCheckerModel.findOne({
-      attributes: [
-        ['checkerId', 'id'], // rename checkerId as id
-        'title',
-        'description',
-        'fields',
-        'constants',
-        'operations',
-        'displays',
-      ],
-      where: { checkerId: id },
-      order: [['createdAt', 'DESC']],
-    })
+    const transaction = await this.sequelize.transaction()
+    const options = this.isSqliteFile ? {} : { transaction }
 
-    if (result)
-      return {
-        ...result.toJSON(),
-        isActive: !!checker?.isActive,
-      } as GetPublishedCheckerWithoutDraftCheckerDTO
-    else return null
+    try {
+      // Check if checker is active
+      const checker = await this.CheckerModel.findByPk(id)
+      const result = await this.PublishedCheckerModel.findOne({
+        attributes: [
+          ['checkerId', 'id'], // rename checkerId as id
+          'title',
+          'description',
+          'fields',
+          'constants',
+          'operations',
+          'displays',
+        ],
+        where: { checkerId: id },
+        order: [['createdAt', 'DESC']],
+        ...options,
+      })
+
+      await transaction.commit()
+      if (result)
+        return {
+          ...result.toJSON(),
+          isActive: !!checker?.isActive,
+        } as GetPublishedCheckerWithoutDraftCheckerDTO
+      else return null
+    } catch (error) {
+      this.logger?.error(error)
+      await transaction.rollback()
+      throw error
+    }
   }
 
   publish: (id: string, checker: Checker, user: User) => Promise<Checker> =
@@ -191,6 +200,7 @@ export class CheckerService {
     })
     if (checker) {
       const isAuthorized = checker.users?.some(
+        // Sequelize automatically adds properties of userToChecker association to user model
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         (u) => u.UserToChecker.isOwner && u.id === user?.id
@@ -206,6 +216,7 @@ export class CheckerService {
     async (id, user) => {
       const checker = await this.findAndCheckAuth(id, user)
       if (checker) {
+        // Sequelize automatically adds users property to checker model through association
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         return checker.users
@@ -227,12 +238,15 @@ export class CheckerService {
       if (checker) {
         const collaboratorUser = await this.UserModel.findOne({
           where: { email: collaboratorEmail },
+          ...options,
         })
+        // Sequelize automatically adds users property to checker model through association
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         if (checker.users?.some((u) => u.email === collaboratorEmail))
           throw new Error('User is already a collaborator')
         if (collaboratorUser) {
+          // Sequelize automatically adds addChecker method to user model through association
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           await collaboratorUser.addChecker(
@@ -257,18 +271,30 @@ export class CheckerService {
     user: User,
     collaboratorEmail: string
   ) => Promise<void> = async (id, user, collaboratorEmail) => {
+    const transaction = await this.sequelize.transaction()
+    const options = this.isSqliteFile ? {} : { transaction }
     const checker = await this.findAndCheckAuth(id, user)
-    if (checker) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const collaborator = checker.users?.find(
-        (u: CollaboratorUser) =>
-          u.email === collaboratorEmail && !u.UserToChecker.isOwner
-      )
-      if (!collaborator) throw new Error('Error removing collaborator')
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      else await checker.removeUser(collaborator)
+
+    try {
+      if (checker) {
+        // Sequelize automatically adds users property to user model through association
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const collaborator = checker.users?.find(
+          (u: CollaboratorUser) =>
+            u.email === collaboratorEmail && !u.UserToChecker.isOwner
+        )
+        if (!collaborator) throw new Error('Error removing collaborator')
+        // Sequelize automatically adds removeUser method to checker model through association
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        else await checker.removeUser(collaborator, options)
+        await transaction.commit()
+      }
+    } catch (error) {
+      this.logger?.error(error)
+      await transaction.rollback()
+      throw error
     }
   }
 

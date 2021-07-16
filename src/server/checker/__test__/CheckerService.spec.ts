@@ -12,6 +12,7 @@ import { CollaboratorUser, User } from '../../../types/user'
 describe('CheckerService', () => {
   const sequelize = new Sequelize({
     dialect: 'sqlite',
+    storage: '/tmp/testDB.sqlite',
     logging: undefined,
     models: [
       UserModel,

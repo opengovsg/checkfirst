@@ -10,11 +10,6 @@ module.exports = {
   },
 
   down: async (queryInterface, _) => {
-    // return queryInterface
-    //   .bulkDelete('usersToCheckers', { isOwner: false })
-    //   .then(() => {
-    //     queryInterface.removeColumn('usersToCheckers', 'isOwner')
-    //   })
     return queryInterface.removeColumn('usersToCheckers', 'isOwner')
   },
 }
