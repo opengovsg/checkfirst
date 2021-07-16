@@ -18,7 +18,10 @@ import '../../styles/checker-field.css'
 
 export const RadioField: FC<Field> = ({ id, title, description, options }) => {
   const styles = useStyles()
-  const { control } = useFormContext()
+  const {
+    control,
+    formState: { isSubmitSuccessful },
+  } = useFormContext()
 
   return (
     <Controller
@@ -50,6 +53,7 @@ export const RadioField: FC<Field> = ({ id, title, description, options }) => {
                       ref={ref}
                       name={id}
                       value={`${value}`}
+                      isDisabled={isSubmitSuccessful}
                     >
                       {label}
                     </RadioInput>

@@ -33,9 +33,7 @@ export const CheckboxField: ComponentMultiStyleConfig = {
       alignItems: 'start',
     },
     previewOptionRowContainer: {
-      h: '40px',
       px: 2,
-      alignItems: 'center',
     },
     checkbox: {
       borderColor: 'secondary.500',

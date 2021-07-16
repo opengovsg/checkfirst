@@ -1,9 +1,8 @@
 import React, { FC } from 'react'
 import { Stack, Text, useMultiStyleConfig } from '@chakra-ui/react'
+import xss from 'xss'
 
-// If the value is over this threshold, the result will be rendered as horizontal
-// regardless of whether it is in mobile view.
-const OVERFLOW_LENGTH = 25
+import '../../styles/inline-external-link.css'
 
 interface LineDisplayProps {
   label: string
@@ -11,15 +10,27 @@ interface LineDisplayProps {
 }
 
 export const LineDisplay: FC<LineDisplayProps> = ({ label, value }) => {
-  const isOverflow = value.length > OVERFLOW_LENGTH
-  const styles = useMultiStyleConfig('LineDisplay', {
-    variant: isOverflow ? 'column' : 'base',
-  })
+  const styles = useMultiStyleConfig('LineDisplay', { variant: 'base' })
+
+  const sanitizeHtml = (html: string) => {
+    const sanitizedHtml = xss(html, {
+      whiteList: { a: ['class', 'target', 'rel', 'href'] },
+      stripIgnoreTag: true,
+      stripIgnoreTagBody: ['script'],
+    })
+
+    return sanitizedHtml
+  }
 
   return (
-    <Stack sx={styles.container} spacing="8px">
+    <Stack sx={styles.container} spacing="4px">
       <Text sx={styles.label}>{label}</Text>
-      <Text sx={styles.value}>{value}</Text>
+      <Text
+        sx={styles.value}
+        dangerouslySetInnerHTML={{
+          __html: sanitizeHtml(value),
+        }}
+      ></Text>
     </Stack>
   )
 }
