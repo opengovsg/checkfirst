@@ -109,7 +109,7 @@ export const EmbedModal: FC<EmbedModalProps> = ({
               name="iframe"
               value={`<iframe src="${linkTo(
                 checker
-              )}" style="width:100%;height:500px"></iframe>`}
+              )}?embed=true" style="width:100%;height:500px"></iframe>`}
             >
               <BiCode size="1rem" />
               <Text>Embed this checker on your site</Text>
