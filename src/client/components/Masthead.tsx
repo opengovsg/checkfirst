@@ -18,6 +18,8 @@ import LionHeadSymbol from '../assets/lion-head-symbol.svg'
 import Lock from '../assets/svg-icons/bxs-lock-alt.svg'
 import Bank from '../assets/svg-icons/bxs-bank.svg'
 
+const TRUSTED_SITES = 'https://go.gov.sg/trusted-sites'
+
 interface MastheadProps {
   width?: string
 }
@@ -97,7 +99,12 @@ export const Masthead: FC<MastheadProps> = ({ width }) => {
                 >
                   Government agencies communicate via .gov.sg websites (e.g.
                   go.gov.sg/open).{' '}
-                  <Link color="#2F60CE" textDecor="underline" href="#">
+                  <Link
+                    color="#2F60CE"
+                    textDecor="underline"
+                    href={TRUSTED_SITES}
+                    isExternal
+                  >
                     Trusted websites <Icon as={BiLinkExternal} />
                   </Link>
                 </Text>
