@@ -137,6 +137,7 @@ export const Masthead: FC<MastheadProps> = ({ width }) => {
                   />
                   ) or
                   {' https://'} as an added precaution. Share sensitive
+                  information only on official, secure websites.
                 </Text>
               </VStack>
             </HStack>
