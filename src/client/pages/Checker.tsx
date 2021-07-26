@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { useQuery } from 'react-query'
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import {
   Box,
   Center,
@@ -11,6 +11,7 @@ import {
   VStack,
 } from '@chakra-ui/react'
 
+import Masthead from '../components/Masthead'
 import { Checker as CheckerComponent } from '../components'
 import { CheckerService } from '../services'
 
@@ -20,6 +21,8 @@ import Logo from '../assets/checkfirst-logo.svg'
 
 export const Checker: FC = () => {
   const { id } = useParams<{ id: string }>()
+  const { search } = useLocation()
+  const query = new URLSearchParams(search)
   const {
     isLoading,
     isError,
@@ -28,6 +31,7 @@ export const Checker: FC = () => {
 
   return (
     <Flex direction="column" bg="neutral.200" minH="100vh">
+      {!query.get('embed') && <Masthead />}
       {!isLoading && !isError && config && <CheckerComponent config={config} />}
       {isLoading && (
         <Center py={16}>
