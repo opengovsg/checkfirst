@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { useQuery } from 'react-query'
-import { useLocation, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import {
   Box,
   Center,
@@ -21,17 +21,23 @@ import Logo from '../assets/checkfirst-logo.svg'
 
 export const Checker: FC = () => {
   const { id } = useParams<{ id: string }>()
-  const { search } = useLocation()
-  const query = new URLSearchParams(search)
   const {
     isLoading,
     isError,
     data: config,
   } = useQuery(['checker', id], () => CheckerService.getPublishedChecker(id))
 
+  function isEmbedded(): boolean {
+    try {
+      return window.self !== window.top
+    } catch (_) {
+      return true
+    }
+  }
+
   return (
     <Flex direction="column" bg="neutral.200" minH="100vh">
-      {!query.get('embed') && <Masthead />}
+      {!isEmbedded() && <Masthead />}
       {!isLoading && !isError && config && <CheckerComponent config={config} />}
       {isLoading && (
         <Center py={16}>
