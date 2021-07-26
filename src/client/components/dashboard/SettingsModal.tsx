@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useState } from 'react'
 import {
   Modal,
   ModalOverlay,
@@ -23,6 +23,8 @@ import {
   Tr,
   Td,
   useDisclosure,
+  Spinner,
+  Skeleton,
 } from '@chakra-ui/react'
 import { Box, Text } from '@chakra-ui/layout'
 import { BiLinkExternal, BiTrash } from 'react-icons/bi'
@@ -120,24 +122,30 @@ export const SettingsModal: FC = () => {
   } = useDisclosure()
 
   // Get published checker
-  const { data: publishedChecker } = useQuery(
+  const {
+    isFetchedAfterMount: publishedCheckerIsFetched,
+    data: publishedChecker,
+  } = useQuery(
     [checkerId, 'publishedChecker'],
     () => CheckerService.getPublishedChecker(checkerId),
-    { refetchOnWindowFocus: false }
+    {
+      onSuccess(data) {
+        setIsDisabled(!data)
+        setIsActive(!!data?.isActive)
+      },
+    }
   )
 
   // Get list of checker collaborators
-  const { data: collaboratorsData, refetch: refetchCollaborators } = useQuery(
+  const {
+    isFetchedAfterMount: collaboratorsDataIsFetched,
+    data: collaboratorsData,
+    refetch: refetchCollaborators,
+  } = useQuery(
     [checkerId, 'collaborators'],
     async () =>
       (await CheckerService.listCollaborators(checkerId)) as CollaboratorUser[]
   )
-
-  // Set initial state of is checker active switch
-  useEffect(() => {
-    setIsDisabled(!publishedChecker)
-    setIsActive(!!publishedChecker?.isActive)
-  }, [publishedChecker])
 
   // Update checker isActive
   const setActive = useMutation(CheckerService.updateChecker, {
@@ -238,7 +246,21 @@ export const SettingsModal: FC = () => {
   }
 
   // Label component with display logic for whether checker is active or not
-  const checkerActiveLabel = (hasPublished: boolean, isActive: boolean) => {
+  const checkerActiveLabel = (
+    hasPublished: boolean,
+    isActive: boolean,
+    isFetched: boolean
+  ) => {
+    if (!isFetched) {
+      return (
+        <FormLabel color="grey">
+          Loading checker state
+          <Text color="grey" fontSize="xs">
+            Awaiting checker data
+          </Text>
+        </FormLabel>
+      )
+    }
     if (hasPublished) {
       if (isActive) {
         return (
@@ -294,15 +316,23 @@ export const SettingsModal: FC = () => {
           <VStack spacing={4}>
             <FormControl>
               <HStack spacing={0}>
-                {checkerActiveLabel(!!publishedChecker, isActive)}
+                {checkerActiveLabel(
+                  !!publishedChecker,
+                  isActive,
+                  publishedCheckerIsFetched
+                )}
                 <Spacer />
-                <Switch
-                  id="isPublished"
-                  isChecked={isActive}
-                  colorScheme="teal"
-                  isDisabled={isDisabled}
-                  onChange={onSwitchChange}
-                />
+                {!publishedCheckerIsFetched ? (
+                  <Spinner size="md" color="grey" />
+                ) : (
+                  <Switch
+                    id="isPublished"
+                    isChecked={isActive}
+                    colorScheme="teal"
+                    isDisabled={isDisabled}
+                    onChange={onSwitchChange}
+                  />
+                )}
               </HStack>
             </FormControl>
             <Divider />
@@ -382,6 +412,8 @@ export const SettingsModal: FC = () => {
                   fontSize="sm"
                   width="170px"
                   aria-label="Add collaborator"
+                  isLoading={addCollaborator.isLoading}
+                  isDisabled={inputEmail.length === 0}
                   onClick={onAddCollaborator}
                 >
                   Add collaborator
@@ -391,10 +423,18 @@ export const SettingsModal: FC = () => {
             <Divider />
 
             <Table variant="simple">
-              {CollaboratorsList({
-                collaboratorsData,
-                onDelete: onRemoveCollaborator,
-              })}
+              {!collaboratorsDataIsFetched ? (
+                <>
+                  <Skeleton height="25px" />
+                  <Skeleton height="25px" mt={2} />
+                  <Skeleton height="25px" mt={2} />
+                </>
+              ) : (
+                CollaboratorsList({
+                  collaboratorsData,
+                  onDelete: onRemoveCollaborator,
+                })
+              )}
             </Table>
           </VStack>
         </ModalBody>
