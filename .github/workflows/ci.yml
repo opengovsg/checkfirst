@@ -118,7 +118,7 @@ jobs:
             echo SESSION_SECRET=${{ secrets.SESSION_SECRET_STAGING }} >> $GITHUB_ENV;
             echo OTP_SECRET=${{ secrets.OTP_SECRET_STAGING }} >> $GITHUB_ENV;
             echo GA_TRACKING_ID=${{ secrets.GA_TRACKING_ID_STAGING }} >> $GITHUB_ENV;
-            echo MAIL_SUFFIX=${{ secrets.MAIL_SUFFIX_STAGING }} >> $GITHUB_ENV;
+            echo "MAIL_SUFFIX=${{ secrets.MAIL_SUFFIX_STAGING }}" >> $GITHUB_ENV;
             echo APP_HOST=staging.checkfirst.gov.sg >> $GITHUB_ENV;
             echo DEPLOY_TIMESTAMP=$(date) >> $GITHUB_ENV;
           elif [[ $GITHUB_REF == $PRODUCTION_BRANCH ]]; then
@@ -132,7 +132,7 @@ jobs:
             echo SESSION_SECRET=${{ secrets.SESSION_SECRET_PRODUCTION }} >> $GITHUB_ENV;
             echo OTP_SECRET=${{ secrets.OTP_SECRET_PRODUCTION }} >> $GITHUB_ENV;
             echo GA_TRACKING_ID=${{ secrets.GA_TRACKING_ID_PRODUCTION }} >> $GITHUB_ENV;
-            echo MAIL_SUFFIX=${{ secrets.MAIL_SUFFIX_PRODUCTION }} >> $GITHUB_ENV;
+            echo "MAIL_SUFFIX=${{ secrets.MAIL_SUFFIX_PRODUCTION }}" >> $GITHUB_ENV;
             echo APP_HOST=checkfirst.gov.sg >> $GITHUB_ENV;
             echo DEPLOY_TIMESTAMP=$(date) >> $GITHUB_ENV
           fi
