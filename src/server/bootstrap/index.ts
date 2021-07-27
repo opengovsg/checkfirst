@@ -43,7 +43,6 @@ const totp = totpFactory.clone({ step, window: [1, 0] })
 const mailSuffix = config.get('mailSuffix')
 
 const emailValidator = new minimatch.Minimatch(mailSuffix, {
-  noext: true,
   noglobstar: true,
   nobrace: true,
   nonegate: true,
