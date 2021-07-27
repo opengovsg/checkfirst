@@ -1,3 +1,4 @@
+import axios from 'axios'
 import React, { FC, useState } from 'react'
 import {
   Modal,
@@ -118,9 +119,16 @@ export const SettingsModal: FC = () => {
     [checkerId, 'publishedChecker'],
     () => CheckerService.getPublishedChecker(checkerId),
     {
-      onSuccess(data) {
+      onSuccess: (data) => {
         setIsDisabled(!data)
         setIsActive(!!data?.isActive)
+      },
+      onError: (err) => {
+        // If 404, it means that the checker is not yet published
+        if (axios.isAxiosError(err) && err.response?.status === 404) {
+          setIsDisabled(true)
+          setIsActive(false)
+        }
       },
     }
   )
