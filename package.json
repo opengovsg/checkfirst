@@ -25,7 +25,7 @@
   "license": "MIT",
   "devDependencies": {
     "@commitlint/cli": "^13.1.0",
-    "@commitlint/config-conventional": "^12.1.4",
+    "@commitlint/config-conventional": "^13.1.0",
     "@commitlint/travis-cli": "^13.1.0",
     "@sentry/webpack-plugin": "^1.16.0",
     "@types/convict": "^6.1.1",
