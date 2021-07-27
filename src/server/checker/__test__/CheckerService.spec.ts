@@ -40,6 +40,11 @@ describe('CheckerService', () => {
     isActive: false,
   }
 
+  const unpublishedChecker: Checker = {
+    ...checker,
+    id: 'unpublished-checker',
+  }
+
   const newPublishedChecker: Checker = {
     ...checker,
     title: 'New Published Title',
@@ -344,6 +349,7 @@ describe('CheckerService', () => {
       await UserModel.destroy({ truncate: true })
       await UserModel.create(user)
       await service.create(checker, user)
+      await service.create(unpublishedChecker, user)
       await UserModel.create(anotherUser)
       await service.publish(checker.id, checker, user)
     })
@@ -352,6 +358,14 @@ describe('CheckerService', () => {
       await expect(
         service.setActive(checker.id, anotherUser, false)
       ).rejects.toMatchObject(new Error('Unauthorized'))
+    })
+
+    it('should throw an error if the checker is not yet published', async () => {
+      await expect(
+        service.setActive(unpublishedChecker.id, user, true)
+      ).rejects.toMatchObject(
+        new Error('Unpublished checker cannot be set to active')
+      )
     })
 
     it('changes isActive of checker when user is a collaborator', async () => {

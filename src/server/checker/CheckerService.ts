@@ -367,6 +367,15 @@ export class CheckerService {
 
       try {
         const checker = await this.findAndCheckAuth(id, user, options)
+
+        // Only a published checker can be update its isActive value
+        const publishedChecker = await this.PublishedCheckerModel.findOne({
+          where: { checkerId: id },
+          ...options,
+        })
+        if (!publishedChecker)
+          throw new Error('Unpublished checker cannot be set to active')
+
         if (checker) {
           await this.CheckerModel.update(
             {
