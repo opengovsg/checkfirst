@@ -42,19 +42,20 @@ import { CollaboratorUser } from '../../../types/user'
 type CollaboratorsTableProps = {
   collaboratorsData: CollaboratorUser[] | undefined
   onDelete: (collaboratorEmail: string) => () => void
+  userEmail?: string
 }
 
 const CollaboratorsList: FC<CollaboratorsTableProps> = ({
   collaboratorsData,
   onDelete,
+  userEmail,
 }) => {
-  const { user } = useAuth()
   const tableItems = collaboratorsData?.map((collaborator) => {
     return (
       <Tr key={collaborator.id}>
         <Td px={0} py={0}>
           {collaborator.email +
-            (collaborator.email === user?.email ? ' (you)' : '')}
+            (collaborator.email === userEmail ? ' (you)' : '')}
         </Td>
         <Td px={0} py={0}>
           {collaborator.UserToChecker.isOwner ? (
@@ -411,7 +412,7 @@ export const SettingsModal: FC = () => {
             <Divider />
 
             <Table variant="simple">
-              {!collaboratorsDataIsFetched ? (
+              {!(collaboratorsDataIsFetched && user) ? (
                 <>
                   <Skeleton height="25px" />
                   <Skeleton height="25px" mt={2} />
@@ -419,6 +420,7 @@ export const SettingsModal: FC = () => {
                 </>
               ) : (
                 CollaboratorsList({
+                  userEmail: user.email,
                   collaboratorsData,
                   onDelete: onRemoveCollaborator,
                 })
