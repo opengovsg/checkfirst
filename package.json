@@ -26,7 +26,7 @@
   "devDependencies": {
     "@commitlint/cli": "^13.1.0",
     "@commitlint/config-conventional": "^12.1.4",
-    "@commitlint/travis-cli": "^12.1.4",
+    "@commitlint/travis-cli": "^13.1.0",
     "@sentry/webpack-plugin": "^1.16.0",
     "@types/convict": "^6.1.1",
     "@types/express": "^4.17.13",
@@ -96,7 +96,7 @@
     "@sentry/react": "^6.10.0",
     "@sentry/tracing": "^6.10.0",
     "ace-builds": "^1.4.12",
-    "aws-sdk": "^2.953.0",
+    "aws-sdk": "^2.954.0",
     "axios": "^0.21.1",
     "body-parser": "^1.19.0",
     "connect-session-sequelize": "^7.1.1",
