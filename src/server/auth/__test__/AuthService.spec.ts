@@ -84,6 +84,82 @@ describe('AuthService', () => {
       expect(totp.generate).not.toHaveBeenCalled()
       expect(mailer.sendMail).not.toHaveBeenCalled()
     })
+    it.each([
+      'nongovernment@valid.com.sg',
+      'user@agency.gov.sg',
+      'user@test.gov.sg',
+    ])('should support multiple whitelisted domains', async (email) => {
+      const otp = '111111'
+      const ip = '192.168.0.1'
+      totp.generate.mockReturnValue(otp)
+
+      const mailSuffix = '@(*.gov.sg|*@valid.com.sg)'
+      const multiDomainValidator = new minimatch.Minimatch(mailSuffix, {
+        noglobstar: true,
+        nobrace: true,
+        nonegate: true,
+      })
+      const auth = new AuthService({
+        secret,
+        appHost,
+        emailValidator: multiDomainValidator,
+        totp,
+        mailer,
+      })
+
+      auth.sendOTP(email, ip)
+      expect(totp.generate).toHaveBeenCalledWith(secret + email)
+      expect(mailer.sendMail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: email,
+          html: expect.stringContaining(otp),
+        })
+      )
+      expect(mailer.sendMail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: email,
+          html: expect.stringContaining(ip),
+        })
+      )
+      expect(mailer.sendMail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: email,
+          html: expect.stringContaining(
+            Math.floor(totp.options.step / 60) + ' minutes'
+          ),
+        })
+      )
+    })
+    it.each([
+      'user@subdomain.valid.com.sg',
+      'user@invalid.com.sg',
+      'user@valid.com.sg.sg',
+    ])(
+      'rejects invalid email with multiple whitelisted domain provided',
+      async (email) => {
+        const otp = '111111'
+        const ip = '192.168.0.1'
+        totp.generate.mockReturnValue(otp)
+
+        const mailSuffix = '@(*.gov.sg|*@valid.com.sg)'
+        const multiDomainValidator = new minimatch.Minimatch(mailSuffix, {
+          noglobstar: true,
+          nobrace: true,
+          nonegate: true,
+        })
+        const auth = new AuthService({
+          secret,
+          appHost,
+          emailValidator: multiDomainValidator,
+          totp,
+          mailer,
+        })
+
+        await expect(() => auth.sendOTP(email, ip)).rejects.toThrowError()
+        expect(totp.generate).not.toHaveBeenCalled()
+        expect(mailer.sendMail).not.toHaveBeenCalled()
+      }
+    )
   })
 
   describe('verifyOTP', () => {
