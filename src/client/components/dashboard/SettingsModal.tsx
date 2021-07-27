@@ -145,6 +145,8 @@ export const SettingsModal: FC = () => {
           isActive ? 'inactivated' : 'activated'
         }`,
       })
+      // Refetch checkers again to ensure that their status are up-to-date on dashboard
+      queryClient.invalidateQueries('checkers')
       setIsActive(data)
       setIsDisabled(false)
     },

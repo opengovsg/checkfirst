@@ -35,12 +35,22 @@ type CheckerCardProps = {
 }
 
 type StatusIndicatorProps = {
-  status: 'published' | 'draft'
+  status: 'active' | 'inactive' | 'draft'
 }
 
 const StatusIndicator: FC<StatusIndicatorProps> = ({ status }) => {
   const styles = useMultiStyleConfig('CheckerCard', {})
-  const color = status === 'published' ? 'success.500' : 'warning.500'
+  let color
+  switch (status) {
+    case 'active':
+      color = 'success.500'
+      break
+    case 'inactive':
+      color = 'red.500'
+      break
+    default:
+      color = 'warning.500'
+  }
 
   return (
     <Flex sx={styles.indicator} direction="row">
@@ -153,6 +163,14 @@ export const CheckerCard: FC<CheckerCardProps> = ({ checker }) => {
     },
   ]
 
+  const getCheckerStatus = () => {
+    const { isActive, publishedCheckers } = checker
+    const isPublished = publishedCheckers.length > 0
+
+    if (!isPublished) return 'draft'
+    return isActive ? 'active' : 'inactive'
+  }
+
   return (
     <>
       <Link to={{ pathname: `/builder/${checker.id}` }}>
@@ -169,11 +187,7 @@ export const CheckerCard: FC<CheckerCardProps> = ({ checker }) => {
             </Text>
           </VStack>
           <Flex direction="row" sx={styles.actions}>
-            <StatusIndicator
-              status={
-                checker.publishedCheckers.length > 0 ? 'published' : 'draft'
-              }
-            />
+            <StatusIndicator status={getCheckerStatus()} />
             <ActionMenu actions={actions} />
           </Flex>
         </VStack>
