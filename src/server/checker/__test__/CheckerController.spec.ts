@@ -19,7 +19,6 @@ describe('CheckerController', () => {
     constants: [],
     displays: [],
     operations: [],
-    isActive: false,
   }
 
   const service = {
@@ -30,6 +29,7 @@ describe('CheckerController', () => {
     delete: jest.fn(),
     retrievePublished: jest.fn(),
     publish: jest.fn(),
+    setActive: jest.fn(),
     listCollaborators: jest.fn(),
     addCollaborator: jest.fn(),
     deleteCollaborator: jest.fn(),
@@ -395,6 +395,38 @@ describe('CheckerController', () => {
         .expect(400)
       expect(response.body).toStrictEqual({ message })
       expect(service.publish).toHaveBeenCalledWith(id, checker, user)
+    })
+  })
+
+  describe('setActive', () => {
+    const user = { id: 1, email: 'user@agency.gov.sg' }
+    const app = express()
+    app.use(bodyParser.json())
+    app.use(sessionMiddleware({ user }))
+    app.post('/c/drafts/:id/active', controller.setActive)
+
+    beforeEach(() => {
+      service.setActive.mockReset()
+    })
+
+    it('rejects non-authenticated setting of checker isActive', async () => {
+      const app = express()
+      app.use(bodyParser.json())
+      app.use(sessionMiddleware({}))
+      app.post('/c/drafts/:id/active', controller.setActive)
+
+      await request(app).post(`/c/drafts/${checker.id}/active`).expect(401)
+      expect(service.setActive).not.toHaveBeenCalled()
+    })
+
+    it('allows authenticated setting of checker isActive', async () => {
+      const isActive = true
+      const response = await request(app)
+        .post(`/c/drafts/${checker.id}/active`)
+        .send({ isActive })
+        .expect(200)
+      expect(response.body).toStrictEqual({ isActive })
+      expect(service.setActive).toHaveBeenCalledWith(checker.id, user, isActive)
     })
   })
 

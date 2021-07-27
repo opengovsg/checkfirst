@@ -139,7 +139,7 @@ export const CheckerCard: FC<CheckerCardProps> = ({ checker }) => {
   }
 
   const onSettings = () => {
-    history.push(`${path}/settings/${checker.id}`, { checker })
+    history.push(`${path}/settings/${checker.id}`)
   }
 
   const actions = [

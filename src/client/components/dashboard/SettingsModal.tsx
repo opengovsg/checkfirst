@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import React, { FC, useState } from 'react'
 import {
   Modal,
@@ -29,7 +28,7 @@ import {
 import { Box, Text } from '@chakra-ui/layout'
 import { BiLinkExternal, BiTrash } from 'react-icons/bi'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { useHistory, useLocation, useParams } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import { useAuth } from '../../contexts'
 import { useStyledToast } from '../common/StyledToast'
 import { ConfirmDialog } from '../ConfirmDialog'
@@ -37,17 +36,12 @@ import { DefaultTooltip } from '../common/DefaultTooltip'
 import { getApiErrorMessage } from '../../api'
 import { CheckerService } from '../../services'
 
-import { Checker } from '../../../types/checker'
 import { EmbedField } from '../common/EmbedField'
 import { CollaboratorUser } from '../../../types/user'
 
 type CollaboratorsTableProps = {
   collaboratorsData: CollaboratorUser[] | undefined
   onDelete: (collaboratorEmail: string) => () => void
-}
-
-type LocationState = {
-  checker: Checker
 }
 
 const CollaboratorsList: FC<CollaboratorsTableProps> = ({
@@ -94,17 +88,11 @@ export const SettingsModal: FC = () => {
   const queryClient = useQueryClient()
   const styledToast = useStyledToast()
   const history = useHistory()
-  const location = useLocation<LocationState>()
 
   const checkerId =
     useParams<{
       id?: string
     }>().id || ''
-  let propChecker = location.state?.checker
-  propChecker = _.omit(propChecker, [
-    'publishedCheckers',
-    'updatedAt',
-  ]) as Checker
 
   const [selectedCollaborator, setSelectedCollaborator] = useState('')
   const [isDisabled, setIsDisabled] = useState(true)
@@ -148,7 +136,7 @@ export const SettingsModal: FC = () => {
   )
 
   // Update checker isActive
-  const setActive = useMutation(CheckerService.updateChecker, {
+  const setActive = useMutation(CheckerService.setActive, {
     onSuccess: (data) => {
       styledToast({
         status: 'success',
@@ -156,7 +144,7 @@ export const SettingsModal: FC = () => {
           isActive ? 'inactivated' : 'activated'
         }`,
       })
-      setIsActive(data.isActive)
+      setIsActive(data)
       setIsDisabled(false)
     },
     onError: (err) => {
@@ -213,7 +201,7 @@ export const SettingsModal: FC = () => {
   const onSwitchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setIsDisabled(true)
     setActive.mutateAsync({
-      ...propChecker,
+      id: checkerId,
       isActive: event.target.checked,
     })
   }

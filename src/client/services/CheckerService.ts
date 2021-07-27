@@ -32,7 +32,9 @@ const createChecker = async (
   )
 }
 
-const getPublishedChecker = async (id: string): Promise<checker.Checker> => {
+const getPublishedChecker = async (
+  id: string
+): Promise<checker.GetPublishedCheckerWithoutDraftCheckerDTO> => {
   return ApiClient.get(`/c/${id}`).then((res) => res.data)
 }
 
@@ -41,6 +43,18 @@ const publishChecker = async (
 ): Promise<checker.Checker> => {
   return ApiClient.post(`/c/drafts/${checker.id}/publish`, checker).then(
     (res) => res.data
+  )
+}
+
+const setActive = async ({
+  id,
+  isActive,
+}: {
+  id: string
+  isActive: boolean
+}): Promise<boolean> => {
+  return ApiClient.post(`/c/drafts/${id}/active`, { isActive }).then(
+    (res) => res.data.isActive
   )
 }
 
@@ -78,6 +92,7 @@ export const CheckerService = {
   createChecker,
   getPublishedChecker,
   publishChecker,
+  setActive,
   listCollaborators,
   addCollaborator,
   deleteCollaborator,

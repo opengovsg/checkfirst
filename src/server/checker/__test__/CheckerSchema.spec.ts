@@ -9,7 +9,6 @@ describe('CheckerSchema', () => {
     constants: [],
     displays: [],
     operations: [],
-    isActive: true,
   }
 
   describe('checker metadata', () => {

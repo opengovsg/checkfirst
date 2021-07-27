@@ -154,6 +154,26 @@ export class CheckerController {
     }
   }
 
+  setActive: (req: Request, res: Response) => Promise<void> = async (
+    req,
+    res
+  ) => {
+    const { id } = req.params
+    const { isActive } = req.body
+    const { user } = req.session
+    if (!user) {
+      res.status(401).json({ message: 'User not signed in' })
+      return
+    }
+
+    try {
+      await this.service.setActive(id, user, isActive)
+      res.json({ isActive: isActive })
+    } catch (error) {
+      res.status(400).json({ message: error.message })
+    }
+  }
+
   listCollaborators: (req: Request, res: Response) => Promise<void> = async (
     req,
     res

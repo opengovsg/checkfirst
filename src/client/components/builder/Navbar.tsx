@@ -92,7 +92,7 @@ export const Navbar: FC = () => {
   }
 
   const onSettings = () => {
-    history.push(`${match?.url}/settings`, { checker })
+    history.push(`${match?.url}/settings`)
   }
 
   return (

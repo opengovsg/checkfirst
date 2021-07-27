@@ -1,5 +1,6 @@
 import {
   Checker,
+  CheckerWithActive,
   CreatePublishedCheckerDTO,
   GetPublishedCheckerWithoutDraftCheckerDTO,
 } from '../../types/checker'
@@ -12,6 +13,8 @@ import {
   PublishedChecker as PublishedCheckerModel,
   UserToChecker as UserToCheckerModel,
 } from '../database/models'
+import { Transaction } from 'sequelize'
+import _ from 'lodash'
 
 export class CheckerService {
   private sequelize: Sequelize
@@ -52,7 +55,14 @@ export class CheckerService {
           throw new Error(`User ${user.id} [${user.email}] not found`)
         }
 
-        const checkerInstance = await this.CheckerModel.create(checker, options)
+        const checkerInstance = await this.CheckerModel.create(
+          {
+            ...checker,
+            isActive: false,
+          },
+          options
+        )
+
         await this.UserToCheckerModel.create(
           {
             checkerId: checkerInstance.id,
@@ -92,7 +102,9 @@ export class CheckerService {
     id,
     user
   ) => {
-    return await this.findAndCheckAuth(id, user)
+    const checker = await this.findAndCheckAuth(id, user)
+    if (checker) return _.omit(checker.toJSON(), ['isActive']) as Checker
+    else return null
   }
 
   retrievePublished: (
@@ -141,14 +153,30 @@ export class CheckerService {
       const transactionOptions = this.isSqliteFile ? {} : { transaction }
 
       try {
-        const existingChecker = await this.findAndCheckAuth(id, user)
+        const existingChecker = await this.findAndCheckAuth(
+          id,
+          user,
+          transactionOptions
+        )
         if (!existingChecker) throw new Error(`Checker ${id} not found`)
 
-        // Perform update in checkers and create in publishedCheckers with 1 transaction
-        await this.CheckerModel.update(checker, {
-          where: { id },
+        // Check if a published checker already exists. If this is the first publish, set checker isActive to true
+        const publishedChecker = await this.PublishedCheckerModel.findOne({
+          where: { checkerId: id },
           ...transactionOptions,
         })
+
+        // Perform update in checkers and create in publishedCheckers with 1 transaction
+        await this.CheckerModel.update(
+          {
+            ...checker,
+            isActive: publishedChecker ? existingChecker.isActive : true,
+          },
+          {
+            where: { id },
+            ...transactionOptions,
+          }
+        )
 
         const createPublishedChecker: CreatePublishedCheckerDTO = {
           title: checker.title,
@@ -175,11 +203,17 @@ export class CheckerService {
 
   private findAndCheckAuth: (
     id: string,
-    user: User
+    user: User,
+    transactionOptions?: { transaction?: Transaction }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ) => Promise<(Model<Checker, any> & Checker) | null> = async (id, user) => {
+  ) => Promise<(Model<Checker, any> & CheckerWithActive) | null> = async (
+    id,
+    user,
+    transactionOptions = {}
+  ) => {
     const checker = await this.CheckerModel.findByPk(id, {
       include: [this.UserModel],
+      ...transactionOptions,
     })
     if (checker) {
       const isAuthorized = checker.users?.some((u) => u.id === user.id)
@@ -192,11 +226,17 @@ export class CheckerService {
 
   private findAndCheckAuthOwner: (
     id: string,
-    user: User | null
+    user: User | null,
+    transaction?: { transaction?: Transaction }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ) => Promise<(Model<Checker, any> & Checker) | null> = async (id, user) => {
+  ) => Promise<(Model<Checker, any> & CheckerWithActive) | null> = async (
+    id,
+    user,
+    transactionOptions
+  ) => {
     const checker = await this.CheckerModel.findByPk(id, {
       include: [this.UserModel],
+      ...transactionOptions,
     })
     if (checker) {
       const isAuthorized = checker.users?.some(
@@ -232,7 +272,7 @@ export class CheckerService {
     const options = this.isSqliteFile ? {} : { transaction }
 
     try {
-      const checker = await this.findAndCheckAuth(id, user)
+      const checker = await this.findAndCheckAuth(id, user, options)
       collaboratorEmail = collaboratorEmail.toLowerCase()
 
       if (checker) {
@@ -246,12 +286,12 @@ export class CheckerService {
         if (checker.users?.some((u) => u.email === collaboratorEmail))
           throw new Error('User is already a collaborator')
         if (collaboratorUser) {
-          // Sequelize automatically adds addChecker method to user model through association
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          await collaboratorUser.addChecker(
-            checker,
-            { through: { isOwner: false } },
+          await this.UserToCheckerModel.create(
+            {
+              checkerId: checker.id,
+              userId: collaboratorUser.id,
+              isOwner: false,
+            },
             options
           )
           await transaction.commit()
@@ -273,9 +313,9 @@ export class CheckerService {
   ) => Promise<void> = async (id, user, collaboratorEmail) => {
     const transaction = await this.sequelize.transaction()
     const options = this.isSqliteFile ? {} : { transaction }
-    const checker = await this.findAndCheckAuth(id, user)
 
     try {
+      const checker = await this.findAndCheckAuth(id, user, options)
       if (checker) {
         // Sequelize automatically adds users property to user model through association
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -305,14 +345,46 @@ export class CheckerService {
   ) => Promise<number> = async (id, checker, user) => {
     const c = await this.findAndCheckAuth(id, user)
     if (c) {
-      const [count] = await this.CheckerModel.update(checker, {
-        where: { id },
-      })
+      const [count] = await this.CheckerModel.update(
+        {
+          ...checker,
+          isActive: c.isActive,
+        },
+        {
+          where: { id },
+        }
+      )
       return count
     } else {
       return 0
     }
   }
+
+  setActive: (id: string, user: User, isActive: boolean) => Promise<void> =
+    async (id, user, isActive) => {
+      const transaction = await this.sequelize.transaction()
+      const options = this.isSqliteFile ? {} : { transaction }
+
+      try {
+        const checker = await this.findAndCheckAuth(id, user, options)
+        if (checker) {
+          await this.CheckerModel.update(
+            {
+              isActive: isActive,
+            },
+            {
+              where: { id: checker.id },
+              ...options,
+            }
+          )
+        }
+        await transaction.commit()
+      } catch (error) {
+        this.logger?.error(error)
+        await transaction.rollback()
+        throw error
+      }
+    }
 
   delete: (id: string, user: User) => Promise<number> = async (id, user) => {
     const checker = await this.findAndCheckAuthOwner(id, user)

@@ -33,7 +33,11 @@ describe('CheckerService', () => {
     constants: [],
     operations: [],
     displays: [],
-    isActive: true,
+  }
+
+  const checkerWithActive = {
+    ...checker,
+    isActive: false,
   }
 
   const newPublishedChecker: Checker = {
@@ -49,7 +53,6 @@ describe('CheckerService', () => {
     constants: [],
     operations: [],
     displays: [],
-    isActive: true,
   }
 
   beforeAll(async () => {
@@ -62,7 +65,7 @@ describe('CheckerService', () => {
       await UserModel.destroy({ truncate: true })
     })
     it('returns false if checker exists', async () => {
-      await CheckerModel.create(checker)
+      await CheckerModel.create(checkerWithActive)
 
       const created = await service.create(checker, user)
 
@@ -253,7 +256,7 @@ describe('CheckerService', () => {
       await service.create(checker, user)
     })
 
-    it('listing collaborators should throw error if user is not collaborator of checker', async () => {
+    it('should throw error if user is not collaborator of checker when listing collaborators', async () => {
       await expect(
         service.listCollaborators(checker.id, anotherUser)
       ).rejects.toMatchObject(new Error('Unauthorized'))
@@ -325,12 +328,36 @@ describe('CheckerService', () => {
       })
     })
 
-    it('updates creates new publishedChecker on publish', async () => {
+    it('updates creates new publishedChecker on publish and sets isActive of checker to true', async () => {
       const actualPublishedChecker = await service.retrievePublished(checker.id)
 
       expect(actualPublishedChecker).toMatchObject({
         ...newPublishedChecker,
+        isActive: true,
       })
+    })
+  })
+
+  describe('setActive', () => {
+    beforeAll(async () => {
+      await CheckerModel.destroy({ truncate: true })
+      await UserModel.destroy({ truncate: true })
+      await UserModel.create(user)
+      await service.create(checker, user)
+      await UserModel.create(anotherUser)
+      await service.publish(checker.id, checker, user)
+    })
+
+    it('should throw error if user is not a collaborator of checker', async () => {
+      await expect(
+        service.setActive(checker.id, anotherUser, false)
+      ).rejects.toMatchObject(new Error('Unauthorized'))
+    })
+
+    it('changes isActive of checker when user is a collaborator', async () => {
+      await service.setActive(checker.id, user, false)
+      const publishedChecker = await service.retrievePublished(checker.id)
+      expect(publishedChecker?.isActive).toEqual(false)
     })
   })
 })

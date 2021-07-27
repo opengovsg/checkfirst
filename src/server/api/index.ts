@@ -28,6 +28,9 @@ export default (options: {
   api.put('/c/drafts/:id', checker.put)
   api.delete('/c/drafts/:id', checker.delete)
 
+  // Set whether checker is active
+  api.post('/c/drafts/:id/active', checker.setActive)
+
   // Adding and deleting collaborators
   api.get('/c/drafts/:id/collaborator', checker.listCollaborators)
   api.post('/c/drafts/:id/collaborator', checker.addCollaborator)

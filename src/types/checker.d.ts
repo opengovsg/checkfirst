@@ -16,6 +16,17 @@ export type Checker = Pick<
   | 'constants'
   | 'operations'
   | 'displays'
+>
+
+export type CheckerWithActive = Pick<
+  CheckerModel,
+  | 'id'
+  | 'title'
+  | 'description'
+  | 'fields'
+  | 'constants'
+  | 'operations'
+  | 'displays'
   | 'isActive'
 >
 
@@ -53,9 +64,6 @@ export type GetPublishedCheckerWithoutDraftCheckerDTO = Pick<
   | 'constants'
   | 'operations'
   | 'displays'
-  | 'createdAt'
-  | 'updatedAt'
-  | 'checkerId'
 > & { isActive: boolean }
 
 export type ConfigArrayName = 'fields' | 'operations' | 'displays' | 'constants'
