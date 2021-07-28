@@ -1,11 +1,11 @@
 import { reducer } from '../CheckerContext'
 import { BuilderAction } from '../../../types/builder'
 import {
-  Checker,
   Field,
   Operation,
   Display,
   Constant,
+  CheckerWithActive,
   // ConfigArrayEnum
 } from '../../../types/checker'
 
@@ -36,13 +36,14 @@ const initialConstant: Constant = {
   title: 'initial_constant',
   table: [{ key: 'test', value: 2 }],
 }
-const initialChecker: Checker = {
+const initialChecker: CheckerWithActive = {
   id: 'Initial',
   title: 'Checker test',
   fields: [initialField],
   operations: [initialOperation],
   constants: [initialConstant],
   displays: [initialDisplay],
+  isActive: true,
 }
 
 // Objects to be used by the test cases

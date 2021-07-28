@@ -7,11 +7,12 @@ import {
   PublishedChecker as PublishedCheckerModel,
 } from '../../database/models'
 import { Checker } from '../../../types/checker'
-import { User } from '../../../types/user'
+import { CollaboratorUser, User } from '../../../types/user'
 
 describe('CheckerService', () => {
   const sequelize = new Sequelize({
     dialect: 'sqlite',
+    storage: '/tmp/testDB.sqlite',
     logging: undefined,
     models: [
       UserModel,
@@ -33,6 +34,17 @@ describe('CheckerService', () => {
     operations: [],
     displays: [],
   }
+
+  const checkerWithActive = {
+    ...checker,
+    isActive: false,
+  }
+
+  const unpublishedChecker: Checker = {
+    ...checker,
+    id: 'unpublished-checker',
+  }
+
   const newPublishedChecker: Checker = {
     ...checker,
     title: 'New Published Title',
@@ -58,7 +70,7 @@ describe('CheckerService', () => {
       await UserModel.destroy({ truncate: true })
     })
     it('returns false if checker exists', async () => {
-      await CheckerModel.create(checker)
+      await CheckerModel.create(checkerWithActive)
 
       const created = await service.create(checker, user)
 
@@ -228,6 +240,81 @@ describe('CheckerService', () => {
     })
   })
 
+  describe('collaborators', () => {
+    const collaboratorUser: CollaboratorUser = {
+      ...user,
+      UserToChecker: {
+        isOwner: true,
+      },
+    }
+    const anotherCollaboratorUser: CollaboratorUser = {
+      ...anotherUser,
+      UserToChecker: {
+        isOwner: false,
+      },
+    }
+    beforeEach(async () => {
+      await CheckerModel.destroy({ truncate: true })
+      await UserModel.destroy({ truncate: true })
+      await UserModel.create(user)
+      await UserModel.create(anotherUser)
+      await service.create(checker, user)
+    })
+
+    it('should throw error if user is not collaborator of checker when listing collaborators', async () => {
+      await expect(
+        service.listCollaborators(checker.id, anotherUser)
+      ).rejects.toMatchObject(new Error('Unauthorized'))
+    })
+
+    it('should list all collaborators of the checker if user is collaborator of checker', async () => {
+      const collaborators = await service.listCollaborators(checker.id, user)
+      expect(collaborators.length).toBe(1)
+      expect(collaborators[0]).toMatchObject(collaboratorUser)
+    })
+
+    it('does not add collaborator if not already user', async () => {
+      await UserModel.destroy({ where: { email: anotherUser.email } })
+      await expect(
+        service.addCollaborator(checker.id, user, anotherUser.email)
+      ).rejects.toMatchObject(new Error('No such user'))
+      const collaborators = await service.listCollaborators(checker.id, user)
+      expect(collaborators.length).toBe(1)
+    })
+
+    it('does not add collaborator if user to add is already a collaborator', async () => {
+      await expect(
+        service.addCollaborator(checker.id, user, user.email)
+      ).rejects.toMatchObject(new Error('User is already a collaborator'))
+      const collaborators = await service.listCollaborators(checker.id, user)
+      expect(collaborators.length).toBe(1)
+    })
+
+    it('successfully adds new user as collaborator', async () => {
+      await service.addCollaborator(checker.id, user, anotherUser.email)
+      const collaborators = await service.listCollaborators(checker.id, user)
+      expect(collaborators.length).toBe(2)
+      expect(collaborators[1]).toMatchObject(anotherCollaboratorUser)
+    })
+
+    it('should not delete collaborator if collaborator to delete is owner', async () => {
+      await service.addCollaborator(checker.id, user, anotherUser.email)
+      await expect(
+        service.deleteCollaborator(checker.id, anotherUser, user.email)
+      ).rejects.toMatchObject(new Error('Error removing collaborator'))
+      const collaborators = await service.listCollaborators(checker.id, user)
+      expect(collaborators.length).toBe(2)
+    })
+
+    it('successfully deletes collaborator if collaborator is not owner', async () => {
+      await service.addCollaborator(checker.id, user, anotherUser.email)
+      await service.deleteCollaborator(checker.id, user, anotherUser.email)
+      const collaborators = await service.listCollaborators(checker.id, user)
+      expect(collaborators.length).toBe(1)
+      expect(collaborators[0]).toMatchObject(collaboratorUser)
+    })
+  })
+
   describe('publish', () => {
     beforeAll(async () => {
       await CheckerModel.destroy({ truncate: true })
@@ -246,12 +333,45 @@ describe('CheckerService', () => {
       })
     })
 
-    it('updates creates new publishedChecker on publish', async () => {
+    it('updates creates new publishedChecker on publish and sets isActive of checker to true', async () => {
       const actualPublishedChecker = await service.retrievePublished(checker.id)
 
       expect(actualPublishedChecker).toMatchObject({
         ...newPublishedChecker,
+        isActive: true,
       })
+    })
+  })
+
+  describe('setActive', () => {
+    beforeAll(async () => {
+      await CheckerModel.destroy({ truncate: true })
+      await UserModel.destroy({ truncate: true })
+      await UserModel.create(user)
+      await service.create(checker, user)
+      await service.create(unpublishedChecker, user)
+      await UserModel.create(anotherUser)
+      await service.publish(checker.id, checker, user)
+    })
+
+    it('should throw error if user is not a collaborator of checker', async () => {
+      await expect(
+        service.setActive(checker.id, anotherUser, false)
+      ).rejects.toMatchObject(new Error('Unauthorized'))
+    })
+
+    it('should throw an error if the checker is not yet published', async () => {
+      await expect(
+        service.setActive(unpublishedChecker.id, user, true)
+      ).rejects.toMatchObject(
+        new Error('Unpublished checker cannot be set to active')
+      )
+    })
+
+    it('changes isActive of checker when user is a collaborator', async () => {
+      await service.setActive(checker.id, user, false)
+      const publishedChecker = await service.retrievePublished(checker.id)
+      expect(publishedChecker?.isActive).toEqual(false)
     })
   })
 })

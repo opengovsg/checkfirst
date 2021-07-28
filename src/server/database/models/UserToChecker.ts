@@ -1,6 +1,7 @@
 import {
   Column,
   CreatedAt,
+  DataType,
   ForeignKey,
   Model,
   Table,
@@ -19,6 +20,12 @@ export class UserToChecker extends Model {
   @ForeignKey(() => Checker)
   @Column
   checkerId!: string
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  isOwner!: boolean
 
   @CreatedAt
   createdAt!: Date
