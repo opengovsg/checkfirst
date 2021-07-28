@@ -49,6 +49,7 @@ functions:
       CSP_REPORT_URI: ${env:CSP_REPORT_URI}
       APP_HOST: ${env:APP_HOST}
       DEPLOY_TIMESTAMP: ${env:DEPLOY_TIMESTAMP}
+      MAIL_SUFFIX: ${env:MAIL_SUFFIX}
     events:
       - http:
           path: api/v1/{proxy+}
