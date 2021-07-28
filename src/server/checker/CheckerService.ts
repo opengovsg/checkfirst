@@ -117,7 +117,7 @@ export class CheckerService {
 
     try {
       // Check if checker is active
-      const checker = await this.CheckerModel.findByPk(id)
+      const checker = await this.CheckerModel.findByPk(id, { ...options })
       const result = await this.PublishedCheckerModel.findOne({
         attributes: [
           ['checkerId', 'id'], // rename checkerId as id
