@@ -10,7 +10,7 @@ module.exports = {
 
     const query =
       'UPDATE checkers ' +
-      'SET isActive = EXISTS( SELECT 1 FROM checkers as c1, "publishedCheckers" as pc1 ' +
+      'SET "isActive" = EXISTS( SELECT 1 FROM checkers as c1, "publishedCheckers" as pc1 ' +
       'WHERE c1.id = pc1."checkerId" ' +
       'AND checkers.id = pc1."checkerId")'
     await queryInterface.sequelize.query(query, {
