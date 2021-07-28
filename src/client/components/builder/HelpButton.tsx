@@ -18,6 +18,7 @@ import {
   Spacer,
   Portal,
   useDisclosure,
+  useOutsideClick,
 } from '@chakra-ui/react'
 import { Text } from '@chakra-ui/layout'
 import {
@@ -43,19 +44,27 @@ import { useRouteMatch } from 'react-router-dom'
 
 import { IconType } from 'react-icons'
 
+// States denoting the pages of the help button menu popover
+enum PopoverTabState {
+  Overall = '',
+  Questions = 'questions',
+  Constants = 'constants',
+  Logic = 'logic',
+}
+
+// Data type for help button menu links
+type HelpLink = {
+  title: string
+  link: string
+  icon: IconType
+}
+
 export const HelpButton: FC = () => {
   const { GA_USER_EVENTS } = useGoogleAnalytics()
   const { url } = useRouteMatch()
   const { onOpen, onClose, isOpen } = useDisclosure()
-  const wrapperRef = useRef<HTMLDivElement>(null)
+  const popoverRef = useRef<HTMLDivElement>(null)
 
-  // States denoting the pages of the help button menu popover
-  enum PopoverTabState {
-    Overall = '',
-    Questions = 'questions',
-    Constants = 'constants',
-    Logic = 'logic',
-  }
   const [currentTabState, setTabState] = useState(PopoverTabState.Overall)
 
   // Set initial help button menu page based on action in the url
@@ -66,27 +75,10 @@ export const HelpButton: FC = () => {
   }, [url])
 
   // Force-close popover when clicking anywhere outside popover element
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        wrapperRef.current &&
-        !wrapperRef.current.contains(event.target as Node)
-      ) {
-        onClose()
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [onClose])
-
-  // Data type for help button menu links
-  type HelpLink = {
-    title: string
-    link: string
-    icon: IconType
-  }
+  useOutsideClick({
+    ref: popoverRef,
+    handler: onClose,
+  })
 
   const questionTabs: HelpLink[] = [
     {
@@ -282,7 +274,7 @@ export const HelpButton: FC = () => {
         </DefaultTooltip>
 
         <Portal>
-          <PopoverContent height="350px" ref={wrapperRef}>
+          <PopoverContent height="350px" ref={popoverRef}>
             <PopoverCloseButton />
             <PopoverHeader>
               <PopoverTitle currentTab={currentTabState} />
