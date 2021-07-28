@@ -61,6 +61,12 @@ export class Checker extends Model {
   })
   displays!: Display[]
 
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  isActive!: boolean
+
   @BelongsToMany(() => User, () => UserToChecker)
   users!: User[]
 

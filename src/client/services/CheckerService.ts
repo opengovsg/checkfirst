@@ -1,6 +1,7 @@
 import { ApiClient } from '../api'
 
 import * as checker from '../../types/checker'
+import CollaboratorUser from '../../types/user'
 
 const getChecker = async (id: string): Promise<checker.Checker> => {
   return ApiClient.get(`/c/drafts/${id}`).then((res) => res.data)
@@ -31,7 +32,9 @@ const createChecker = async (
   )
 }
 
-const getPublishedChecker = async (id: string): Promise<checker.Checker> => {
+const getPublishedChecker = async (
+  id: string
+): Promise<checker.GetPublishedCheckerWithoutDraftCheckerDTO> => {
   return ApiClient.get(`/c/${id}`).then((res) => res.data)
 }
 
@@ -43,6 +46,44 @@ const publishChecker = async (
   )
 }
 
+const setActive = async ({
+  id,
+  isActive,
+}: {
+  id: string
+  isActive: boolean
+}): Promise<boolean> => {
+  return ApiClient.post(`/c/drafts/${id}/active`, { isActive }).then(
+    (res) => res.data.isActive
+  )
+}
+
+const listCollaborators = async (id: string): Promise<CollaboratorUser[]> => {
+  return ApiClient.get(`/c/drafts/${id}/collaborator`).then((res) => res.data)
+}
+
+const addCollaborator = async ({
+  id,
+  collaboratorEmail,
+}: {
+  id: string
+  collaboratorEmail: string
+}): Promise<void> => {
+  return ApiClient.post(`/c/drafts/${id}/collaborator`, { collaboratorEmail })
+}
+
+const deleteCollaborator = async ({
+  id,
+  collaboratorEmail,
+}: {
+  id: string
+  collaboratorEmail: string
+}): Promise<void> => {
+  return ApiClient.delete(`/c/drafts/${id}/collaborator`, {
+    data: { collaboratorEmail },
+  })
+}
+
 export const CheckerService = {
   getChecker,
   listCheckers,
@@ -51,4 +92,8 @@ export const CheckerService = {
   createChecker,
   getPublishedChecker,
   publishChecker,
+  setActive,
+  listCollaborators,
+  addCollaborator,
+  deleteCollaborator,
 }
