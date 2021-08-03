@@ -24,20 +24,11 @@ import { Text } from '@chakra-ui/layout'
 import {
   BiArrowBack,
   BiCalculator,
-  BiCalendar,
-  BiGitBranch,
-  BiGitCompare,
   BiQuestionMark,
-  BiRadioCircleMarked,
   BiTable,
+  BiText,
 } from 'react-icons/bi'
-import {
-  FiAtSign,
-  HiHashtag,
-  IoEyeOutline,
-  RiArrowRightSLine,
-  RiCheckboxMultipleBlankFill,
-} from 'react-icons/all'
+import { FiAtSign, IoEyeOutline, RiArrowRightSLine } from 'react-icons/all'
 import { useGoogleAnalytics } from '../../contexts'
 import { DefaultTooltip } from '../common/DefaultTooltip'
 import { useRouteMatch } from 'react-router-dom'
@@ -82,65 +73,40 @@ export const HelpButton: FC = () => {
 
   const questionTabs: HelpLink[] = [
     {
-      title: 'Numeric',
-      link: 'https://guide.checkfirst.gov.sg/features/form-builder#question-types',
-      icon: HiHashtag,
-    },
-    {
-      title: 'Radio question',
-      link: 'https://guide.checkfirst.gov.sg/features/form-builder#question-types',
-      icon: BiRadioCircleMarked,
-    },
-    {
-      title: 'Checkbox question',
-      link: 'https://guide.checkfirst.gov.sg/features/form-builder#question-types',
-      icon: RiCheckboxMultipleBlankFill,
-    },
-    {
-      title: 'Date question',
-      link: 'https://guide.checkfirst.gov.sg/features/form-builder#question-types',
-      icon: BiCalendar,
+      title: 'Learn about Question blocks',
+      link: 'https://go.gov.sg/checkfirst-formbuilder',
+      icon: BiQuestionMark,
     },
   ]
 
   const constantTableTabs: HelpLink[] = [
     {
-      title: 'Constant tables',
-      link: 'https://guide.checkfirst.gov.sg/features/constants',
+      title: 'Learn about Constant tables',
+      link: 'https://go.gov.sg/checkfirst-constants',
       icon: BiTable,
     },
   ]
 
   const logicTabs: HelpLink[] = [
     {
-      title: 'Referencing questions',
-      link: 'https://guide.checkfirst.gov.sg/features/logic#referencing-blocks',
+      title: 'Learn about Logic blocks',
+      link: 'https://go.gov.sg/checkfirst-logic',
+      icon: BiCalculator,
+    },
+    {
+      title: 'Referencing Question blocks',
+      link: 'https://go.gov.sg/checkfirst-reference-blocks',
       icon: FiAtSign,
     },
     {
       title: 'Hide/show results',
-      link: 'https://guide.checkfirst.gov.sg/features/logic#how-to-use-logic',
+      link: 'https://go.gov.sg/checkfirst-hide-show-results',
       icon: IoEyeOutline,
     },
     {
-      title: 'Calculated logic',
-      link: 'https://guide.checkfirst.gov.sg/features/logic/calculator-logic',
-      icon: BiCalculator,
-    },
-    {
-      title: 'Conditional logic',
-      link: 'https://guide.checkfirst.gov.sg/features/logic/conditional-logic',
-      icon: BiGitBranch,
-    },
-    {
-      title: 'Date logic',
-      link: 'https://guide.checkfirst.gov.sg/features/logic/date-logic',
-      icon: BiCalendar,
-    },
-    {
-      title: 'Map constant table',
-      link: 'https://guide.checkfirst.gov.sg/features/logic/map-constant',
-      icon: BiGitCompare,
+      title: 'Results formatting',
+      link: 'https://go.gov.sg/checkfirst-format-results',
+      icon: BiText,
     },
   ]
 
@@ -203,6 +169,20 @@ export const HelpButton: FC = () => {
         {overviewListItem('QUESTIONS TAB', PopoverTabState.Questions)}
         {overviewListItem('CONSTANTS TAB', PopoverTabState.Constants)}
         {overviewListItem('LOGIC TAB', PopoverTabState.Logic)}
+        <ListItem display="flex">
+          <OutboundLink
+            eventLabel={GA_USER_EVENTS.BUILDER_HELP_BUTTON}
+            to="https://go.gov.sg/checkfirst-tutorials"
+            target="_blank"
+          >
+            <Button color="primary.500" variant="link" px="10px">
+              <Text fontSize="14px" fontWeight={600}>
+                TUTORIALS
+              </Text>
+            </Button>
+            <Spacer />
+          </OutboundLink>
+        </ListItem>
       </List>
     )
   }
