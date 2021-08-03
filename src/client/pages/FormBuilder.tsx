@@ -14,24 +14,31 @@ import {
   PreviewNavBar,
   HelpButton,
 } from '../components/builder'
+import { SettingsModal } from '../components/dashboard/SettingsModal'
 
-const WithNavBar: FC = ({ children }) => (
-  <Flex direction="column" minH="100vh" bgColor="neutral.200">
-    <Navbar />
-    <HelpButton />
-    <Container
-      h="calc(100vh - 73px)"
-      overflow="auto"
-      mt="73px"
-      maxW="100vw"
-      pb="32px"
-    >
-      <Container maxW="756px" px={0}>
-        {children}
+const WithNavBar: FC = ({ children }) => {
+  const { path } = useRouteMatch()
+  return (
+    <Flex direction="column" minH="100vh" bgColor="neutral.200">
+      <Navbar />
+      <HelpButton />
+      <Container
+        h="calc(100vh - 73px)"
+        overflow="auto"
+        mt="73px"
+        maxW="100vw"
+        pb="32px"
+      >
+        <Container maxW="756px" px={0}>
+          {children}
+        </Container>
       </Container>
-    </Container>
-  </Flex>
-)
+      <Switch>
+        <Route exact path={`${path}/settings`} component={SettingsModal} />
+      </Switch>
+    </Flex>
+  )
+}
 
 const WithPreviewNavBar: FC = ({ children }) => (
   <Flex direction="column" minH="100vh" bgColor="neutral.200">
@@ -70,17 +77,17 @@ export const FormBuilder: FC = () => {
 
   return (
     <Switch>
-      <Route exact path={`${path}/questions`}>
+      <Route path={`${path}/questions`}>
         <WithNavBar>
           <QuestionsTab />
         </WithNavBar>
       </Route>
-      <Route exact path={`${path}/constants`}>
+      <Route path={`${path}/constants`}>
         <WithNavBar>
           <ConstantsTab />
         </WithNavBar>
       </Route>
-      <Route exact path={`${path}/logic`}>
+      <Route path={`${path}/logic`}>
         <WithNavBar>
           <LogicTab />
         </WithNavBar>

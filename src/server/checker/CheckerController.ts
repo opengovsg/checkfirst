@@ -153,5 +153,84 @@ export class CheckerController {
       res.status(400).json({ message: error.message })
     }
   }
+
+  setActive: (req: Request, res: Response) => Promise<void> = async (
+    req,
+    res
+  ) => {
+    const { id } = req.params
+    const { isActive } = req.body
+    const { user } = req.session
+    if (!user) {
+      res.status(401).json({ message: 'User not signed in' })
+      return
+    }
+
+    try {
+      await this.service.setActive(id, user, isActive)
+      res.json({ isActive: isActive })
+    } catch (error) {
+      res.status(400).json({ message: error.message })
+    }
+  }
+
+  listCollaborators: (req: Request, res: Response) => Promise<void> = async (
+    req,
+    res
+  ) => {
+    const { id } = req.params
+    const { user } = req.session
+    if (!user) {
+      res.status(401).json({ message: 'User not signed in' })
+      return
+    }
+
+    try {
+      const users = await this.service.listCollaborators(id, user)
+      res.json(users)
+    } catch (error) {
+      res.status(400).json({ message: error.message })
+    }
+  }
+
+  addCollaborator: (req: Request, res: Response) => Promise<void> = async (
+    req,
+    res
+  ) => {
+    const { id } = req.params
+    const { collaboratorEmail } = req.body
+    const { user } = req.session
+    if (!user) {
+      res.status(401).json({ message: 'User not signed in' })
+      return
+    }
+
+    try {
+      await this.service.addCollaborator(id, user, collaboratorEmail)
+      res.json()
+    } catch (error) {
+      res.status(400).json({ message: error.message })
+    }
+  }
+
+  deleteCollaborator: (req: Request, res: Response) => Promise<void> = async (
+    req,
+    res
+  ) => {
+    const { id } = req.params
+    const { collaboratorEmail } = req.body
+    const { user } = req.session
+    if (!user) {
+      res.status(401).json({ message: 'User not signed in' })
+      return
+    }
+
+    try {
+      await this.service.deleteCollaborator(id, user, collaboratorEmail)
+      res.json()
+    } catch (error) {
+      res.status(400).json({ message: error.message })
+    }
+  }
 }
 export default CheckerController
