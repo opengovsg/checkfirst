@@ -27,7 +27,13 @@ export const Checker: FC = () => {
   } = useQuery(['checker', id], () => CheckerService.getPublishedChecker(id))
 
   return (
-    <Flex direction="column" bg="neutral.200" minH="100vh">
+    <Flex
+      direction="column"
+      bg={{ base: 'white', lg: 'neutral.200' }}
+      alignItems="center"
+      minH="100vh"
+      py={{ base: '0px', lg: '64px' }}
+    >
       {!isLoading && !isError && config && config.isActive && (
         <CheckerComponent config={config} />
       )}
