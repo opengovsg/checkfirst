@@ -31,7 +31,7 @@ import {
 import { FiAtSign, IoEyeOutline, RiArrowRightSLine } from 'react-icons/all'
 import { useGoogleAnalytics } from '../../contexts'
 import { DefaultTooltip } from '../common/DefaultTooltip'
-import { useRouteMatch } from 'react-router-dom'
+import { useRouteMatch, useHistory, useLocation } from 'react-router-dom'
 
 import { IconType } from 'react-icons'
 
@@ -52,8 +52,12 @@ type HelpLink = {
 
 export const HelpButton: FC = () => {
   const { GA_USER_EVENTS } = useGoogleAnalytics()
+  const history = useHistory()
   const { url } = useRouteMatch()
-  const { onOpen, onClose, isOpen } = useDisclosure()
+  const { state, pathname } = useLocation<{ isNewChecker: boolean }>()
+  const { onOpen, onClose, isOpen } = useDisclosure({
+    defaultIsOpen: state?.isNewChecker,
+  })
   const popoverRef = useRef<HTMLDivElement>(null)
 
   const [currentTabState, setTabState] = useState(PopoverTabState.Overall)
@@ -68,7 +72,11 @@ export const HelpButton: FC = () => {
   // Force-close popover when clicking anywhere outside popover element
   useOutsideClick({
     ref: popoverRef,
-    handler: onClose,
+    handler: () => {
+      // Reset isNewChecker flag if it is set
+      if (state?.isNewChecker) history.replace(pathname, {})
+      onClose()
+    },
   })
 
   const questionTabs: HelpLink[] = [
