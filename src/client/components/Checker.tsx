@@ -202,7 +202,10 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
         sx={{ overscrollBehavior: 'contain' }}
       >
         <FormProvider {...methods}>
-          <form onSubmit={methods.handleSubmit(onSubmit)}>
+          <form
+            style={{ width: '100%' }}
+            onSubmit={methods.handleSubmit(onSubmit)}
+          >
             <VStack align="stretch" spacing={10}>
               <VStack spacing={2}>
                 <Text ref={header} sx={styles.title}>
@@ -226,17 +229,17 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
 
       {!isEmpty(variables) && isCheckerComplete() && (
         <Flex
-          w={{ base: '100%', md: '832px' }}
+          w={{ base: '100%', lg: '832px' }}
           bg="primary.500"
           as="div"
           ref={outcomes}
-          flex={1}
+          flex={{ base: 1, lg: '0' }}
           color="neutral.200"
           pt={8}
           pb={16}
           px={8}
         >
-          <VStack align="stretch" spacing="40px">
+          <VStack w="100%" align="stretch" spacing="40px">
             {operations.map(renderDisplay)}
             <Stack
               direction={{ base: 'column', md: 'row' }}
