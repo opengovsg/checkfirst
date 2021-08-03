@@ -7,7 +7,7 @@ import {
   IconButton,
   Button,
   HStack,
-  Container,
+  Center,
   Text,
   Link,
   useMultiStyleConfig,
@@ -60,9 +60,9 @@ export const PreviewTemplate: FC = () => {
           </HStack>
         }
       />
-      <Container sx={styles.checkerContainer}>
+      <Center sx={styles.checkerContainer} direction="column">
         {!isLoading ? <Checker config={config} /> : null}
-      </Container>
+      </Center>
     </Flex>
   )
 }
