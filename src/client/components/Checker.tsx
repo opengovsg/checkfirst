@@ -6,7 +6,6 @@ import { isEmpty, filter } from 'lodash'
 import {
   useMultiStyleConfig,
   StylesProvider,
-  Container,
   VStack,
   Stack,
   Flex,
@@ -201,9 +200,17 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
 
   return (
     <StylesProvider value={styles}>
-      <Container maxW="xl" p={8} mb={4} sx={{ overscrollBehavior: 'contain' }}>
+      <Flex
+        w={{ base: '100%', lg: '832px' }}
+        p="40px"
+        bg="white"
+        sx={{ overscrollBehavior: 'contain' }}
+      >
         <FormProvider {...methods}>
-          <form onSubmit={methods.handleSubmit(onSubmit)}>
+          <form
+            style={{ width: '100%' }}
+            onSubmit={methods.handleSubmit(onSubmit)}
+          >
             <VStack align="stretch" spacing={10}>
               <VStack spacing={2}>
                 <Text ref={header} sx={styles.title}>
@@ -223,40 +230,48 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
             </VStack>
           </form>
         </FormProvider>
-      </Container>
+      </Flex>
 
       {!isEmpty(variables) && isCheckerComplete() && (
-        <Flex bg="primary.500" as="div" ref={outcomes} flex={1}>
-          <Container maxW="xl" pt={8} pb={16} px={8} color="neutral.200">
-            <VStack align="stretch" spacing="40px">
-              {operations.map(renderDisplay)}
-              <Stack
-                direction={{ base: 'column', md: 'row' }}
-                alignItems="center"
-                justifyContent="center"
-                spacing="16px"
+        <Flex
+          w={{ base: '100%', lg: '832px' }}
+          bg="primary.500"
+          as="div"
+          ref={outcomes}
+          flex={{ base: 1, lg: '0' }}
+          color="neutral.200"
+          pt={8}
+          pb={16}
+          px={8}
+        >
+          <VStack w="100%" align="stretch" spacing="40px">
+            {operations.map(renderDisplay)}
+            <Stack
+              direction={{ base: 'column', md: 'row' }}
+              alignItems="center"
+              justifyContent="center"
+              spacing="16px"
+            >
+              <Button
+                w={{ base: '100%', md: 'auto' }}
+                _hover={{ bg: 'primary.300' }}
+                rightIcon={<BiEditAlt />}
+                variant="outline"
+                onClick={() => reset(true)}
               >
-                <Button
-                  w={{ base: '100%', md: 'auto' }}
-                  _hover={{ bg: 'primary.300' }}
-                  rightIcon={<BiEditAlt />}
-                  variant="outline"
-                  onClick={() => reset(true)}
-                >
-                  Edit fields
-                </Button>
-                <Button
-                  w={{ base: '100%', md: 'auto' }}
-                  _hover={{ bg: 'primary.300' }}
-                  rightIcon={<VscDebugRestart />}
-                  variant="outline"
-                  onClick={() => reset()}
-                >
-                  Restart checker
-                </Button>
-              </Stack>
-            </VStack>
-          </Container>
+                Edit fields
+              </Button>
+              <Button
+                w={{ base: '100%', md: 'auto' }}
+                _hover={{ bg: 'primary.300' }}
+                rightIcon={<VscDebugRestart />}
+                variant="outline"
+                onClick={() => reset()}
+              >
+                Restart checker
+              </Button>
+            </Stack>
+          </VStack>
         </Flex>
       )}
     </StylesProvider>
