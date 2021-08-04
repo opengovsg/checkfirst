@@ -31,9 +31,9 @@ export const Masthead: FC<MastheadProps> = ({ width }) => {
   return (
     <Flex bg="#E5E5E5" direction="column" position="relative" zIndex="banner">
       <Container
-        width={{ base: '100%', md: width ?? '93vw' }}
-        maxW={{ base: '100%', md: width ?? '93vw' }}
+        maxW={{ base: '100%', xl: width ?? '70vw' }}
         py={{ base: '8px', md: '4px' }}
+        px={{ base: '14px', xl: '0px' }}
         layerStyle="app"
         borderBottom={isOpen ? { base: 'solid 1px #C9CCCF', md: '0px' } : '0px'}
       >
@@ -63,8 +63,7 @@ export const Masthead: FC<MastheadProps> = ({ width }) => {
       </Container>
       {isOpen && (
         <Container
-          width={{ base: '100%', md: width ?? '93vw' }}
-          maxW={{ base: '100%', md: width ?? '93vw' }}
+          maxW={{ base: '100%', xl: width ?? '70vw' }}
           layerStyle="app"
         >
           <Stack
