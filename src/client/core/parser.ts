@@ -30,7 +30,16 @@ export const parseConditionalExpr = (expression: string): IfelseState => {
   */
   const dfs = (node: mathjs.MathNode, conds: string[], ops: string[]) => {
     const { op, args } = node
-    if (op !== 'and' && op !== 'or') return conds.push(node.toString())
+    if (op !== 'and' && op !== 'or')
+      return conds.push(
+        node.toString({
+          handler: (node: mathjs.MathNode) => {
+            // Override toString for ConstantNode to always use fixed notation
+            if (node.type === 'ConstantNode')
+              return mathjs.format(node.value, { notation: 'fixed' })
+          },
+        })
+      )
     if (!args || args.length !== 2) return
 
     const [left, right] = args

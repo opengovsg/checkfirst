@@ -109,7 +109,7 @@ export const CreateNewModal: FC<CreateNewModalProps> = ({ onClose }) => {
         status: 'success',
         description: `${created?.title} has been created successfully`,
       })
-      history.push(`/builder/${created.id}`)
+      history.push(`/builder/${created.id}`, { isNewChecker: true })
     },
     onError: (err) => {
       styledToast({
