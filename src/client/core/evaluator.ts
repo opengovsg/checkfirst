@@ -2,8 +2,10 @@
 import { typed, create, all, factory, Unit } from 'mathjs'
 import * as mathjs from 'mathjs'
 import { Graph, alg } from 'graphlib'
-import * as checker from '../../types/checker'
 import xss from 'xss'
+
+import * as checker from '../../types/checker'
+import { sanitizeHtml } from '../utils/sanitize-html'
 
 export class EvaluationCycleError extends Error {
   cycles: string[][]
@@ -85,6 +87,15 @@ const factories = {
 
     return a
   }),
+  // Custom paragraph function
+  paragraph: factory('paragraph', [], () =>
+    typed('paragraph', {
+      'string | number': (content: string | number) => {
+        const sanitized = sanitizeHtml(content.toString())
+        return `<p>${sanitized}</p>`
+      },
+    })
+  ),
 }
 export const math = create(factories, config)
 math.import!(
