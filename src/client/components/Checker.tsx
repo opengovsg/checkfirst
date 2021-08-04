@@ -1,3 +1,4 @@
+import * as mathjs from 'mathjs'
 import React, { FC, useState, useRef } from 'react'
 import { BiEditAlt } from 'react-icons/bi'
 import { VscDebugRestart } from 'react-icons/vsc'
@@ -5,7 +6,6 @@ import { isEmpty, filter } from 'lodash'
 import {
   useMultiStyleConfig,
   StylesProvider,
-  Container,
   VStack,
   Stack,
   Flex,
@@ -43,6 +43,10 @@ function isUnit(
   return (output as Unit).toNumber !== undefined
 }
 
+function isNumeric(output: unknown): output is number {
+  return !isNaN(parseFloat(output as string)) && isFinite(output as number)
+}
+
 export const Checker: FC<CheckerProps> = ({ config }) => {
   const styledToast = useStyledToast()
   const styles = useMultiStyleConfig('Checker', {})
@@ -70,25 +74,25 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
 
   const renderDisplay = (operation: checker.Operation, i: number) => {
     const output = variables[operation.id]
+    let value: string
+    if (isUnit(output)) {
+      value = new Date(output.toNumber('seconds') * 1000).toLocaleString(
+        'default',
+        {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+        }
+      )
+    } else if (isNumeric(output)) {
+      value = mathjs.format(output, { notation: 'fixed' })
+    } else {
+      value = output.toString()
+    }
 
     return (
       operation.show && (
-        <LineDisplay
-          key={i}
-          label={operation.title}
-          value={
-            isUnit(output)
-              ? new Date(output.toNumber('seconds') * 1000).toLocaleString(
-                  'default',
-                  {
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric',
-                  }
-                )
-              : (output as string)
-          }
-        />
+        <LineDisplay key={i} label={operation.title} value={value} />
       )
     )
   }
@@ -196,9 +200,17 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
 
   return (
     <StylesProvider value={styles}>
-      <Container maxW="xl" p={8} mb={4} sx={{ overscrollBehavior: 'contain' }}>
+      <Flex
+        w={{ base: '100%', lg: '832px' }}
+        p="40px"
+        bg="white"
+        sx={{ overscrollBehavior: 'contain' }}
+      >
         <FormProvider {...methods}>
-          <form onSubmit={methods.handleSubmit(onSubmit)}>
+          <form
+            style={{ width: '100%' }}
+            onSubmit={methods.handleSubmit(onSubmit)}
+          >
             <VStack align="stretch" spacing={10}>
               <VStack spacing={2}>
                 <Text ref={header} sx={styles.title}>
@@ -218,40 +230,48 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
             </VStack>
           </form>
         </FormProvider>
-      </Container>
+      </Flex>
 
       {!isEmpty(variables) && isCheckerComplete() && (
-        <Flex bg="primary.500" as="div" ref={outcomes} flex={1}>
-          <Container maxW="xl" pt={8} pb={16} px={8} color="neutral.200">
-            <VStack align="stretch" spacing="40px">
-              {operations.map(renderDisplay)}
-              <Stack
-                direction={{ base: 'column', md: 'row' }}
-                alignItems="center"
-                justifyContent="center"
-                spacing="16px"
+        <Flex
+          w={{ base: '100%', lg: '832px' }}
+          bg="primary.500"
+          as="div"
+          ref={outcomes}
+          flex={{ base: 1, lg: '0' }}
+          color="neutral.200"
+          pt={8}
+          pb={16}
+          px={8}
+        >
+          <VStack w="100%" align="stretch" spacing="40px">
+            {operations.map(renderDisplay)}
+            <Stack
+              direction={{ base: 'column', md: 'row' }}
+              alignItems="center"
+              justifyContent="center"
+              spacing="16px"
+            >
+              <Button
+                w={{ base: '100%', md: 'auto' }}
+                _hover={{ bg: 'primary.300' }}
+                rightIcon={<BiEditAlt />}
+                variant="outline"
+                onClick={() => reset(true)}
               >
-                <Button
-                  w={{ base: '100%', md: 'auto' }}
-                  _hover={{ bg: 'primary.300' }}
-                  rightIcon={<BiEditAlt />}
-                  variant="outline"
-                  onClick={() => reset(true)}
-                >
-                  Edit fields
-                </Button>
-                <Button
-                  w={{ base: '100%', md: 'auto' }}
-                  _hover={{ bg: 'primary.300' }}
-                  rightIcon={<VscDebugRestart />}
-                  variant="outline"
-                  onClick={() => reset()}
-                >
-                  Restart checker
-                </Button>
-              </Stack>
-            </VStack>
-          </Container>
+                Edit fields
+              </Button>
+              <Button
+                w={{ base: '100%', md: 'auto' }}
+                _hover={{ bg: 'primary.300' }}
+                rightIcon={<VscDebugRestart />}
+                variant="outline"
+                onClick={() => reset()}
+              >
+                Restart checker
+              </Button>
+            </Stack>
+          </VStack>
         </Flex>
       )}
     </StylesProvider>

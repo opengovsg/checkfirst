@@ -2,7 +2,13 @@ import React, { FC } from 'react'
 import { AxiosError } from 'axios'
 import { useIsFetching, useQueryClient } from 'react-query'
 import { Container, Flex } from '@chakra-ui/react'
-import { Switch, Route, Redirect, useRouteMatch } from 'react-router-dom'
+import {
+  Switch,
+  Route,
+  Redirect,
+  useRouteMatch,
+  useLocation,
+} from 'react-router-dom'
 
 import * as checker from '../../types/checker'
 import {
@@ -43,17 +49,16 @@ const WithNavBar: FC = ({ children }) => {
 const WithPreviewNavBar: FC = ({ children }) => (
   <Flex direction="column" minH="100vh" bgColor="neutral.200">
     <PreviewNavBar />
-    <Container
+    <Flex
       h="calc(100vh - 73px)"
       overflow="auto"
       mt="73px"
-      maxW="100vw"
       pb="32px"
+      direction="column"
+      alignItems="center"
     >
-      <Container maxW="756px" px={0}>
-        {children}
-      </Container>
-    </Container>
+      {children}
+    </Flex>
   </Flex>
 )
 
@@ -62,6 +67,7 @@ export const FormBuilder: FC = () => {
     path,
     params: { id },
   } = useRouteMatch<{ id: string }>()
+  const location = useLocation()
   const isLoading = useIsFetching(['builder', id])
   const queryClient = useQueryClient()
   const queryState = queryClient.getQueryState<
@@ -97,7 +103,7 @@ export const FormBuilder: FC = () => {
           <PreviewTab />
         </WithPreviewNavBar>
       </Route>
-      <Redirect to={`${path}/questions`} />
+      <Redirect to={{ pathname: `${path}/questions`, state: location.state }} />
     </Switch>
   )
 }

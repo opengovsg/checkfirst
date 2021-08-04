@@ -21,13 +21,12 @@ export const PreviewTemplate: ComponentMultiStyleConfig = {
       minW: 6,
     },
     checkerContainer: {
-      mt: '144px',
+      mt: '72px',
       mb: '64px',
-      maxW: 'xl',
       pt: '32px',
       px: '0px',
-      bg: 'white',
-      borderRadius: '12px',
+      w: '100%',
+      flexDir: 'column',
     },
   },
 }

@@ -175,8 +175,8 @@ export const CheckerCard: FC<CheckerCardProps> = ({ checker }) => {
     <>
       <Link to={{ pathname: `/builder/${checker.id}` }}>
         <VStack sx={styles.card} align="stretch" role="group">
-          <VStack align="stretch" spacing="8px">
-            <Text flex={1} sx={styles.title} noOfLines={3}>
+          <VStack align="stretch" spacing="8px" flex={1}>
+            <Text sx={styles.title} noOfLines={3}>
               {checker.title}
             </Text>
             <Text flex={1} sx={styles.subtitle} isTruncated>

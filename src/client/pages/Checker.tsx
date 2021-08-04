@@ -36,39 +36,47 @@ export const Checker: FC = () => {
   }
 
   return (
-    <Flex direction="column" bg="neutral.200" minH="100vh">
+    <>
       {!isEmbedded() && <Masthead />}
-      {!isLoading && !isError && config && config.isActive && (
-        <CheckerComponent config={config} />
-      )}
-      {isLoading && (
-        <Center py={16}>
-          <Spinner size="xl" color="primary.500" thickness="4px" />
-        </Center>
-      )}
-      {!isLoading && (isError || !config?.isActive) && (
-        <Center py={16}>
-          <VStack spacing={4}>
-            <Image
-              flex={1}
-              src={notFoundErrorImage}
-              height={{ base: '257px', lg: 'auto' }}
-              mb={{ base: '24px', lg: '0px' }}
-            />
-            <Text textStyle="heading2" color="primary.500">
-              There’s nothing here.
-            </Text>
-            <Text textStyle="body1">
-              If you think this is a mistake, please contact the agency that
-              gave you the checker link.
-            </Text>
-            <Box pt={32}>
-              <Image htmlWidth="144px" src={Logo} />
-            </Box>
-          </VStack>
-        </Center>
-      )}
-    </Flex>
+      <Flex
+        direction="column"
+        bg={{ base: 'white', lg: 'neutral.200' }}
+        alignItems="center"
+        minH="100vh"
+        py={{ base: '0px', lg: '64px' }}
+      >
+        {!isLoading && !isError && config && config.isActive && (
+          <CheckerComponent config={config} />
+        )}
+        {isLoading && (
+          <Center py={16}>
+            <Spinner size="xl" color="primary.500" thickness="4px" />
+          </Center>
+        )}
+        {!isLoading && (isError || !config?.isActive) && (
+          <Center py={16}>
+            <VStack spacing={4}>
+              <Image
+                flex={1}
+                src={notFoundErrorImage}
+                height={{ base: '257px', lg: 'auto' }}
+                mb={{ base: '24px', lg: '0px' }}
+              />
+              <Text textStyle="heading2" color="primary.500">
+                There’s nothing here.
+              </Text>
+              <Text textStyle="body1">
+                If you think this is a mistake, please contact the agency that
+                gave you the checker link.
+              </Text>
+              <Box pt={32}>
+                <Image htmlWidth="144px" src={Logo} />
+              </Box>
+            </VStack>
+          </Center>
+        )}
+      </Flex>
+    </>
   )
 }
 
