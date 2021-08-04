@@ -1,3 +1,4 @@
+import * as mathjs from 'mathjs'
 import React, { FC, useState, useRef } from 'react'
 import { BiEditAlt } from 'react-icons/bi'
 import { VscDebugRestart } from 'react-icons/vsc'
@@ -43,6 +44,10 @@ function isUnit(
   return (output as Unit).toNumber !== undefined
 }
 
+function isNumeric(output: unknown): output is number {
+  return !isNaN(parseFloat(output as string)) && isFinite(output as number)
+}
+
 export const Checker: FC<CheckerProps> = ({ config }) => {
   const styledToast = useStyledToast()
   const styles = useMultiStyleConfig('Checker', {})
@@ -70,25 +75,25 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
 
   const renderDisplay = (operation: checker.Operation, i: number) => {
     const output = variables[operation.id]
+    let value: string
+    if (isUnit(output)) {
+      value = new Date(output.toNumber('seconds') * 1000).toLocaleString(
+        'default',
+        {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+        }
+      )
+    } else if (isNumeric(output)) {
+      value = mathjs.format(output, { notation: 'fixed' })
+    } else {
+      value = output.toString()
+    }
 
     return (
       operation.show && (
-        <LineDisplay
-          key={i}
-          label={operation.title}
-          value={
-            isUnit(output)
-              ? new Date(output.toNumber('seconds') * 1000).toLocaleString(
-                  'default',
-                  {
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric',
-                  }
-                )
-              : (output as string)
-          }
-        />
+        <LineDisplay key={i} label={operation.title} value={value} />
       )
     )
   }
