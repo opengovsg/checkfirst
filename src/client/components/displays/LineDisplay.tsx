@@ -3,6 +3,7 @@ import { Stack, Text, useMultiStyleConfig } from '@chakra-ui/react'
 
 import { sanitizeHtml } from '../../utils/sanitize-html'
 import '../../styles/inline-external-link.css'
+import '../../styles/line-display.css'
 
 interface LineDisplayProps {
   label: string
@@ -16,6 +17,7 @@ export const LineDisplay: FC<LineDisplayProps> = ({ label, value }) => {
     <Stack sx={styles.container} spacing="4px">
       <Text sx={styles.label}>{label}</Text>
       <Text
+        className="line-display"
         sx={styles.value}
         dangerouslySetInnerHTML={{
           __html: sanitizeHtml(value),
