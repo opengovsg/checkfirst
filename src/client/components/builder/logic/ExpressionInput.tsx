@@ -7,6 +7,7 @@ import React, {
   useState,
 } from 'react'
 import {
+  Box,
   Badge,
   HStack,
   Input,
@@ -17,6 +18,7 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { matchSorter, RankingInfo } from 'match-sorter'
+import TextareaAutoresize from 'react-textarea-autosize'
 
 import Downshift from 'downshift'
 
@@ -58,6 +60,7 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
 
   const inputRef = useRef<HTMLInputElement>(null)
   const wrapperRef = useRef<HTMLDivElement>(null)
+  const cursorRef = useRef<HTMLSpanElement>(null)
 
   // hide calc bar and reset selection when clicking outside of the component
   useEffect(() => {
@@ -229,6 +232,26 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
 
   const currentMatches = getCurrentQueryMatches()
 
+  const CursorOverlay: FC<{ value: string }> = ({ value }) => {
+    const cursorPos = inputRef.current?.selectionStart
+    return (
+      <Box
+        visibility="hidden"
+        whiteSpace="pre-wrap"
+        w="100%"
+        h="100%"
+        py="8px"
+        px="16px"
+        sx={props.sx}
+        position="absolute"
+        top="0"
+      >
+        {cursorPos ? value.substring(0, cursorPos) : inputValue}
+        <span ref={cursorRef} />
+      </Box>
+    )
+  }
+
   return (
     <VStack align="stretch" position="relative" flex={1} w={0} ref={wrapperRef}>
       <Downshift
@@ -264,11 +287,14 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
             flex={1}
           >
             <Input
+              as={TextareaAutoresize}
               {...getInputProps({
                 placeholder:
                   placeholder || 'Type @ to reference a block in your formula',
                 ...props,
               })}
+              resize="none"
+              py="8px"
               value={inputValue || ''}
               ref={inputRef}
               onChange={(e) => setInputValue(e.currentTarget.value)}
@@ -279,17 +305,18 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
               }}
               onFocus={() => setHasFocus(true)}
             />
+            <CursorOverlay value={inputValue ?? ''} />
             <UnorderedList
               {...getMenuProps()}
               listStyleType="none"
               border={isOpen ? 'solid 1px #E2E8F0' : 0}
-              borderBottomRadius="6px"
               maxH="200px"
               overflowY="auto"
               position="absolute"
-              top="40px"
               bg="white"
-              w="100%"
+              w="300px"
+              top={`${(cursorRef.current?.offsetTop ?? 0) + 24}px`}
+              left={`${cursorRef.current?.offsetLeft ?? 0}px`}
               zIndex={99}
             >
               {isOpen

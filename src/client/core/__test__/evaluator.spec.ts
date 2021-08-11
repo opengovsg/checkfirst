@@ -208,6 +208,38 @@ describe('link', () => {
   })
 })
 
+describe('paragraph', () => {
+  it('should wrap content in <p> tag', () => {
+    const content = 'Hello world'
+    const expr = `paragraph("${content}")`
+
+    const output = evaluateOperation(expr, {})
+    expect(output).toBe(`<p>${content}</p>`)
+  })
+
+  it('should support links in the content', () => {
+    const displayText = 'Google'
+    const url = 'https://google.com'
+    const content = `link("${displayText}", "${url}")`
+    const expr = `paragraph(${content} + " here")`
+
+    const output = evaluateOperation(expr, {})
+    const link = `<a class="inline-external-link" target="_blank" rel="noopener noreferrer" href="${url}">${displayText}</a>`
+    expect(output).toBe(`<p>${link} here</p>`)
+  })
+
+  it('should sanitize content', () => {
+    const displayText = 'Google'
+    const url = 'https://google.com'
+    const content = `link("${displayText}", "${url}")`
+    const expr = `paragraph(${content} + "<script>var x = 1</script>")`
+
+    const output = evaluateOperation(expr, {})
+    const link = `<a class="inline-external-link" target="_blank" rel="noopener noreferrer" href="${url}">${displayText}</a>`
+    expect(output).toBe(`<p>${link}</p>`)
+  })
+})
+
 describe('variableReducer', () => {
   it('should apply evaluateOperation and accumulate variables', () => {
     const op: checker.Operation = {
