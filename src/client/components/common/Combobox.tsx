@@ -72,9 +72,13 @@ const ItemRenderer: FC<ItemRendererProps> = (props) => {
           item,
           index: props.index,
         })}
-        bg={highlightedIndex === props.index ? 'neutral.50' : 'none'}
+        bg={highlightedIndex === props.index ? 'neutral.200' : 'none'}
         py={'12px'}
         px={'20px'}
+        cursor="pointer"
+        _hover={{
+          bg: 'neutral.200',
+        }}
       >
         <HStack spacing={4}>
           <Text isTruncated>{item.label}</Text>
@@ -228,9 +232,9 @@ export const Combobox: FC<ComboboxProps> = ({
   // purely for adding padding insets to FixedStyleList
   // see https://codesandbox.io/s/react-window-list-padding-dg0pq
   const innerElementType = forwardRef(({ style, ...rest }, ref) => (
-    <div
+    <Box
       ref={ref}
-      style={{
+      sx={{
         ...style,
         height: `${parseFloat(style.height) + dropdownInset * 2}px`,
       }}
@@ -272,19 +276,13 @@ export const Combobox: FC<ComboboxProps> = ({
           position="relative"
           flex={1}
         >
-          <HStack
-            spacing={0}
-            zIndex={100}
-            backgroundColor="white"
-            borderRadius="5px"
-          >
+          <HStack spacing={0} backgroundColor="white" borderRadius="5px">
             <label {...getLabelProps()} hidden>
               {label}
             </label>
             <InputGroup>
               <Input
                 isDisabled={isDisabled}
-                zIndex={100}
                 borderRadius={
                   inputOptions?.useClearButton ? '5px 0px 0px 5px' : '5px'
                 }
@@ -333,48 +331,46 @@ export const Combobox: FC<ComboboxProps> = ({
                 borderRadius="0px 5px 5px 0px"
                 icon={<BiX size="16px" />}
                 onClick={() => {
-                  // reset field for new search
-                  setState({ inputValue: '' })
                   onChange('')
-                  updateSearchResults('')
-
-                  // refocus on input field
-                  input.focus()
+                  // Refocus after the blur event
+                  setTimeout(() => input.focus())
                 }}
               />
             ) : null}
           </HStack>
-          <Box
-            boxShadow="0px 0px 10px rgba(216, 222, 235, 0.5)"
-            position={'absolute'}
-            maxH={`${dropdownHeight}px`}
-            top={dropdownDir === DropdownDirection.down ? '40px' : undefined}
-            bottom={dropdownDir === DropdownDirection.up ? '40px' : undefined}
-            bg="white"
-            w="100%"
-            zIndex={99}
-          >
-            <FixedSizeList
-              {...getMenuProps({
-                ref: dropdownListRef,
-              })}
-              height={isOpen ? getDropdownHeight(searchResults.length) : 0}
-              itemSize={itemHeight}
-              itemCount={searchResults.length}
-              itemData={
-                {
-                  items: searchResults,
-                  highlightedIndex: highlightedIndex,
-                  getItemProps: getItemProps,
-                  selectedItem: selectedItem,
-                  topDropdownInset: dropdownInset,
-                } as ItemRendererProps['data']
-              }
-              innerElementType={innerElementType}
+          {isOpen && (
+            <Box
+              boxShadow="0px 0px 10px rgba(216, 222, 235, 0.5)"
+              position={'absolute'}
+              maxH={`${dropdownHeight}px`}
+              top={dropdownDir === DropdownDirection.down ? '40px' : undefined}
+              bottom={dropdownDir === DropdownDirection.up ? '40px' : undefined}
+              bg="white"
+              w="100%"
+              zIndex={99}
             >
-              {ItemRenderer}
-            </FixedSizeList>
-          </Box>
+              <FixedSizeList
+                {...getMenuProps({
+                  ref: dropdownListRef,
+                })}
+                height={getDropdownHeight(searchResults.length)}
+                itemSize={itemHeight}
+                itemCount={searchResults.length}
+                itemData={
+                  {
+                    items: searchResults,
+                    highlightedIndex: highlightedIndex,
+                    getItemProps: getItemProps,
+                    selectedItem: selectedItem,
+                    topDropdownInset: dropdownInset,
+                  } as ItemRendererProps['data']
+                }
+                innerElementType={innerElementType}
+              >
+                {ItemRenderer}
+              </FixedSizeList>
+            </Box>
+          )}
         </VStack>
       )}
     </Downshift>
