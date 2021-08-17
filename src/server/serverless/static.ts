@@ -8,7 +8,6 @@ import helmet from '../bootstrap/helmet'
 const BINARY_CONTENT_TYPES = ['image/png']
 
 const app = express()
-app.disable('x-powered-by')
 app.use(morgan)
 app.use(helmet)
 
