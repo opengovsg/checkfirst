@@ -10,6 +10,7 @@ import {
   IconButton,
   Box,
   forwardRef,
+  Icon,
 } from '@chakra-ui/react'
 import { FixedSizeList, ListChildComponentProps } from 'react-window'
 import Downshift, {
@@ -19,7 +20,7 @@ import Downshift, {
 } from 'downshift'
 import { matchSorter, MatchSorterOptions } from 'match-sorter'
 import React, { FC, RefCallback, useMemo, useRef, useState } from 'react'
-import { BiChevronDown, BiX } from 'react-icons/bi'
+import { BiChevronDown, BiChevronUp, BiX } from 'react-icons/bi'
 import { FieldOption } from '../../../types/checker'
 
 enum DropdownDirection {
@@ -262,7 +263,7 @@ export const Combobox: FC<ComboboxProps> = ({
         highlightedIndex,
         isOpen,
         openMenu,
-        setState,
+        closeMenu,
       }) => (
         <VStack
           {...getRootProps()}
@@ -304,10 +305,22 @@ export const Combobox: FC<ComboboxProps> = ({
                   },
                 })}
               />
-              <InputRightElement pointerEvents="none">
-                <BiChevronDown
+              <InputRightElement>
+                <Icon
+                  as={
+                    isOpen && searchResults.length > 0
+                      ? BiChevronUp
+                      : BiChevronDown
+                  }
                   aria-label="dropdown-icon"
                   color={isDisabled ? '#A5ABB3' : 'black'}
+                  cursor="pointer"
+                  onClick={() => {
+                    if (isOpen) return closeMenu()
+
+                    setDropdownDir(calculateDropdownDirection())
+                    openMenu(() => dropdownListRef.current?.scrollTo(0))
+                  }}
                 />
               </InputRightElement>
             </InputGroup>
