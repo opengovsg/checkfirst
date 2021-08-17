@@ -148,6 +148,7 @@ export async function bootstrap(): Promise<{
   app.use(Sentry.Handlers.requestHandler())
   app.use(Sentry.Handlers.tracingHandler())
 
+  app.disable('x-powered-by')
   app.use(morgan)
   app.use(helmet)
 
