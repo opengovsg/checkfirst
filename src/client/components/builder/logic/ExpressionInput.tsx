@@ -249,7 +249,7 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
   }
 
   return (
-    <VStack align="stretch" position="relative" flex={1} w={0} ref={wrapperRef}>
+    <VStack align="stretch" position="relative" flex={1} ref={wrapperRef}>
       <Downshift
         // controlled values
         inputValue={inputValue}
