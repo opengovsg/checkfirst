@@ -37,7 +37,7 @@ export const Navbar: FC = () => {
   const match = useRouteMatch<{ id: string; action: string }>({
     path: '/builder/:id/:action',
   })
-  const { save, publish, isChanged, config: checker } = useCheckerContext()
+  const { save, publish, isSaved, config: checker } = useCheckerContext()
 
   const navStyles = useMultiStyleConfig('NavbarComponents', {})
 
@@ -49,7 +49,7 @@ export const Navbar: FC = () => {
   const index = ROUTES.indexOf(params.action)
 
   const checkBeforeBack = () => {
-    if (!isChanged) {
+    if (!isSaved) {
       history.push('/dashboard')
     } else {
       onBackPromptOpen()
@@ -135,13 +135,13 @@ export const Navbar: FC = () => {
             <Button
               variant="outline"
               sx={navStyles.button}
-              leftIcon={!isChanged ? <BiCheck size="24px" /> : undefined}
+              leftIcon={isSaved ? <BiCheck size="24px" /> : undefined}
               colorScheme="primary"
               onClick={handleSave}
-              disabled={!isChanged}
+              disabled={isSaved}
               isLoading={save.isLoading}
             >
-              {isChanged ? 'Save draft' : 'Saved'}
+              {!isSaved ? 'Save draft' : 'Saved'}
             </Button>
             <Button
               variant="solid"

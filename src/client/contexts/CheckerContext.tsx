@@ -2,14 +2,18 @@ import React, {
   FC,
   createContext,
   useContext,
-  useEffect,
   useReducer,
   useState,
 } from 'react'
 import { AxiosError } from 'axios'
 import update from 'immutability-helper'
 import { useRouteMatch } from 'react-router-dom'
-import { useQuery, useMutation, UseMutationResult } from 'react-query'
+import {
+  useQuery,
+  useQueryClient,
+  useMutation,
+  UseMutationResult,
+} from 'react-query'
 
 import { Checker } from '../../types/checker'
 import {
@@ -113,6 +117,8 @@ export const reducer = (state: Checker, action: BuilderAction): Checker => {
 interface CheckerContextProps {
   config: Checker
   isChanged: boolean
+  isSaved: boolean
+  setChanged: React.Dispatch<React.SetStateAction<boolean>>
   dispatch: React.Dispatch<BuilderAction>
   save: UseMutationResult<Checker, AxiosError<{ message: string }>, void>
   publish: UseMutationResult<Checker, AxiosError<{ message: string }>, void>
@@ -134,8 +140,8 @@ export const CheckerProvider: FC = ({ children }) => {
   const {
     params: { id },
   } = useRouteMatch<{ id: string }>()
+  const queryClient = useQueryClient()
   const [config, dispatch] = useReducer(reducer, initialConfig)
-  const [lastSavedConfig, setLastSavedConfig] = useState<Checker>(initialConfig)
   const [isChanged, setChanged] = useState(false)
 
   const dispatchLoad = (loadedState: Checker) => {
@@ -143,24 +149,19 @@ export const CheckerProvider: FC = ({ children }) => {
       type: BuilderActionEnum.LoadConfig,
       payload: { loadedState },
     })
-    setLastSavedConfig(JSON.parse(JSON.stringify(loadedState)))
   }
 
   // Initial query for checker data
-  const { isSuccess, data } = useQuery(
+  const { data: savedConfig } = useQuery(
     ['builder', id],
     () => CheckerService.getChecker(id),
-    { refetchOnWindowFocus: false }
-  )
-  useEffect(() => {
-    if (data) {
-      dispatchLoad(data)
+    {
+      refetchOnWindowFocus: false,
+      onSuccess: (data) => {
+        if (data) dispatchLoad(data)
+      },
     }
-  }, [isSuccess, data])
-
-  useEffect(() => {
-    setChanged(JSON.stringify(config) !== JSON.stringify(lastSavedConfig))
-  }, [config, lastSavedConfig])
+  )
 
   const save = useMutation<Checker, AxiosError<{ message: string }>, void>(
     () => CheckerService.updateChecker(config),
@@ -168,6 +169,7 @@ export const CheckerProvider: FC = ({ children }) => {
       onSuccess: (checker) => {
         // On success, update load the returned checker to ensure consistency with backend
         dispatchLoad(checker)
+        queryClient.invalidateQueries(['builder', id])
       },
     }
   )
@@ -182,7 +184,15 @@ export const CheckerProvider: FC = ({ children }) => {
     }
   )
 
-  const value = { config, isChanged, dispatch, save, publish }
+  const value = {
+    config,
+    isChanged,
+    isSaved: JSON.stringify(config) === JSON.stringify(savedConfig),
+    setChanged,
+    dispatch,
+    save,
+    publish,
+  }
   return (
     <checkerContext.Provider value={value}>{children}</checkerContext.Provider>
   )
