@@ -22,6 +22,7 @@ import {
   MenuList,
   MenuItem,
   MenuIcon,
+  useDisclosure,
 } from '@chakra-ui/react'
 
 import { useCheckerContext } from '../../contexts'
@@ -35,6 +36,7 @@ import {
 } from '../builder/logic'
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../util/enums'
 import useActiveIndex from '../../hooks/use-active-index'
+import { UnsavedChangesDialog } from './UnsavedChangesDialog'
 
 // Images
 import emptyLogicTabImage from '../../assets/states/empty-logic.svg'
@@ -74,10 +76,13 @@ const generateDefaultDateOp = (id: number): checker.Operation => ({
 })
 
 export const LogicTab: FC = () => {
-  const { dispatch, config } = useCheckerContext()
+  const { dispatch, isChanged, config } = useCheckerContext()
   const [activeIndex, setActiveIndex] = useActiveIndex(config.operations)
   const [offsetTop, setOffsetTop] = useState<number>(16)
   const [nextUniqueId, setNextUniqueId] = useState<number>(1)
+
+  const changedModal = useDisclosure()
+  const [onDiscard, setOnDiscard] = useState<() => void>()
 
   useEffect(() => {
     let highestIndex = 0
@@ -196,6 +201,13 @@ export const LogicTab: FC = () => {
   ]
 
   const onSelect = ({ index }: { index: number }) => {
+    if (isChanged) {
+      setOnDiscard(() => () => {
+        setActiveIndex(index)
+      })
+      return changedModal.onOpen()
+    }
+
     setActiveIndex(index)
   }
 
@@ -230,56 +242,59 @@ export const LogicTab: FC = () => {
   }
 
   return (
-    <VStack align="stretch" position="relative" spacing={4}>
-      {config.operations.length > 0 ? (
-        <FloatingToolbar offsetTop={offsetTop} options={toolbarOptions} />
-      ) : (
-        <Center py={16}>
-          <VStack spacing={4} w="100%">
-            <Text textStyle="heading2" color="primary.500">
-              Build a logical brain for your checker
-            </Text>
-            <Text textAlign="center">
-              Use input from questions to make calculations or generate a logic
-              outcome.
-              <br />
-              <Link
-                href={LOGIC_CONSTANTS_GUIDE_URL}
-                isExternal
-                color="primary.500"
-              >
-                Learn how to work with logic
-              </Link>
-            </Text>
-            <Box pt="16px" pb="32px">
-              <Menu placement="bottom">
-                <MenuButton
-                  leftIcon={<BiPlus />}
-                  as={Button}
-                  colorScheme="primary"
+    <>
+      <VStack align="stretch" position="relative" spacing={4}>
+        {config.operations.length > 0 ? (
+          <FloatingToolbar offsetTop={offsetTop} options={toolbarOptions} />
+        ) : (
+          <Center py={16}>
+            <VStack spacing={4} w="100%">
+              <Text textStyle="heading2" color="primary.500">
+                Build a logical brain for your checker
+              </Text>
+              <Text textAlign="center">
+                Use input from questions to make calculations or generate a
+                logic outcome.
+                <br />
+                <Link
+                  href={LOGIC_CONSTANTS_GUIDE_URL}
+                  isExternal
+                  color="primary.500"
                 >
-                  Add logic
-                </MenuButton>
-                <MenuList>
-                  {addMenu.map(({ label, icon, onClick }, i) => (
-                    <MenuItem onClick={onClick} key={i}>
-                      <MenuIcon mr={4}>{icon}</MenuIcon>
-                      {label}
-                    </MenuItem>
-                  ))}
-                </MenuList>
-              </Menu>
-            </Box>
-            <Image
-              flex={1}
-              src={emptyLogicTabImage}
-              height={{ base: '257px', lg: 'auto' }}
-              mb={{ base: '24px', lg: '0px' }}
-            />
-          </VStack>
-        </Center>
-      )}
-      {config.operations.map(renderOperation)}
-    </VStack>
+                  Learn how to work with logic
+                </Link>
+              </Text>
+              <Box pt="16px" pb="32px">
+                <Menu placement="bottom">
+                  <MenuButton
+                    leftIcon={<BiPlus />}
+                    as={Button}
+                    colorScheme="primary"
+                  >
+                    Add logic
+                  </MenuButton>
+                  <MenuList>
+                    {addMenu.map(({ label, icon, onClick }, i) => (
+                      <MenuItem onClick={onClick} key={i}>
+                        <MenuIcon mr={4}>{icon}</MenuIcon>
+                        {label}
+                      </MenuItem>
+                    ))}
+                  </MenuList>
+                </Menu>
+              </Box>
+              <Image
+                flex={1}
+                src={emptyLogicTabImage}
+                height={{ base: '257px', lg: 'auto' }}
+                mb={{ base: '24px', lg: '0px' }}
+              />
+            </VStack>
+          </Center>
+        )}
+        {config.operations.map(renderOperation)}
+      </VStack>
+      <UnsavedChangesDialog {...changedModal} onDiscard={onDiscard} />
+    </>
   )
 }
