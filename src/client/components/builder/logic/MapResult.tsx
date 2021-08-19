@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { isValidExpression, math } from '../../../core/evaluator'
-import update from 'immutability-helper'
 import { BiGitCompare, BiChevronDown } from 'react-icons/bi'
 import {
   Badge,
@@ -18,10 +17,13 @@ import {
   useStyles,
   useMultiStyleConfig,
 } from '@chakra-ui/react'
+import { useForm, Controller } from 'react-hook-form'
 
 import { useCheckerContext } from '../../../contexts'
 import { createBuilderField, OperationFieldComponent } from '../BuilderField'
+import { useStyledToast } from '../../common/StyledToast'
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../../util/enums'
+import { ToolbarPortal } from '../ToolbarPortal'
 import { FormulaPreview } from './FormulaPreview'
 
 interface MapState {
@@ -60,51 +62,30 @@ const toExpression = (state: MapState): string => {
   }
 }
 
-const InputComponent: OperationFieldComponent = ({ operation, index }) => {
-  const { title, expression } = operation
-  const { config, dispatch } = useCheckerContext()
-  const [mapState, setMapState] = useState<MapState>(fromExpression(expression))
+const InputComponent: OperationFieldComponent = ({
+  operation,
+  index,
+  toolbar,
+}) => {
+  const { config, setChanged, isChanged, dispatch } = useCheckerContext()
 
   const commonStyles = useStyles()
   const styles = useMultiStyleConfig('MapResult', {})
+  const toast = useStyledToast()
 
+  const initialMapState = fromExpression(operation.expression)
+  const { handleSubmit, register, formState, control, reset } = useForm<
+    { title: string } & MapState
+  >({
+    defaultValues: {
+      title: operation.title,
+      tableId: initialMapState.tableId || '',
+      variableId: initialMapState.variableId || '',
+    },
+  })
   useEffect(() => {
-    const updatedExpr = toExpression(mapState)
-    // TODO: Check args length is 2
-    if (
-      operation.expression !== updatedExpr &&
-      isValidExpression(updatedExpr)
-    ) {
-      dispatch({
-        type: BuilderActionEnum.Update,
-        payload: {
-          currIndex: index,
-          element: { ...operation, expression: updatedExpr },
-          configArrName: ConfigArrayEnum.Operations,
-        },
-      })
-    }
-  }, [mapState, dispatch, index, operation])
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    dispatch({
-      type: BuilderActionEnum.Update,
-      payload: {
-        currIndex: index,
-        element: { ...operation, [name]: value },
-        configArrName: ConfigArrayEnum.Operations,
-      },
-    })
-  }
-
-  const handleExprChange = (name: string, value: string) => {
-    setMapState((s) =>
-      update(s, {
-        [name]: { $set: value },
-      })
-    )
-  }
+    setChanged(formState.isDirty)
+  }, [formState.isDirty, setChanged])
 
   const renderBadgeWithTitle = (
     id: string,
@@ -119,6 +100,41 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
     </HStack>
   )
 
+  const handleSave = () => {
+    handleSubmit(
+      (data) => {
+        const { title, ...mapState } = data
+        const expression = toExpression(mapState)
+        if (isValidExpression(expression)) {
+          dispatch({
+            type: BuilderActionEnum.Update,
+            payload: {
+              currIndex: index,
+              element: { ...operation, title, expression },
+              configArrName: ConfigArrayEnum.Operations,
+            },
+          })
+          reset(undefined, { keepValues: true, keepDirty: false })
+          toast({
+            status: 'success',
+            description: 'Logic block updated',
+          })
+        } else {
+          toast({
+            status: 'error',
+            description: 'Unable to save logic block',
+          })
+        }
+      },
+      () => {
+        toast({
+          status: 'error',
+          description: 'Unable to save logic block',
+        })
+      }
+    )()
+  }
+
   return (
     <VStack sx={commonStyles.fullWidthContainer} spacing={4}>
       <InputGroup>
@@ -127,99 +143,129 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
           children={<BiGitCompare />}
         />
         <Input
-          name="title"
           sx={commonStyles.fieldInput}
           type="text"
           placeholder="Result description"
-          onChange={handleChange}
-          value={title}
+          {...register('title', {
+            required: { value: true, message: 'Title cannot be empty' },
+          })}
+          isInvalid={!!formState.errors.title}
         />
       </InputGroup>
+      <Text fontSize="sm" color="error.500">
+        {formState.errors.title?.message}
+      </Text>
       <HStack sx={styles.mapContainer} spacing={4}>
         <Text sx={styles.mapText}>MAP</Text>
-        <Menu matchWidth preventOverflow={false}>
-          {({ onClose }) => (
-            <>
-              <MenuButton
-                as={Button}
-                sx={styles.menuButton}
-                variant="outline"
-                rightIcon={<BiChevronDown />}
-              >
-                <Text
-                  sx={styles.menuButtonText}
-                  textColor={
-                    mapState.variableId ? 'secondary.700' : 'neutral.500'
-                  }
-                >
-                  {mapState.variableId
-                    ? mapState.variableId
-                    : 'Select question'}
-                </Text>
-              </MenuButton>
-              <MenuList sx={styles.menuList}>
-                {config.fields.map(({ id, title }, i) => (
-                  <MenuItem
-                    key={i}
-                    onClick={() => {
-                      handleExprChange('variableId', id)
-                      onClose()
-                    }}
-                  >
-                    {renderBadgeWithTitle(id, title, 'error.500')}
-                  </MenuItem>
-                ))}
-                {config.operations.map(({ id, title }, i) => (
-                  <MenuItem
-                    key={i}
-                    onClick={() => {
-                      handleExprChange('variableId', id)
-                      onClose()
-                    }}
-                  >
-                    {renderBadgeWithTitle(id, title, 'success.500')}
-                  </MenuItem>
-                ))}
-              </MenuList>
-            </>
-          )}
-        </Menu>
+        <Controller
+          name="variableId"
+          rules={{
+            required: { value: true, message: 'Table ID cannot be empty' },
+          }}
+          control={control}
+          render={({ field: { value, onChange } }) => {
+            return (
+              <Menu matchWidth preventOverflow={false}>
+                {({ onClose }) => (
+                  <>
+                    <MenuButton
+                      as={Button}
+                      sx={styles.menuButton}
+                      variant="outline"
+                      rightIcon={<BiChevronDown />}
+                    >
+                      <Text
+                        sx={styles.menuButtonText}
+                        textColor={value ? 'secondary.700' : 'neutral.500'}
+                      >
+                        {value || 'Select question'}
+                      </Text>
+                    </MenuButton>
+                    <MenuList sx={styles.menuList}>
+                      {config.fields.map(({ id, title }, i) => (
+                        <MenuItem
+                          key={i}
+                          onClick={() => {
+                            onChange(id)
+                            onClose()
+                          }}
+                        >
+                          {renderBadgeWithTitle(id, title, 'error.500')}
+                        </MenuItem>
+                      ))}
+                      {config.operations.map(({ id, title }, i) => (
+                        <MenuItem
+                          key={i}
+                          onClick={() => {
+                            onChange(id)
+                            onClose()
+                          }}
+                        >
+                          {renderBadgeWithTitle(id, title, 'success.500')}
+                        </MenuItem>
+                      ))}
+                    </MenuList>
+                  </>
+                )}
+              </Menu>
+            )
+          }}
+        />
         <Text sx={styles.toText}>TO</Text>
-        <Menu matchWidth>
-          {({ onClose }) => (
-            <>
-              <MenuButton
-                as={Button}
-                sx={styles.menuButton}
-                variant="outline"
-                rightIcon={<BiChevronDown />}
-              >
-                <Text
-                  sx={styles.menuButtonText}
-                  textColor={mapState.tableId ? 'secondary.700' : 'neutral.500'}
-                >
-                  {mapState.tableId
-                    ? mapState.tableId
-                    : 'Select constant table'}
-                </Text>
-              </MenuButton>
-              <MenuList sx={styles.menuList}>
-                {config.constants.map(({ id, title }, i) => (
-                  <MenuItem
-                    key={i}
-                    onClick={() => {
-                      handleExprChange('tableId', id)
-                      onClose()
-                    }}
-                  >
-                    {renderBadgeWithTitle(id, title, 'warning.500')}
-                  </MenuItem>
-                ))}
-              </MenuList>
-            </>
-          )}
-        </Menu>
+        <Controller
+          name="tableId"
+          control={control}
+          render={({ field: { value, onChange } }) => {
+            return (
+              <Menu matchWidth>
+                {({ onClose }) => (
+                  <>
+                    <MenuButton
+                      as={Button}
+                      sx={styles.menuButton}
+                      variant="outline"
+                      rightIcon={<BiChevronDown />}
+                    >
+                      <Text
+                        sx={styles.menuButtonText}
+                        textColor={value ? 'secondary.700' : 'neutral.500'}
+                      >
+                        {value || 'Select constant table'}
+                      </Text>
+                    </MenuButton>
+                    <MenuList sx={styles.menuList}>
+                      {config.constants.map(({ id, title }, i) => (
+                        <MenuItem
+                          key={i}
+                          onClick={() => {
+                            onChange(id)
+                            onClose()
+                          }}
+                        >
+                          {renderBadgeWithTitle(id, title, 'warning.500')}
+                        </MenuItem>
+                      ))}
+                    </MenuList>
+                  </>
+                )}
+              </Menu>
+            )
+          }}
+        />
       </HStack>
+      <Text fontSize="sm" color="error.500">
+        {(formState.errors.variableId || formState.errors.tableId) &&
+          'Invalid mapping logic. Please check inputs.'}
+      </Text>
+      <ToolbarPortal container={toolbar}>
+        <Button
+          isDisabled={!isChanged}
+          colorScheme="primary"
+          onClick={handleSave}
+        >
+          Save
+        </Button>
+      </ToolbarPortal>
     </VStack>
   )
 }
