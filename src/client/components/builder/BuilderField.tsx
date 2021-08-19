@@ -26,6 +26,7 @@ export type TitleFieldComponent = FC<
 interface QuestionFieldComponentProps {
   field: checker.Field
   index: number
+  toolbar: HTMLElement | null
 }
 export type QuestionFieldComponent = FC<QuestionFieldComponentProps>
 
@@ -132,7 +133,14 @@ export const createBuilderField =
         const Content = (
           active ? InputComponent : PreviewComponent
         ) as QuestionFieldComponent
-        return <Content {...props} field={data} index={index} />
+        return (
+          <Content
+            {...props}
+            field={data}
+            index={index}
+            toolbar={toolbar.current}
+          />
+        )
       }
 
       if (isConstantData(data)) {
