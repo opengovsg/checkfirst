@@ -49,7 +49,7 @@ export const Navbar: FC = () => {
   const index = ROUTES.indexOf(params.action)
 
   const checkBeforeBack = () => {
-    if (!isSaved) {
+    if (isSaved) {
       history.push('/dashboard')
     } else {
       onBackPromptOpen()
