@@ -1,5 +1,7 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
+  Flex,
+  Button,
   VStack,
   Text,
   Input,
@@ -7,10 +9,12 @@ import {
   useMultiStyleConfig,
   Textarea,
 } from '@chakra-ui/react'
+import { useForm } from 'react-hook-form'
 
 import { createBuilderField, TitleFieldComponent } from '../BuilderField'
 import { useCheckerContext } from '../../../contexts'
 import { BuilderActionEnum } from '../../../../util/enums'
+import { useStyledToast } from '../../common/StyledToast'
 
 const enum SettingsName {
   description = 'description',
@@ -18,22 +22,48 @@ const enum SettingsName {
 }
 
 const InputComponent: TitleFieldComponent = ({ title, description }) => {
-  const { dispatch } = useCheckerContext()
   const commonStyles = useStyles()
   const styles = useMultiStyleConfig('TitleField', {})
+  const toast = useStyledToast()
 
-  const handleChange = (
-    e:
-      | React.ChangeEvent<HTMLInputElement>
-      | React.ChangeEvent<HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target
-    const update = { settingsName: name as SettingsName, value }
+  const { setChanged, isChanged, dispatch } = useCheckerContext()
+  const { handleSubmit, register, formState, reset } = useForm<{
+    title: string
+    description: string
+  }>({
+    defaultValues: { title, description },
+  })
+  useEffect(() => {
+    setChanged(formState.isDirty)
+  }, [formState.isDirty, setChanged])
 
-    dispatch({
-      type: BuilderActionEnum.UpdateSettings,
-      payload: update,
-    })
+  const handleSave = () => {
+    handleSubmit(
+      ({ title, description }) => {
+        dispatch({
+          type: BuilderActionEnum.UpdateSettings,
+          payload: { settingsName: SettingsName.title, value: title },
+        })
+        dispatch({
+          type: BuilderActionEnum.UpdateSettings,
+          payload: {
+            settingsName: SettingsName.description,
+            value: description,
+          },
+        })
+        reset(undefined, { keepValues: true, keepDirty: false })
+        toast({
+          status: 'success',
+          description: 'Updated checker details',
+        })
+      },
+      () => {
+        toast({
+          status: 'error',
+          description: 'Unable to update checker details',
+        })
+      }
+    )()
   }
 
   return (
@@ -41,19 +71,30 @@ const InputComponent: TitleFieldComponent = ({ title, description }) => {
       <Input
         type="text"
         sx={commonStyles.fieldInput}
-        name={SettingsName.title}
         placeholder="Title"
-        onChange={handleChange}
-        value={title}
+        {...register(SettingsName.title, {
+          required: { value: true, message: 'Title cannot be empty' },
+        })}
+        isInvalid={!!formState.errors.title}
       />
+      <Text fontSize="sm" color="error.500">
+        {formState.errors.title?.message}
+      </Text>
       <Textarea
         type="text"
         sx={styles.descriptionTextarea}
-        name={SettingsName.description}
         placeholder="Description"
-        onChange={handleChange}
-        value={description}
+        {...register(SettingsName.description)}
       />
+      <Flex justifyContent="flex-end">
+        <Button
+          isDisabled={!isChanged}
+          colorScheme="primary"
+          onClick={handleSave}
+        >
+          Save
+        </Button>
+      </Flex>
     </VStack>
   )
 }
