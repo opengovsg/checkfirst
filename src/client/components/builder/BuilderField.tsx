@@ -39,6 +39,7 @@ export type OperationFieldComponent = FC<OperationFieldComponentProps>
 interface ConstantFieldComponentProps {
   constant: checker.Constant
   index: number
+  toolbar: HTMLElement | null
 }
 export type ConstantFieldComponent = FC<ConstantFieldComponentProps>
 
@@ -138,7 +139,14 @@ export const createBuilderField =
         const Content = (
           active ? InputComponent : PreviewComponent
         ) as ConstantFieldComponent
-        return <Content {...props} constant={data} index={index} />
+        return (
+          <Content
+            {...props}
+            constant={data}
+            index={index}
+            toolbar={toolbar.current}
+          />
+        )
       }
 
       if (isOperationData(data)) {
