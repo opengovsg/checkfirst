@@ -47,12 +47,14 @@ type QueryBlock = {
 interface ExpressionInputProps extends Omit<InputProps, 'onChange' | 'value'> {
   onChange: (expr: string) => void
   value: string
+  refCallback?: React.RefCallback<HTMLInputElement>
 }
 
 export const ExpressionInput: FC<ExpressionInputProps> = ({
   onChange,
   value,
   placeholder,
+  refCallback,
   ...props
 }) => {
   const [inputValue, setInputValue] = useState<string>(value)
@@ -62,6 +64,10 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
   const inputRef = useRef<HTMLInputElement>(null)
   const wrapperRef = useRef<HTMLDivElement>(null)
   const cursorRef = useRef<HTMLSpanElement>(null)
+
+  useEffect(() => {
+    if (refCallback) refCallback(inputRef.current)
+  }, [refCallback, inputRef])
 
   useOutsideClick({
     ref: wrapperRef,
