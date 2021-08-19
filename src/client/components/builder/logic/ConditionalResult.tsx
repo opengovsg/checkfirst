@@ -86,8 +86,8 @@ const InputComponent: OperationFieldComponent = ({
     name: 'conditions',
   })
   useEffect(() => {
-    setChanged(formState.isDirty)
-  }, [formState.isDirty, formState.dirtyFields, setChanged])
+    setChanged(Object.keys(formState.dirtyFields).length > 0)
+  }, [formState, setChanged])
 
   const updateAllConditionTypes = (conditionType: ConditionType) => {
     // Set conditionType state
