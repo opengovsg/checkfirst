@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react'
+import React, { FC, useRef, useEffect } from 'react'
 import { difference } from 'lodash'
 import { BiDuplicate, BiTrash, BiShow, BiHide } from 'react-icons/bi'
 import {
@@ -32,6 +32,7 @@ export type QuestionFieldComponent = FC<QuestionFieldComponentProps>
 interface OperationFieldComponentProps {
   operation: checker.Operation
   index: number
+  toolbar: HTMLElement | null
 }
 export type OperationFieldComponent = FC<OperationFieldComponentProps>
 
@@ -105,6 +106,8 @@ export const createBuilderField =
     const { dispatch } = useCheckerContext()
     const variant = active ? 'active' : ''
 
+    const toolbar = useRef<HTMLElement>(null)
+
     const getVariant = (data: BuilderFieldData): string => {
       if (!active) return 'inactive'
       if (isFieldData(data) || isTitleData(data)) return 'success'
@@ -120,6 +123,7 @@ export const createBuilderField =
     }, [active, onActive, top])
 
     const handleSelect = () => {
+      // TODO: Check if there are pending changes. If so prompt the user before selection
       if (!active && onSelect) onSelect({ index })
     }
 
@@ -142,7 +146,14 @@ export const createBuilderField =
         const Content = (
           active ? InputComponent : PreviewComponent
         ) as OperationFieldComponent
-        return <Content {...props} operation={data} index={index} />
+        return (
+          <Content
+            {...props}
+            operation={data}
+            index={index}
+            toolbar={toolbar.current}
+          />
+        )
       }
 
       const Content = (
@@ -315,6 +326,7 @@ export const createBuilderField =
                     }
                     onClick={handleDelete}
                   />
+                  <span ref={toolbar}></span>
                 </>
               )}
             </HStack>
