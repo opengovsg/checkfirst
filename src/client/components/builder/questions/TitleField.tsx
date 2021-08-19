@@ -27,7 +27,7 @@ const InputComponent: TitleFieldComponent = ({ title, description }) => {
   const toast = useStyledToast()
 
   const { setChanged, isChanged, dispatch } = useCheckerContext()
-  const { handleSubmit, register, formState, reset } = useForm<{
+  const { handleSubmit, register, formState, reset, setValue } = useForm<{
     title: string
     description: string
   }>({
@@ -36,6 +36,14 @@ const InputComponent: TitleFieldComponent = ({ title, description }) => {
   useEffect(() => {
     setChanged(formState.isDirty)
   }, [formState.isDirty, setChanged])
+
+  useEffect(() => {
+    setValue('title', title)
+  }, [title, setValue])
+
+  useEffect(() => {
+    setValue('description', description || '')
+  }, [description, setValue])
 
   const handleSave = () => {
     handleSubmit(
@@ -72,7 +80,7 @@ const InputComponent: TitleFieldComponent = ({ title, description }) => {
         type="text"
         sx={commonStyles.fieldInput}
         placeholder="Title"
-        {...register(SettingsName.title, {
+        {...register('title', {
           required: { value: true, message: 'Title cannot be empty' },
         })}
         isInvalid={!!formState.errors.title}
@@ -84,7 +92,7 @@ const InputComponent: TitleFieldComponent = ({ title, description }) => {
         type="text"
         sx={styles.descriptionTextarea}
         placeholder="Description"
-        {...register(SettingsName.description)}
+        {...register('description')}
       />
       <Flex justifyContent="flex-end">
         <Button
