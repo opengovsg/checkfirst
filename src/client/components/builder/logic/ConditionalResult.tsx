@@ -161,6 +161,9 @@ const InputComponent: OperationFieldComponent = ({
           isInvalid={!!formState.errors.title}
         />
       </InputGroup>
+      <Text fontSize="sm" color="error.500">
+        {formState.errors.title?.message}
+      </Text>
       <HStack sx={styles.inputContainer}>
         <Text sx={styles.inputLabel}>IF</Text>
         <Controller
