@@ -18,6 +18,7 @@ import {
   Button,
   Menu,
   MenuButton,
+  useDisclosure,
 } from '@chakra-ui/react'
 
 import * as checker from '../../../types/checker'
@@ -28,6 +29,7 @@ import { useCheckerContext } from '../../contexts'
 
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../util/enums'
 import useActiveIndex from '../../hooks/use-active-index'
+import { UnsavedChangesDialog } from './UnsavedChangesDialog'
 
 // Images
 import emptyConstantsTabImage from '../../assets/states/empty-constants.svg'
@@ -41,12 +43,15 @@ const generateDefaultMap = (id: number): checker.Constant => ({
 })
 
 export const ConstantsTab: FC = () => {
-  const { config, dispatch } = useCheckerContext()
+  const { config, dispatch, isChanged } = useCheckerContext()
   const { constants } = config
 
   const [activeIndex, setActiveIndex] = useActiveIndex(constants)
   const [offsetTop, setOffsetTop] = useState<number>(16)
   const [nextUniqueId, setNextUniqueId] = useState<number>(1)
+
+  const changedModal = useDisclosure()
+  const [onDiscard, setOnDiscard] = useState<() => void>()
 
   useEffect(() => {
     let highestIndex = 0
@@ -109,6 +114,13 @@ export const ConstantsTab: FC = () => {
   ]
 
   const onSelect = ({ index }: { index: number }) => {
+    if (isChanged) {
+      setOnDiscard(() => () => {
+        setActiveIndex(index)
+      })
+      return changedModal.onOpen()
+    }
+
     setActiveIndex(index)
   }
 
@@ -146,56 +158,59 @@ export const ConstantsTab: FC = () => {
   }
 
   return (
-    <VStack align="stretch" position="relative" spacing={4}>
-      {config.constants.length > 0 ? (
-        <>
-          <FloatingToolbar offsetTop={offsetTop} options={toolbarOptions} />
-          <Alert status="info">
-            <AlertIcon />
-            <AlertDescription>
-              Constants can only be numeric values. To map constants to options
-              of a question, ensure that the reference is the same as the
-              option.
-            </AlertDescription>
-          </Alert>
-          {constants.map(renderMap)}
-        </>
-      ) : (
-        <Center py={16}>
-          <VStack spacing={4} w="100%">
-            <Text textStyle="heading2" color="primary.500">
-              Give each option a numeric value
-            </Text>
-            <Text textAlign="center">
-              With constant tables, you can assign a number to different options
-              of a radio question. <br />
-              Especially useful when trying to make calculations based off a
-              user’s choice. <br />
-              <Link href={CONSTANTS_GUIDE_URL} isExternal color="primary.500">
-                Learn how to work with constants
-              </Link>
-            </Text>
-            <Box pt="16px" pb="32px">
-              <Menu placement="bottom">
-                <MenuButton
-                  leftIcon={<BiPlus />}
-                  as={Button}
-                  colorScheme="primary"
-                  onClick={addInitialMap}
-                >
-                  Add constant table
-                </MenuButton>
-              </Menu>
-            </Box>
-            <Image
-              flex={1}
-              src={emptyConstantsTabImage}
-              height={{ base: '257px', lg: 'auto' }}
-              mb={{ base: '24px', lg: '0px' }}
-            />
-          </VStack>
-        </Center>
-      )}
-    </VStack>
+    <>
+      <VStack align="stretch" position="relative" spacing={4}>
+        {config.constants.length > 0 ? (
+          <>
+            <FloatingToolbar offsetTop={offsetTop} options={toolbarOptions} />
+            <Alert status="info">
+              <AlertIcon />
+              <AlertDescription>
+                Constants can only be numeric values. To map constants to
+                options of a question, ensure that the reference is the same as
+                the option.
+              </AlertDescription>
+            </Alert>
+            {constants.map(renderMap)}
+          </>
+        ) : (
+          <Center py={16}>
+            <VStack spacing={4} w="100%">
+              <Text textStyle="heading2" color="primary.500">
+                Give each option a numeric value
+              </Text>
+              <Text textAlign="center">
+                With constant tables, you can assign a number to different
+                options of a radio question. <br />
+                Especially useful when trying to make calculations based off a
+                user’s choice. <br />
+                <Link href={CONSTANTS_GUIDE_URL} isExternal color="primary.500">
+                  Learn how to work with constants
+                </Link>
+              </Text>
+              <Box pt="16px" pb="32px">
+                <Menu placement="bottom">
+                  <MenuButton
+                    leftIcon={<BiPlus />}
+                    as={Button}
+                    colorScheme="primary"
+                    onClick={addInitialMap}
+                  >
+                    Add constant table
+                  </MenuButton>
+                </Menu>
+              </Box>
+              <Image
+                flex={1}
+                src={emptyConstantsTabImage}
+                height={{ base: '257px', lg: 'auto' }}
+                mb={{ base: '24px', lg: '0px' }}
+              />
+            </VStack>
+          </Center>
+        )}
+      </VStack>
+      <UnsavedChangesDialog {...changedModal} onDiscard={onDiscard} />
+    </>
   )
 }
