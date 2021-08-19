@@ -123,7 +123,6 @@ export const createBuilderField =
     }, [active, onActive, top])
 
     const handleSelect = () => {
-      // TODO: Check if there are pending changes. If so prompt the user before selection
       if (!active && onSelect) onSelect({ index })
     }
 
