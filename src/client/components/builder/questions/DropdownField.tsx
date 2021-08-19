@@ -90,7 +90,7 @@ const InputComponent: QuestionFieldComponent = ({ field, index, toolbar }) => {
         type="text"
         sx={commonStyles.fieldInput}
         placeholder="Description"
-        {...register('title')}
+        {...register('description')}
       />
       <VStack sx={commonStyles.halfWidthContainer} spacing={4}>
         <Controller
