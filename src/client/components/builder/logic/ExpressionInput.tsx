@@ -16,6 +16,7 @@ import {
   UnorderedList,
   VStack,
   Text,
+  useOutsideClick,
 } from '@chakra-ui/react'
 import { matchSorter, RankingInfo } from 'match-sorter'
 import TextareaAutoresize from 'react-textarea-autosize'
@@ -62,21 +63,10 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
   const wrapperRef = useRef<HTMLDivElement>(null)
   const cursorRef = useRef<HTMLSpanElement>(null)
 
-  // hide calc bar and reset selection when clicking outside of the component
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        wrapperRef.current &&
-        !wrapperRef.current.contains(event.target as Node)
-      ) {
-        setHasFocus(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [])
+  useOutsideClick({
+    ref: wrapperRef,
+    handler: () => setHasFocus(false),
+  })
 
   // syncs input value with subsequent value updates
   useEffect(() => {
