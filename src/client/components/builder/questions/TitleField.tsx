@@ -16,11 +16,6 @@ import { useCheckerContext } from '../../../contexts'
 import { BuilderActionEnum } from '../../../../util/enums'
 import { useStyledToast } from '../../common/StyledToast'
 
-const enum SettingsName {
-  description = 'description',
-  title = 'title',
-}
-
 const InputComponent: TitleFieldComponent = ({ title, description }) => {
   const commonStyles = useStyles()
   const styles = useMultiStyleConfig('TitleField', {})
@@ -50,14 +45,7 @@ const InputComponent: TitleFieldComponent = ({ title, description }) => {
       ({ title, description }) => {
         dispatch({
           type: BuilderActionEnum.UpdateSettings,
-          payload: { settingsName: SettingsName.title, value: title },
-        })
-        dispatch({
-          type: BuilderActionEnum.UpdateSettings,
-          payload: {
-            settingsName: SettingsName.description,
-            value: description,
-          },
+          payload: { title, description },
         })
         reset(undefined, { keepValues: true, keepDirty: false })
         toast({

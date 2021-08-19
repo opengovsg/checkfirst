@@ -65,8 +65,8 @@ export interface BuilderReorderPayload {
 }
 
 export interface BuilderUpdateSettingsPayload {
-  settingsName: 'description' | 'title'
-  value: string
+  title: string
+  description?: string
 }
 
 export interface BuilderLoadConfigPayload {

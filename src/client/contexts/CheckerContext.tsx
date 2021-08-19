@@ -93,12 +93,11 @@ export const reducer = (state: Checker, action: BuilderAction): Checker => {
     }
 
     case BuilderActionEnum.UpdateSettings: {
-      const { settingsName, value } = payload as BuilderUpdateSettingsPayload
+      const { title, description } = payload as BuilderUpdateSettingsPayload
 
       newState = update(state, {
-        [settingsName]: {
-          $set: value,
-        },
+        title: { $set: title },
+        description: { $set: description },
       })
 
       return newState
