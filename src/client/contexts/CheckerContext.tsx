@@ -14,6 +14,7 @@ import {
   useMutation,
   UseMutationResult,
 } from 'react-query'
+import { useDisclosure, UseModalProps } from '@chakra-ui/react'
 
 import { Checker } from '../../types/checker'
 import {
@@ -121,6 +122,8 @@ interface CheckerContextProps {
   dispatch: React.Dispatch<BuilderAction>
   save: UseMutationResult<Checker, AxiosError<{ message: string }>, void>
   publish: UseMutationResult<Checker, AxiosError<{ message: string }>, void>
+  getUnsavedChangesModalProps: () => UseModalProps & { onDiscard?: () => void }
+  checkHasChanged: (fn: () => void) => void
 }
 
 const initialConfig = {
@@ -142,6 +145,17 @@ export const CheckerProvider: FC = ({ children }) => {
   const queryClient = useQueryClient()
   const [config, dispatch] = useReducer(reducer, initialConfig)
   const [isChanged, setChanged] = useState(false)
+
+  const unsavedChangesModal = useDisclosure()
+  const [onDiscard, setOnDiscard] = useState<() => void>()
+
+  const checkHasChanged = (fn: () => void) => {
+    if (isChanged) {
+      setOnDiscard(() => fn)
+      return unsavedChangesModal.onOpen()
+    }
+    fn()
+  }
 
   const dispatchLoad = (loadedState: Checker) => {
     dispatch({
@@ -183,6 +197,13 @@ export const CheckerProvider: FC = ({ children }) => {
     }
   )
 
+  const getUnsavedChangesModalProps = (): UseModalProps & {
+    onDiscard?: () => void
+  } => ({
+    ...unsavedChangesModal,
+    onDiscard,
+  })
+
   const value = {
     config,
     isChanged,
@@ -191,7 +212,10 @@ export const CheckerProvider: FC = ({ children }) => {
     dispatch,
     save,
     publish,
+    getUnsavedChangesModalProps,
+    checkHasChanged,
   }
+
   return (
     <checkerContext.Provider value={value}>{children}</checkerContext.Provider>
   )
