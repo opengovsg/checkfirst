@@ -105,7 +105,7 @@ export const createBuilderField =
     ...props
   }) => {
     const [ref, { top }] = usePosition()
-    const { dispatch } = useCheckerContext()
+    const { dispatch, isChanged } = useCheckerContext()
     const variant = active ? 'active' : ''
 
     const toolbar = useRef<HTMLElement>(null)
@@ -314,6 +314,7 @@ export const createBuilderField =
                     )
                   }
                   onClick={handleDisplayToggle}
+                  disabled={isChanged}
                 />
               )}
               {!isTitleData(data) && (
@@ -328,6 +329,7 @@ export const createBuilderField =
                       </DefaultTooltip>
                     }
                     onClick={handleDuplicate}
+                    disabled={isChanged}
                   />
                   <ActionButton
                     colorScheme="error"
@@ -340,6 +342,7 @@ export const createBuilderField =
                       </DefaultTooltip>
                     }
                     onClick={handleDelete}
+                    disabled={isChanged}
                   />
                   <span ref={toolbar}></span>
                 </>
