@@ -10,14 +10,7 @@ import {
   BiSelectMultiple,
 } from 'react-icons/bi'
 import { IoIosArrowDropdown } from 'react-icons/io'
-import {
-  Center,
-  Image,
-  Link,
-  Text,
-  VStack,
-  useDisclosure,
-} from '@chakra-ui/react'
+import { Center, Image, Link, Text, VStack } from '@chakra-ui/react'
 
 import * as checker from '../../../types/checker'
 import { FloatingToolbar } from './FloatingToolbar'
@@ -29,7 +22,6 @@ import {
   DateField,
   DropdownField,
 } from '../builder/questions'
-import { UnsavedChangesDialog } from './UnsavedChangesDialog'
 
 import { useCheckerContext } from '../../contexts'
 
@@ -108,15 +100,12 @@ const generateDefaultDateField = (id: number): checker.Field => ({
 export const TITLE_FIELD_ID = 'TITLE'
 
 export const QuestionsTab: FC = () => {
-  const { config, dispatch, isChanged } = useCheckerContext()
+  const { config, dispatch, checkHasChanged } = useCheckerContext()
   const { title, description, fields } = config
 
   const [activeIndex, setActiveIndex] = useActiveIndex(fields)
   const [offsetTop, setOffsetTop] = useState<number>(16)
   const [nextUniqueId, setNextUniqueId] = useState<number>(1)
-
-  const changedModal = useDisclosure()
-  const [onDiscard, setOnDiscard] = useState<() => void>()
 
   useEffect(() => {
     let highestIndex = 0
@@ -250,16 +239,10 @@ export const QuestionsTab: FC = () => {
   ]
 
   const onSelect = ({ index }: { index: number }) => {
-    if (isChanged) {
-      setOnDiscard(() => () => {
-        setActiveIndex(index, index === TITLE_FIELD_INDEX)
-      })
-      return changedModal.onOpen()
-    }
     // By default, setActiveIndex would not allow setting active index to -1 unless
     // it's the last element in items. However, TitleField is a special case and we
     // want to force an update to -1 index when we are selecting it
-    setActiveIndex(index, index === TITLE_FIELD_INDEX)
+    checkHasChanged(() => setActiveIndex(index, index === TITLE_FIELD_INDEX))
   }
 
   const onActive = ({ top }: { top: number }) => {
@@ -313,7 +296,6 @@ export const QuestionsTab: FC = () => {
       ) : (
         <EmptyQuestionsTabBody />
       )}
-      <UnsavedChangesDialog {...changedModal} onDiscard={onDiscard} />
     </VStack>
   )
 }
