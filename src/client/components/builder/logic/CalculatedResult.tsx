@@ -26,7 +26,7 @@ const InputComponent: OperationFieldComponent = ({
   index,
   toolbar,
 }) => {
-  const { dispatch, setChanged, isChanged } = useCheckerContext()
+  const { dispatch, setChanged, isChanged, save } = useCheckerContext()
   const commonStyles = useStyles()
   const toast = useStyledToast()
 
@@ -40,23 +40,27 @@ const InputComponent: OperationFieldComponent = ({
   const handleSave: React.MouseEventHandler = async (_event) => {
     handleSubmit(
       ({ expression, title }) => {
-        dispatch({
-          type: BuilderActionEnum.Update,
-          payload: {
-            currIndex: index,
-            element: {
-              ...operation,
-              expression,
-              title,
+        dispatch(
+          {
+            type: BuilderActionEnum.Update,
+            payload: {
+              currIndex: index,
+              element: {
+                ...operation,
+                expression,
+                title,
+              },
+              configArrName: ConfigArrayEnum.Operations,
             },
-            configArrName: ConfigArrayEnum.Operations,
           },
-        })
-        reset(undefined, { keepValues: true, keepDirty: false })
-        toast({
-          status: 'success',
-          description: 'Logic block updated',
-        })
+          () => {
+            reset(undefined, { keepValues: true, keepDirty: false })
+            toast({
+              status: 'success',
+              description: 'Logic block updated',
+            })
+          }
+        )
       },
       () => {
         toast({
@@ -119,6 +123,7 @@ const InputComponent: OperationFieldComponent = ({
       <ToolbarPortal container={toolbar}>
         <Button
           isDisabled={!isChanged}
+          isLoading={save.isLoading}
           colorScheme="primary"
           onClick={handleSave}
         >

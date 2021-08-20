@@ -67,7 +67,7 @@ const InputComponent: OperationFieldComponent = ({
   toolbar,
 }) => {
   const { title, expression, id: currentId } = operation
-  const { config, setChanged, isChanged, dispatch } = useCheckerContext()
+  const { config, setChanged, isChanged, dispatch, save } = useCheckerContext()
   const initialDate = fromExpression(expression)
   const toast = useStyledToast()
   const commonStyles = useStyles()
@@ -104,20 +104,23 @@ const InputComponent: OperationFieldComponent = ({
         const { title, ...dateState } = data
         const expression = toExpression(dateState)
         if (isValidExpression(expression)) {
-          dispatch({
-            type: BuilderActionEnum.Update,
-            payload: {
-              currIndex: index,
-              element: { ...operation, title, expression },
-              configArrName: ConfigArrayEnum.Operations,
+          dispatch(
+            {
+              type: BuilderActionEnum.Update,
+              payload: {
+                currIndex: index,
+                element: { ...operation, title, expression },
+                configArrName: ConfigArrayEnum.Operations,
+              },
             },
-          })
-
-          reset(undefined, { keepValues: true, keepDirty: false })
-          toast({
-            status: 'success',
-            description: 'Logic block updated',
-          })
+            () => {
+              reset(undefined, { keepValues: true, keepDirty: false })
+              toast({
+                status: 'success',
+                description: 'Logic block updated',
+              })
+            }
+          )
         } else {
           toast({
             status: 'error',
@@ -283,6 +286,7 @@ const InputComponent: OperationFieldComponent = ({
       <ToolbarPortal container={toolbar}>
         <Button
           isDisabled={!isChanged}
+          isLoading={save.isLoading}
           colorScheme="primary"
           onClick={handleSave}
         >

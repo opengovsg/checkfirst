@@ -67,7 +67,7 @@ const InputComponent: OperationFieldComponent = ({
   index,
   toolbar,
 }) => {
-  const { config, setChanged, isChanged, dispatch } = useCheckerContext()
+  const { config, setChanged, isChanged, dispatch, save } = useCheckerContext()
 
   const commonStyles = useStyles()
   const styles = useMultiStyleConfig('MapResult', {})
@@ -106,19 +106,23 @@ const InputComponent: OperationFieldComponent = ({
         const { title, ...mapState } = data
         const expression = toExpression(mapState)
         if (isValidExpression(expression)) {
-          dispatch({
-            type: BuilderActionEnum.Update,
-            payload: {
-              currIndex: index,
-              element: { ...operation, title, expression },
-              configArrName: ConfigArrayEnum.Operations,
+          dispatch(
+            {
+              type: BuilderActionEnum.Update,
+              payload: {
+                currIndex: index,
+                element: { ...operation, title, expression },
+                configArrName: ConfigArrayEnum.Operations,
+              },
             },
-          })
-          reset(undefined, { keepValues: true, keepDirty: false })
-          toast({
-            status: 'success',
-            description: 'Logic block updated',
-          })
+            () => {
+              reset(undefined, { keepValues: true, keepDirty: false })
+              toast({
+                status: 'success',
+                description: 'Logic block updated',
+              })
+            }
+          )
         } else {
           toast({
             status: 'error',
@@ -260,6 +264,7 @@ const InputComponent: OperationFieldComponent = ({
       <ToolbarPortal container={toolbar}>
         <Button
           isDisabled={!isChanged}
+          isLoading={save.isLoading}
           colorScheme="primary"
           onClick={handleSave}
         >

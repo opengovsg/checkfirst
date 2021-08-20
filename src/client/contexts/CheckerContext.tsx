@@ -119,8 +119,8 @@ interface CheckerContextProps {
   isChanged: boolean
   isSaved: boolean
   setChanged: React.Dispatch<React.SetStateAction<boolean>>
-  dispatch: React.Dispatch<BuilderAction>
   save: UseMutationResult<Checker, AxiosError<{ message: string }>, void>
+  dispatch: (action: BuilderAction, callback?: () => void) => void
   publish: UseMutationResult<Checker, AxiosError<{ message: string }>, void>
   getUnsavedChangesModalProps: () => UseModalProps & { onDiscard?: () => void }
   checkHasChanged: (fn: () => void) => void
@@ -205,11 +205,23 @@ export const CheckerProvider: FC = ({ children }) => {
   })
 
   const value = {
-    config,
+    config: savedConfig || config,
     isChanged,
     isSaved: JSON.stringify(config) === JSON.stringify(savedConfig),
     setChanged,
-    dispatch,
+    dispatch: (action: BuilderAction, callback?: () => void) => {
+      if (action.type !== BuilderActionEnum.LoadConfig) {
+        const update = reducer(config, action)
+        save.mutate(update, {
+          onSuccess: () => {
+            if (callback) callback()
+          },
+        })
+      } else {
+        dispatch(action)
+        if (callback) callback()
+      }
+    },
     save,
     publish,
     getUnsavedChangesModalProps,

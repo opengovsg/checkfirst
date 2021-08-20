@@ -52,7 +52,7 @@ const InputComponent: OperationFieldComponent = ({
   index,
   toolbar,
 }) => {
-  const { isChanged, setChanged, dispatch } = useCheckerContext()
+  const { isChanged, setChanged, dispatch, save } = useCheckerContext()
   const commonStyles = useStyles()
   const toast = useStyledToast()
   const styles = useMultiStyleConfig('ConditionalResult', {})
@@ -115,19 +115,23 @@ const InputComponent: OperationFieldComponent = ({
 
         const expression = toExpression(ifelseState)
         if (isValidExpression(expression)) {
-          dispatch({
-            type: BuilderActionEnum.Update,
-            payload: {
-              currIndex: index,
-              element: { ...operation, title, expression },
-              configArrName: ConfigArrayEnum.Operations,
+          dispatch(
+            {
+              type: BuilderActionEnum.Update,
+              payload: {
+                currIndex: index,
+                element: { ...operation, title, expression },
+                configArrName: ConfigArrayEnum.Operations,
+              },
             },
-          })
-          reset(undefined, { keepValues: true, keepDirty: false })
-          toast({
-            status: 'success',
-            description: 'Logic block updated',
-          })
+            () => {
+              reset(undefined, { keepValues: true, keepDirty: false })
+              toast({
+                status: 'success',
+                description: 'Logic block updated',
+              })
+            }
+          )
         } else {
           toast({
             status: 'error',
@@ -358,6 +362,7 @@ const InputComponent: OperationFieldComponent = ({
           colorScheme="primary"
           onClick={handleSave}
           isDisabled={!isChanged}
+          isLoading={save.isLoading}
         >
           Save
         </Button>
