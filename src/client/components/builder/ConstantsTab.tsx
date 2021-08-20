@@ -18,7 +18,6 @@ import {
   Button,
   Menu,
   MenuButton,
-  useDisclosure,
 } from '@chakra-ui/react'
 
 import * as checker from '../../../types/checker'
@@ -29,7 +28,6 @@ import { useCheckerContext } from '../../contexts'
 
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../util/enums'
 import useActiveIndex from '../../hooks/use-active-index'
-import { UnsavedChangesDialog } from './UnsavedChangesDialog'
 
 // Images
 import emptyConstantsTabImage from '../../assets/states/empty-constants.svg'
@@ -43,15 +41,12 @@ const generateDefaultMap = (id: number): checker.Constant => ({
 })
 
 export const ConstantsTab: FC = () => {
-  const { config, dispatch, isChanged } = useCheckerContext()
+  const { config, dispatch, checkHasChanged } = useCheckerContext()
   const { constants } = config
 
   const [activeIndex, setActiveIndex] = useActiveIndex(constants)
   const [offsetTop, setOffsetTop] = useState<number>(16)
   const [nextUniqueId, setNextUniqueId] = useState<number>(1)
-
-  const changedModal = useDisclosure()
-  const [onDiscard, setOnDiscard] = useState<() => void>()
 
   useEffect(() => {
     let highestIndex = 0
@@ -114,14 +109,7 @@ export const ConstantsTab: FC = () => {
   ]
 
   const onSelect = ({ index }: { index: number }) => {
-    if (isChanged) {
-      setOnDiscard(() => () => {
-        setActiveIndex(index)
-      })
-      return changedModal.onOpen()
-    }
-
-    setActiveIndex(index)
+    checkHasChanged(() => setActiveIndex(index))
   }
 
   const onActive = ({ top }: { top: number }) => {
@@ -210,7 +198,6 @@ export const ConstantsTab: FC = () => {
           </Center>
         )}
       </VStack>
-      <UnsavedChangesDialog {...changedModal} onDiscard={onDiscard} />
     </>
   )
 }
