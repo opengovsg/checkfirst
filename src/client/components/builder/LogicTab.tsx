@@ -22,7 +22,6 @@ import {
   MenuList,
   MenuItem,
   MenuIcon,
-  useDisclosure,
 } from '@chakra-ui/react'
 
 import { useCheckerContext } from '../../contexts'
@@ -36,7 +35,6 @@ import {
 } from '../builder/logic'
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../util/enums'
 import useActiveIndex from '../../hooks/use-active-index'
-import { UnsavedChangesDialog } from './UnsavedChangesDialog'
 
 // Images
 import emptyLogicTabImage from '../../assets/states/empty-logic.svg'
@@ -76,13 +74,10 @@ const generateDefaultDateOp = (id: number): checker.Operation => ({
 })
 
 export const LogicTab: FC = () => {
-  const { dispatch, isChanged, config } = useCheckerContext()
+  const { dispatch, config, checkHasChanged } = useCheckerContext()
   const [activeIndex, setActiveIndex] = useActiveIndex(config.operations)
   const [offsetTop, setOffsetTop] = useState<number>(16)
   const [nextUniqueId, setNextUniqueId] = useState<number>(1)
-
-  const changedModal = useDisclosure()
-  const [onDiscard, setOnDiscard] = useState<() => void>()
 
   useEffect(() => {
     let highestIndex = 0
@@ -201,14 +196,7 @@ export const LogicTab: FC = () => {
   ]
 
   const onSelect = ({ index }: { index: number }) => {
-    if (isChanged) {
-      setOnDiscard(() => () => {
-        setActiveIndex(index)
-      })
-      return changedModal.onOpen()
-    }
-
-    setActiveIndex(index)
+    checkHasChanged(() => setActiveIndex(index))
   }
 
   const onActive = ({ top }: { top: number }) => {
@@ -294,7 +282,6 @@ export const LogicTab: FC = () => {
         )}
         {config.operations.map(renderOperation)}
       </VStack>
-      <UnsavedChangesDialog {...changedModal} onDiscard={onDiscard} />
     </>
   )
 }
