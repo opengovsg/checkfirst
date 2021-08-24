@@ -125,7 +125,7 @@ const InputComponent: OperationFieldComponent = ({
               },
             },
             () => {
-              reset(undefined, { keepValues: true, keepDirty: false })
+              reset(data, { keepValues: true, keepDirty: false })
               toast({
                 status: 'success',
                 description: 'Logic block updated',
