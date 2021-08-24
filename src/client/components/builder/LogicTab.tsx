@@ -74,7 +74,8 @@ const generateDefaultDateOp = (id: number): checker.Operation => ({
 })
 
 export const LogicTab: FC = () => {
-  const { dispatch, config, isChanged, checkHasChanged } = useCheckerContext()
+  const { save, dispatch, config, isChanged, checkHasChanged } =
+    useCheckerContext()
   const [activeIndex, setActiveIndex] = useActiveIndex(config.operations)
   const [offsetTop, setOffsetTop] = useState<number>(16)
   const [nextUniqueId, setNextUniqueId] = useState<number>(1)
@@ -92,7 +93,7 @@ export const LogicTab: FC = () => {
     {
       label: 'Calculation',
       icon: <BiCalculator />,
-      disabled: isChanged,
+      disabled: isChanged || save.isLoading,
       onClick: () => {
         dispatch({
           type: BuilderActionEnum.Add,
@@ -109,7 +110,7 @@ export const LogicTab: FC = () => {
     {
       label: 'Conditional',
       icon: <BiGitBranch />,
-      disabled: isChanged,
+      disabled: isChanged || save.isLoading,
       onClick: () => {
         dispatch({
           type: BuilderActionEnum.Add,
@@ -126,7 +127,7 @@ export const LogicTab: FC = () => {
     {
       label: 'Map constants',
       icon: <BiGitCompare />,
-      disabled: isChanged || config.constants.length === 0,
+      disabled: isChanged || save.isLoading || config.constants.length === 0,
       onClick: () => {
         dispatch({
           type: BuilderActionEnum.Add,
@@ -143,7 +144,7 @@ export const LogicTab: FC = () => {
     {
       label: 'Date calculation',
       icon: <BiCalendar />,
-      disabled: isChanged,
+      disabled: isChanged || save.isLoading,
       onClick: () => {
         dispatch({
           type: BuilderActionEnum.Add,
@@ -162,7 +163,7 @@ export const LogicTab: FC = () => {
     {
       icon: <BiPlusCircle />,
       label: 'Add result',
-      disabled: isChanged,
+      disabled: isChanged || save.isLoading,
       menu: addMenu,
     },
     {
@@ -179,7 +180,7 @@ export const LogicTab: FC = () => {
         })
         setActiveIndex(activeIndex - 1)
       },
-      disabled: isChanged || activeIndex === 0,
+      disabled: isChanged || save.isLoading || activeIndex === 0,
     },
     {
       icon: <BiDownArrowAlt />,
@@ -195,7 +196,10 @@ export const LogicTab: FC = () => {
         })
         setActiveIndex(activeIndex + 1)
       },
-      disabled: isChanged || activeIndex === config.operations.length - 1,
+      disabled:
+        isChanged ||
+        save.isLoading ||
+        activeIndex === config.operations.length - 1,
     },
   ]
 

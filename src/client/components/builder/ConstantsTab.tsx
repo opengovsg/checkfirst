@@ -41,7 +41,8 @@ const generateDefaultMap = (id: number): checker.Constant => ({
 })
 
 export const ConstantsTab: FC = () => {
-  const { config, dispatch, isChanged, checkHasChanged } = useCheckerContext()
+  const { save, config, dispatch, isChanged, checkHasChanged } =
+    useCheckerContext()
   const { constants } = config
 
   const [activeIndex, setActiveIndex] = useActiveIndex(constants)
@@ -61,7 +62,7 @@ export const ConstantsTab: FC = () => {
     {
       icon: <BiPlusCircle />,
       label: 'Add map',
-      disabled: isChanged,
+      disabled: isChanged || save.isLoading,
       onClick: () => {
         dispatch({
           type: BuilderActionEnum.Add,
@@ -89,7 +90,7 @@ export const ConstantsTab: FC = () => {
         })
         setActiveIndex(activeIndex - 1)
       },
-      disabled: isChanged || activeIndex === 0,
+      disabled: isChanged || save.isLoading || activeIndex === 0,
     },
     {
       icon: <BiDownArrowAlt />,
@@ -105,7 +106,8 @@ export const ConstantsTab: FC = () => {
         })
         setActiveIndex(activeIndex + 1)
       },
-      disabled: isChanged || activeIndex === constants.length - 1,
+      disabled:
+        isChanged || save.isLoading || activeIndex === constants.length - 1,
     },
   ]
 

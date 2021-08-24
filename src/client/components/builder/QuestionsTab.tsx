@@ -100,7 +100,8 @@ const generateDefaultDateField = (id: number): checker.Field => ({
 export const TITLE_FIELD_ID = 'TITLE'
 
 export const QuestionsTab: FC = () => {
-  const { config, dispatch, isChanged, checkHasChanged } = useCheckerContext()
+  const { save, config, dispatch, isChanged, checkHasChanged } =
+    useCheckerContext()
   const { title, description, fields } = config
 
   const [activeIndex, setActiveIndex] = useActiveIndex(fields)
@@ -120,12 +121,12 @@ export const QuestionsTab: FC = () => {
     {
       icon: <BiPlusCircle />,
       label: 'Add question',
-      disabled: isChanged,
+      disabled: isChanged || save.isLoading,
       menu: [
         {
           label: 'Number',
           icon: <BiHash />,
-          disabled: isChanged,
+          disabled: isChanged || save.isLoading,
           onClick: () => {
             dispatch({
               type: BuilderActionEnum.Add,
@@ -142,7 +143,7 @@ export const QuestionsTab: FC = () => {
         {
           label: 'Radio',
           icon: <BiRadioCircleMarked />,
-          disabled: isChanged,
+          disabled: isChanged || save.isLoading,
           onClick: () => {
             dispatch({
               type: BuilderActionEnum.Add,
@@ -159,7 +160,7 @@ export const QuestionsTab: FC = () => {
         {
           label: 'Dropdown',
           icon: <IoIosArrowDropdown />,
-          disabled: isChanged,
+          disabled: isChanged || save.isLoading,
           onClick: () => {
             dispatch({
               type: BuilderActionEnum.Add,
@@ -176,7 +177,7 @@ export const QuestionsTab: FC = () => {
         {
           label: 'Checkbox',
           icon: <BiSelectMultiple />,
-          disabled: isChanged,
+          disabled: isChanged || save.isLoading,
           onClick: () => {
             dispatch({
               type: BuilderActionEnum.Add,
@@ -193,7 +194,7 @@ export const QuestionsTab: FC = () => {
         {
           label: 'Date',
           icon: <BiCalendar />,
-          disabled: isChanged,
+          disabled: isChanged || save.isLoading,
           onClick: () => {
             dispatch({
               type: BuilderActionEnum.Add,
@@ -224,7 +225,10 @@ export const QuestionsTab: FC = () => {
         setActiveIndex(activeIndex - 1)
       },
       disabled:
-        isChanged || activeIndex === TITLE_FIELD_INDEX || activeIndex === 0,
+        isChanged ||
+        save.isLoading ||
+        activeIndex === TITLE_FIELD_INDEX ||
+        activeIndex === 0,
     },
     {
       icon: <BiDownArrowAlt />,
@@ -242,6 +246,7 @@ export const QuestionsTab: FC = () => {
       },
       disabled:
         isChanged ||
+        save.isLoading ||
         activeIndex === TITLE_FIELD_INDEX ||
         activeIndex === fields.length - 1,
     },
