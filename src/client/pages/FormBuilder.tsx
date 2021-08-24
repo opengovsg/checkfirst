@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { AxiosError } from 'axios'
 import { useIsFetching, useQueryClient } from 'react-query'
-import { Container, Flex } from '@chakra-ui/react'
+import { Container, Flex, Center, Spinner } from '@chakra-ui/react'
 import {
   Switch,
   Route,
@@ -23,7 +23,6 @@ import {
 import { SettingsModal } from '../components/dashboard/SettingsModal'
 import { UnsavedChangesDialog } from '../components/builder/UnsavedChangesDialog'
 import { useCheckerContext } from '../contexts/CheckerContext'
-
 const WithNavBar: FC = ({ children }) => {
   const { path } = useRouteMatch()
   return (
@@ -77,7 +76,8 @@ export const FormBuilder: FC = () => {
     AxiosError<{ message: string }>
   >(['builder', id])
 
-  const { getUnsavedChangesModalProps } = useCheckerContext()
+  const { isFetchedAfterMount, getUnsavedChangesModalProps } =
+    useCheckerContext()
 
   // If not found or unauthorised, redirect back to dashboard
   if (!isLoading && queryState?.error) {
@@ -85,7 +85,7 @@ export const FormBuilder: FC = () => {
     return <Redirect to="/dashboard" />
   }
 
-  return (
+  return isFetchedAfterMount ? (
     <>
       <Switch>
         <Route path={`${path}/questions`}>
@@ -114,6 +114,10 @@ export const FormBuilder: FC = () => {
       </Switch>
       <UnsavedChangesDialog {...getUnsavedChangesModalProps()} />
     </>
+  ) : (
+    <Center py={16}>
+      <Spinner size="xl" color="primary.500" thickness="4px" />
+    </Center>
   )
 }
 
