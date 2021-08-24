@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { BiCheck, BiCog, BiShow } from 'react-icons/bi'
+import { BiCog, BiShow } from 'react-icons/bi'
 import { getApiErrorMessage } from '../../api'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import { Redirect } from 'react-router-dom'
@@ -37,7 +37,7 @@ export const Navbar: FC = () => {
   const match = useRouteMatch<{ id: string; action: string }>({
     path: '/builder/:id/:action',
   })
-  const { save, publish, isSaved, config: checker } = useCheckerContext()
+  const { publish, isSaved, config: checker } = useCheckerContext()
 
   const navStyles = useMultiStyleConfig('NavbarComponents', {})
 
@@ -59,21 +59,6 @@ export const Navbar: FC = () => {
   const handleTabChange = (index: number) => {
     const id = match?.params.id
     if (id) history.push(`/builder/${id}/${ROUTES[index]}`)
-  }
-
-  const handleSave = async () => {
-    try {
-      await save.mutateAsync(undefined)
-      styledToast({
-        status: 'success',
-        description: 'Your checker has been saved successfully.',
-      })
-    } catch (err) {
-      styledToast({
-        status: 'error',
-        description: getApiErrorMessage(err),
-      })
-    }
   }
 
   const handlePublish = async () => {
@@ -132,17 +117,6 @@ export const Navbar: FC = () => {
                 </DefaultTooltip>
               </Link>
             </HStack>
-            <Button
-              variant="outline"
-              sx={navStyles.button}
-              leftIcon={isSaved ? <BiCheck size="24px" /> : undefined}
-              colorScheme="primary"
-              onClick={handleSave}
-              disabled={isSaved}
-              isLoading={save.isLoading}
-            >
-              {!isSaved ? 'Save draft' : 'Saved'}
-            </Button>
             <Button
               variant="solid"
               sx={navStyles.button}
