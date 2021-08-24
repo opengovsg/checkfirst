@@ -33,7 +33,7 @@ const InputComponent: ConstantFieldComponent = ({
   index,
   toolbar,
 }) => {
-  const { dispatch, setChanged, isChanged } = useCheckerContext()
+  const { dispatch, setChanged, isChanged, save } = useCheckerContext()
   const commonStyles = useStyles()
   const styles = useMultiStyleConfig('MapTable', {})
   const toast = useStyledToast()
@@ -72,19 +72,23 @@ const InputComponent: ConstantFieldComponent = ({
   const handleSave = () => {
     handleSubmit(
       ({ title, table }) => {
-        dispatch({
-          type: BuilderActionEnum.Update,
-          payload: {
-            currIndex: index,
-            element: { ...constant, title, table },
-            configArrName: ConfigArrayEnum.Constants,
+        dispatch(
+          {
+            type: BuilderActionEnum.Update,
+            payload: {
+              currIndex: index,
+              element: { ...constant, title, table },
+              configArrName: ConfigArrayEnum.Constants,
+            },
           },
-        })
-        reset(undefined, { keepValues: true, keepDirty: false })
-        toast({
-          status: 'success',
-          description: 'Constant table updated',
-        })
+          () => {
+            reset({ title, table }, { keepValues: true, keepDirty: false })
+            toast({
+              status: 'success',
+              description: 'Constant table updated',
+            })
+          }
+        )
       },
       () => {
         toast({
@@ -205,6 +209,7 @@ const InputComponent: ConstantFieldComponent = ({
           colorScheme="primary"
           onClick={handleSave}
           isDisabled={!isChanged}
+          isLoading={save.isLoading}
         >
           Save
         </Button>
