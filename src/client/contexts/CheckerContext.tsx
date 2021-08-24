@@ -119,8 +119,12 @@ interface CheckerContextProps {
   isChanged: boolean
   isSaved: boolean
   setChanged: React.Dispatch<React.SetStateAction<boolean>>
-  save: UseMutationResult<Checker, AxiosError<{ message: string }>, void>
   dispatch: (action: BuilderAction, callback?: () => void) => void
+  save: UseMutationResult<
+    Checker,
+    AxiosError<{ message: string }>,
+    Checker | undefined
+  >
   publish: UseMutationResult<Checker, AxiosError<{ message: string }>, void>
   getUnsavedChangesModalProps: () => UseModalProps & { onDiscard?: () => void }
   checkHasChanged: (fn: () => void) => void
@@ -176,23 +180,23 @@ export const CheckerProvider: FC = ({ children }) => {
     }
   )
 
-  const save = useMutation<Checker, AxiosError<{ message: string }>, void>(
-    () => CheckerService.updateChecker(config),
-    {
-      onSuccess: (checker) => {
-        // On success, update load the returned checker to ensure consistency with backend
-        dispatchLoad(checker)
-        queryClient.invalidateQueries(['builder', id])
-      },
-    }
-  )
+  const save = useMutation<
+    Checker,
+    AxiosError<{ message: string }>,
+    Checker | undefined
+  >((update?: Checker) => CheckerService.updateChecker(update || config), {
+    onSettled: () => {
+      // On success, update load the returned checker to ensure consistency with backend
+      queryClient.invalidateQueries(['builder', id])
+    },
+  })
 
   const publish = useMutation<Checker, AxiosError<{ message: string }>, void>(
     () => CheckerService.publishChecker(config),
     {
-      onSuccess: (checker) => {
+      onSettled: () => {
         // On success, update load the returned checker to ensure consistency with backend
-        dispatchLoad(checker)
+        queryClient.invalidateQueries(['builder', id])
       },
     }
   )
