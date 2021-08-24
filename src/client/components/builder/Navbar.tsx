@@ -37,7 +37,7 @@ export const Navbar: FC = () => {
   const match = useRouteMatch<{ id: string; action: string }>({
     path: '/builder/:id/:action',
   })
-  const { publish, isSaved, config: checker } = useCheckerContext()
+  const { save, publish, isSaved, config: checker } = useCheckerContext()
 
   const navStyles = useMultiStyleConfig('NavbarComponents', {})
 
@@ -123,6 +123,7 @@ export const Navbar: FC = () => {
               colorScheme="primary"
               onClick={handlePublish}
               isLoading={publish.isLoading}
+              isDisabled={save.isLoading}
             >
               Publish changes
             </Button>
