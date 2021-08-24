@@ -8,14 +8,6 @@ import {
   IconButton,
   Button,
   HStack,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  useDisclosure,
   useMultiStyleConfig,
 } from '@chakra-ui/react'
 
@@ -27,17 +19,12 @@ import { NavbarContainer, NavbarTabs, NavbarBack } from '../common/navbar'
 const ROUTES = ['questions', 'constants', 'logic']
 
 export const Navbar: FC = () => {
-  const {
-    isOpen: isBackPromptOpen,
-    onOpen: onBackPromptOpen,
-    onClose: onBackPromptClose,
-  } = useDisclosure()
   const history = useHistory()
   const styledToast = useStyledToast()
   const match = useRouteMatch<{ id: string; action: string }>({
     path: '/builder/:id/:action',
   })
-  const { save, publish, isSaved, config: checker } = useCheckerContext()
+  const { save, publish, config: checker } = useCheckerContext()
 
   const navStyles = useMultiStyleConfig('NavbarComponents', {})
 
@@ -49,11 +36,7 @@ export const Navbar: FC = () => {
   const index = ROUTES.indexOf(params.action)
 
   const checkBeforeBack = () => {
-    if (isSaved) {
-      history.push('/dashboard')
-    } else {
-      onBackPromptOpen()
-    }
+    history.push('/dashboard')
   }
 
   const handleTabChange = (index: number) => {
@@ -130,29 +113,6 @@ export const Navbar: FC = () => {
           </HStack>
         }
       />
-
-      {/* Unsaved Changes Modal */}
-      <Modal isOpen={isBackPromptOpen} onClose={onBackPromptClose} size="lg">
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Discard changes?</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            You have unsaved changes. Do you wish to discard them?
-          </ModalBody>
-          <ModalFooter>
-            <Button onClick={onBackPromptClose} variant="ghost">
-              Cancel
-            </Button>
-            <Button
-              onClick={() => history.push('/dashboard')}
-              colorScheme="error"
-            >
-              Discard
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
     </>
   )
 }
