@@ -185,6 +185,12 @@ export const CheckerProvider: FC = ({ children }) => {
     AxiosError<{ message: string }>,
     Checker | undefined
   >((update?: Checker) => CheckerService.updateChecker(update || config), {
+    onMutate: (updated) => {
+      // Cancel other in-flight queries to prevent them from overwriting the optimistic update
+      queryClient.cancelQueries(['builder', id])
+      // Optimistically update checker config first
+      queryClient.setQueryData(['builder', id], updated)
+    },
     onSettled: () => {
       // On success, update load the returned checker to ensure consistency with backend
       queryClient.invalidateQueries(['builder', id])
