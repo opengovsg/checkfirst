@@ -63,7 +63,7 @@ export const Navbar: FC = () => {
 
   const handleSave = async () => {
     try {
-      await save.mutateAsync()
+      await save.mutateAsync(undefined)
       styledToast({
         status: 'success',
         description: 'Your checker has been saved successfully.',
