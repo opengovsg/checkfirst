@@ -47,7 +47,7 @@ const InputComponent: TitleFieldComponent = ({ title, description }) => {
           type: BuilderActionEnum.UpdateSettings,
           payload: { title, description },
         })
-        reset(undefined, { keepValues: true, keepDirty: false })
+        reset({ title, description }, { keepValues: true, keepDirty: false })
         toast({
           status: 'success',
           description: 'Updated checker details',

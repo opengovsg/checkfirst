@@ -34,7 +34,7 @@ const InputComponent: QuestionFieldComponent = ({ field, index, toolbar }) => {
   const styles = useMultiStyleConfig('RadioField', {})
   const toast = useStyledToast()
 
-  const { setChanged, isChanged, dispatch } = useCheckerContext()
+  const { setChanged, isChanged, dispatch, save } = useCheckerContext()
   const { register, control, formState, reset, handleSubmit } = useForm<
     Omit<checker.Field, 'id' | 'type'>
   >({
@@ -102,19 +102,26 @@ const InputComponent: QuestionFieldComponent = ({ field, index, toolbar }) => {
   const handleSave = () => {
     handleSubmit(
       ({ title, description, options }) => {
-        dispatch({
-          type: BuilderActionEnum.Update,
-          payload: {
-            currIndex: index,
-            element: { ...field, title, description, options },
-            configArrName: ConfigArrayEnum.Fields,
+        dispatch(
+          {
+            type: BuilderActionEnum.Update,
+            payload: {
+              currIndex: index,
+              element: { ...field, title, description, options },
+              configArrName: ConfigArrayEnum.Fields,
+            },
           },
-        })
-        reset(undefined, { keepValues: true, keepDirty: false })
-        toast({
-          status: 'success',
-          description: 'Radio question updated',
-        })
+          () => {
+            reset(
+              { title, description, options },
+              { keepValues: true, keepDirty: false }
+            )
+            toast({
+              status: 'success',
+              description: 'Radio question updated',
+            })
+          }
+        )
       },
       () => {
         toast({
@@ -167,6 +174,7 @@ const InputComponent: QuestionFieldComponent = ({ field, index, toolbar }) => {
       <ToolbarPortal container={toolbar}>
         <Button
           isDisabled={!isChanged}
+          isLoading={save.isLoading}
           colorScheme="primary"
           onClick={handleSave}
         >
