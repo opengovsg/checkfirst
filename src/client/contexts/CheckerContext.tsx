@@ -1,10 +1,4 @@
-import React, {
-  FC,
-  createContext,
-  useContext,
-  useReducer,
-  useState,
-} from 'react'
+import React, { FC, createContext, useContext, useState } from 'react'
 import { AxiosError } from 'axios'
 import update from 'immutability-helper'
 import { useRouteMatch } from 'react-router-dom'
@@ -24,7 +18,6 @@ import {
   BuilderRemovePayload,
   BuilderReorderPayload,
   BuilderUpdateSettingsPayload,
-  BuilderLoadConfigPayload,
 } from '../../types/builder'
 import { BuilderActionEnum } from '../../util/enums'
 import { CheckerService } from '../services'
@@ -104,11 +97,6 @@ export const reducer = (state: Checker, action: BuilderAction): Checker => {
       return newState
     }
 
-    case BuilderActionEnum.LoadConfig: {
-      const { loadedState } = payload as BuilderLoadConfigPayload
-      return loadedState
-    }
-
     default:
       return state
   }
@@ -116,15 +104,11 @@ export const reducer = (state: Checker, action: BuilderAction): Checker => {
 
 interface CheckerContextProps {
   config: Checker
+  isFetchedAfterMount: boolean
   isChanged: boolean
-  isSaved: boolean
   setChanged: React.Dispatch<React.SetStateAction<boolean>>
   dispatch: (action: BuilderAction, callback?: () => void) => void
-  save: UseMutationResult<
-    Checker,
-    AxiosError<{ message: string }>,
-    Checker | undefined
-  >
+  save: UseMutationResult<Checker, AxiosError<{ message: string }>, Checker>
   publish: UseMutationResult<Checker, AxiosError<{ message: string }>, void>
   getUnsavedChangesModalProps: () => UseModalProps & { onDiscard?: () => void }
   checkHasChanged: (fn: () => void) => void
@@ -147,7 +131,6 @@ export const CheckerProvider: FC = ({ children }) => {
     params: { id },
   } = useRouteMatch<{ id: string }>()
   const queryClient = useQueryClient()
-  const [config, dispatch] = useReducer(reducer, initialConfig)
   const [isChanged, setChanged] = useState(false)
 
   const unsavedChangesModal = useDisclosure()
@@ -161,44 +144,34 @@ export const CheckerProvider: FC = ({ children }) => {
     fn()
   }
 
-  const dispatchLoad = (loadedState: Checker) => {
-    dispatch({
-      type: BuilderActionEnum.LoadConfig,
-      payload: { loadedState },
-    })
-  }
-
   // Initial query for checker data
-  const { data: savedConfig } = useQuery(
+  const { data: config, isFetchedAfterMount } = useQuery(
     ['builder', id],
     () => CheckerService.getChecker(id),
     {
+      placeholderData: initialConfig,
       refetchOnWindowFocus: false,
-      onSuccess: (data) => {
-        if (data) dispatchLoad(data)
+    }
+  )
+
+  const save = useMutation<Checker, AxiosError<{ message: string }>, Checker>(
+    (update: Checker) => CheckerService.updateChecker(update),
+    {
+      onMutate: (updated) => {
+        // Cancel other in-flight queries to prevent them from overwriting the optimistic update
+        queryClient.cancelQueries(['builder', id])
+        // Optimistically update checker config first
+        queryClient.setQueryData(['builder', id], updated)
+      },
+      onSettled: () => {
+        // On success, update load the returned checker to ensure consistency with backend
+        queryClient.invalidateQueries(['builder', id])
       },
     }
   )
 
-  const save = useMutation<
-    Checker,
-    AxiosError<{ message: string }>,
-    Checker | undefined
-  >((update?: Checker) => CheckerService.updateChecker(update || config), {
-    onMutate: (updated) => {
-      // Cancel other in-flight queries to prevent them from overwriting the optimistic update
-      queryClient.cancelQueries(['builder', id])
-      // Optimistically update checker config first
-      queryClient.setQueryData(['builder', id], updated)
-    },
-    onSettled: () => {
-      // On success, update load the returned checker to ensure consistency with backend
-      queryClient.invalidateQueries(['builder', id])
-    },
-  })
-
   const publish = useMutation<Checker, AxiosError<{ message: string }>, void>(
-    () => CheckerService.publishChecker(config),
+    () => CheckerService.publishChecker(config || initialConfig),
     {
       onSettled: () => {
         // On success, update load the returned checker to ensure consistency with backend
@@ -215,21 +188,22 @@ export const CheckerProvider: FC = ({ children }) => {
   })
 
   const value = {
-    config: savedConfig || config,
+    config: config || initialConfig,
+    isFetchedAfterMount,
     isChanged,
-    isSaved: JSON.stringify(config) === JSON.stringify(savedConfig),
     setChanged,
     dispatch: (action: BuilderAction, callback?: () => void) => {
-      if (action.type !== BuilderActionEnum.LoadConfig) {
-        const update = reducer(config, action)
+      const update = reducer(config || initialConfig, action)
+      if (action.type === BuilderActionEnum.Add) {
+        // For add actions, we don't immediately persist the data to the backend.
+        queryClient.setQueryData(['builder', id], update)
+        if (callback) callback()
+      } else {
         save.mutate(update, {
           onSuccess: () => {
             if (callback) callback()
           },
         })
-      } else {
-        dispatch(action)
-        if (callback) callback()
       }
     },
     save,

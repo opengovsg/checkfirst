@@ -81,5 +81,4 @@ export interface BuilderAction {
     | BuilderRemovePayload
     | BuilderReorderPayload
     | BuilderUpdateSettingsPayload
-    | BuilderLoadConfigPayload
 }
