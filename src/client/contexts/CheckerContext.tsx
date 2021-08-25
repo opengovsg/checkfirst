@@ -21,6 +21,7 @@ import {
 } from '../../types/builder'
 import { BuilderActionEnum } from '../../util/enums'
 import { CheckerService } from '../services'
+import { useStyledToast } from '../components/common/StyledToast'
 
 const checkerContext = createContext<CheckerContextProps | undefined>(undefined)
 
@@ -135,6 +136,7 @@ export const CheckerProvider: FC = ({ children }) => {
 
   const unsavedChangesModal = useDisclosure()
   const [onDiscard, setOnDiscard] = useState<() => void>()
+  const toast = useStyledToast()
 
   const checkHasChanged = (fn: () => void) => {
     if (isChanged) {
@@ -162,6 +164,12 @@ export const CheckerProvider: FC = ({ children }) => {
         queryClient.cancelQueries(['builder', id])
         // Optimistically update checker config first
         queryClient.setQueryData(['builder', id], updated)
+      },
+      onError: (err) => {
+        toast({
+          status: 'error',
+          description: err.response?.data.message || 'Failed to save checker',
+        })
       },
       onSettled: () => {
         // On success, update load the returned checker to ensure consistency with backend
