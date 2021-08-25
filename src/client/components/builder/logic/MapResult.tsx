@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { isValidExpression, math } from '../../../core/evaluator'
+import { isValidExpression, math } from '../../../../shared/core/evaluator'
 import { BiGitCompare, BiChevronDown } from 'react-icons/bi'
 import {
   Badge,

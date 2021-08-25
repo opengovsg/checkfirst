@@ -13,7 +13,7 @@ import {
 import { useForm, Controller } from 'react-hook-form'
 
 import { useCheckerContext } from '../../../contexts'
-import { isValidExpression } from '../../../core/evaluator'
+import { isValidExpression } from '../../../../shared/core/evaluator'
 import { createBuilderField, OperationFieldComponent } from '../BuilderField'
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../../util/enums'
 import { ExpressionInput } from './ExpressionInput'

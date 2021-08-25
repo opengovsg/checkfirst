@@ -4,8 +4,8 @@ import {
   Condition,
   IfelseState,
 } from '../../../../types/conditional'
-import { parseConditionalExpr } from '../../../core/parser'
-import { isValidExpression } from '../../../core/evaluator'
+import { parseConditionalExpr } from '../../../../shared/core/parser'
+import { isValidExpression } from '../../../../shared/core/evaluator'
 import { BiGitBranch, BiTrash, BiChevronDown, BiPlus } from 'react-icons/bi'
 import {
   Divider,

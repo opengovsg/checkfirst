@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { isValidExpression } from '../../../core/evaluator'
+import { isValidExpression } from '../../../../shared/core/evaluator'
 import { BiCalendar, BiChevronDown } from 'react-icons/bi'
 import {
   VStack,
