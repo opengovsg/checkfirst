@@ -21,7 +21,7 @@ const InputComponent: TitleFieldComponent = ({ title, description }) => {
   const styles = useMultiStyleConfig('TitleField', {})
   const toast = useStyledToast()
 
-  const { setChanged, isChanged, dispatch } = useCheckerContext()
+  const { setChanged, isChanged, dispatch, save } = useCheckerContext()
   const { handleSubmit, register, formState, reset, setValue } = useForm<{
     title: string
     description: string
@@ -85,6 +85,7 @@ const InputComponent: TitleFieldComponent = ({ title, description }) => {
       <Flex justifyContent="flex-end">
         <Button
           isDisabled={!isChanged}
+          isLoading={save.isLoading}
           colorScheme="primary"
           onClick={handleSave}
         >
