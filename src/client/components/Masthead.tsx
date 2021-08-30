@@ -55,7 +55,7 @@ export const Masthead: FC<MastheadProps> = ({ width }) => {
                 textDecor="underline"
                 onClick={onToggle}
               >
-                How to identify it? <Icon boxSize="16px" as={BiChevronDown} />
+                How to identify <Icon boxSize="16px" as={BiChevronDown} />
               </Link>
             </Text>
           </Flex>
