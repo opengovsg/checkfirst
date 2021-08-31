@@ -202,17 +202,11 @@ export const CheckerProvider: FC = ({ children }) => {
     setChanged,
     dispatch: (action: BuilderAction, callback?: () => void) => {
       const update = reducer(config || initialConfig, action)
-      if (action.type === BuilderActionEnum.Add) {
-        // For add actions, we don't immediately persist the data to the backend.
-        queryClient.setQueryData(['builder', id], update)
-        if (callback) callback()
-      } else {
-        save.mutate(update, {
-          onSuccess: () => {
-            if (callback) callback()
-          },
-        })
-      }
+      save.mutate(update, {
+        onSuccess: () => {
+          if (callback) callback()
+        },
+      })
     },
     save,
     publish,
