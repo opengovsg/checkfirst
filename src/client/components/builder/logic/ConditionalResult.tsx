@@ -52,7 +52,7 @@ const InputComponent: OperationFieldComponent = ({
   index,
   toolbar,
 }) => {
-  const { isChanged, setChanged, dispatch, save } = useCheckerContext()
+  const { setChanged, dispatch, save } = useCheckerContext()
   const commonStyles = useStyles()
   const toast = useStyledToast()
   const styles = useMultiStyleConfig('ConditionalResult', {})
@@ -361,7 +361,6 @@ const InputComponent: OperationFieldComponent = ({
         <Button
           colorScheme="primary"
           onClick={handleSave}
-          isDisabled={!isChanged}
           isLoading={save.isLoading}
         >
           Save

@@ -34,7 +34,7 @@ const InputComponent: QuestionFieldComponent = ({ field, index, toolbar }) => {
   const styles = useMultiStyleConfig('RadioField', {})
   const toast = useStyledToast()
 
-  const { setChanged, isChanged, dispatch, save } = useCheckerContext()
+  const { setChanged, dispatch, save } = useCheckerContext()
   const { register, control, formState, reset, handleSubmit } = useForm<
     Omit<checker.Field, 'id' | 'type'>
   >({
@@ -173,7 +173,6 @@ const InputComponent: QuestionFieldComponent = ({ field, index, toolbar }) => {
       </VStack>
       <ToolbarPortal container={toolbar}>
         <Button
-          isDisabled={!isChanged}
           isLoading={save.isLoading}
           colorScheme="primary"
           onClick={handleSave}

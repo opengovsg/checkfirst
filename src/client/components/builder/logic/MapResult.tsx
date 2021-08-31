@@ -67,7 +67,7 @@ const InputComponent: OperationFieldComponent = ({
   index,
   toolbar,
 }) => {
-  const { config, setChanged, isChanged, dispatch, save } = useCheckerContext()
+  const { config, setChanged, dispatch, save } = useCheckerContext()
 
   const commonStyles = useStyles()
   const styles = useMultiStyleConfig('MapResult', {})
@@ -263,7 +263,6 @@ const InputComponent: OperationFieldComponent = ({
       </Text>
       <ToolbarPortal container={toolbar}>
         <Button
-          isDisabled={!isChanged}
           isLoading={save.isLoading}
           colorScheme="primary"
           onClick={handleSave}

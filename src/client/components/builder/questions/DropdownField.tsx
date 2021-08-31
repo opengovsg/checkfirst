@@ -23,7 +23,7 @@ import { useStyledToast } from '../../common/StyledToast'
 
 const InputComponent: QuestionFieldComponent = ({ field, index, toolbar }) => {
   const { title, description, options } = field
-  const { setChanged, isChanged, dispatch, save } = useCheckerContext()
+  const { setChanged, dispatch, save } = useCheckerContext()
   const commonStyles = useStyles()
   const toast = useStyledToast()
 
@@ -141,7 +141,6 @@ const InputComponent: QuestionFieldComponent = ({ field, index, toolbar }) => {
       </VStack>
       <ToolbarPortal container={toolbar}>
         <Button
-          isDisabled={!isChanged}
           isLoading={save.isLoading}
           colorScheme="primary"
           onClick={handleSave}

@@ -26,7 +26,7 @@ const InputComponent: QuestionFieldComponent = ({ field, index, toolbar }) => {
   const styles = useMultiStyleConfig('NumericField', {})
   const toast = useStyledToast()
 
-  const { setChanged, isChanged, dispatch, save } = useCheckerContext()
+  const { setChanged, dispatch, save } = useCheckerContext()
   const { handleSubmit, register, formState, reset } = useForm<
     Pick<checker.Field, 'title' | 'description'>
   >({
@@ -106,7 +106,6 @@ const InputComponent: QuestionFieldComponent = ({ field, index, toolbar }) => {
       />
       <ToolbarPortal container={toolbar}>
         <Button
-          isDisabled={!isChanged}
           isLoading={save.isLoading}
           colorScheme="primary"
           onClick={handleSave}

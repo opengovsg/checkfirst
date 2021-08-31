@@ -26,7 +26,7 @@ const InputComponent: OperationFieldComponent = ({
   index,
   toolbar,
 }) => {
-  const { dispatch, setChanged, isChanged, save } = useCheckerContext()
+  const { dispatch, setChanged, save } = useCheckerContext()
   const commonStyles = useStyles()
   const toast = useStyledToast()
 
@@ -122,7 +122,6 @@ const InputComponent: OperationFieldComponent = ({
       </Text>
       <ToolbarPortal container={toolbar}>
         <Button
-          isDisabled={!isChanged}
           isLoading={save.isLoading}
           colorScheme="primary"
           onClick={handleSave}

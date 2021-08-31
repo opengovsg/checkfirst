@@ -33,7 +33,7 @@ const InputComponent: ConstantFieldComponent = ({
   index,
   toolbar,
 }) => {
-  const { dispatch, setChanged, isChanged, save } = useCheckerContext()
+  const { dispatch, setChanged, save } = useCheckerContext()
   const commonStyles = useStyles()
   const styles = useMultiStyleConfig('MapTable', {})
   const toast = useStyledToast()
@@ -208,7 +208,6 @@ const InputComponent: ConstantFieldComponent = ({
         <Button
           colorScheme="primary"
           onClick={handleSave}
-          isDisabled={!isChanged}
           isLoading={save.isLoading}
         >
           Save
