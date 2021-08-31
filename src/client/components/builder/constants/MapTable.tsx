@@ -33,7 +33,7 @@ const InputComponent: ConstantFieldComponent = ({
   index,
   toolbar,
 }) => {
-  const { dispatch, setChanged, save } = useCheckerContext()
+  const { dispatch, setChanged, isChanged, save } = useCheckerContext()
   const commonStyles = useStyles()
   const styles = useMultiStyleConfig('MapTable', {})
   const toast = useStyledToast()
@@ -205,13 +205,24 @@ const InputComponent: ConstantFieldComponent = ({
         </Button>
       </VStack>
       <ToolbarPortal container={toolbar}>
-        <Button
-          colorScheme="primary"
-          onClick={handleSave}
-          isLoading={save.isLoading}
-        >
-          Save
-        </Button>
+        <HStack>
+          {isChanged && (
+            <Button
+              colorScheme="primary"
+              variant="outline"
+              onClick={() => reset(undefined, { keepValues: false })}
+            >
+              Reset
+            </Button>
+          )}
+          <Button
+            colorScheme="primary"
+            onClick={handleSave}
+            isLoading={save.isLoading}
+          >
+            Save
+          </Button>
+        </HStack>
       </ToolbarPortal>
     </>
   )

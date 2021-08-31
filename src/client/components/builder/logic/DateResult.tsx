@@ -67,7 +67,7 @@ const InputComponent: OperationFieldComponent = ({
   toolbar,
 }) => {
   const { title, expression, id: currentId } = operation
-  const { config, setChanged, dispatch, save } = useCheckerContext()
+  const { config, setChanged, isChanged, dispatch, save } = useCheckerContext()
   const initialDate = fromExpression(expression)
   const toast = useStyledToast()
   const commonStyles = useStyles()
@@ -284,13 +284,24 @@ const InputComponent: OperationFieldComponent = ({
           'Invalid date logic. Please check inputs.'}
       </Text>
       <ToolbarPortal container={toolbar}>
-        <Button
-          isLoading={save.isLoading}
-          colorScheme="primary"
-          onClick={handleSave}
-        >
-          Save
-        </Button>
+        <HStack>
+          {isChanged && (
+            <Button
+              colorScheme="primary"
+              variant="outline"
+              onClick={() => reset(undefined, { keepValues: false })}
+            >
+              Reset
+            </Button>
+          )}
+          <Button
+            isLoading={save.isLoading}
+            colorScheme="primary"
+            onClick={handleSave}
+          >
+            Save
+          </Button>
+        </HStack>
       </ToolbarPortal>
     </VStack>
   )

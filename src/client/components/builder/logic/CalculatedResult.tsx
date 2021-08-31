@@ -26,7 +26,7 @@ const InputComponent: OperationFieldComponent = ({
   index,
   toolbar,
 }) => {
-  const { dispatch, setChanged, save } = useCheckerContext()
+  const { dispatch, setChanged, isChanged, save } = useCheckerContext()
   const commonStyles = useStyles()
   const toast = useStyledToast()
 
@@ -121,13 +121,24 @@ const InputComponent: OperationFieldComponent = ({
         {formState.errors.expression?.message}
       </Text>
       <ToolbarPortal container={toolbar}>
-        <Button
-          isLoading={save.isLoading}
-          colorScheme="primary"
-          onClick={handleSave}
-        >
-          Save
-        </Button>
+        <HStack>
+          {isChanged && (
+            <Button
+              colorScheme="primary"
+              variant="outline"
+              onClick={() => reset(undefined, { keepValues: false })}
+            >
+              Reset
+            </Button>
+          )}
+          <Button
+            isLoading={save.isLoading}
+            colorScheme="primary"
+            onClick={handleSave}
+          >
+            Save
+          </Button>
+        </HStack>
       </ToolbarPortal>
     </VStack>
   )

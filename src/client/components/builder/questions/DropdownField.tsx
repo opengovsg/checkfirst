@@ -3,6 +3,7 @@ import { IoIosArrowDropdown } from 'react-icons/io'
 import {
   Button,
   VStack,
+  HStack,
   Text,
   Input,
   Select,
@@ -23,7 +24,7 @@ import { useStyledToast } from '../../common/StyledToast'
 
 const InputComponent: QuestionFieldComponent = ({ field, index, toolbar }) => {
   const { title, description, options } = field
-  const { setChanged, dispatch, save } = useCheckerContext()
+  const { setChanged, isChanged, dispatch, save } = useCheckerContext()
   const commonStyles = useStyles()
   const toast = useStyledToast()
 
@@ -140,13 +141,24 @@ const InputComponent: QuestionFieldComponent = ({ field, index, toolbar }) => {
         />
       </VStack>
       <ToolbarPortal container={toolbar}>
-        <Button
-          isLoading={save.isLoading}
-          colorScheme="primary"
-          onClick={handleSave}
-        >
-          Save
-        </Button>
+        <HStack>
+          {isChanged && (
+            <Button
+              colorScheme="primary"
+              variant="outline"
+              onClick={() => reset(undefined, { keepValues: false })}
+            >
+              Reset
+            </Button>
+          )}
+          <Button
+            isLoading={save.isLoading}
+            colorScheme="primary"
+            onClick={handleSave}
+          >
+            Save
+          </Button>
+        </HStack>
       </ToolbarPortal>
     </VStack>
   )

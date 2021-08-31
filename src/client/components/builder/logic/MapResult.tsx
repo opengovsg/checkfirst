@@ -67,7 +67,7 @@ const InputComponent: OperationFieldComponent = ({
   index,
   toolbar,
 }) => {
-  const { config, setChanged, dispatch, save } = useCheckerContext()
+  const { config, setChanged, isChanged, dispatch, save } = useCheckerContext()
 
   const commonStyles = useStyles()
   const styles = useMultiStyleConfig('MapResult', {})
@@ -262,13 +262,24 @@ const InputComponent: OperationFieldComponent = ({
           'Invalid mapping logic. Please check inputs.'}
       </Text>
       <ToolbarPortal container={toolbar}>
-        <Button
-          isLoading={save.isLoading}
-          colorScheme="primary"
-          onClick={handleSave}
-        >
-          Save
-        </Button>
+        <HStack>
+          {isChanged && (
+            <Button
+              colorScheme="primary"
+              variant="outline"
+              onClick={() => reset(undefined, { keepValues: false })}
+            >
+              Reset
+            </Button>
+          )}
+          <Button
+            isLoading={save.isLoading}
+            colorScheme="primary"
+            onClick={handleSave}
+          >
+            Save
+          </Button>
+        </HStack>
       </ToolbarPortal>
     </VStack>
   )

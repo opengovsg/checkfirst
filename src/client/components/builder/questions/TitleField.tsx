@@ -3,6 +3,7 @@ import {
   Flex,
   Button,
   VStack,
+  HStack,
   Text,
   Input,
   useStyles,
@@ -21,7 +22,7 @@ const InputComponent: TitleFieldComponent = ({ title, description }) => {
   const styles = useMultiStyleConfig('TitleField', {})
   const toast = useStyledToast()
 
-  const { setChanged, dispatch, save } = useCheckerContext()
+  const { setChanged, isChanged, dispatch, save } = useCheckerContext()
   const { handleSubmit, register, formState, reset, setValue } = useForm<{
     title: string
     description: string
@@ -83,13 +84,24 @@ const InputComponent: TitleFieldComponent = ({ title, description }) => {
         {...register('description')}
       />
       <Flex justifyContent="flex-end">
-        <Button
-          isLoading={save.isLoading}
-          colorScheme="primary"
-          onClick={handleSave}
-        >
-          Save
-        </Button>
+        <HStack>
+          {isChanged && (
+            <Button
+              colorScheme="primary"
+              variant="outline"
+              onClick={() => reset(undefined, { keepValues: false })}
+            >
+              Reset
+            </Button>
+          )}
+          <Button
+            isLoading={save.isLoading}
+            colorScheme="primary"
+            onClick={handleSave}
+          >
+            Save
+          </Button>
+        </HStack>
       </Flex>
     </VStack>
   )

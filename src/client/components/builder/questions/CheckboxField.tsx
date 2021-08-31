@@ -35,7 +35,7 @@ const InputComponent: QuestionFieldComponent = ({ field, index, toolbar }) => {
   const styles = useMultiStyleConfig('CheckboxField', {})
   const toast = useStyledToast()
 
-  const { setChanged, dispatch, save } = useCheckerContext()
+  const { setChanged, isChanged, dispatch, save } = useCheckerContext()
   const { register, control, formState, reset, handleSubmit } = useForm<
     Omit<checker.Field, 'id' | 'type'>
   >({
@@ -178,13 +178,24 @@ const InputComponent: QuestionFieldComponent = ({ field, index, toolbar }) => {
         </HStack>
       </VStack>
       <ToolbarPortal container={toolbar}>
-        <Button
-          isLoading={save.isLoading}
-          colorScheme="primary"
-          onClick={handleSave}
-        >
-          Save
-        </Button>
+        <HStack>
+          {isChanged && (
+            <Button
+              colorScheme="primary"
+              variant="outline"
+              onClick={() => reset(undefined, { keepValues: false })}
+            >
+              Reset
+            </Button>
+          )}
+          <Button
+            isLoading={save.isLoading}
+            colorScheme="primary"
+            onClick={handleSave}
+          >
+            Save
+          </Button>
+        </HStack>
       </ToolbarPortal>
     </VStack>
   )

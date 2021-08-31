@@ -4,6 +4,7 @@ import {
   Button,
   useStyles,
   VStack,
+  HStack,
   Text,
   Input,
   InputGroup,
@@ -25,7 +26,7 @@ const InputComponent: QuestionFieldComponent = ({ field, index, toolbar }) => {
   const commonStyles = useStyles()
   const toast = useStyledToast()
 
-  const { setChanged, dispatch, save } = useCheckerContext()
+  const { setChanged, isChanged, dispatch, save } = useCheckerContext()
   const { handleSubmit, register, formState, reset } = useForm<
     Pick<checker.Field, 'title' | 'description'>
   >({
@@ -109,13 +110,24 @@ const InputComponent: QuestionFieldComponent = ({ field, index, toolbar }) => {
         />
       </InputGroup>
       <ToolbarPortal container={toolbar}>
-        <Button
-          isLoading={save.isLoading}
-          colorScheme="primary"
-          onClick={handleSave}
-        >
-          Save
-        </Button>
+        <HStack>
+          {isChanged && (
+            <Button
+              colorScheme="primary"
+              variant="outline"
+              onClick={() => reset(undefined, { keepValues: false })}
+            >
+              Reset
+            </Button>
+          )}
+          <Button
+            isLoading={save.isLoading}
+            colorScheme="primary"
+            onClick={handleSave}
+          >
+            Save
+          </Button>
+        </HStack>
       </ToolbarPortal>
     </VStack>
   )
