@@ -361,7 +361,7 @@ const InputComponent: OperationFieldComponent = ({
         <HStack>
           {isChanged && (
             <Button
-              isLoading={save.isLoading}
+              isDisabled={save.isLoading}
               colorScheme="primary"
               variant="outline"
               onClick={() => reset(undefined, { keepValues: false })}
