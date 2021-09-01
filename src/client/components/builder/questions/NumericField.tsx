@@ -1,36 +1,76 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { BiHash } from 'react-icons/bi'
 import {
+  Button,
   useStyles,
   VStack,
+  HStack,
   Text,
   Input,
   InputGroup,
   InputLeftElement,
   useMultiStyleConfig,
 } from '@chakra-ui/react'
+import { useForm } from 'react-hook-form'
 
+import * as checker from '../../../../types/checker'
 import { createBuilderField, QuestionFieldComponent } from '../BuilderField'
 import { useCheckerContext } from '../../../contexts'
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../../util/enums'
 import { TitlePreviewText } from './TitlePreviewText'
+import { ToolbarPortal } from '../ToolbarPortal'
+import { useStyledToast } from '../../common/StyledToast'
 
-const InputComponent: QuestionFieldComponent = ({ field, index }) => {
+const InputComponent: QuestionFieldComponent = ({ field, index, toolbar }) => {
   const { title, description } = field
   const commonStyles = useStyles()
   const styles = useMultiStyleConfig('NumericField', {})
+  const toast = useStyledToast()
 
-  const { dispatch } = useCheckerContext()
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    dispatch({
-      type: BuilderActionEnum.Update,
-      payload: {
-        currIndex: index,
-        element: { ...field, [name]: value },
-        configArrName: ConfigArrayEnum.Fields,
+  const { setChanged, isChanged, dispatch, save } = useCheckerContext()
+  const { handleSubmit, register, formState, reset } = useForm<
+    Pick<checker.Field, 'title' | 'description'>
+  >({
+    defaultValues: {
+      title,
+      description,
+    },
+  })
+  useEffect(() => {
+    setChanged(formState.isDirty)
+  }, [formState.isDirty, setChanged])
+
+  const handleSave = () => {
+    handleSubmit(
+      ({ title, description }) => {
+        dispatch(
+          {
+            type: BuilderActionEnum.Update,
+            payload: {
+              currIndex: index,
+              element: { ...field, title, description },
+              configArrName: ConfigArrayEnum.Fields,
+            },
+          },
+          () => {
+            reset(
+              { title, description },
+              { keepValues: true, keepDirty: false }
+            )
+            toast({
+              status: 'success',
+              description: 'Numeric question updated',
+            })
+          }
+        )
       },
-    })
+      () => {
+        toast({
+          status: 'error',
+          description: 'Unable to save numeric question',
+        })
+      }
+    )()
   }
 
   return (
@@ -44,18 +84,20 @@ const InputComponent: QuestionFieldComponent = ({ field, index }) => {
           type="text"
           sx={commonStyles.fieldInput}
           placeholder="Question"
-          name="title"
-          onChange={handleChange}
-          value={title}
+          {...register('title', {
+            required: { value: true, message: 'Title cannot be empty' },
+          })}
+          isInvalid={!!formState.errors.title}
         />
       </InputGroup>
+      <Text fontSize="sm" color="error.500">
+        {formState.errors.title?.message}
+      </Text>
       <Input
         type="text"
         sx={commonStyles.fieldInput}
-        name="description"
         placeholder="Description"
-        onChange={handleChange}
-        value={description}
+        {...register('description')}
       />
       <Input
         type="text"
@@ -63,6 +105,27 @@ const InputComponent: QuestionFieldComponent = ({ field, index }) => {
         sx={{ ...commonStyles.dummyInput, ...styles.numericInput }}
         disabled
       />
+      <ToolbarPortal container={toolbar}>
+        <HStack>
+          {isChanged && (
+            <Button
+              isDisabled={save.isLoading}
+              colorScheme="primary"
+              variant="outline"
+              onClick={() => reset(undefined, { keepValues: false })}
+            >
+              Reset
+            </Button>
+          )}
+          <Button
+            isLoading={save.isLoading}
+            colorScheme="primary"
+            onClick={handleSave}
+          >
+            Save
+          </Button>
+        </HStack>
+      </ToolbarPortal>
     </VStack>
   )
 }

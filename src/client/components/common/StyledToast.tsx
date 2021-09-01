@@ -13,6 +13,7 @@ import {
   UseToastOptions,
 } from '@chakra-ui/react'
 import { BiCheckCircle, BiErrorCircle, BiX } from 'react-icons/bi'
+import '../../styles/toast-width.css'
 
 interface StyledToastProps extends RenderProps {
   message: string
@@ -33,12 +34,7 @@ export const StyledToast: FC<StyledToastProps> = ({
   }
 
   return (
-    <Flex
-      sx={styles.boxContainer}
-      role="alert"
-      aria-live="assertive"
-      aria-atomic="true"
-    >
+    <Flex role="alert" aria-live="assertive" aria-atomic="true">
       <Box sx={styles.toastBox}>
         <HStack spacing={2} sx={styles.container}>
           <Icon
@@ -78,7 +74,7 @@ export const useStyledToast = (
 ): useStyledToastReturnType => {
   const toast = useToast({
     position: 'top',
-    duration: 6000,
+    duration: 3000,
     ...options,
   })
 

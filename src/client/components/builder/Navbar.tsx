@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { BiCheck, BiCog, BiShow } from 'react-icons/bi'
+import { BiCog, BiShow } from 'react-icons/bi'
 import { getApiErrorMessage } from '../../api'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import { Redirect } from 'react-router-dom'
@@ -8,14 +8,6 @@ import {
   IconButton,
   Button,
   HStack,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  useDisclosure,
   useMultiStyleConfig,
 } from '@chakra-ui/react'
 
@@ -27,17 +19,12 @@ import { NavbarContainer, NavbarTabs, NavbarBack } from '../common/navbar'
 const ROUTES = ['questions', 'constants', 'logic']
 
 export const Navbar: FC = () => {
-  const {
-    isOpen: isBackPromptOpen,
-    onOpen: onBackPromptOpen,
-    onClose: onBackPromptClose,
-  } = useDisclosure()
   const history = useHistory()
   const styledToast = useStyledToast()
   const match = useRouteMatch<{ id: string; action: string }>({
     path: '/builder/:id/:action',
   })
-  const { save, publish, isChanged, config: checker } = useCheckerContext()
+  const { save, publish, config: checker } = useCheckerContext()
 
   const navStyles = useMultiStyleConfig('NavbarComponents', {})
 
@@ -49,31 +36,12 @@ export const Navbar: FC = () => {
   const index = ROUTES.indexOf(params.action)
 
   const checkBeforeBack = () => {
-    if (!isChanged) {
-      history.push('/dashboard')
-    } else {
-      onBackPromptOpen()
-    }
+    history.push('/dashboard')
   }
 
   const handleTabChange = (index: number) => {
     const id = match?.params.id
     if (id) history.push(`/builder/${id}/${ROUTES[index]}`)
-  }
-
-  const handleSave = async () => {
-    try {
-      await save.mutateAsync()
-      styledToast({
-        status: 'success',
-        description: 'Your checker has been saved successfully.',
-      })
-    } catch (err) {
-      styledToast({
-        status: 'error',
-        description: getApiErrorMessage(err),
-      })
-    }
   }
 
   const handlePublish = async () => {
@@ -133,51 +101,18 @@ export const Navbar: FC = () => {
               </Link>
             </HStack>
             <Button
-              variant="outline"
-              sx={navStyles.button}
-              leftIcon={!isChanged ? <BiCheck size="24px" /> : undefined}
-              colorScheme="primary"
-              onClick={handleSave}
-              disabled={!isChanged}
-              isLoading={save.isLoading}
-            >
-              {isChanged ? 'Save draft' : 'Saved'}
-            </Button>
-            <Button
               variant="solid"
               sx={navStyles.button}
               colorScheme="primary"
               onClick={handlePublish}
               isLoading={publish.isLoading}
+              isDisabled={save.isLoading}
             >
               Publish changes
             </Button>
           </HStack>
         }
       />
-
-      {/* Unsaved Changes Modal */}
-      <Modal isOpen={isBackPromptOpen} onClose={onBackPromptClose} size="lg">
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Discard changes?</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            You have unsaved changes. Do you wish to discard them?
-          </ModalBody>
-          <ModalFooter>
-            <Button onClick={onBackPromptClose} variant="ghost">
-              Cancel
-            </Button>
-            <Button
-              onClick={() => history.push('/dashboard')}
-              colorScheme="error"
-            >
-              Discard
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
     </>
   )
 }

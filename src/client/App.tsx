@@ -46,7 +46,11 @@ const App: FC = () => {
         <Router history={history}>
           <GoogleAnalyticsProvider>
             <AuthProvider>
-              <Sentry.ErrorBoundary fallback={Fallback}>
+              <Sentry.ErrorBoundary
+                fallback={({ resetError }) => (
+                  <Fallback resetError={resetError} />
+                )}
+              >
                 <Switch>
                   <Route exact path="/c/:id" component={Checker} />
                   <Route exact path="/login" component={Login} />

@@ -65,16 +65,20 @@ const generateDefaultMapOp = (id: number): checker.Operation => ({
   show: true,
 })
 
-const generateDefaultDateOp = (id: number): checker.Operation => ({
+const generateDefaultDateOp = (
+  id: number,
+  dateFieldId: string
+): checker.Operation => ({
   id: `O${id}`,
   type: 'DATE',
   title: 'Date result',
-  expression: '',
+  expression: `${dateFieldId} + 1 days`,
   show: true,
 })
 
 export const LogicTab: FC = () => {
-  const { dispatch, config } = useCheckerContext()
+  const { save, dispatch, config, isChanged, checkHasChanged } =
+    useCheckerContext()
   const [activeIndex, setActiveIndex] = useActiveIndex(config.operations)
   const [offsetTop, setOffsetTop] = useState<number>(16)
   const [nextUniqueId, setNextUniqueId] = useState<number>(1)
@@ -88,10 +92,15 @@ export const LogicTab: FC = () => {
     setNextUniqueId(highestIndex + 1)
   }, [config])
 
+  const hasDateField = () => {
+    return config.fields.filter((field) => field.type === 'DATE').length > 0
+  }
+
   const addMenu = [
     {
       label: 'Calculation',
       icon: <BiCalculator />,
+      disabled: isChanged || save.isLoading,
       onClick: () => {
         dispatch({
           type: BuilderActionEnum.Add,
@@ -108,6 +117,7 @@ export const LogicTab: FC = () => {
     {
       label: 'Conditional',
       icon: <BiGitBranch />,
+      disabled: isChanged || save.isLoading,
       onClick: () => {
         dispatch({
           type: BuilderActionEnum.Add,
@@ -124,7 +134,7 @@ export const LogicTab: FC = () => {
     {
       label: 'Map constants',
       icon: <BiGitCompare />,
-      disabled: config.constants.length === 0,
+      disabled: isChanged || save.isLoading || config.constants.length === 0,
       onClick: () => {
         dispatch({
           type: BuilderActionEnum.Add,
@@ -141,11 +151,15 @@ export const LogicTab: FC = () => {
     {
       label: 'Date calculation',
       icon: <BiCalendar />,
+      disabled: isChanged || save.isLoading || !hasDateField(),
       onClick: () => {
         dispatch({
           type: BuilderActionEnum.Add,
           payload: {
-            element: generateDefaultDateOp(nextUniqueId),
+            element: generateDefaultDateOp(
+              nextUniqueId,
+              config.fields.filter((f) => f.type === 'DATE')?.[0].id
+            ),
             configArrName: ConfigArrayEnum.Operations,
             newIndex: activeIndex + 1,
           },
@@ -159,6 +173,7 @@ export const LogicTab: FC = () => {
     {
       icon: <BiPlusCircle />,
       label: 'Add result',
+      disabled: isChanged || save.isLoading,
       menu: addMenu,
     },
     {
@@ -175,7 +190,7 @@ export const LogicTab: FC = () => {
         })
         setActiveIndex(activeIndex - 1)
       },
-      disabled: activeIndex === 0,
+      disabled: isChanged || save.isLoading || activeIndex === 0,
     },
     {
       icon: <BiDownArrowAlt />,
@@ -191,12 +206,15 @@ export const LogicTab: FC = () => {
         })
         setActiveIndex(activeIndex + 1)
       },
-      disabled: activeIndex === config.operations.length - 1,
+      disabled:
+        isChanged ||
+        save.isLoading ||
+        activeIndex === config.operations.length - 1,
     },
   ]
 
   const onSelect = ({ index }: { index: number }) => {
-    setActiveIndex(index)
+    checkHasChanged(() => setActiveIndex(index))
   }
 
   const onActive = ({ top }: { top: number }) => {
@@ -230,56 +248,58 @@ export const LogicTab: FC = () => {
   }
 
   return (
-    <VStack align="stretch" position="relative" spacing={4}>
-      {config.operations.length > 0 ? (
-        <FloatingToolbar offsetTop={offsetTop} options={toolbarOptions} />
-      ) : (
-        <Center py={16}>
-          <VStack spacing={4} w="100%">
-            <Text textStyle="heading2" color="primary.500">
-              Build a logical brain for your checker
-            </Text>
-            <Text textAlign="center">
-              Use input from questions to make calculations or generate a logic
-              outcome.
-              <br />
-              <Link
-                href={LOGIC_CONSTANTS_GUIDE_URL}
-                isExternal
-                color="primary.500"
-              >
-                Learn how to work with logic
-              </Link>
-            </Text>
-            <Box pt="16px" pb="32px">
-              <Menu placement="bottom">
-                <MenuButton
-                  leftIcon={<BiPlus />}
-                  as={Button}
-                  colorScheme="primary"
+    <>
+      <VStack align="stretch" position="relative" spacing={4}>
+        {config.operations.length > 0 ? (
+          <FloatingToolbar offsetTop={offsetTop} options={toolbarOptions} />
+        ) : (
+          <Center py={16}>
+            <VStack spacing={4} w="100%">
+              <Text textStyle="heading2" color="primary.500">
+                Build a logical brain for your checker
+              </Text>
+              <Text textAlign="center">
+                Use input from questions to make calculations or generate a
+                logic outcome.
+                <br />
+                <Link
+                  href={LOGIC_CONSTANTS_GUIDE_URL}
+                  isExternal
+                  color="primary.500"
                 >
-                  Add logic
-                </MenuButton>
-                <MenuList>
-                  {addMenu.map(({ label, icon, onClick }, i) => (
-                    <MenuItem onClick={onClick} key={i}>
-                      <MenuIcon mr={4}>{icon}</MenuIcon>
-                      {label}
-                    </MenuItem>
-                  ))}
-                </MenuList>
-              </Menu>
-            </Box>
-            <Image
-              flex={1}
-              src={emptyLogicTabImage}
-              height={{ base: '257px', lg: 'auto' }}
-              mb={{ base: '24px', lg: '0px' }}
-            />
-          </VStack>
-        </Center>
-      )}
-      {config.operations.map(renderOperation)}
-    </VStack>
+                  Learn how to work with logic
+                </Link>
+              </Text>
+              <Box pt="16px" pb="32px">
+                <Menu placement="bottom">
+                  <MenuButton
+                    leftIcon={<BiPlus />}
+                    as={Button}
+                    colorScheme="primary"
+                  >
+                    Add logic
+                  </MenuButton>
+                  <MenuList>
+                    {addMenu.map(({ label, icon, onClick }, i) => (
+                      <MenuItem onClick={onClick} key={i}>
+                        <MenuIcon mr={4}>{icon}</MenuIcon>
+                        {label}
+                      </MenuItem>
+                    ))}
+                  </MenuList>
+                </Menu>
+              </Box>
+              <Image
+                flex={1}
+                src={emptyLogicTabImage}
+                height={{ base: '257px', lg: 'auto' }}
+                mb={{ base: '24px', lg: '0px' }}
+              />
+            </VStack>
+          </Center>
+        )}
+        {config.operations.map(renderOperation)}
+      </VStack>
+    </>
   )
 }

@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { Stack, Text, useMultiStyleConfig } from '@chakra-ui/react'
 
-import { sanitizeHtml } from '../../utils/sanitize-html'
+import { sanitizeHtml } from '../../../shared/utils/sanitize-html'
 import '../../styles/inline-external-link.css'
 import '../../styles/line-display.css'
 

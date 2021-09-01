@@ -1,15 +1,14 @@
-import React, {
-  FC,
-  createContext,
-  useContext,
-  useEffect,
-  useReducer,
-  useState,
-} from 'react'
+import React, { FC, createContext, useContext, useState } from 'react'
 import { AxiosError } from 'axios'
 import update from 'immutability-helper'
 import { useRouteMatch } from 'react-router-dom'
-import { useQuery, useMutation, UseMutationResult } from 'react-query'
+import {
+  useQuery,
+  useQueryClient,
+  useMutation,
+  UseMutationResult,
+} from 'react-query'
+import { useDisclosure, UseModalProps } from '@chakra-ui/react'
 
 import { Checker } from '../../types/checker'
 import {
@@ -19,10 +18,10 @@ import {
   BuilderRemovePayload,
   BuilderReorderPayload,
   BuilderUpdateSettingsPayload,
-  BuilderLoadConfigPayload,
 } from '../../types/builder'
 import { BuilderActionEnum } from '../../util/enums'
 import { CheckerService } from '../services'
+import { useStyledToast } from '../components/common/StyledToast'
 
 const checkerContext = createContext<CheckerContextProps | undefined>(undefined)
 
@@ -89,20 +88,14 @@ export const reducer = (state: Checker, action: BuilderAction): Checker => {
     }
 
     case BuilderActionEnum.UpdateSettings: {
-      const { settingsName, value } = payload as BuilderUpdateSettingsPayload
+      const { title, description } = payload as BuilderUpdateSettingsPayload
 
       newState = update(state, {
-        [settingsName]: {
-          $set: value,
-        },
+        title: { $set: title },
+        description: { $set: description },
       })
 
       return newState
-    }
-
-    case BuilderActionEnum.LoadConfig: {
-      const { loadedState } = payload as BuilderLoadConfigPayload
-      return loadedState
     }
 
     default:
@@ -112,10 +105,14 @@ export const reducer = (state: Checker, action: BuilderAction): Checker => {
 
 interface CheckerContextProps {
   config: Checker
+  isFetchedAfterMount: boolean
   isChanged: boolean
-  dispatch: React.Dispatch<BuilderAction>
-  save: UseMutationResult<Checker, AxiosError<{ message: string }>, void>
+  setChanged: React.Dispatch<React.SetStateAction<boolean>>
+  dispatch: (action: BuilderAction, callback?: () => void) => void
+  save: UseMutationResult<Checker, AxiosError<{ message: string }>, Checker>
   publish: UseMutationResult<Checker, AxiosError<{ message: string }>, void>
+  getUnsavedChangesModalProps: () => UseModalProps & { onDiscard?: () => void }
+  checkHasChanged: (fn: () => void) => void
 }
 
 const initialConfig = {
@@ -134,55 +131,89 @@ export const CheckerProvider: FC = ({ children }) => {
   const {
     params: { id },
   } = useRouteMatch<{ id: string }>()
-  const [config, dispatch] = useReducer(reducer, initialConfig)
-  const [lastSavedConfig, setLastSavedConfig] = useState<Checker>(initialConfig)
+  const queryClient = useQueryClient()
   const [isChanged, setChanged] = useState(false)
 
-  const dispatchLoad = (loadedState: Checker) => {
-    dispatch({
-      type: BuilderActionEnum.LoadConfig,
-      payload: { loadedState },
-    })
-    setLastSavedConfig(JSON.parse(JSON.stringify(loadedState)))
+  const unsavedChangesModal = useDisclosure()
+  const [onDiscard, setOnDiscard] = useState<() => void>()
+  const toast = useStyledToast()
+
+  const checkHasChanged = (fn: () => void) => {
+    if (isChanged) {
+      setOnDiscard(() => fn)
+      return unsavedChangesModal.onOpen()
+    }
+    fn()
   }
 
   // Initial query for checker data
-  const { isSuccess, data } = useQuery(
+  const { data: config, isFetchedAfterMount } = useQuery(
     ['builder', id],
     () => CheckerService.getChecker(id),
-    { refetchOnWindowFocus: false }
-  )
-  useEffect(() => {
-    if (data) {
-      dispatchLoad(data)
-    }
-  }, [isSuccess, data])
-
-  useEffect(() => {
-    setChanged(JSON.stringify(config) !== JSON.stringify(lastSavedConfig))
-  }, [config, lastSavedConfig])
-
-  const save = useMutation<Checker, AxiosError<{ message: string }>, void>(
-    () => CheckerService.updateChecker(config),
     {
-      onSuccess: (checker) => {
+      placeholderData: initialConfig,
+      refetchOnWindowFocus: false,
+    }
+  )
+
+  const save = useMutation<Checker, AxiosError<{ message: string }>, Checker>(
+    (update: Checker) => CheckerService.updateChecker(update),
+    {
+      onMutate: (updated) => {
+        // Cancel other in-flight queries to prevent them from overwriting the optimistic update
+        queryClient.cancelQueries(['builder', id])
+        // Optimistically update checker config first
+        queryClient.setQueryData(['builder', id], updated)
+      },
+      onError: (err) => {
+        toast({
+          status: 'error',
+          description: err.response?.data.message || 'Failed to save checker',
+        })
+      },
+      onSettled: () => {
         // On success, update load the returned checker to ensure consistency with backend
-        dispatchLoad(checker)
+        queryClient.invalidateQueries(['builder', id])
       },
     }
   )
 
   const publish = useMutation<Checker, AxiosError<{ message: string }>, void>(
-    () => CheckerService.publishChecker(config),
+    () => CheckerService.publishChecker(config || initialConfig),
     {
-      onSuccess: (checker) => {
+      onSettled: () => {
         // On success, update load the returned checker to ensure consistency with backend
-        dispatchLoad(checker)
+        queryClient.invalidateQueries(['builder', id])
       },
     }
   )
 
-  const value = { config, isChanged, dispatch, save, publish }
+  const getUnsavedChangesModalProps = (): UseModalProps & {
+    onDiscard?: () => void
+  } => ({
+    ...unsavedChangesModal,
+    onDiscard,
+  })
+
+  const value = {
+    config: config || initialConfig,
+    isFetchedAfterMount,
+    isChanged,
+    setChanged,
+    dispatch: (action: BuilderAction, callback?: () => void) => {
+      const update = reducer(config || initialConfig, action)
+      save.mutate(update, {
+        onSuccess: () => {
+          if (callback) callback()
+        },
+      })
+    },
+    save,
+    publish,
+    getUnsavedChangesModalProps,
+    checkHasChanged,
+  }
+
   return (
     <checkerContext.Provider value={value}>{children}</checkerContext.Provider>
   )

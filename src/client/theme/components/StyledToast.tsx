@@ -10,15 +10,6 @@ export const StyledToast: ComponentMultiStyleConfig = {
     'closeButton',
   ],
   baseStyle: ({ colorScheme }) => ({
-    boxContainer: {
-      w: '100vw',
-      position: 'absolute',
-      left: 0,
-      right: 0,
-      px: 2,
-      justifyContent: 'center',
-      pointerEvents: 'none',
-    },
     toastBox: {
       w: { base: '100%', md: '680px' },
       minH: '56px',

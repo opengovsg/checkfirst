@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { BiTable, BiTrash, BiPlus } from 'react-icons/bi'
 import {
   IconButton,
@@ -18,159 +18,214 @@ import {
   useMultiStyleConfig,
   useStyles,
 } from '@chakra-ui/react'
+import { useForm, useFieldArray } from 'react-hook-form'
 
 import * as checker from '../../../../types/checker'
 import { createBuilderField, ConstantFieldComponent } from '../BuilderField'
 import { useCheckerContext } from '../../../contexts'
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../../util/enums'
 import { DefaultTooltip } from '../../common/DefaultTooltip'
+import { ToolbarPortal } from '../ToolbarPortal'
+import { useStyledToast } from '../../common/StyledToast'
 
-const InputComponent: ConstantFieldComponent = ({ constant, index }) => {
-  const { title, table } = constant
-  const { dispatch } = useCheckerContext()
+const InputComponent: ConstantFieldComponent = ({
+  constant,
+  index,
+  toolbar,
+}) => {
+  const { dispatch, setChanged, isChanged, save } = useCheckerContext()
   const commonStyles = useStyles()
   const styles = useMultiStyleConfig('MapTable', {})
+  const toast = useStyledToast()
 
-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    dispatch({
-      type: BuilderActionEnum.Update,
-      payload: {
-        currIndex: index,
-        element: { ...constant, [name]: value },
-        configArrName: ConfigArrayEnum.Constants,
-      },
-    })
-  }
+  const { register, control, formState, reset, handleSubmit } = useForm<
+    Pick<checker.Constant, 'title' | 'table'>
+  >({
+    defaultValues: {
+      title: constant.title || '',
+      ...(constant.table && constant.table.length > 0
+        ? { table: constant.table }
+        : {}),
+    },
+  })
+  const {
+    fields: table,
+    append,
+    remove,
+  } = useFieldArray<Pick<checker.Constant, 'title' | 'table'>>({
+    name: 'table',
+    control,
+  })
+  useEffect(() => {
+    setChanged(Object.keys(formState.dirtyFields).length > 0)
+  }, [formState, setChanged])
 
   const handleAddTableRow = () => {
     const newTableElem = { key: '', value: NaN }
-    constant.table.push(newTableElem)
-    dispatch({
-      type: BuilderActionEnum.Update,
-      payload: {
-        currIndex: index,
-        element: { ...constant, table: constant.table },
-        configArrName: ConfigArrayEnum.Constants,
-      },
-    })
+    append(newTableElem)
   }
 
   const handleDeleteTableRow = (tableRowIndex: number) => {
-    constant.table.splice(tableRowIndex, 1)
-    dispatch({
-      type: BuilderActionEnum.Update,
-      payload: {
-        currIndex: index,
-        element: { ...constant, table: constant.table },
-        configArrName: ConfigArrayEnum.Constants,
-      },
-    })
+    remove(tableRowIndex)
   }
 
-  const handleUpdateTableRow = (
-    updatedTableElem: checker.TableElem,
-    tableRowIndex: number
-  ) => {
-    constant.table.splice(tableRowIndex, 1, updatedTableElem)
-    dispatch({
-      type: BuilderActionEnum.Update,
-      payload: {
-        currIndex: index,
-        element: { ...constant, table: constant.table },
-        configArrName: ConfigArrayEnum.Constants,
+  const handleSave = () => {
+    handleSubmit(
+      ({ title, table }) => {
+        dispatch(
+          {
+            type: BuilderActionEnum.Update,
+            payload: {
+              currIndex: index,
+              element: { ...constant, title, table },
+              configArrName: ConfigArrayEnum.Constants,
+            },
+          },
+          () => {
+            reset({ title, table }, { keepValues: true, keepDirty: false })
+            toast({
+              status: 'success',
+              description: 'Constant table updated',
+            })
+          }
+        )
       },
-    })
+      () => {
+        toast({
+          status: 'error',
+          description: 'Unable to save constant table',
+        })
+      }
+    )()
   }
 
   return (
-    <VStack
-      sx={{ ...commonStyles.fullWidthContainer, ...styles.fieldContainer }}
-      spacing={4}
-    >
-      <InputGroup>
-        <InputLeftElement
-          sx={commonStyles.inputIconElement}
-          children={<BiTable />}
-        />
-        <Input
-          type="text"
-          sx={commonStyles.fieldInput}
-          placeholder="Table Name"
-          name="title"
-          onChange={handleTitleChange}
-          value={title}
-        />
-      </InputGroup>
-      <Table sx={styles.table} variant="simple" colorScheme="table">
-        <Thead>
-          <Tr>
-            <Th sx={styles.tableHead}>
-              <Text sx={styles.tableHeadText}>Reference</Text>
-            </Th>
-            <Th sx={styles.tableHead}>
-              <Text sx={styles.tableHeadText}>Constant</Text>
-            </Th>
-            <Th />
-          </Tr>
-        </Thead>
-        <Tbody>
-          {table.map(({ key, value }, index) => (
-            <Tr key={index}>
-              <Td sx={styles.tableCell}>
-                <Input
-                  sx={styles.tableInput}
-                  type="text"
-                  placeholder="Reference"
-                  name="Reference"
-                  onChange={(e) => {
-                    handleUpdateTableRow({ key: e.target.value, value }, index)
-                  }}
-                  value={key}
-                />
-              </Td>
-              <Td sx={styles.tableCell}>
-                <Input
-                  sx={styles.tableInput}
-                  type="number"
-                  placeholder="Numeric Value"
-                  name="constant"
-                  onChange={(e) => {
-                    handleUpdateTableRow(
-                      { key, value: Number(e.target.value) },
-                      index
-                    )
-                  }}
-                  value={value}
-                />
-              </Td>
-              <Td sx={styles.deleteCell}>
-                <DefaultTooltip label="Delete row">
-                  <IconButton
-                    sx={styles.deleteButton}
-                    variant="link"
-                    colorScheme="error"
-                    aria-label="delete item"
-                    icon={<BiTrash />}
-                    onClick={() => handleDeleteTableRow(index)}
-                  />
-                </DefaultTooltip>
-              </Td>
-            </Tr>
-          ))}
-        </Tbody>
-      </Table>
-      <Button
-        leftIcon={<BiPlus />}
-        sx={styles.addRowButton}
-        variant="solid"
-        colorScheme="primary"
-        aria-label="add map item"
-        onClick={handleAddTableRow}
+    <>
+      <VStack
+        sx={{ ...commonStyles.fullWidthContainer, ...styles.fieldContainer }}
+        spacing={4}
       >
-        Add row
-      </Button>
-    </VStack>
+        <InputGroup>
+          <InputLeftElement
+            sx={commonStyles.inputIconElement}
+            children={<BiTable />}
+          />
+          <Input
+            type="text"
+            sx={commonStyles.fieldInput}
+            placeholder="Table Name"
+            {...register('title', {
+              required: { value: true, message: 'Title cannot be empty' },
+            })}
+            isInvalid={!!formState.errors.title}
+          />
+        </InputGroup>
+        <Text fontSize="sm" color="error.500">
+          {formState.errors.title?.message}
+        </Text>
+        <Table sx={styles.table} variant="simple" colorScheme="table">
+          <Thead>
+            <Tr>
+              <Th sx={styles.tableHead}>
+                <Text sx={styles.tableHeadText}>Reference</Text>
+              </Th>
+              <Th sx={styles.tableHead}>
+                <Text sx={styles.tableHeadText}>Constant</Text>
+              </Th>
+              <Th />
+            </Tr>
+          </Thead>
+          <Tbody>
+            {table.map((_, index) => (
+              <Tr key={index}>
+                <Td sx={styles.tableCell}>
+                  <Input
+                    sx={styles.tableInput}
+                    type="text"
+                    placeholder="Reference"
+                    {...register(`table.${index}.key`, {
+                      required: {
+                        value: true,
+                        message: 'Table row value cannot be empty',
+                      },
+                    })}
+                    isInvalid={
+                      !!(
+                        formState.errors.table &&
+                        formState.errors.table[index]?.key
+                      )
+                    }
+                  />
+                </Td>
+                <Td sx={styles.tableCell}>
+                  <Input
+                    sx={styles.tableInput}
+                    type="number"
+                    placeholder="Numeric Value"
+                    {...register(`table.${index}.value`, {
+                      required: {
+                        value: true,
+                        message: 'Table row value cannot be empty',
+                      },
+                    })}
+                    isInvalid={
+                      !!(
+                        formState.errors.table &&
+                        formState.errors.table[index]?.value
+                      )
+                    }
+                  />
+                </Td>
+                <Td sx={styles.deleteCell}>
+                  <DefaultTooltip label="Delete row">
+                    <IconButton
+                      sx={styles.deleteButton}
+                      variant="link"
+                      colorScheme="error"
+                      aria-label="delete item"
+                      icon={<BiTrash />}
+                      onClick={() => handleDeleteTableRow(index)}
+                      isDisabled={table.length <= 1}
+                    />
+                  </DefaultTooltip>
+                </Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+        <Button
+          leftIcon={<BiPlus />}
+          sx={styles.addRowButton}
+          variant="solid"
+          colorScheme="primary"
+          aria-label="add map item"
+          onClick={handleAddTableRow}
+        >
+          Add row
+        </Button>
+      </VStack>
+      <ToolbarPortal container={toolbar}>
+        <HStack>
+          {isChanged && (
+            <Button
+              isDisabled={save.isLoading}
+              colorScheme="primary"
+              variant="outline"
+              onClick={() => reset(undefined, { keepValues: false })}
+            >
+              Reset
+            </Button>
+          )}
+          <Button
+            colorScheme="primary"
+            onClick={handleSave}
+            isLoading={save.isLoading}
+          >
+            Save
+          </Button>
+        </HStack>
+      </ToolbarPortal>
+    </>
   )
 }
 

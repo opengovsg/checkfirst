@@ -23,7 +23,7 @@ import {
 } from './fields'
 import { LineDisplay } from './displays'
 import * as checker from './../../types/checker'
-import { evaluate } from './../core/evaluator'
+import { evaluate } from '../../shared/core/evaluator'
 import { unit, Unit } from 'mathjs'
 import { useGoogleAnalytics } from '../contexts'
 import { useStyledToast } from './common/StyledToast'

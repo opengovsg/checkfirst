@@ -16,6 +16,7 @@ import {
   UnorderedList,
   VStack,
   Text,
+  useOutsideClick,
 } from '@chakra-ui/react'
 import { matchSorter, RankingInfo } from 'match-sorter'
 import TextareaAutoresize from 'react-textarea-autosize'
@@ -46,12 +47,14 @@ type QueryBlock = {
 interface ExpressionInputProps extends Omit<InputProps, 'onChange' | 'value'> {
   onChange: (expr: string) => void
   value: string
+  refCallback?: React.RefCallback<HTMLInputElement>
 }
 
 export const ExpressionInput: FC<ExpressionInputProps> = ({
   onChange,
   value,
   placeholder,
+  refCallback,
   ...props
 }) => {
   const [inputValue, setInputValue] = useState<string>(value)
@@ -62,21 +65,14 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
   const wrapperRef = useRef<HTMLDivElement>(null)
   const cursorRef = useRef<HTMLSpanElement>(null)
 
-  // hide calc bar and reset selection when clicking outside of the component
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        wrapperRef.current &&
-        !wrapperRef.current.contains(event.target as Node)
-      ) {
-        setHasFocus(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [])
+    if (refCallback) refCallback(inputRef.current)
+  }, [refCallback, inputRef])
+
+  useOutsideClick({
+    ref: wrapperRef,
+    handler: () => setHasFocus(false),
+  })
 
   // syncs input value with subsequent value updates
   useEffect(() => {
@@ -253,7 +249,7 @@ export const ExpressionInput: FC<ExpressionInputProps> = ({
   }
 
   return (
-    <VStack align="stretch" position="relative" flex={1} w={0} ref={wrapperRef}>
+    <VStack align="stretch" position="relative" flex={1} ref={wrapperRef}>
       <Downshift
         // controlled values
         inputValue={inputValue}

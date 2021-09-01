@@ -15,7 +15,7 @@ export const TitlePreviewText: FC<FieldIndexTextProps> = ({
   // user-facing index starts from 1
   return (
     <Text sx={styles.title} {...props}>
-      <Text sx={styles.fieldIndex}>{`${index + 1}.`}</Text> {children}
+      <Text as="span" sx={styles.fieldIndex}>{`${index + 1}.`}</Text> {children}
     </Text>
   )
 }

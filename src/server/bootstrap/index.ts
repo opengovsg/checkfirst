@@ -1,5 +1,6 @@
 import express, { Express, Request, Response, NextFunction } from 'express'
 import session from 'express-session'
+import { Sequelize as RawSequelize } from 'sequelize'
 import { Sequelize, SequelizeOptions } from 'sequelize-typescript'
 import SequelizeStoreFactory from 'connect-session-sequelize'
 import bodyParser from 'body-parser'
@@ -97,7 +98,7 @@ export async function bootstrap(): Promise<{
 
   const sessionMiddleware = session({
     store: new SequelizeStore({
-      db: sequelize,
+      db: sequelize as RawSequelize,
       tableName: 'sessions',
     }),
     resave: false, // can set to false since touch is implemented by our store
