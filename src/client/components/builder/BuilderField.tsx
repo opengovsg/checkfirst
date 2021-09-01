@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react'
+import React, { FC, useRef, useEffect } from 'react'
 import { difference } from 'lodash'
 import { BiDuplicate, BiTrash, BiShow, BiHide } from 'react-icons/bi'
 import {
@@ -26,18 +26,21 @@ export type TitleFieldComponent = FC<
 interface QuestionFieldComponentProps {
   field: checker.Field
   index: number
+  toolbar: HTMLElement | null
 }
 export type QuestionFieldComponent = FC<QuestionFieldComponentProps>
 
 interface OperationFieldComponentProps {
   operation: checker.Operation
   index: number
+  toolbar: HTMLElement | null
 }
 export type OperationFieldComponent = FC<OperationFieldComponentProps>
 
 interface ConstantFieldComponentProps {
   constant: checker.Constant
   index: number
+  toolbar: HTMLElement | null
 }
 export type ConstantFieldComponent = FC<ConstantFieldComponentProps>
 
@@ -102,8 +105,10 @@ export const createBuilderField =
     ...props
   }) => {
     const [ref, { top }] = usePosition()
-    const { dispatch } = useCheckerContext()
+    const { save, dispatch, isChanged } = useCheckerContext()
     const variant = active ? 'active' : ''
+
+    const toolbar = useRef<HTMLElement>(null)
 
     const getVariant = (data: BuilderFieldData): string => {
       if (!active) return 'inactive'
@@ -128,21 +133,42 @@ export const createBuilderField =
         const Content = (
           active ? InputComponent : PreviewComponent
         ) as QuestionFieldComponent
-        return <Content {...props} field={data} index={index} />
+        return (
+          <Content
+            {...props}
+            field={data}
+            index={index}
+            toolbar={toolbar.current}
+          />
+        )
       }
 
       if (isConstantData(data)) {
         const Content = (
           active ? InputComponent : PreviewComponent
         ) as ConstantFieldComponent
-        return <Content {...props} constant={data} index={index} />
+        return (
+          <Content
+            {...props}
+            constant={data}
+            index={index}
+            toolbar={toolbar.current}
+          />
+        )
       }
 
       if (isOperationData(data)) {
         const Content = (
           active ? InputComponent : PreviewComponent
         ) as OperationFieldComponent
-        return <Content {...props} operation={data} index={index} />
+        return (
+          <Content
+            {...props}
+            operation={data}
+            index={index}
+            toolbar={toolbar.current}
+          />
+        )
       }
 
       const Content = (
@@ -288,6 +314,7 @@ export const createBuilderField =
                     )
                   }
                   onClick={handleDisplayToggle}
+                  disabled={isChanged || save.isLoading}
                 />
               )}
               {!isTitleData(data) && (
@@ -302,6 +329,7 @@ export const createBuilderField =
                       </DefaultTooltip>
                     }
                     onClick={handleDuplicate}
+                    disabled={isChanged || save.isLoading}
                   />
                   <ActionButton
                     colorScheme="error"
@@ -314,7 +342,9 @@ export const createBuilderField =
                       </DefaultTooltip>
                     }
                     onClick={handleDelete}
+                    disabled={isChanged || save.isLoading}
                   />
+                  <span ref={toolbar}></span>
                 </>
               )}
             </HStack>

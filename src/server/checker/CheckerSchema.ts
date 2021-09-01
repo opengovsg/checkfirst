@@ -1,4 +1,10 @@
 import Joi from 'joi'
+import { isValidExpression } from '../../shared/core/evaluator'
+
+const expressionValidator = (expr: string): string => {
+  if (!isValidExpression(expr)) throw new Error('Invalid expression')
+  return expr
+}
 
 const FieldOptionsSchema = Joi.object({
   label: Joi.string().required(),
@@ -40,7 +46,7 @@ const OperationSchema = Joi.object({
   id: Joi.string().required(),
   type: Joi.string().valid('ARITHMETIC', 'IFELSE', 'MAP', 'DATE').required(),
   title: Joi.string().required(),
-  expression: Joi.string().required(),
+  expression: Joi.string().custom(expressionValidator).required(),
   show: Joi.boolean().required(),
 })
 

@@ -77,8 +77,8 @@ export const BuilderField: ComponentMultiStyleConfig = {
       borderRadius: '4px',
     },
     actionBar: {
-      h: 12,
       px: 4,
+      py: 2,
       borderTop: 'solid 1px',
       borderTopColor: 'secondary.200',
       justifyContent: 'flex-end',

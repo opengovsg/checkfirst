@@ -30,7 +30,6 @@ import {
 } from 'react-icons/bi'
 import { FiAtSign, IoEyeOutline, RiArrowRightSLine } from 'react-icons/all'
 import { useGoogleAnalytics } from '../../contexts'
-import { DefaultTooltip } from '../common/DefaultTooltip'
 import { useRouteMatch, useHistory, useLocation } from 'react-router-dom'
 
 import { IconType } from 'react-icons'
@@ -248,18 +247,16 @@ export const HelpButton: FC = () => {
         onClose={onClose}
         onOpen={onOpen}
       >
-        <DefaultTooltip label="Help & Resources">
-          <PopoverTrigger>
-            <IconButton
-              aria-label="Open guide"
-              icon={<BiQuestionMark color="white" size="24px" />}
-              isRound
-              bg="primary.500"
-              _hover={{ color: 'primary.500' }}
-              variant="solid"
-            />
-          </PopoverTrigger>
-        </DefaultTooltip>
+        <PopoverTrigger>
+          <IconButton
+            aria-label="Open guide"
+            icon={<BiQuestionMark color="white" size="24px" />}
+            isRound
+            bg="primary.500"
+            _hover={{ color: 'primary.500' }}
+            variant="solid"
+          />
+        </PopoverTrigger>
 
         <Portal>
           <PopoverContent height="350px" ref={popoverRef}>

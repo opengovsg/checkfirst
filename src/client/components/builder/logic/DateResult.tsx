@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { isValidExpression } from '../../../core/evaluator'
+import React, { useEffect } from 'react'
+import { isValidExpression } from '../../../../shared/core/evaluator'
 import { BiCalendar, BiChevronDown } from 'react-icons/bi'
 import {
   VStack,
@@ -19,17 +19,19 @@ import {
   useStyles,
   useMultiStyleConfig,
 } from '@chakra-ui/react'
+import { useForm, Controller } from 'react-hook-form'
 
 import { useCheckerContext } from '../../../contexts'
 import { createBuilderField, OperationFieldComponent } from '../BuilderField'
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../../util/enums'
+import { useStyledToast } from '../../common/StyledToast'
 import { FormulaPreview } from './FormulaPreview'
-import update from 'immutability-helper'
+import { ToolbarPortal } from '../ToolbarPortal'
 
 interface DateState {
   variableId: string
   isAdd: boolean
-  numberOfIntervals: number
+  numberOfIntervals: string | number
 }
 
 const EMPTY_STATE: DateState = {
@@ -59,52 +61,29 @@ const toExpression = (state: DateState): string => {
   return `${variableId} ${isAdd ? '+' : '-'} ${numberOfIntervals} days`
 }
 
-const InputComponent: OperationFieldComponent = ({ operation, index }) => {
+const InputComponent: OperationFieldComponent = ({
+  operation,
+  index,
+  toolbar,
+}) => {
   const { title, expression, id: currentId } = operation
-  const { config, dispatch } = useCheckerContext()
-  const [dateState, setDateState] = useState<DateState>(
-    fromExpression(expression)
-  )
-
+  const { config, setChanged, isChanged, dispatch, save } = useCheckerContext()
+  const initialDate = fromExpression(expression)
+  const toast = useStyledToast()
   const commonStyles = useStyles()
   const styles = useMultiStyleConfig('DateResult', {})
 
+  const { register, formState, control, handleSubmit, reset } = useForm<
+    { title: string } & DateState
+  >({
+    defaultValues: {
+      title,
+      ...initialDate,
+    },
+  })
   useEffect(() => {
-    const updatedExpression = toExpression(dateState)
-    if (
-      operation.expression !== updatedExpression &&
-      isValidExpression(updatedExpression)
-    ) {
-      dispatch({
-        type: BuilderActionEnum.Update,
-        payload: {
-          currIndex: index,
-          element: { ...operation, expression: updatedExpression },
-          configArrName: ConfigArrayEnum.Operations,
-        },
-      })
-    }
-  }, [dateState, dispatch, index, operation])
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    dispatch({
-      type: BuilderActionEnum.Update,
-      payload: {
-        currIndex: index,
-        element: { ...operation, [name]: value },
-        configArrName: ConfigArrayEnum.Operations,
-      },
-    })
-  }
-
-  const updateState = (name: string, value: string | boolean | number) => {
-    setDateState((s) =>
-      update(s, {
-        [name]: { $set: value },
-      })
-    )
-  }
+    setChanged(formState.isDirty)
+  }, [formState.isDirty, setChanged])
 
   const renderBadgeWithTitle = (
     id: string,
@@ -119,6 +98,45 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
     </HStack>
   )
 
+  const handleSave = () => {
+    handleSubmit(
+      (data) => {
+        const { title, ...dateState } = data
+        const expression = toExpression(dateState)
+        if (isValidExpression(expression)) {
+          dispatch(
+            {
+              type: BuilderActionEnum.Update,
+              payload: {
+                currIndex: index,
+                element: { ...operation, title, expression },
+                configArrName: ConfigArrayEnum.Operations,
+              },
+            },
+            () => {
+              reset(data, { keepValues: true, keepDirty: false })
+              toast({
+                status: 'success',
+                description: 'Logic block updated',
+              })
+            }
+          )
+        } else {
+          toast({
+            status: 'error',
+            description: 'Unable to save logic block',
+          })
+        }
+      },
+      () => {
+        toast({
+          status: 'error',
+          description: 'Unable to save logic block',
+        })
+      }
+    )()
+  }
+
   return (
     <VStack sx={commonStyles.fullWidthContainer} spacing={4}>
       <InputGroup>
@@ -127,94 +145,154 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
           children={<BiCalendar />}
         />
         <Input
-          name="title"
           sx={commonStyles.fieldInput}
           type="text"
           placeholder="Operation title"
-          onChange={handleChange}
-          value={title}
+          {...register('title', {
+            required: { value: true, message: 'Title cannot be empty' },
+          })}
+          isInvalid={!!formState.errors.title}
         />
       </InputGroup>
+      <Text fontSize="sm" color="error.500">
+        {formState.errors.title?.message}
+      </Text>
       <HStack sx={styles.dateContainer} spacing={4}>
-        <Menu matchWidth>
-          {({ onClose }) => (
-            <>
-              <MenuButton
-                as={Button}
-                sx={styles.questionButton}
-                variant="outline"
-                rightIcon={<BiChevronDown />}
-              >
-                <Text
-                  sx={styles.menuButtonText}
-                  textColor={
-                    dateState.variableId ? 'secondary.700' : 'neutral.500'
-                  }
+        <Controller
+          name="variableId"
+          rules={{
+            required: { value: true, message: 'Variable cannot be empty' },
+          }}
+          control={control}
+          render={({ field: { value, onChange } }) => {
+            return (
+              <Menu matchWidth>
+                {({ onClose }) => (
+                  <>
+                    <MenuButton
+                      as={Button}
+                      sx={styles.questionButton}
+                      variant="outline"
+                      rightIcon={<BiChevronDown />}
+                    >
+                      <Text
+                        sx={styles.menuButtonText}
+                        textColor={value ? 'secondary.700' : 'neutral.500'}
+                      >
+                        {value || 'Select question'}
+                      </Text>
+                    </MenuButton>
+                    <MenuList>
+                      {config.fields
+                        .filter(({ type }) => type === 'DATE')
+                        .map(({ id, title }, i) => (
+                          <MenuItem
+                            key={i}
+                            onClick={() => {
+                              onChange(id)
+                              onClose()
+                            }}
+                          >
+                            {renderBadgeWithTitle(id, title, 'success.500')}
+                          </MenuItem>
+                        ))}
+                      {config.operations
+                        .filter(
+                          ({ id, type }) => type === 'DATE' && id !== currentId
+                        )
+                        .map(({ id, title }, i) => (
+                          <MenuItem
+                            key={i}
+                            onClick={() => {
+                              onChange(id)
+                              onClose()
+                            }}
+                          >
+                            {renderBadgeWithTitle(id, title, 'primary.500')}
+                          </MenuItem>
+                        ))}
+                    </MenuList>
+                  </>
+                )}
+              </Menu>
+            )
+          }}
+        />
+        <Controller
+          name="isAdd"
+          control={control}
+          render={({ field: { value, onChange } }) => {
+            return (
+              <Menu matchWidth>
+                <MenuButton
+                  as={Button}
+                  sx={styles.operatorButton}
+                  variant="outline"
+                  rightIcon={<BiChevronDown />}
                 >
-                  {dateState.variableId
-                    ? dateState.variableId
-                    : 'Select question'}
-                </Text>
-              </MenuButton>
-              <MenuList>
-                {config.fields
-                  .filter(({ type }) => type === 'DATE')
-                  .map(({ id, title }, i) => (
-                    <MenuItem
-                      key={i}
-                      onClick={() => {
-                        updateState('variableId', id)
-                        onClose()
-                      }}
-                    >
-                      {renderBadgeWithTitle(id, title, 'success.500')}
-                    </MenuItem>
-                  ))}
-                {config.operations
-                  .filter(({ id, type }) => type === 'DATE' && id !== currentId)
-                  .map(({ id, title }, i) => (
-                    <MenuItem
-                      key={i}
-                      onClick={() => {
-                        updateState('variableId', id)
-                        onClose()
-                      }}
-                    >
-                      {renderBadgeWithTitle(id, title, 'primary.500')}
-                    </MenuItem>
-                  ))}
-              </MenuList>
-            </>
-          )}
-        </Menu>
-        <Menu matchWidth>
-          <MenuButton
-            as={Button}
-            sx={styles.operatorButton}
-            variant="outline"
-            rightIcon={<BiChevronDown />}
-          >
-            <Text sx={styles.menuButtonText}>
-              {dateState.isAdd ? '+' : '-'}
-            </Text>
-          </MenuButton>
-          <MenuList sx={styles.operatorMenuList}>
-            <MenuItem onClick={() => updateState('isAdd', true)}>+</MenuItem>
-            <MenuItem onClick={() => updateState('isAdd', false)}>-</MenuItem>
-          </MenuList>
-        </Menu>
-        <NumberInput
-          sx={styles.numberInput}
-          precision={0}
-          step={1}
-          min={0}
-          defaultValue={dateState.numberOfIntervals || undefined}
-          onChange={(value) => updateState('numberOfIntervals', value)}
-        >
-          <NumberInputField sx={styles.numberField} placeholder="Number" />
-        </NumberInput>
+                  <Text sx={styles.menuButtonText}>{value ? '+' : '-'}</Text>
+                </MenuButton>
+                <MenuList sx={styles.operatorMenuList}>
+                  <MenuItem onClick={() => onChange(true)}>+</MenuItem>
+                  <MenuItem onClick={() => onChange(false)}>-</MenuItem>
+                </MenuList>
+              </Menu>
+            )
+          }}
+        />
+        <Controller
+          name="numberOfIntervals"
+          rules={{
+            required: {
+              value: true,
+              message: 'Number of intervals cannot be empty',
+            },
+            min: {
+              value: 0,
+              message: 'Number of intervals cannot be less than 0',
+            },
+          }}
+          control={control}
+          render={({
+            field: { name, value, onChange, ref },
+            fieldState: { invalid },
+          }) => {
+            return (
+              <NumberInput
+                name={name}
+                sx={styles.numberInput}
+                precision={0}
+                step={1}
+                min={0}
+                value={value}
+                onChange={onChange}
+                isInvalid={invalid}
+              >
+                <NumberInputField
+                  sx={styles.numberField}
+                  placeholder="Number"
+                  ref={ref}
+                />
+              </NumberInput>
+            )
+          }}
+        />
         <Text sx={styles.daysText}>DAYS</Text>
       </HStack>
+      <Text fontSize="sm" color="error.500">
+        {(formState.errors.variableId || formState.errors.numberOfIntervals) &&
+          'Invalid date logic. Please check inputs.'}
+      </Text>
+      <ToolbarPortal container={toolbar}>
+        <Button
+          isDisabled={!isChanged}
+          isLoading={save.isLoading}
+          colorScheme="primary"
+          onClick={handleSave}
+        >
+          Save
+        </Button>
+      </ToolbarPortal>
     </VStack>
   )
 }

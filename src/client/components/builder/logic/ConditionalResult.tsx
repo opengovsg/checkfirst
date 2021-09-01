@@ -4,9 +4,8 @@ import {
   Condition,
   IfelseState,
 } from '../../../../types/conditional'
-import { parseConditionalExpr } from '../../../core/parser'
-import { isValidExpression } from '../../../core/evaluator'
-import update, { Spec } from 'immutability-helper'
+import { parseConditionalExpr } from '../../../../shared/core/parser'
+import { isValidExpression } from '../../../../shared/core/evaluator'
 import { BiGitBranch, BiTrash, BiChevronDown, BiPlus } from 'react-icons/bi'
 import {
   Divider,
@@ -26,13 +25,16 @@ import {
   useMultiStyleConfig,
   useStyles,
 } from '@chakra-ui/react'
+import { useForm, useFieldArray, Controller } from 'react-hook-form'
 
 import { useCheckerContext } from '../../../contexts'
 import { createBuilderField, OperationFieldComponent } from '../BuilderField'
 import { BuilderActionEnum, ConfigArrayEnum } from '../../../../util/enums'
 import { ExpressionInput } from './ExpressionInput'
 import { DefaultTooltip } from '../../common/DefaultTooltip'
+import { useStyledToast } from '../../common/StyledToast'
 import { FormulaPreview } from './FormulaPreview'
+import { ToolbarPortal } from '../ToolbarPortal'
 
 const toExpression = (state: IfelseState): string => {
   const { ifExpr, conditions, elseExpr, thenExpr } = state
@@ -45,87 +47,53 @@ const toExpression = (state: IfelseState): string => {
   return `ifelse(${condition.trim()}, ${thenExpr.trim()}, ${elseExpr.trim()})`
 }
 
-const InputComponent: OperationFieldComponent = ({ operation, index }) => {
-  const { title, expression } = operation
-  const { dispatch } = useCheckerContext()
-  const [ifelseState, setIfelseState] = useState<IfelseState>(
-    parseConditionalExpr(expression)
-  )
+const InputComponent: OperationFieldComponent = ({
+  operation,
+  index,
+  toolbar,
+}) => {
+  const { isChanged, setChanged, dispatch, save } = useCheckerContext()
   const commonStyles = useStyles()
+  const toast = useStyledToast()
   const styles = useMultiStyleConfig('ConditionalResult', {})
 
   // Retrieve condition type from ifelseState if there exist conditions; else use AND type as default
+  const { conditions: initialConditions, ...ifElseThen } = parseConditionalExpr(
+    operation.expression
+  )
   const initialConditionType: ConditionType =
-    ifelseState.conditions.length > 0 ? ifelseState.conditions[0].type : 'AND'
+    initialConditions.length > 0 ? initialConditions[0].type : 'AND'
   const [conditionType, setConditionType] = useState(initialConditionType)
 
+  const { formState, register, control, handleSubmit, reset } = useForm<
+    { title: string } & IfelseState
+  >({
+    defaultValues: {
+      title: operation.title,
+      ...ifElseThen,
+      ...(initialConditions && initialConditions.length > 0
+        ? { conditions: initialConditions }
+        : {}),
+    },
+  })
+  const {
+    fields: conditions,
+    append,
+    remove,
+    update,
+  } = useFieldArray<{ title: string } & IfelseState>({
+    control,
+    name: 'conditions',
+  })
   useEffect(() => {
-    const updatedExpr = toExpression(ifelseState)
-    // TODO: Check args length is 4
-    if (
-      operation.expression !== updatedExpr &&
-      isValidExpression(updatedExpr)
-    ) {
-      dispatch({
-        type: BuilderActionEnum.Update,
-        payload: {
-          currIndex: index,
-          element: { ...operation, expression: updatedExpr },
-          configArrName: ConfigArrayEnum.Operations,
-        },
-      })
-    }
-  }, [ifelseState, dispatch, index, operation])
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    dispatch({
-      type: BuilderActionEnum.Update,
-      payload: {
-        currIndex: index,
-        element: { ...operation, [name]: value },
-        configArrName: ConfigArrayEnum.Operations,
-      },
-    })
-  }
-
-  const handleExprChange = (name: string, value: string) => {
-    setIfelseState((s) =>
-      update(s, {
-        [name]: { $set: value },
-      })
-    )
-  }
-
-  const updateConditionExpression = (
-    i: number,
-    condition: Partial<Condition>
-  ) => {
-    setIfelseState((s) =>
-      update(s, {
-        conditions: { [i]: { $merge: condition } },
-      })
-    )
-  }
+    setChanged(Object.keys(formState.dirtyFields).length > 0)
+  }, [formState, setChanged])
 
   const updateAllConditionTypes = (conditionType: ConditionType) => {
     // Set conditionType state
     setConditionType(conditionType)
-
     // Set all condition types in ifElseState
-    const updateAllConditionTypes: Record<string, Spec<Condition>> = {}
-
-    ifelseState.conditions.forEach((_condition, conditionIndex) => {
-      updateAllConditionTypes[conditionIndex] = {
-        type: { $set: conditionType },
-      }
-    })
-
-    setIfelseState((s) =>
-      update(s, {
-        conditions: updateAllConditionTypes,
-      })
-    )
+    conditions.forEach((cond, i) => update(i, { ...cond, type: conditionType }))
   }
 
   const addCondition = () => {
@@ -133,20 +101,51 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
       type: conditionType,
       expression: '',
     }
-
-    setIfelseState((s) =>
-      update(s, {
-        conditions: { $push: [emptyCondition] },
-      })
-    )
+    append(emptyCondition)
   }
 
   const deleteCondition = (index: number) => {
-    setIfelseState((s) =>
-      update(s, {
-        conditions: { $splice: [[index, 1]] },
-      })
-    )
+    remove(index)
+  }
+
+  const handleSave = () => {
+    handleSubmit(
+      (data) => {
+        const { title, ...ifelseState } = data
+
+        const expression = toExpression(ifelseState)
+        if (isValidExpression(expression)) {
+          dispatch(
+            {
+              type: BuilderActionEnum.Update,
+              payload: {
+                currIndex: index,
+                element: { ...operation, title, expression },
+                configArrName: ConfigArrayEnum.Operations,
+              },
+            },
+            () => {
+              reset(data, { keepValues: true, keepDirty: false })
+              toast({
+                status: 'success',
+                description: 'Logic block updated',
+              })
+            }
+          )
+        } else {
+          toast({
+            status: 'error',
+            description: 'Unable to save logic block',
+          })
+        }
+      },
+      () => {
+        toast({
+          status: 'error',
+          description: 'Unable to save logic block',
+        })
+      }
+    )()
   }
 
   return (
@@ -157,26 +156,55 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
           children={<BiGitBranch />}
         />
         <Input
-          name="title"
-          sx={commonStyles.fieldInput}
           type="text"
+          sx={commonStyles.fieldInput}
           placeholder="Result description"
-          onChange={handleChange}
-          value={title}
+          {...register('title', {
+            required: { value: true, message: 'Title cannot be empty' },
+          })}
+          isInvalid={!!formState.errors.title}
         />
       </InputGroup>
+      <Text fontSize="sm" color="error.500">
+        {formState.errors.title?.message}
+      </Text>
       <HStack sx={styles.inputContainer}>
         <Text sx={styles.inputLabel}>IF</Text>
-        <ExpressionInput
-          type="text"
-          sx={commonStyles.expressionInput}
+        <Controller
           name="ifExpr"
-          onChange={(expr) => handleExprChange('ifExpr', expr)}
-          value={ifelseState.ifExpr}
+          control={control}
+          rules={{
+            required: {
+              value: true,
+              message: 'Expression cannot be empty ',
+            },
+            validate: (expr) => isValidExpression(expr) || 'Invalid expression',
+          }}
+          render={({
+            field: { name, value, onChange, ref },
+            fieldState: { error, invalid },
+          }) => {
+            return (
+              <Box flex={1}>
+                <ExpressionInput
+                  type="text"
+                  sx={commonStyles.expressionInput}
+                  name={name}
+                  onChange={onChange}
+                  value={value}
+                  isInvalid={invalid}
+                  refCallback={ref}
+                />
+                <Text fontSize="sm" color="error.500">
+                  {error?.message}
+                </Text>
+              </Box>
+            )
+          }}
         />
         <Box sx={styles.deleteSpacer} />
       </HStack>
-      {ifelseState.conditions.map((cond, i) => (
+      {conditions.map((cond, i) => (
         <HStack key={i} sx={styles.inputContainer}>
           {i === 0 ? (
             <Menu autoSelect={false}>
@@ -193,7 +221,7 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
                   as={Button}
                   variant="ghost"
                   sx={styles.menuItem}
-                  isActive={conditionType === 'AND'}
+                  isActive={cond.type === 'AND'}
                   onClick={() => updateAllConditionTypes('AND')}
                 >
                   And
@@ -202,7 +230,7 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
                   as={Button}
                   variant="ghost"
                   sx={styles.menuItem}
-                  isActive={conditionType === 'OR'}
+                  isActive={cond.type === 'OR'}
                   onClick={() => updateAllConditionTypes('OR')}
                 >
                   Or
@@ -212,13 +240,35 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
           ) : (
             <Text sx={styles.spacedInputLabel}>{conditionType}</Text>
           )}
-          <ExpressionInput
-            type="text"
-            sx={commonStyles.expressionInput}
-            onChange={(expression) =>
-              updateConditionExpression(i, { expression })
-            }
-            value={cond.expression}
+          <Controller
+            control={control}
+            name={`conditions.${i}.expression`}
+            rules={{
+              required: { value: true, message: 'Expression cannot be empty' },
+              validate: (expr) =>
+                isValidExpression(expr) || 'Invalid expression',
+            }}
+            render={({
+              field: { name, value, onChange, ref },
+              fieldState: { error, invalid },
+            }) => {
+              return (
+                <Box flex={1}>
+                  <ExpressionInput
+                    type="text"
+                    sx={commonStyles.expressionInput}
+                    name={name}
+                    onChange={onChange}
+                    value={value}
+                    isInvalid={invalid}
+                    refCallback={ref}
+                  />
+                  <Text fontSize="sm" color="error.500">
+                    {error?.message}
+                  </Text>
+                </Box>
+              )
+            }}
           />
           <DefaultTooltip label="Delete condition">
             <IconButton
@@ -242,28 +292,81 @@ const InputComponent: OperationFieldComponent = ({ operation, index }) => {
         Add condition
       </Button>
       <Divider sx={styles.divider} />
-      <HStack sx={styles.inputContainer}>
+      <HStack alignItems="stretch" sx={styles.inputContainer}>
         <Text sx={styles.inputLabel}>THEN</Text>
-        <ExpressionInput
-          type="text"
-          sx={commonStyles.expressionInput}
+        <Controller
           name="thenExpr"
-          placeholder="Use this field as a ‘true/false’ statement, or show a result"
-          onChange={(expr) => handleExprChange('thenExpr', expr)}
-          value={ifelseState.thenExpr}
+          control={control}
+          rules={{
+            required: { value: true, message: 'Expression cannot be empty' },
+            validate: (expr) => isValidExpression(expr) || 'Invalid expression',
+          }}
+          render={({
+            field: { name, value, onChange, ref },
+            fieldState: { error, invalid },
+          }) => {
+            return (
+              <Box flex={1}>
+                <ExpressionInput
+                  type="text"
+                  sx={commonStyles.expressionInput}
+                  placeholder="Use this field as a ‘true/false’ statement, or show a result"
+                  name={name}
+                  onChange={onChange}
+                  value={value}
+                  isInvalid={invalid}
+                  refCallback={ref}
+                />
+                <Text fontSize="sm" color="error.500">
+                  {error?.message}
+                </Text>
+              </Box>
+            )
+          }}
         />
       </HStack>
       <HStack sx={styles.inputContainer}>
         <Text sx={styles.inputLabel}>ELSE</Text>
-        <ExpressionInput
-          type="text"
-          sx={commonStyles.expressionInput}
+        <Controller
           name="elseExpr"
-          placeholder="Use this field as a ‘true/false’ statement, or show a result"
-          onChange={(expr) => handleExprChange('elseExpr', expr)}
-          value={ifelseState.elseExpr}
+          control={control}
+          rules={{
+            required: { value: true, message: 'Expression cannot be empty' },
+            validate: (expr) => isValidExpression(expr) || 'Invalid expression',
+          }}
+          render={({
+            field: { name, value, onChange },
+            fieldState: { error, invalid },
+          }) => {
+            return (
+              <Box flex={1}>
+                <ExpressionInput
+                  type="text"
+                  sx={commonStyles.expressionInput}
+                  name={name}
+                  placeholder="Use this field as a ‘true/false’ statement, or show a result"
+                  onChange={onChange}
+                  value={value}
+                  isInvalid={invalid}
+                />
+                <Text fontSize="sm" color="error.500">
+                  {error?.message}
+                </Text>
+              </Box>
+            )
+          }}
         />
       </HStack>
+      <ToolbarPortal container={toolbar}>
+        <Button
+          colorScheme="primary"
+          onClick={handleSave}
+          isDisabled={!isChanged}
+          isLoading={save.isLoading}
+        >
+          Save
+        </Button>
+      </ToolbarPortal>
     </VStack>
   )
 }
