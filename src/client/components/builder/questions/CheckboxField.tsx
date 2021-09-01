@@ -81,7 +81,6 @@ const InputComponent: QuestionFieldComponent = ({ field, index, toolbar }) => {
         />
         <Input
           type="text"
-          value={option.label}
           {...register(`options.${i}.label`, {
             required: { value: true, message: 'Option value cannot be empty' },
           })}
