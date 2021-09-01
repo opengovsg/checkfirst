@@ -65,11 +65,14 @@ const generateDefaultMapOp = (id: number): checker.Operation => ({
   show: true,
 })
 
-const generateDefaultDateOp = (id: number): checker.Operation => ({
+const generateDefaultDateOp = (
+  id: number,
+  dateFieldId: string
+): checker.Operation => ({
   id: `O${id}`,
   type: 'DATE',
   title: 'Date result',
-  expression: '',
+  expression: `${dateFieldId} + 1 days`,
   show: true,
 })
 
@@ -88,6 +91,10 @@ export const LogicTab: FC = () => {
     })
     setNextUniqueId(highestIndex + 1)
   }, [config])
+
+  const hasDateField = () => {
+    return config.fields.filter((field) => field.type === 'DATE').length > 0
+  }
 
   const addMenu = [
     {
@@ -144,12 +151,15 @@ export const LogicTab: FC = () => {
     {
       label: 'Date calculation',
       icon: <BiCalendar />,
-      disabled: isChanged || save.isLoading,
+      disabled: isChanged || save.isLoading || !hasDateField(),
       onClick: () => {
         dispatch({
           type: BuilderActionEnum.Add,
           payload: {
-            element: generateDefaultDateOp(nextUniqueId),
+            element: generateDefaultDateOp(
+              nextUniqueId,
+              config.fields.filter((f) => f.type === 'DATE')?.[0].id
+            ),
             configArrName: ConfigArrayEnum.Operations,
             newIndex: activeIndex + 1,
           },

@@ -37,7 +37,7 @@ const CONSTANTS_GUIDE_URL = 'https://go.gov.sg/checkfirst-constants'
 const generateDefaultMap = (id: number): checker.Constant => ({
   id: `T${id}`,
   title: 'Insert map title',
-  table: [{ key: '', value: NaN }],
+  table: [{ key: 'Key', value: 1 }],
 })
 
 export const ConstantsTab: FC = () => {

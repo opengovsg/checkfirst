@@ -3,6 +3,7 @@ import { IoIosArrowDropdown } from 'react-icons/io'
 import {
   Button,
   VStack,
+  HStack,
   Text,
   Input,
   Select,
@@ -140,14 +141,24 @@ const InputComponent: QuestionFieldComponent = ({ field, index, toolbar }) => {
         />
       </VStack>
       <ToolbarPortal container={toolbar}>
-        <Button
-          isDisabled={!isChanged}
-          isLoading={save.isLoading}
-          colorScheme="primary"
-          onClick={handleSave}
-        >
-          Save
-        </Button>
+        <HStack>
+          {isChanged && (
+            <Button
+              colorScheme="primary"
+              variant="outline"
+              onClick={() => reset(undefined, { keepValues: false })}
+            >
+              Reset
+            </Button>
+          )}
+          <Button
+            isLoading={save.isLoading}
+            colorScheme="primary"
+            onClick={handleSave}
+          >
+            Save
+          </Button>
+        </HStack>
       </ToolbarPortal>
     </VStack>
   )

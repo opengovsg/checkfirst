@@ -4,6 +4,7 @@ import {
   Button,
   useStyles,
   VStack,
+  HStack,
   Text,
   Input,
   InputGroup,
@@ -105,14 +106,24 @@ const InputComponent: QuestionFieldComponent = ({ field, index, toolbar }) => {
         disabled
       />
       <ToolbarPortal container={toolbar}>
-        <Button
-          isDisabled={!isChanged}
-          isLoading={save.isLoading}
-          colorScheme="primary"
-          onClick={handleSave}
-        >
-          Save
-        </Button>
+        <HStack>
+          {isChanged && (
+            <Button
+              colorScheme="primary"
+              variant="outline"
+              onClick={() => reset(undefined, { keepValues: false })}
+            >
+              Reset
+            </Button>
+          )}
+          <Button
+            isLoading={save.isLoading}
+            colorScheme="primary"
+            onClick={handleSave}
+          >
+            Save
+          </Button>
+        </HStack>
       </ToolbarPortal>
     </VStack>
   )

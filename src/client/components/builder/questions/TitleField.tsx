@@ -3,6 +3,7 @@ import {
   Flex,
   Button,
   VStack,
+  HStack,
   Text,
   Input,
   useStyles,
@@ -83,14 +84,24 @@ const InputComponent: TitleFieldComponent = ({ title, description }) => {
         {...register('description')}
       />
       <Flex justifyContent="flex-end">
-        <Button
-          isDisabled={!isChanged}
-          isLoading={save.isLoading}
-          colorScheme="primary"
-          onClick={handleSave}
-        >
-          Save
-        </Button>
+        <HStack>
+          {isChanged && (
+            <Button
+              colorScheme="primary"
+              variant="outline"
+              onClick={() => reset(undefined, { keepValues: false })}
+            >
+              Reset
+            </Button>
+          )}
+          <Button
+            isLoading={save.isLoading}
+            colorScheme="primary"
+            onClick={handleSave}
+          >
+            Save
+          </Button>
+        </HStack>
       </Flex>
     </VStack>
   )

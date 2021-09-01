@@ -52,7 +52,7 @@ const InputComponent: OperationFieldComponent = ({
   index,
   toolbar,
 }) => {
-  const { isChanged, setChanged, dispatch, save } = useCheckerContext()
+  const { setChanged, isChanged, dispatch, save } = useCheckerContext()
   const commonStyles = useStyles()
   const toast = useStyledToast()
   const styles = useMultiStyleConfig('ConditionalResult', {})
@@ -358,14 +358,25 @@ const InputComponent: OperationFieldComponent = ({
         />
       </HStack>
       <ToolbarPortal container={toolbar}>
-        <Button
-          colorScheme="primary"
-          onClick={handleSave}
-          isDisabled={!isChanged}
-          isLoading={save.isLoading}
-        >
-          Save
-        </Button>
+        <HStack>
+          {isChanged && (
+            <Button
+              isLoading={save.isLoading}
+              colorScheme="primary"
+              variant="outline"
+              onClick={() => reset(undefined, { keepValues: false })}
+            >
+              Reset
+            </Button>
+          )}
+          <Button
+            colorScheme="primary"
+            onClick={handleSave}
+            isLoading={save.isLoading}
+          >
+            Save
+          </Button>
+        </HStack>
       </ToolbarPortal>
     </VStack>
   )
