@@ -81,7 +81,6 @@ const InputComponent: QuestionFieldComponent = ({ field, index, toolbar }) => {
         />
         <Input
           type="text"
-          value={option.label}
           {...register(`options.${i}.label`, {
             required: { value: true, message: 'Option value cannot be empty' },
           })}
@@ -181,6 +180,7 @@ const InputComponent: QuestionFieldComponent = ({ field, index, toolbar }) => {
         <HStack>
           {isChanged && (
             <Button
+              isDisabled={save.isLoading}
               colorScheme="primary"
               variant="outline"
               onClick={() => reset(undefined, { keepValues: false })}
