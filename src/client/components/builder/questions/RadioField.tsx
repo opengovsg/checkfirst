@@ -63,9 +63,9 @@ const InputComponent: QuestionFieldComponent = ({ field, index, toolbar }) => {
   }
 
   const addOption = () => {
-    const newOptionLabel = `Option ${field.options.length + 1}`
+    const newOptionLabel = `Option ${options.length + 1}`
     // newValue is an increment of the last option's value to ensure that values are unique
-    const newValue = field.options[field.options.length - 1].value + 1
+    const newValue = options[options.length - 1].value + 1
     const newOption = { label: newOptionLabel, value: newValue }
     append(newOption)
   }
@@ -92,7 +92,7 @@ const InputComponent: QuestionFieldComponent = ({ field, index, toolbar }) => {
           aria-label="Delete option"
           icon={<BiTrash />}
           variant="link"
-          disabled={field.options.length <= 1}
+          disabled={options.length <= 1}
           onClick={() => deleteOption(i)}
         />
       </HStack>
