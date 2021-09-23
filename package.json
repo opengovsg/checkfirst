@@ -33,7 +33,7 @@
     "@types/express-session": "^1.17.4",
     "@types/graphlib": "^2.1.8",
     "@types/helmet": "^4.0.0",
-    "@types/jest": "^27.0.1",
+    "@types/jest": "^27.0.2",
     "@types/joi": "^17.2.3",
     "@types/loadable__component": "^5.13.4",
     "@types/mathjs": "^9.4.2",
