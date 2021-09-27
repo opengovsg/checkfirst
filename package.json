@@ -38,7 +38,7 @@
     "@types/loadable__component": "^5.13.4",
     "@types/mathjs": "^9.4.2",
     "@types/morgan": "^1.9.3",
-    "@types/node": "^16.9.6",
+    "@types/node": "^16.10.1",
     "@types/nodemailer": "^6.4.4",
     "@types/react-dom": "^17.0.9",
     "@types/react-flatpickr": "^3.8.4",
