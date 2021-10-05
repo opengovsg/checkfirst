@@ -73,7 +73,7 @@
     "ts-loader": "^9.2.6",
     "ts-node-dev": "^1.1.8",
     "typescript": "^4.3.5",
-    "webpack": "^5.56.1",
+    "webpack": "^5.57.1",
     "webpack-cli": "^4.8.0",
     "webpack-dev-server": "^4.3.1"
   },
@@ -96,7 +96,7 @@
     "@sentry/react": "^6.13.2",
     "@sentry/tracing": "^6.13.2",
     "ace-builds": "^1.4.13",
-    "aws-sdk": "^2.1000.0",
+    "aws-sdk": "^2.1001.0",
     "axios": "^0.21.4",
     "body-parser": "^1.19.0",
     "connect-session-sequelize": "^7.1.2",
