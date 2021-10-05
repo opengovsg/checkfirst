@@ -45,27 +45,32 @@ const App: FC = () => {
       <QueryClientProvider client={queryClient}>
         <Router history={history}>
           <GoogleAnalyticsProvider>
-            <AuthProvider>
-              <Sentry.ErrorBoundary
-                fallback={({ resetError }) => (
-                  <Fallback resetError={resetError} />
-                )}
-              >
-                <Switch>
-                  <Route exact path="/c/:id" component={Checker} />
-                  <Route exact path="/login" component={Login} />
-                  <Route exact path="/" component={Landing} />
-                  <PrivateRoute path="/dashboard" component={Dashboard} />
-                  <PrivateRoute path="/builder/:id">
-                    {/* TODO: Rename to BuilderProvider */}
-                    <CheckerProvider>
-                      <FormBuilder />
-                    </CheckerProvider>
-                  </PrivateRoute>
-                  <Redirect to="/" />
-                </Switch>
-              </Sentry.ErrorBoundary>
-            </AuthProvider>
+            <Sentry.ErrorBoundary
+              fallback={({ resetError }) => (
+                <Fallback resetError={resetError} />
+              )}
+            >
+              <Switch>
+                <Route exact path="/c/:id" component={Checker} />
+                {/* Only apply AuthProvider to all other routes to avoid extraneous API call */}
+                <Route>
+                  <AuthProvider>
+                    <Switch>
+                      <Route exact path="/login" component={Login} />
+                      <Route exact path="/" component={Landing} />
+                      <PrivateRoute path="/dashboard" component={Dashboard} />
+                      <PrivateRoute path="/builder/:id">
+                        {/* TODO: Rename to BuilderProvider */}
+                        <CheckerProvider>
+                          <FormBuilder />
+                        </CheckerProvider>
+                      </PrivateRoute>
+                      <Redirect to="/" />
+                    </Switch>
+                  </AuthProvider>
+                </Route>
+              </Switch>
+            </Sentry.ErrorBoundary>
           </GoogleAnalyticsProvider>
         </Router>
       </QueryClientProvider>
