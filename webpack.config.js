@@ -76,6 +76,9 @@ module.exports = () => {
       },
       historyApiFallback: true,
       allowedHosts: 'auto',
+      client: {
+        overlay: { errors: true, warnings: false },
+      },
     },
     devtool: 'source-map',
     plugins: [
@@ -101,7 +104,9 @@ module.exports = () => {
         'process.env.FRONTEND_SENTRY_DSN': JSON.stringify(
           process.env.FRONTEND_SENTRY_DSN
         ),
-        'process.env.NODE_ENV': JSON.stringify(process.env.LAMBDA_NODE_ENV),
+        'process.env.NODE_ENV': JSON.stringify(
+          process.env.LAMBDA_NODE_ENV || 'development'
+        ),
       }),
     ],
   }
