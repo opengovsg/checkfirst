@@ -76,6 +76,9 @@ module.exports = () => {
       },
       historyApiFallback: true,
       allowedHosts: 'auto',
+      client: {
+        overlay: { errors: true, warnings: false },
+      },
     },
     devtool: 'source-map',
     plugins: [
