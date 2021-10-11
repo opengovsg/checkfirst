@@ -135,7 +135,7 @@
     "reflect-metadata": "^0.1.13",
     "scroll-behavior-polyfill": "^2.0.13",
     "sequelize": "^6.6.5",
-    "sequelize-typescript": "^2.1.0",
+    "sequelize-typescript": "^2.1.1",
     "serverless-http": "^2.7.0",
     "style-loader": "^3.3.0",
     "uuid": "^8.3.2",
