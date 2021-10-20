@@ -40,7 +40,7 @@
     "@types/morgan": "^1.9.3",
     "@types/node": "^16.11.1",
     "@types/nodemailer": "^6.4.4",
-    "@types/react-dom": "^17.0.9",
+    "@types/react-dom": "^17.0.10",
     "@types/react-flatpickr": "^3.8.4",
     "@types/react-router-dom": "^5.3.1",
     "@types/react-window": "^1.8.5",
