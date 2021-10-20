@@ -100,7 +100,7 @@
     "axios": "^0.22.0",
     "body-parser": "^1.19.0",
     "connect-session-sequelize": "^7.1.2",
-    "convict": "^6.2.0",
+    "convict": "^6.2.1",
     "css-loader": "^6.4.0",
     "downshift": "^6.1.7",
     "express": "^4.17.1",
