@@ -50,7 +50,7 @@
     "@typescript-eslint/eslint-plugin": "^4.33.0",
     "@typescript-eslint/parser": "^4.33.0",
     "auto-changelog": "^2.3.0",
-    "babel-loader": "^8.2.2",
+    "babel-loader": "^8.2.3",
     "babel-polyfill": "^6.26.0",
     "clean-webpack-plugin": "^4.0.0",
     "commitizen": "^4.2.4",
@@ -137,7 +137,7 @@
     "sequelize": "^6.7.0",
     "sequelize-typescript": "^2.1.1",
     "serverless-http": "^2.7.0",
-    "style-loader": "^3.3.0",
+    "style-loader": "^3.3.1",
     "uuid": "^8.3.2",
     "winston": "^3.3.3",
     "xss": "^1.0.10"
