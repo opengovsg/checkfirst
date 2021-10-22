@@ -97,7 +97,7 @@
     "@sentry/tracing": "^6.13.3",
     "ace-builds": "^1.4.13",
     "aws-sdk": "^2.1013.0",
-    "axios": "^0.22.0",
+    "axios": "^0.23.0",
     "body-parser": "^1.19.0",
     "connect-session-sequelize": "^7.1.2",
     "convict": "^6.2.1",
