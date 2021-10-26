@@ -64,7 +64,7 @@
     "html-webpack-plugin": "^5.5.0",
     "husky": "^7.0.4",
     "jest": "^27.3.1",
-    "lint-staged": "^11.2.4",
+    "lint-staged": "^11.2.6",
     "prettier": "^2.4.1",
     "sequelize-cli": "^6.2.0",
     "sqlite3": "^5.0.1",
