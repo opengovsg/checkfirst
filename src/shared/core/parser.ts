@@ -8,7 +8,10 @@ import { Condition, IfelseState } from '../../types/conditional'
  */
 export const parseConditionalExpr = (expression: string): IfelseState => {
   const root = math.parse!(expression)
-  const { name, args } = root
+  const {
+    fn: { name },
+    args,
+  } = root as mathjs.FunctionNode
 
   // Parsing is only support for expression in the form of ifelse(CONDITION, THEN, ELSE)
   if (name !== 'ifelse') throw new Error('Not ifelse expression')
@@ -29,7 +32,7 @@ export const parseConditionalExpr = (expression: string): IfelseState => {
       A == 1  B == 2
   */
   const dfs = (node: mathjs.MathNode, conds: string[], ops: string[]) => {
-    const { op, args } = node
+    const { op, args } = node as mathjs.OperatorNode
     if (op !== 'and' && op !== 'or')
       return conds.push(
         node.toString({
