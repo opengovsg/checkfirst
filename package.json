@@ -108,7 +108,7 @@
     "framer-motion": "^4.1.17",
     "graphlib": "^2.1.8",
     "helmet": "^4.6.0",
-    "history": "^4.10.1",
+    "history": "^5.0.3",
     "immutability-helper": "^3.1.1",
     "joi": "^17.4.2",
     "lodash": "^4.17.21",
