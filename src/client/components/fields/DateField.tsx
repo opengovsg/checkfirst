@@ -30,7 +30,7 @@ export const DateField: FC<Field> = ({ id, title, description }) => {
     <Controller
       name={id}
       control={control}
-      defaultValue={new Date()}
+      defaultValue={new Date(new Date().setHours(0, 0, 0, 0))}
       rules={{ required: true }}
       render={({
         field: { onChange, value, ref },

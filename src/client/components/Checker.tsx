@@ -172,7 +172,10 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
             methods.setValue(field.id, 0)
             break
           case 'DATE':
-            methods.setValue(field.id, new Date())
+            methods.setValue(
+              field.id,
+              new Date(new Date().setHours(0, 0, 0, 0))
+            )
             break
           case 'RADIO':
             methods.setValue(field.id, '')
