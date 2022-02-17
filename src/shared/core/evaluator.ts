@@ -1,5 +1,13 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { typed, create, all, factory, Unit } from 'mathjs'
+import {
+  typed,
+  create,
+  all,
+  factory,
+  Unit,
+  FunctionNode,
+  SymbolNode,
+} from 'mathjs'
 import * as mathjs from 'mathjs'
 import { Graph, alg } from 'graphlib'
 import xss from 'xss'
@@ -122,16 +130,24 @@ const BLACKLIST = [
 // @ts-ignore
 const UNITS = Object.keys(mathjs.Unit.UNITS)
 
+function isFunctionNode(node: mathjs.MathNode): node is FunctionNode {
+  return node.type === 'FunctionNode'
+}
+
+function isSymbolNode(node: mathjs.MathNode): node is SymbolNode {
+  return node.type === 'SymbolNode'
+}
+
 export const evaluateOperation = (
   expression: string,
   variables: checker.VariableResults
 ): string | number | Unit => {
   const node = math.parse!(expression)
   const blacklisted = node.filter(
-    (n) => n.isFunctionNode && n.name && BLACKLIST.includes(n.name)
-  )
+    (n) => isFunctionNode(n) && n.fn.name && BLACKLIST.includes(n.fn.name)
+  ) as FunctionNode[]
   if (blacklisted.length > 0) {
-    const functionNames = blacklisted.map((n) => n.name).join(', ')
+    const functionNames = blacklisted.map((n) => n.fn.name).join(', ')
     throw new Error(`The following functions are not allowed: ${functionNames}`)
   }
 
@@ -159,8 +175,8 @@ export const getDependencies = (expression: string): Set<string> => {
   const dependencies = new Set<string>()
   const functions: string[] = []
   node.traverse((node) => {
-    if (node.isFunctionNode && node.name) functions.push(node.name)
-    if (node.isSymbolNode && node.name && !UNITS.includes(node.name))
+    if (isFunctionNode(node) && node.fn.name) functions.push(node.fn.name)
+    if (isSymbolNode(node) && node.name && !UNITS.includes(node.name))
       dependencies.add(node.name)
   })
 

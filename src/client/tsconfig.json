@@ -19,5 +19,6 @@
     "isolatedModules": true,
     "jsx": "react",
     "experimentalDecorators": true,
+    "useUnknownInCatchVariables": false,
   }
 }

@@ -41,7 +41,7 @@ const fromExpression = (expression: string) => {
   const args: string[] = []
   root.forEach((node) => args.push(node.toString()))
 
-  if (root.isAccessorNode && args.length === 2) {
+  if (root.type === 'AccessorNode' && args.length === 2) {
     return {
       tableId: args[0],
       variableId: args[1].slice(1, -1),
