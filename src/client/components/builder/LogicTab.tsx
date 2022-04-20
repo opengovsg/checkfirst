@@ -280,8 +280,8 @@ export const LogicTab: FC = () => {
                     Add logic
                   </MenuButton>
                   <MenuList>
-                    {addMenu.map(({ label, icon, onClick }, i) => (
-                      <MenuItem onClick={onClick} key={i}>
+                    {addMenu.map(({ label, icon, onClick, disabled }, i) => (
+                      <MenuItem onClick={onClick} key={i} isDisabled={disabled}>
                         <MenuIcon mr={4}>{icon}</MenuIcon>
                         {label}
                       </MenuItem>
