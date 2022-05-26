@@ -205,7 +205,7 @@ const InputComponent: OperationFieldComponent = ({
         <Box sx={styles.deleteSpacer} />
       </HStack>
       {conditions.map((cond, i) => (
-        <HStack key={i} sx={styles.inputContainer}>
+        <HStack key={cond.id} sx={styles.inputContainer}>
           {i === 0 ? (
             <Menu autoSelect={false}>
               <MenuButton
