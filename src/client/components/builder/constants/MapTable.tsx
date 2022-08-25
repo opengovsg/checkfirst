@@ -163,6 +163,7 @@ const InputComponent: ConstantFieldComponent = ({
                     type="number"
                     placeholder="Numeric Value"
                     {...register(`table.${index}.value`, {
+                      valueAsNumber: true,
                       required: {
                         value: true,
                         message: 'Table row value cannot be empty',
