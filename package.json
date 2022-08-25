@@ -36,7 +36,6 @@
     "@types/jest": "^27.0.2",
     "@types/joi": "^17.2.3",
     "@types/loadable__component": "^5.13.4",
-    "@types/mathjs": "^9.4.2",
     "@types/morgan": "^1.9.3",
     "@types/node": "^16.11.6",
     "@types/nodemailer": "^6.4.4",
