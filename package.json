@@ -89,7 +89,7 @@
   "dependencies": {
     "@chakra-ui/react": "^1.6.10",
     "@emotion/react": "^11.10.0",
-    "@emotion/styled": "^11.3.0",
+    "@emotion/styled": "^11.10.4",
     "@loadable/component": "^5.15.0",
     "@sentry/node": "^6.13.3",
     "@sentry/react": "^6.13.3",
