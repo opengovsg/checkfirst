@@ -81,6 +81,14 @@ describe('Operation', () => {
       expect(output).toBe(10)
     })
 
+    it('should support [unit, unit] outputs', () => {
+      const expected = unit(`${Date.now() / 1000} seconds`)
+      const c = unit(`${Date.now() / 1000} seconds`)
+      const expr = 'ifelse(a > b, expected, expected)'
+      const output = evaluateOperation(expr, { a: 2, b: 1, c, expected })
+      expect(output).toBe(expected)
+    })
+
     it('should support [string, number] outputs', () => {
       const expr = 'ifelse(a > b, "hello", 20)'
       const output = evaluateOperation(expr, { a: 2, b: 1 })
@@ -91,6 +99,50 @@ describe('Operation', () => {
       const expr = 'ifelse(a > b, 10, "hello")'
       const output = evaluateOperation(expr, { a: 2, b: 1 })
       expect(output).toBe(10)
+    })
+
+    it('should support [number, unit] outputs', () => {
+      const expected = unit(`${Date.now() / 1000} seconds`)
+      const expr = 'ifelse(a > b, expected, 0)'
+      const output = evaluateOperation(expr, {
+        a: 2,
+        b: 1,
+        expected,
+      })
+      expect(output).toBe(expected)
+    })
+
+    it('should support [unit, number] outputs', () => {
+      const expected = unit(`${Date.now() / 1000} seconds`)
+      const expr = 'ifelse(a > b, 0, expected)'
+      const output = evaluateOperation(expr, {
+        a: 1,
+        b: 2,
+        expected,
+      })
+      expect(output).toBe(expected)
+    })
+
+    it('should support [string, unit] outputs', () => {
+      const expected = unit(`${Date.now() / 1000} seconds`)
+      const expr = 'ifelse(a > b, expected, "unexpected")'
+      const output = evaluateOperation(expr, {
+        a: 2,
+        b: 1,
+        expected,
+      })
+      expect(output).toBe(expected)
+    })
+
+    it('should support [unit, string] outputs', () => {
+      const expected = unit(`${Date.now() / 1000} seconds`)
+      const expr = 'ifelse(a > b, "unexpected", expected)'
+      const output = evaluateOperation(expr, {
+        a: 1,
+        b: 2,
+        expected,
+      })
+      expect(output).toBe(expected)
     })
 
     it('should not accept a string conditional', () => {
@@ -142,6 +194,17 @@ describe('countif', () => {
   it('should support [number[], number] inputs', () => {
     const expr = 'countif([a, b], 7)'
     const output = evaluateOperation(expr, { a: 7, b: 8 })
+    expect(output).toBe(1)
+  })
+
+  it('should support [unit[], unit] inputs', () => {
+    const refDate: Unit = unit(`${Date.now() / 1000} seconds`)
+    const expr = 'countif([a, b], c)'
+    const output = evaluateOperation(expr, {
+      a: refDate,
+      b: unit(`${Date.now() / 1000} seconds`),
+      c: refDate,
+    })
     expect(output).toBe(1)
   })
 

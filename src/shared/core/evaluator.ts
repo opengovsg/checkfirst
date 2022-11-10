@@ -48,22 +48,22 @@ const factories = {
   // Custom if-else function
   createIfElse: factory('ifelse', [], () =>
     typed('ifelse', {
-      'boolean, string | number, string | number': (
+      'boolean, string | number | Unit, string | number | Unit': (
         condition: boolean,
-        a: string | number,
-        b: string | number
+        a: string | number | Unit,
+        b: string | number | Unit
       ) => (condition ? a : b),
     })
   ),
   // Custom count-if function
   createCountIf: factory('countif', [], () =>
     typed('countif', {
-      'Array, string | number': (
-        elemArray: string[] | number[],
-        comparedElem: string | number
+      'Array, string | number | Unit': (
+        elemArray: string[] | number[] | Unit[],
+        comparedElem: string | number | Unit
       ) => {
         let count = 0
-        elemArray.forEach((elem: string | number) => {
+        elemArray.forEach((elem: string | number | Unit) => {
           if (elem === comparedElem) count++
         })
         return count
