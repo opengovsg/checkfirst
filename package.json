@@ -1,6 +1,6 @@
 {
   "name": "@opengovsg/checkfirst",
-  "version": "1.14.5",
+  "version": "1.14.6",
   "description": "Calculators and eligibility checkers for Singapore Government policies",
   "main": "build/server/index.js",
   "homepage": "https://checkfirst.gov.sg",
