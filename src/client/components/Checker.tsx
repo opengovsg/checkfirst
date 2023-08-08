@@ -85,7 +85,8 @@ export const Checker: FC<CheckerProps> = ({ config }) => {
         }
       )
     } else if (isNumeric(output)) {
-      value = mathjs.format(output, { notation: 'fixed' })
+      // coerce `output`, since it could be a string
+      value = mathjs.format(Number(output), { notation: 'fixed' })
     } else {
       value = output.toString()
     }
