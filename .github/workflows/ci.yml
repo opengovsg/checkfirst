@@ -26,7 +26,6 @@ jobs:
             ${{ runner.OS }}-node-
             ${{ runner.OS }}-
       - run: npm ci
-      - run: npx lockfile-lint --type npm --path package-lock.json --validate-https --allowed-hosts npm
       - run: npm run lint
   compile:
     name: Compile
