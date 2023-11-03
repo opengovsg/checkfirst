@@ -121,7 +121,7 @@ export class CheckerController {
     const { id } = req.params
     try {
       const checker = await this.service.retrievePublished(id)
-      if (!checker) {
+      if (!checker || !checker.isActive) {
         res.status(404).json({ message: 'Not Found' })
       } else {
         res.json(checker)
