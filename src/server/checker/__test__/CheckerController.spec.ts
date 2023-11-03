@@ -324,15 +324,32 @@ describe('CheckerController', () => {
       service.retrievePublished.mockReset()
     })
 
-    it('accepts non-authenticated getPublished', async () => {
+    it('accepts non-authenticated getPublished, but returns 404 if inactive', async () => {
       const app = express()
       app.use(bodyParser.json())
       app.use(sessionMiddleware({}))
       app.get('/c/:id', controller.getPublished)
 
-      service.retrievePublished.mockResolvedValue(checker)
+      service.retrievePublished.mockResolvedValue({
+        ...checker,
+        isActive: false,
+      })
+      await request(app).get(`/c/${checker.id}`).expect(404)
+      expect(service.retrievePublished).toHaveBeenCalledWith(checker.id)
+    })
+
+    it('accepts non-authenticated getPublished, and returns 200 if active', async () => {
+      const app = express()
+      app.use(bodyParser.json())
+      app.use(sessionMiddleware({}))
+      app.get('/c/:id', controller.getPublished)
+
+      service.retrievePublished.mockResolvedValue({
+        ...checker,
+        isActive: true,
+      })
       const response = await request(app).get(`/c/${checker.id}`).expect(200)
-      expect(response.body).toStrictEqual(checker)
+      expect(response.body).toStrictEqual({ ...checker, isActive: true })
       expect(service.retrievePublished).toHaveBeenCalledWith(checker.id)
     })
 
