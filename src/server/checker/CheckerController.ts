@@ -119,10 +119,22 @@ export class CheckerController {
     res
   ) => {
     const { id } = req.params
+    const { user } = req.session
     try {
       const checker = await this.service.retrievePublished(id)
-      if (!checker || !checker.isActive) {
+      if (!checker) {
         res.status(404).json({ message: 'Not Found' })
+      } else if (!checker.isActive) {
+        if (!user) {
+          res.status(404).json({ message: 'Not Found' })
+        } else {
+          try {
+            await this.service.findAndCheckAuth(id, user)
+            res.json(checker)
+          } catch {
+            res.status(404).json({ message: 'Not Found' })
+          }
+        }
       } else {
         res.json(checker)
       }
