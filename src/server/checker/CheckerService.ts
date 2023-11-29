@@ -201,7 +201,7 @@ export class CheckerService {
       }
     }
 
-  private findAndCheckAuth: (
+  findAndCheckAuth: (
     id: string,
     user: User,
     transactionOptions?: { transaction?: Transaction }

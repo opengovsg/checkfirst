@@ -33,6 +33,7 @@ describe('CheckerController', () => {
     listCollaborators: jest.fn(),
     addCollaborator: jest.fn(),
     deleteCollaborator: jest.fn(),
+    findAndCheckAuth: jest.fn(),
   }
   const controller = new CheckerController({ service })
 
