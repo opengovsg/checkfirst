@@ -39,12 +39,11 @@ export const OtpForm: FC<OtpFormProps> = ({ onSuccess }) => {
     sendOtp.mutate(formattedEmail)
   }
 
-  const hasError = () => errors.email || sendOtp.isError
+  const hasError = (): boolean => !!errors.email || sendOtp.isError
 
   const getErrorMessage = (): string => {
-    const { email } = errors
-    return email && email.type === 'required'
-      ? 'Please provide a valid email address'
+    return errors && errors.email
+      ? 'Please provide a valid .gov.sg email address'
       : getApiErrorMessage(sendOtp.error)
   }
 
@@ -55,12 +54,15 @@ export const OtpForm: FC<OtpFormProps> = ({ onSuccess }) => {
           <FormLabel label="neutral.900">Login</FormLabel>
           <Text color="neutral.700" mb="24px">
             Only available for use by public officers with a{' '}
-            <strong>gov.sg</strong> email.
+            <strong>.gov.sg</strong> email.
           </Text>
           <Input
             h="48px"
-            type="email"
-            {...register('email', { required: true })}
+            {...register('email', {
+              required: true,
+              pattern:
+                /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+.gov.sg$/,
+            })}
             placeholder="e.g. jane@open.gov.sg"
           />
           {hasError() && (
