@@ -94,7 +94,7 @@
     "@sentry/node": "^6.13.3",
     "@sentry/react": "^6.13.3",
     "@sentry/tracing": "^6.13.3",
-    "ace-builds": "^1.4.13",
+    "ace-builds": "^1.31.1",
     "aws-sdk": "^2.1020.0",
     "axios": "^0.24.0",
     "body-parser": "^1.20.2",
