@@ -52,10 +52,10 @@ jobs:
           languages: js
           service-name: ${{ secrets.DD_SERVICE_NAME }}
           api-key: ${{ secrets.DD_API_KEY }}
-      - run: npm test
+      - run: npm test:coverage
         env:
           # Required to allow Datadog to trace Vitest tests
-          NODE_OPTIONS: -r ${{ env.DD_TRACE_PACKAGE }} --import ${{ env.DD_TRACE_ESM_IMPORT }}
+          NODE_OPTIONS: -r ${{ env.DD_TRACE_PACKAGE }}
   gatekeep:
     name: Determine if Build & Deploy is needed
     outputs:

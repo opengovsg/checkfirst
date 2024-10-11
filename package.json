@@ -8,6 +8,7 @@
     "lint": "eslint .",
     "lint-fix": "eslint --fix ./src",
     "test": "jest",
+    "test:coverage": "jest --coverage",
     "build": "tsc && webpack --mode production",
     "dev": "concurrently \"npm run dev-server\" \"npm run dev-client\"",
     "dev-server": "ts-node-dev --respawn --transpile-only --inspect -- src/server/index.ts",
