@@ -55,7 +55,7 @@ jobs:
       - run: npm run test:coverage
         env:
           # Required to allow Datadog to trace Vitest tests
-          NODE_OPTIONS: -r ${{ env.DD_TRACE_PACKAGE }}
+          NODE_OPTIONS: --max-old-space-size=4096 -r ${{ env.DD_TRACE_PACKAGE }}
   gatekeep:
     name: Determine if Build & Deploy is needed
     outputs:
