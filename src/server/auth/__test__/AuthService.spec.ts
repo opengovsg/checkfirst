@@ -167,6 +167,10 @@ describe('AuthService', () => {
     const token = '111111'
     beforeAll(async () => {
       await sequelizeReady
+      await UserModel.create(user)
+    })
+    afterAll(async () => {
+      await UserModel.destroy({ where: user })
     })
     it('returns user on successful verify', async () => {
       totp.verify.mockReturnValue(true)

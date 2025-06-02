@@ -44,7 +44,7 @@ By default SQLite DB is used. For other available environments refer to: `src/se
 ### SQLite table not found
 This may occur if the SQlite tables created is in the wrong format or required tables are not created
 
-Add `await sequelize.sync({force:true}` to the `server/database/index` file after `await sequelize.authenticate()`. This will force all the tables in to be dropped and created again with the correct tables.
+Add `await sequelize.sync({ force:true })` to the `src/server/bootstrap/index` file after `await sequelize.authenticate()`. This will force all the tables in to be dropped and created again with the correct tables.
 
 A potential long term fix for issues related to SQLite is to replace SQLite with a docker-compose environment for usage during development.
 

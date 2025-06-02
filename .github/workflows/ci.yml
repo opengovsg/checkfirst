@@ -11,62 +11,51 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Use Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
-          node-version: '12.x'
-      - name: Cache Node.js modules
-        uses: actions/cache@v2
-        with:
-          # npm cache files are stored in `~/.npm` on Linux/macOS
-          path: ~/.npm
-          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.OS }}-node-
-            ${{ runner.OS }}-
+          node-version: 'latest'
+          cache: 'npm'
       - run: npm ci
       - run: npm run lint
   compile:
     name: Compile
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Use Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
-          node-version: '12.x'
-      - name: Cache Node.js modules
-        uses: actions/cache@v2
-        with:
-          # npm cache files are stored in `~/.npm` on Linux/macOS
-          path: ~/.npm
-          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.OS }}-node-
-            ${{ runner.OS }}-
+          node-version: 'latest'
+          cache: 'npm'
       - run: npm ci
       - run: npm run build
   test:
     name: Test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Use Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
-          node-version: '12.x'
-      - name: Cache Node.js modules
-        uses: actions/cache@v2
-        with:
-          # npm cache files are stored in `~/.npm` on Linux/macOS
-          path: ~/.npm
-          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.OS }}-node-
-            ${{ runner.OS }}-
+          node-version: 'latest'
+          cache: 'npm'
       - run: npm ci
-      - run: npm test
+      - name: Configure Datadog Test Visibility
+        env:
+          DD_SERVICE_NAME: ${{ secrets.DD_SERVICE_NAME }}
+          DD_API_KEY: ${{ secrets.DD_API_KEY }}
+        if: env.DD_SERVICE_NAME != '' && env.DD_API_KEY != ''
+        uses: datadog/test-visibility-github-action@v1
+        with:
+          languages: js
+          service-name: ${{ secrets.DD_SERVICE_NAME }}
+          api-key: ${{ secrets.DD_API_KEY }}
+      - run: npm run test:coverage
+        env:
+          # Required to allow Datadog to trace Vitest tests
+          NODE_OPTIONS: --max-old-space-size=4096 -r ${{ env.DD_TRACE_PACKAGE }}
   gatekeep:
     name: Determine if Build & Deploy is needed
     outputs:
@@ -90,20 +79,12 @@ jobs:
     needs: [test, lint, compile, gatekeep]
     if: needs.gatekeep.outputs.proceed == 'true'
     steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js 16.x
-        uses: actions/setup-node@v1
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: '16.x'
-      - name: Cache Node.js modules
-        uses: actions/cache@v2
-        with:
-          # npm cache files are stored in `~/.npm` on Linux/macOS
-          path: ~/.npm
-          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.OS }}-node-
-            ${{ runner.OS }}-
+          node-version: 'latest'
+          cache: 'npm'
       - run: npm ci
       - run: |
           if [[ $GITHUB_REF == $STAGING_BRANCH ]]; then
@@ -142,7 +123,7 @@ jobs:
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
       - name: serverless deploy
-        uses: opengovsg/serverless-github-action@v2.1.0
+        uses: serverless/github-action@v3.2.0
         with:
           args: -c "serverless plugin install --name serverless-plugin-custom-binary && serverless deploy --conceal"
           entrypoint: /bin/bash

@@ -81,11 +81,18 @@ export class AuthService {
         secret: this.secretFrom(email),
         token,
       })
-      const [user] = isVerified
-        ? await this.UserModel.findOrCreate({ where: { email } })
-        : []
 
-      return user
+      const user = isVerified
+        ? await this.UserModel.findOne({ where: { email } })
+        : null
+
+      if (!user && isVerified) {
+        throw new Error(
+          'We are no longer accepting new user accounts. Contact checkfirst@open.gov.sg for more information'
+        )
+      }
+
+      return user ?? undefined
     }
 }
 
