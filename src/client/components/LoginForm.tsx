@@ -71,35 +71,38 @@ export const LoginForm: FC<LoginFormProps> = ({ email, onLogin }) => {
     )
   }
 
-  const hasError = () => errors.email || auth.verifyOtp.isError
+  const hasError = (): boolean => !!errors.token || auth.verifyOtp.isError
 
   const getErrorMessage = (): string => {
-    const { otp } = errors
-    return otp && otp.type === 'required'
+    return errors && errors.token
       ? 'Please provide a valid OTP'
-      : getApiErrorMessage(auth.verifyOtp.error)
+      : auth.verifyOtp.isError
+      ? getApiErrorMessage(auth.verifyOtp.error)
+      : ''
   }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <VStack spacing="32px" align="stretch">
-        <FormControl id="email" isInvalid={hasError()}>
-          <FormLabel color="neutral.900">One time password</FormLabel>
+        <FormControl id="token" isInvalid={hasError()}>
+          <FormLabel color="neutral.900" isRequired>
+            One time password
+          </FormLabel>
           <Text color="neutral.700" mb="24px">
             Please enter the OTP sent to {email}.
           </Text>
           <Input
             h="48px"
-            type="text"
-            inputMode="numeric"
-            pattern="\d{6}"
-            {...register('token', { required: true })}
+            {...register('token', {
+              required: true,
+              minLength: 6,
+              maxLength: 6,
+              pattern: /^\d{6}/,
+            })}
             autoComplete="one-time-code"
             placeholder="e.g. 111111"
           />
-          {hasError() && (
-            <FormErrorMessage>{getErrorMessage()}</FormErrorMessage>
-          )}
+          <FormErrorMessage children={getErrorMessage()} />
         </FormControl>
         <HStack justifyContent="flex-start" spacing={6}>
           <Button
