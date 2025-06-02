@@ -123,7 +123,7 @@ jobs:
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
       - name: serverless deploy
-        uses: opengovsg/serverless-github-action@v2.1.0
+        uses: serverless/github-action@v3.2.0
         with:
           args: -c "serverless plugin install --name serverless-plugin-custom-binary && serverless deploy --conceal"
           entrypoint: /bin/bash
